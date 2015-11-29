@@ -145,7 +145,7 @@ namespace GT
                 easyaudio_device_info info;
                 if (easyaudio_get_output_device_info(m_pAudioContext, iDevice, &info))
                 {
-                    GTLib::String message;
+                    String message;
                     message.AppendFormatted("Playback Device (%d) - %s", iDevice, info.description);
 
                     this->PostLogMessage(message.c_str());
@@ -168,7 +168,7 @@ namespace GT
 
             this->UnacquireAllThreads();
 
-            GTLib::Vector<GTLib::Thread*> threadsToDelete;
+            Vector<Thread*> threadsToDelete;
             m_threadManagementLock.Lock();
             {
                 threadsToDelete = m_dormantThreads;
@@ -231,9 +231,9 @@ namespace GT
         ////////////////////////////////////////////////////
         // Threading
 
-        GTLib::Thread* EngineContext::AcquireThread()
+        Thread* EngineContext::AcquireThread()
         {
-            GTLib::Thread* thread = nullptr;
+            Thread* thread = nullptr;
 
             m_threadManagementLock.Lock();
             {
@@ -258,7 +258,7 @@ namespace GT
                 // If we haven't got a thread at this point it means there was no available dormant thread and thus we need to create a new one.
                 if (thread == nullptr)
                 {
-                    thread = new GTLib::Thread();
+                    thread = new Thread();
                 }
 
 
@@ -274,7 +274,7 @@ namespace GT
             return thread;
         }
 
-        void EngineContext::UnacquireThread(GTLib::Thread* thread)
+        void EngineContext::UnacquireThread(Thread* thread)
         {
             if (thread != nullptr)
             {
@@ -286,7 +286,7 @@ namespace GT
             }
         }
 
-        void EngineContext::UnacquireThreadNoLock(GTLib::Thread* thread)
+        void EngineContext::UnacquireThreadNoLock(Thread* thread)
         {
             assert(thread != nullptr);
 

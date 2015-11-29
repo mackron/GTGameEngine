@@ -5,7 +5,7 @@
 
 #include "WindowEvent.hpp"
 
-namespace GTLib
+namespace GT
 {
     /// Callback passed to NextWindowEvent().
     ///

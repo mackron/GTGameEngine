@@ -2,7 +2,7 @@
 
 #include <GTEngine/Animation/Animation.hpp>
 
-namespace GTEngine
+namespace GT
 {
     Animation::Animation()
         : keyFrames(), channels(),
@@ -173,8 +173,8 @@ namespace GTEngine
                 }
 
                 // We will clamp the start and end frames against the timeline so we don't crash.
-                keyFrameStart = GTLib::Clamp(keyFrameStart, static_cast<size_t>(0U), this->keyFrames.count - 1);
-                keyFrameEnd   = GTLib::Clamp(keyFrameEnd,   static_cast<size_t>(0U), this->keyFrames.count - 1);
+                keyFrameStart = Clamp(keyFrameStart, static_cast<size_t>(0U), this->keyFrames.count - 1);
+                keyFrameEnd   = Clamp(keyFrameEnd,   static_cast<size_t>(0U), this->keyFrames.count - 1);
 
 
                 // Here we check if this frame is looping. If so, we need to set the index of the item in the key frame queue. The value will be the
@@ -310,9 +310,9 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void Animation::Serialize(GTLib::Serializer &serializer) const
+    void Animation::Serialize(Serializer &serializer) const
     {
-        GTLib::BasicSerializer playbackSerializer;
+        BasicSerializer playbackSerializer;
 
         this->currentAnimationTrack.Serialize(playbackSerializer);
 
@@ -340,7 +340,7 @@ namespace GTEngine
         serializer.Write(header);
     }
 
-    void Animation::Deserialize(GTLib::Deserializer &deserializer)
+    void Animation::Deserialize(Deserializer &deserializer)
     {
         // We are going to use an iteration based deserializer here.
         Serialization::ChunkHeader header;

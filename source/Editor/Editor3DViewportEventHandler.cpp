@@ -5,7 +5,7 @@
 #include <GTEngine/SceneViewport.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 
-namespace GTEngine
+namespace GT
 {
     Editor3DViewportEventHandler::Editor3DViewportEventHandler(Game &game, SceneViewport &viewport)
         : game(game), viewport(viewport),
@@ -32,12 +32,12 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnSize(GTGUI::Element &element)
     {
-        int newWidth  = GTLib::Max(element.GetInnerWidth(),  1);
-        int newHeight = GTLib::Max(element.GetInnerHeight(), 1);
+        int newWidth  = Max(element.GetInnerWidth(),  1);
+        int newHeight = Max(element.GetInnerHeight(), 1);
 
         this->viewport.Resize(newWidth, newHeight);
 
-        auto camera = this->viewport.GetCameraNode()->GetComponent<GTEngine::CameraComponent>();
+        auto camera = this->viewport.GetCameraNode()->GetComponent<CameraComponent>();
         camera->Set3DProjection(camera->perspective.fov, static_cast<float>(newWidth) / static_cast<float>(newHeight), camera->zNear, camera->zFar);
     }
 
@@ -45,7 +45,7 @@ namespace GTEngine
     {
         auto colourBuffer = this->viewport.GetColourBuffer();
 
-        auto shader = GTEngine::ShaderLibrary::GetTextured2DQuadShader();
+        auto shader = ShaderLibrary::GetTextured2DQuadShader();
         assert(shader != nullptr);
         {
             Renderer::SetCurrentShader(shader);
@@ -54,7 +54,7 @@ namespace GTEngine
             Renderer::PushPendingUniforms(*shader);
 
             
-            GTLib::Rect<int> viewportRect;
+            Rect<int> viewportRect;
             element.GetAbsoluteRect(viewportRect);
 
             float quadLeft   = static_cast<float>(viewportRect.left);

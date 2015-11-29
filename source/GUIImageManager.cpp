@@ -4,7 +4,7 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Core/ImageLoader.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GUIImageManager::GUIImageManager()
     {
@@ -26,18 +26,18 @@ namespace GTEngine
     GTGUI::ImageHandle GUIImageManager::CreateImage(unsigned int width, unsigned int height, GTGUI::ImageFormat format, const void* data)
     {
         // First, translate the format to a GTLib format. If it's not a supported format, we need to return 0.
-        auto translatedFormat = GTLib::ImageFormat_None;
+        auto translatedFormat = ImageFormat_None;
         if (format == GTGUI::ImageFormat_RGB8)
         {
-            translatedFormat = GTLib::ImageFormat_RGB8;
+            translatedFormat = ImageFormat_RGB8;
         }
         else if (format == GTGUI::ImageFormat_RGBA8)
         {
-            translatedFormat = GTLib::ImageFormat_RGBA8;
+            translatedFormat = ImageFormat_RGBA8;
         }
         else if (format == GTGUI::ImageFormat_A8)
         {
-            translatedFormat = GTLib::ImageFormat_R8;
+            translatedFormat = ImageFormat_R8;
         }
         else
         {
@@ -61,24 +61,24 @@ namespace GTEngine
     
     GTGUI::ImageHandle GUIImageManager::LoadImage(const char* filePath)
     {
-        auto loader = GTLib::ImageLoader::Create(filePath);
+        auto loader = ImageLoader::Create(filePath);
         if (loader != nullptr)
         {
-            GTLib::ImageFileInfo info;
+            ImageFileInfo info;
             loader->GetImageInfo(info);
             
-            if (info.format == GTLib::ImageFormat_RGB8 || info.format == GTLib::ImageFormat_RGBA8 || info.format == GTLib::ImageFormat_R8)      // <-- Only supporting RGB8, RGBA8 and A8 formats.
+            if (info.format == ImageFormat_RGB8 || info.format == ImageFormat_RGBA8 || info.format == ImageFormat_R8)      // <-- Only supporting RGB8, RGBA8 and A8 formats.
             {
-                GTLib::Mipmap mipmap;
+                Mipmap mipmap;
                 if (loader->LoadMipmap(0, mipmap))      // <-- '0' means the base mipmap.
                 {
                     GTGUI::ImageFormat format;
                     
-                    if (info.format == GTLib::ImageFormat_RGBA8)
+                    if (info.format == ImageFormat_RGBA8)
                     {
                         format = GTGUI::ImageFormat_RGBA8;
                     }
-                    else if (info.format == GTLib::ImageFormat_R8)
+                    else if (info.format == ImageFormat_R8)
                     {
                         format = GTGUI::ImageFormat_A8;
                     }
@@ -145,15 +145,15 @@ namespace GTEngine
         assert(texture != nullptr);
         {
             auto format = texture->GetFormat();
-            if (format == GTLib::ImageFormat_RGB8)
+            if (format == ImageFormat_RGB8)
             {
                 return GTGUI::ImageFormat_RGB8;
             }
-            else if (format == GTLib::ImageFormat_RGBA8)
+            else if (format == ImageFormat_RGBA8)
             {
                 return GTGUI::ImageFormat_RGBA8;
             }
-            else if (format == GTLib::ImageFormat_R8)
+            else if (format == ImageFormat_R8)
             {
                 return GTGUI::ImageFormat_A8;
             }

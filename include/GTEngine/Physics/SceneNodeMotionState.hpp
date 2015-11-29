@@ -5,7 +5,7 @@
 
 #include "Bullet.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class SceneNode;
 

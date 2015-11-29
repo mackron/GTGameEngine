@@ -7,7 +7,7 @@
 #include "../Math.hpp"
 
 /// PointLight.
-namespace GTEngine
+namespace GT
 {
     class PointLightComponent : public Component
     {
@@ -61,10 +61,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
         
     public:
@@ -94,7 +94,7 @@ namespace GTEngine
 
 
 /// SpotLight.
-namespace GTEngine
+namespace GT
 {
     class SpotLightComponent : public Component
     {
@@ -159,10 +159,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
         
@@ -197,7 +197,7 @@ namespace GTEngine
 
 
 // DirectionalLight
-namespace GTEngine
+namespace GT
 {
     class DirectionalLightComponent : public Component
     {
@@ -236,10 +236,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
         
     public:
@@ -260,7 +260,7 @@ namespace GTEngine
 
 
 // DirectionalLight
-namespace GTEngine
+namespace GT
 {
     class AmbientLightComponent : public Component
     {
@@ -283,10 +283,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
         
     public:

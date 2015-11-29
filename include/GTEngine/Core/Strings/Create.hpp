@@ -10,7 +10,7 @@
 
 #include <cstdarg>
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {
@@ -27,7 +27,7 @@ namespace GTLib
 
         /// Creates a new string. If the input string is null, returns an empty string.
         ///
-        /// Delete the string with GTLib::Strings::Delete().
+        /// Delete the string with Strings::Delete().
         template <typename T>
         T* Create(const T* source, ptrdiff_t sourceSizeInTs = -1, size_t* lengthInTsOut = nullptr)
         {
@@ -89,7 +89,7 @@ namespace GTLib
         }
 
         template <typename T>
-        T* Create(const GTLib::Strings::List<T> &source)
+        T* Create(const Strings::List<T> &source)
         {
             T* result = static_cast<T*>(malloc(source.BuildStringSize()));
             source.BuildString(result);
@@ -123,10 +123,10 @@ namespace GTLib
         /// Creates a formatted string. Currently only UTF-8.
         inline char* CreateFormatted(const char* format, va_list argList1, va_list argList2, size_t* lengthInTsOut = nullptr)
         {
-            size_t transformedValueLength = static_cast<size_t>(GTLib::IO::vsnprintf(nullptr, 0, format, argList1));
+            size_t transformedValueLength = static_cast<size_t>(IO::vsnprintf(nullptr, 0, format, argList1));
             auto   transformedValue       = static_cast<char*>(malloc(transformedValueLength + 1));
 
-            GTLib::IO::vsnprintf(transformedValue, transformedValueLength + 1, format, argList2);
+            IO::vsnprintf(transformedValue, transformedValueLength + 1, format, argList2);
 
 
             if (lengthInTsOut != nullptr)
@@ -140,7 +140,7 @@ namespace GTLib
 
 
 
-        /// Deletes a string that was created with GTLib::Strings::Create() or GTLib::Strings::CreateEmpty().
+        /// Deletes a string that was created with Strings::Create() or Strings::CreateEmpty().
         template <typename T>
         void Delete(T* source)
         {

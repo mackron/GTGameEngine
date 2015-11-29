@@ -2,7 +2,7 @@
 
 #include <GTEngine/Editor/SceneEditor/SceneEditorGameEventFilter.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneEditorGameEventFilter::SceneEditorGameEventFilter()
         : m_viewport(nullptr)
@@ -35,19 +35,19 @@ namespace GTEngine
         return true;
     }
     
-    bool SceneEditorGameEventFilter::OnMouseButtonDown(GTLib::MouseButton &, int &mousePosX, int &mousePosY)
+    bool SceneEditorGameEventFilter::OnMouseButtonDown(MouseButton &, int &mousePosX, int &mousePosY)
     {
         this->NormalizeMouseCoordinates(mousePosX, mousePosY);
         return true;
     }
     
-    bool SceneEditorGameEventFilter::OnMouseButtonUp(GTLib::MouseButton &, int &mousePosX, int &mousePosY)
+    bool SceneEditorGameEventFilter::OnMouseButtonUp(MouseButton &, int &mousePosX, int &mousePosY)
     {
         this->NormalizeMouseCoordinates(mousePosX, mousePosY);
         return true;
     }
     
-    bool SceneEditorGameEventFilter::OnMouseButtonDoubleClick(GTLib::MouseButton &, int &mousePosX, int &mousePosY)
+    bool SceneEditorGameEventFilter::OnMouseButtonDoubleClick(MouseButton &, int &mousePosX, int &mousePosY)
     {
         this->NormalizeMouseCoordinates(mousePosX, mousePosY);
         return true;

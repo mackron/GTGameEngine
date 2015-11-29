@@ -73,7 +73,7 @@ namespace GT
     private:
 
         /// The list of message handlers which will have messages dispatched to them.
-        GTLib::Vector<MessageHandler*> m_messageHandlers;
+        Vector<MessageHandler*> m_messageHandlers;
 
 
     private:    // No copying.

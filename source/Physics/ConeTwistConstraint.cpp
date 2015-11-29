@@ -4,7 +4,7 @@
 #include <GTEngine/Physics/DynamicsWorld.hpp>
 #include <GTEngine/Physics.hpp>
 
-namespace GTEngine
+namespace GT
 {
     ConeTwistConstraint::ConeTwistConstraint(RigidBody &bodyA, RigidBody &bodyB, const glm::mat4 &frameA, const glm::mat4 &frameB)
         : btConeTwistConstraint(bodyA, bodyB, BulletUtils::CreateTransform(frameA), BulletUtils::CreateTransform(frameB)),

@@ -3,7 +3,7 @@
 #ifndef __GTTYpe_GlyphMetrics_hpp_
 #define __GTTYpe_GlyphMetrics_hpp_
 
-namespace GTLib
+namespace GT
 {
     /// Structure containing the metrics of a glyph, not including the width and height.
     ///

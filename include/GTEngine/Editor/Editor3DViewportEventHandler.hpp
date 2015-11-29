@@ -6,7 +6,7 @@
 #include <GTEngine/GUI/ElementEventHandler.hpp>
 #include "../Rendering/VertexArray.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class Game;
     class SceneViewport;

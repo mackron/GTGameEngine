@@ -9,7 +9,7 @@
 #include <GTEngine/Core/Map.hpp>
 #include <GTEngine/Core/List.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Framebuffer;
     class Shader;
@@ -21,7 +21,7 @@ namespace GTEngine
     ///
     /// When the data of a texture is changed, it needs to be pushed to the GPU with Renderer::PushTexture2DData() before those changes will
     /// appear during rendering.
-    class Texture2D : private GTLib::Image
+    class Texture2D : private Image
     {
     protected:
 
@@ -29,7 +29,7 @@ namespace GTEngine
         Texture2D();
 
         /// Constructor.
-        Texture2D(unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data = nullptr);
+        Texture2D(unsigned int width, unsigned int height, ImageFormat format, const void* data = nullptr);
 
 
 
@@ -66,7 +66,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If 'data' is null, the storage will be allocated, but will remain undefined. Very useful for framebuffer targets.
-        void SetData(unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data = nullptr);
+        void SetData(unsigned int width, unsigned int height, ImageFormat format, const void* data = nullptr);
         
         /// Sets a sub-region of data.
         ///
@@ -97,7 +97,7 @@ namespace GTEngine
         unsigned int GetHeight() const;
 
         /// Retrieves the format of the image data.
-        GTLib::ImageFormat GetFormat() const;
+        ImageFormat GetFormat() const;
 
 
 
@@ -107,7 +107,7 @@ namespace GTEngine
         /// Retrieves the mipmap at the given index.
         ///
         /// @param index [in] The index of the mipmap to retrieve.
-        const GTLib::Mipmap & GetMipmap(size_t index) const;
+        const Mipmap & GetMipmap(size_t index) const;
 
         
 
@@ -147,14 +147,14 @@ namespace GTEngine
     private:
 
         /// The relative path of the texture.
-        GTLib::String relativePath;
+        String relativePath;
 
 
         /// The list of framebuffers that this texture is attached to.
-        GTLib::List<Framebuffer*> framebuffers;
+        List<Framebuffer*> framebuffers;
 
         /// The list of shaders that this texture is attached to.
-        GTLib::List<Shader*> shaders;
+        List<Shader*> shaders;
 
 
         /// We store a reference count which will be used by the Texture2DLibrary. Initializes to 1.

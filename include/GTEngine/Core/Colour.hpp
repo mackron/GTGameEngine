@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-namespace GTLib
+namespace GT
 {
     class Colour
     {

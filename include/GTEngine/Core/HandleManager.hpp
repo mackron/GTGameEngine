@@ -211,10 +211,10 @@ namespace GT
     private:
 
         /// The list of pointers to objects each handle maps to.
-        GTLib::Vector<ObjectType*> m_objectPointers;
+        Vector<ObjectType*> m_objectPointers;
 
         /// The list of handles that can be recycled.
-        GTLib::Vector<HandleType> m_recyclableHandles;
+        Vector<HandleType> m_recyclableHandles;
     };
 }
 

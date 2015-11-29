@@ -3,7 +3,7 @@
 #ifndef __GTEngine_ParticleFunctionTypes_hpp_
 #define __GTEngine_ParticleFunctionTypes_hpp_
 
-namespace GTEngine
+namespace GT
 {
     /// Enumerator for each of the different particle functions.
     enum ParticleFunctionType

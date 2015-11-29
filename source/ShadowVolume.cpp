@@ -3,7 +3,7 @@
 #include <GTEngine/ShadowVolume.hpp>
 #include <GTEngine/MeshBuilder.hpp>
 
-namespace GTEngine
+namespace GT
 {
     ShadowVolume::ShadowVolume()
         : vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3))

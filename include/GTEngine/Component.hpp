@@ -28,7 +28,7 @@
 
 
 
-namespace GTEngine
+namespace GT
 {
     class SceneNode;
 
@@ -67,12 +67,12 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not need to preserve any information about the owner scene node or the component name.
-        virtual void Serialize(GTLib::Serializer &serializer) const;
+        virtual void Serialize(Serializer &serializer) const;
 
         /// Deserializes the component.
         ///
         /// @param deserializer [in] A reference to the deserializer to read data from.
-        virtual void Deserialize(GTLib::Deserializer &deserializer);
+        virtual void Deserialize(Deserializer &deserializer);
 
         /// Called after the owner scene node has finished deserializing.
         ///

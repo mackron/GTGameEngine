@@ -2,7 +2,7 @@
 
 #include <GTEngine/Physics/StaticMeshCollisionShape.hpp>
 
-namespace GTEngine
+namespace GT
 {
     StaticMeshCollisionShape::StaticMeshCollisionShape()
         : btBvhTriangleMeshShape(new btTriangleIndexVertexArray, true, false)

@@ -5,7 +5,7 @@
 
 #include "Particle.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Container class specially designed for efficient storing of particles.
     ///

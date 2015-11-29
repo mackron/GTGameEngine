@@ -11,7 +11,7 @@
     #pragma warning(disable:4457)   // declaration of '...' hides function parameter
 #endif
 
-namespace GTEngine
+namespace GT
 {
     class SceneNode;
     class ModelComponent;

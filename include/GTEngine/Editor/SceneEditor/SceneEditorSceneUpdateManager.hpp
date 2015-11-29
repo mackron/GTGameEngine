@@ -5,7 +5,7 @@
 
 #include "../../DefaultSceneUpdateManager.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Special update manager for scenes loaded into the scene editor.
     class SceneEditorSceneUpdateManager : public DefaultSceneUpdateManager

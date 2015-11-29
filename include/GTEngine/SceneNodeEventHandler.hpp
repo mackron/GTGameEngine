@@ -5,7 +5,7 @@
 
 #include "Physics/Bullet.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class Scene;
     class SceneNode;

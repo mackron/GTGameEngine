@@ -2,7 +2,7 @@
 
 #include <GTEngine/SceneDeserializeCallback.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneDeserializeCallback::SceneDeserializeCallback()
     {
@@ -18,7 +18,7 @@ namespace GTEngine
         return false;
     }
 
-    bool SceneDeserializeCallback::HandleChunk(const Serialization::ChunkHeader &, GTLib::Deserializer &)
+    bool SceneDeserializeCallback::HandleChunk(const Serialization::ChunkHeader &, Deserializer &)
     {
         return false;
     }

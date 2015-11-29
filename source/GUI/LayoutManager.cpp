@@ -1283,7 +1283,7 @@ namespace GTGUI
 
         
         element.layout.unconstrainedWidth = newWidth;
-        element.width = GTLib::Clamp(newWidth, minWidth, maxWidth);
+        element.width = GT::Clamp(newWidth, minWidth, maxWidth);
 
         return element.GetOuterWidth();
     }
@@ -1313,7 +1313,7 @@ namespace GTGUI
 
         
         element.layout.unconstrainedHeight = newHeight;
-        element.height = GTLib::Clamp(newHeight, minHeight, maxHeight);
+        element.height = GT::Clamp(newHeight, minHeight, maxHeight);
 
         return element.GetOuterHeight();
     }
@@ -1355,7 +1355,7 @@ namespace GTGUI
                         iWidth = (i->width + i->GetHorizontalMargin());
                     }
 
-                    result = GTLib::Max(result, iWidth);
+                    result = GT::Max(result, iWidth);
                 }
             }
         }
@@ -1400,7 +1400,7 @@ namespace GTGUI
                         iHeight = (i->height + i->GetVerticalMargin());
                     }
 
-                    result = GTLib::Max(result, iHeight);
+                    result = GT::Max(result, iHeight);
                 }
             }
         }

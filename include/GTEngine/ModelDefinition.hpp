@@ -12,7 +12,7 @@
 #include <GTEngine/Core/Vector.hpp>
 
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing the base definition of a model.
     ///
@@ -50,13 +50,13 @@ namespace GTEngine
             }
 
             /// The name of the mesh.
-            GTLib::String name;
+            String name;
 
             /// The vertex array containing the base geeometry of the mesh.
-            GTEngine::VertexArray* geometry;
+            VertexArray* geometry;
 
             /// The material to use when drawing the mesh.
-            GTEngine::Material* material;
+            Material* material;
 
             /// The skinning vertex attributes. This is a pointer to an array buffer whose size is equal to the number of vertices in the mesh. This can
             /// be null, in which case it is considered a static mesh.
@@ -99,7 +99,7 @@ namespace GTEngine
         ///     be specified. Typically, absolute paths will only ever be passed to this method when called by the engine.
         ///
         /// @see
-        ///     GTEngine::ModelDefinition::LoadFromFile(const char*)
+        ///     ModelDefinition::LoadFromFile(const char*)
         bool LoadFromFile(const char* fileNameIn, const char* relativePathIn, bool &needsSerialize);
 
 
@@ -134,7 +134,7 @@ namespace GTEngine
         void BuildConvexHulls(ConvexHullBuildSettings &settings) { this->BuildConvexDecomposition(settings); }
 
         /// Retrieves a constant reference to the internal list of convex hulls for this model.
-        const GTLib::Vector<ConvexHull*> & GetConvexHulls() const { return m_convexHulls; }
+        const Vector<ConvexHull*> & GetConvexHulls() const { return m_convexHulls; }
 
 
 
@@ -241,12 +241,12 @@ namespace GTEngine
         // Serialization/Deserialization
 
         /// Serializes the model definition.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the model definition.
         ///
         /// @return True if successful; false otherwise.
-        bool Deserialize(GTLib::Deserializer &deserializer);
+        bool Deserialize(Deserializer &deserializer);
 
 
     private:
@@ -256,48 +256,48 @@ namespace GTEngine
         /// @param absolutePathIn [in] The absolute path of the file to load.
         ///
         /// @return True if successful; false otherwise.
-        bool LoadFromNativeFile(const GTLib::String &absolutePathIn);
+        bool LoadFromNativeFile(const String &absolutePathIn);
 
         /// Loads a model definition from a non-native file (a non-gtmodel file).
         ///
         /// @param absolutePathIn [in] The absolute path of the file to load.
         ///
         /// @return True if successful; false otherwise.
-        bool LoadFromForeignFile(const GTLib::String &absolutePathIn);
+        bool LoadFromForeignFile(const String &absolutePathIn);
 
         /// Loads a model definition from an Assimp-supported file.
         ///
         /// @param absolutePathIn [in] the absolute path of the file to load.
         ///
         /// @return True if successful; false otherwise.
-        bool LoadFromAssimpFile(const GTLib::String &absolutePathIn);
+        bool LoadFromAssimpFile(const String &absolutePathIn);
 
 
     public:
 
         /// The absolute file path. This is of the foreign (source) file.
-        GTLib::String absolutePath;
+        String absolutePath;
 
         /// The relative file path. This is of the foreign (source) file.
-        GTLib::String relativePath;
+        String relativePath;
 
 
         /// The list of meshes.
-        GTLib::Vector<ModelDefinition::Mesh> meshes;
+        Vector<ModelDefinition::Mesh> meshes;
 
         /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and
         /// also fast lookups.
-        GTLib::Vector<Bone*> m_bones;
+        Vector<Bone*> m_bones;
 
 
         /// The model's animation object.
         Animation m_animation;
 
         /// The map for mapping a bone to an animation channel.
-        GTLib::Map<Bone*, AnimationChannel*> animationChannelBones;
+        Map<Bone*, AnimationChannel*> animationChannelBones;
 
         /// The cache of animation keys.
-        GTLib::Vector<TransformAnimationKey*> animationKeyCache;
+        Vector<TransformAnimationKey*> animationKeyCache;
 
 
         /// The padding to apply to the animated AABB.
@@ -306,7 +306,7 @@ namespace GTEngine
 
         /// The list of the convex hulls making up the convex decomposition of this model. This is either loaded from the model's file or
         /// generated with BuildConvexDecomposition().
-        GTLib::Vector<ConvexHull*> m_convexHulls;
+        Vector<ConvexHull*> m_convexHulls;
 
         /// The settings that were used to build the convex hulls.
         ConvexHullBuildSettings convexHullBuildSettings;

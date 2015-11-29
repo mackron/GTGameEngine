@@ -5,7 +5,7 @@
 
 #include <GTEngine/Core/String.hpp>
 
-namespace GTLib
+namespace GT
 {
     /// Static class representing the clipboard for doing copy-and-paste.
     class Clipboard
@@ -19,7 +19,7 @@ namespace GTLib
         static void SetText(const char* text, ptrdiff_t sizeInTs = -1);
 
         /// Retrieves the text data currently on the clipboard.
-        static GTLib::String GetText();
+        static String GetText();
 
 
     private:

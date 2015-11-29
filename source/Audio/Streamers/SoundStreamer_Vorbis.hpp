@@ -16,7 +16,7 @@ namespace GT
     namespace Engine
     {
         /// Sound streamer for Ogg Vorbis files.
-        class SoundStreamer_Vorbis : public GTEngine::SoundStreamer
+        class SoundStreamer_Vorbis : public SoundStreamer
         {
         public:
 

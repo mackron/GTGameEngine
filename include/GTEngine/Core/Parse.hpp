@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     template <typename T>
     T Parse(const char *, int)
@@ -38,7 +38,7 @@ namespace GTLib
     template <> double       Parse<double>(const char *value);
     template <> inline float Parse<float>(const char *value)
     {
-        return (float)GTLib::Parse<double>(value);
+        return (float)Parse<double>(value);
     }
     
     template <> inline int          Parse<int>(const char *value)              { return Parse<int>(value, 0); }

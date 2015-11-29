@@ -6,7 +6,7 @@
 #include "../../RenderCommand.hpp"
 #include "FramebufferState_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers/
     class RCDeleteFramebuffer : public RenderCommand

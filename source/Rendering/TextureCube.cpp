@@ -3,7 +3,7 @@
 #include <GTEngine/Rendering/TextureCube.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 
-namespace GTEngine
+namespace GT
 {
     TextureCube::TextureCube(Texture2D* positiveX, Texture2D* negativeX, Texture2D* positiveY, Texture2D* negativeY, Texture2D* positiveZ, Texture2D* negativeZ)
         : PositiveX(positiveX), NegativeX(negativeX),

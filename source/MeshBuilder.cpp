@@ -12,7 +12,7 @@
     #pragma GCC diagnostic pop
 #endif
 
-namespace GTEngine
+namespace GT
 {
     MeshBuilder::MeshBuilder(size_t vertexSizeInFloats)
         : vertexSizeInFloats(vertexSizeInFloats), vertexBuffer(), indexBuffer(), checkDuplicatesOnEmit(true)
@@ -91,7 +91,7 @@ namespace GTEngine
 }
 
 
-namespace GTEngine
+namespace GT
 {
     /// MeshBuilderP3T2N3
     MeshBuilderP3T2N3::MeshBuilderP3T2N3()
@@ -207,7 +207,7 @@ namespace GTEngine
         float circleRadius       = 1.0f;
         float circleSegmentAngle = glm::radians(360.0f / static_cast<float>(this->ringSegmentsCount));
 
-        GTLib::Vector<glm::vec3> vertices(this->ringSegmentsCount);
+        Vector<glm::vec3> vertices(this->ringSegmentsCount);
 
 
         // Important that we clear.
@@ -278,7 +278,7 @@ namespace GTEngine
     {
         float circleSegmentAngle = glm::radians(360.0f / static_cast<float>(this->ringSegmentsCount));
 
-        GTLib::Vector<glm::vec3> vertices(this->ringSegmentsCount);
+        Vector<glm::vec3> vertices(this->ringSegmentsCount);
         for (unsigned int iSegment = 0; iSegment < this->ringSegmentsCount; ++iSegment)
         {
             glm::vec3 position;
@@ -327,7 +327,7 @@ namespace GTEngine
     {
         float circleSegmentAngle = glm::radians(180.0f / static_cast<float>(this->circleSegmentsCount - 1));
 
-        GTLib::Vector<glm::vec3> vertices(this->circleSegmentsCount);
+        Vector<glm::vec3> vertices(this->circleSegmentsCount);
         for (unsigned int iSegment = 0; iSegment < this->circleSegmentsCount; ++iSegment)
         {
             glm::vec3 position;

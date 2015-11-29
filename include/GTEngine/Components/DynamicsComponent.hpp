@@ -7,7 +7,7 @@
 #include "../AlignedType.hpp"
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a dynamics component.
     ///
@@ -172,10 +172,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 

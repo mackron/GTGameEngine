@@ -61,7 +61,7 @@ namespace GTGUI
     }
 
 
-    void Mesh::SetFromP2T2Colour(const float* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, const GTLib::Colour &colour)
+    void Mesh::SetFromP2T2Colour(const float* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, const GT::Colour &colour)
     {
         const size_t vertexComponentCount = 4;
 

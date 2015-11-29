@@ -4,7 +4,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/GTEngine.hpp>
 
-namespace GTEngine
+namespace GT
 {
     Prefab::Prefab(const char* absolutePathIn, const char* relativePathIn)
         : absolutePath(absolutePathIn), relativePath(relativePathIn), serializers(), hierarchy(), nextID(0)
@@ -38,7 +38,7 @@ namespace GTEngine
     }
 
 
-    GTLib::BasicSerializer* Prefab::GetSerializerByID(uint64_t id)
+    BasicSerializer* Prefab::GetSerializerByID(uint64_t id)
     {
         auto iSerializer = this->serializers.Find(id);
         if (iSerializer != nullptr)
@@ -49,7 +49,7 @@ namespace GTEngine
         return nullptr;
     }
 
-    const GTLib::BasicSerializer* Prefab::GetSerializerByID(uint64_t id) const
+    const BasicSerializer* Prefab::GetSerializerByID(uint64_t id) const
     {
         auto iSerializer = this->serializers.Find(id);
         if (iSerializer != nullptr)
@@ -94,7 +94,7 @@ namespace GTEngine
 
     uint64_t Prefab::AddSingleSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
     {
-        auto serializer = new GTLib::BasicSerializer;
+        auto serializer = new BasicSerializer;
         sceneNode.Serialize(*serializer, SceneNode::NoID | SceneNode::ForceDeselected);
 
         if (id == 0)
@@ -128,7 +128,7 @@ namespace GTEngine
     }
 
 
-    void Prefab::GetChildIDs(uint64_t parentID, GTLib::Vector<uint64_t> &childIDs) const
+    void Prefab::GetChildIDs(uint64_t parentID, Vector<uint64_t> &childIDs) const
     {
         for (size_t i = 0; i < this->hierarchy.count; ++i)
         {
@@ -144,10 +144,10 @@ namespace GTEngine
     ////////////////////////////////////////////
     // Serialization.
 
-    bool Prefab::Serialize(GTLib::Serializer &serializer)
+    bool Prefab::Serialize(Serializer &serializer)
     {
         // We'll need to use an intermediary serializer so we can get an accurate size.
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
         
         // Serializers first.
         intermediarySerializer.Write(static_cast<uint32_t>(this->serializers.count));
@@ -198,7 +198,7 @@ namespace GTEngine
         return true;
     }
 
-    bool Prefab::Deserialize(GTLib::Deserializer &deserializer)
+    bool Prefab::Deserialize(Deserializer &deserializer)
     {
         // We want to clear first.
         this->Clear();
@@ -228,7 +228,7 @@ namespace GTEngine
                             auto buffer = malloc(serializerSizeInBytes);
                             deserializer.Read(buffer, serializerSizeInBytes);
 
-                            auto serializer = new GTLib::BasicSerializer;
+                            auto serializer = new BasicSerializer;
                             serializer->Write(buffer, serializerSizeInBytes);
 
                             free(buffer);
@@ -264,7 +264,7 @@ namespace GTEngine
 
                 default:
                     {
-                        GTEngine::Log("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
+                        Log("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -281,14 +281,14 @@ namespace GTEngine
     bool Prefab::WriteToFile()
     {
 #if 0
-        auto file = GTLib::IO::Open(this->absolutePath.c_str(), GTLib::IO::OpenMode::Write);
+        auto file = IO::Open(this->absolutePath.c_str(), IO::OpenMode::Write);
         if (file != nullptr)
         {
-            GTLib::FileSerializer serializer(file);
+            FileSerializer serializer(file);
             this->Serialize(serializer);
 
 
-            GTLib::IO::Close(file);
+            IO::Close(file);
             return true;
         }
 #endif
@@ -296,7 +296,7 @@ namespace GTEngine
         easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
-            GTLib::FileSerializer serializer(pFile);
+            FileSerializer serializer(pFile);
             this->Serialize(serializer);
 
             easyvfs_close(pFile);
@@ -304,7 +304,7 @@ namespace GTEngine
         }
         else
         {
-            GTEngine::Log("Can not open file: '%s'.", this->absolutePath.c_str());
+            Log("Can not open file: '%s'.", this->absolutePath.c_str());
         }
 
         return false;

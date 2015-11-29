@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_PolygonModes_hpp_
 #define __GTEngine_Rendering_PolygonModes_hpp_
 
-namespace GTEngine
+namespace GT
 {
     enum PolygonMode
     {

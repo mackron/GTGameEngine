@@ -6,7 +6,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Recast/RecastAlloc.h>
 
-namespace GTEngine
+namespace GT
 {
     // A function taken from the Recast/Detour source for use when drawing the navigation mesh.
     float distancePtLine2d(const float* pt, const float* p, const float* q)
@@ -100,7 +100,7 @@ namespace GTEngine
                 auto node = nodes.GetSceneNodeAtIndex(i);
                 assert(node != nullptr);
                 {
-                    auto dynamics = node->GetComponent<GTEngine::DynamicsComponent>();
+                    auto dynamics = node->GetComponent<DynamicsComponent>();
                     if (dynamics != nullptr && dynamics->IsNavigationMeshGenerationEnabled())
                     {
                         CollisionShapeMeshBuilder mesh;
@@ -332,7 +332,7 @@ namespace GTEngine
 
 
 
-    bool NavigationMesh::FindPath(const glm::vec3 &start, const glm::vec3 &end, GTLib::Vector<glm::vec3> &output)
+    bool NavigationMesh::FindPath(const glm::vec3 &start, const glm::vec3 &end, Vector<glm::vec3> &output)
     {
         bool success = false;
 
@@ -519,9 +519,9 @@ namespace GTEngine
     /////////////////////////////////////////////
     // Serialization/Deserialization
 
-    void NavigationMesh::Serialize(GTLib::Serializer &serializer) const
+    void NavigationMesh::Serialize(Serializer &serializer) const
     {
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
         Serialization::ChunkHeader header;
 
 
@@ -639,7 +639,7 @@ namespace GTEngine
         }
     }
 
-    bool NavigationMesh::Deserialize(GTLib::Deserializer &deserializer)
+    bool NavigationMesh::Deserialize(Deserializer &deserializer)
     {
         bool successful = true;
 
@@ -663,7 +663,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        GTEngine::Log("Error deserializing main chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        Log("Error deserializing main chunk of navigation mesh. Unsupported version (%d).", header.version);
                         successful = false;
                     }
 
@@ -712,11 +712,11 @@ namespace GTEngine
                         deserializer.Read(borderSize);
 
 
-                        GTLib::Vector<uint16_t> verts;
-                        GTLib::Vector<uint16_t> polys;
-                        GTLib::Vector<uint16_t> regs;
-                        GTLib::Vector<uint16_t> flags;
-                        GTLib::Vector<uint8_t> areas;
+                        Vector<uint16_t> verts;
+                        Vector<uint16_t> polys;
+                        Vector<uint16_t> regs;
+                        Vector<uint16_t> flags;
+                        Vector<uint8_t> areas;
 
                         verts.Resize(nverts * 3);
                         deserializer.Read(verts.buffer, sizeof(uint16_t) * verts.count);
@@ -765,7 +765,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        GTEngine::Log("Error deserializing Recast Poly Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        Log("Error deserializing Recast Poly Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
                         successful = false;
                     }
 
@@ -834,7 +834,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        GTEngine::Log("Error deserializing Detour Nav Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        Log("Error deserializing Detour Nav Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
                         successful = false;
                     }
 

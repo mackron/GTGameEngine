@@ -6,7 +6,7 @@
 #include "GameObject.hpp"
 #include <GTEngine/Core/List.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a garbage collector for GameObjects.
     ///
@@ -45,7 +45,7 @@ namespace GTEngine
     private:
 
         /// The list of game objects that are marked for deletion.
-        GTLib::List<GameObject*> objects;
+        List<GameObject*> objects;
     };
 }
 

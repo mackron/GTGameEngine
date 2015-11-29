@@ -17,7 +17,7 @@
 
 #define DOUBLE_CLICK_TIME 250
 
-namespace GTLib
+namespace GT
 {
     namespace X11
     {
@@ -43,7 +43,7 @@ namespace GTLib
 
         void DefaultEventHandlerProc(XEvent &e)
         {
-            GTLib::WindowEventHandler &eventHandler = GetWindowEventHandler(e.xany.window);
+            WindowEventHandler &eventHandler = GetWindowEventHandler(e.xany.window);
 
             switch (e.type)
             {
@@ -408,7 +408,7 @@ namespace GTLib
     }
 }
 
-namespace GTLib
+namespace GT
 {
     namespace X11
     {
@@ -521,10 +521,10 @@ namespace GTLib
             ::Cursor sizeArrowBottomRightCursor;
 
             /// The clipboard text on the PRIMARY target.
-            GTLib::String clipboardTextPRIMARY;
+            String clipboardTextPRIMARY;
 
             /// The clipboard text on the CLIPBOARD target.
-            GTLib::String clipboardTextCLIPBOARD;
+            String clipboardTextCLIPBOARD;
 
         private:    // No copying.
             _DisplayContainer(const _DisplayContainer &);
@@ -546,7 +546,7 @@ namespace GTLib
             }
 
             /// The dictionary containing the properties of the window.
-            GTLib::Dictionary<void*> properties;
+            Dictionary<void*> properties;
 
 
         private:    // No copying.
@@ -554,8 +554,8 @@ namespace GTLib
             WindowMetadata & operator=(const WindowMetadata &);
         };
 
-        /// The map containing the window data for every window that posted the GTLib::X11::OnWindowCreated() event.
-        GTLib::Map< ::Window, WindowMetadata*> Windows;
+        /// The map containing the window data for every window that posted the X11::OnWindowCreated() event.
+        Map< ::Window, WindowMetadata*> Windows;
 
 
         /**
@@ -712,8 +712,8 @@ namespace GTLib
                     auto iProperty = sourceMetadata->properties.buffer[i];
 
                     // Some properties don't want to be copied.
-                    if (!GTLib::Strings::Equal(iProperty->key, "__invisiblecursorpixmap") &&
-                        !GTLib::Strings::Equal(iProperty->key, "__invisiblecursor"))
+                    if (!Strings::Equal(iProperty->key, "__invisiblecursorpixmap") &&
+                        !Strings::Equal(iProperty->key, "__invisiblecursor"))
                     {
                         SetWindowProperty(dest, iProperty->key, iProperty->value);
                     }
@@ -810,7 +810,7 @@ namespace GTLib
 
 
         // This map stores default video modes for screens. The key is the screen.
-        static GTLib::Map<int, XF86VidModeModeInfo> DefaultVideoModes;
+        static Map<int, XF86VidModeModeInfo> DefaultVideoModes;
 
         void SwitchVideoMode(int screen, int mode)
         {
@@ -925,7 +925,7 @@ namespace GTLib
         }
 
 
-        void SetCursor(::Window window, GTLib::Cursor cursor)
+        void SetCursor(::Window window, Cursor cursor)
         {
             SetWindowProperty(window, "__cursor", (void*)cursor);
 
@@ -941,7 +941,7 @@ namespace GTLib
             XSync(GetX11Display(), False);
         }
 
-        ::Cursor GetX11Cursor(GTLib::Cursor cursor)
+        ::Cursor GetX11Cursor(Cursor cursor)
         {
             switch (cursor)
             {
@@ -1101,7 +1101,7 @@ namespace GTLib
     }
 }
 
-namespace GTLib
+namespace GT
 {
     XEvent g_event;
     bool PumpNextWindowEvent(bool wait)

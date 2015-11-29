@@ -10,7 +10,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     SubEditor::SubEditor(Editor &ownerEditorIn, const char* absolutePathIn, const char* relativePathIn)
         : m_ownerEditor(ownerEditorIn), m_absolutePath(absolutePathIn), m_relativePath(relativePathIn),
@@ -137,7 +137,7 @@ namespace GTEngine
                 m_isMarkedAsModified = true;
 
                 // We will modify the text of the tab to show a star to the right.
-                GTLib::String tabText(easypath_filename(this->GetRelativePath())); tabText += "*";
+                String tabText(easypath_filename(this->GetRelativePath())); tabText += "*";
                 this->SetTabText(tabText.c_str());
 
 
@@ -195,7 +195,7 @@ namespace GTEngine
         auto mainElement = this->GetMainElement();
         if (mainElement != nullptr)
         {
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", mainElement->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", mainElement->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("DeleteToolBar");
@@ -212,12 +212,12 @@ namespace GTEngine
 
 
 
-    GTEngine::GameScript & SubEditor::GetScript()
+    GameScript & SubEditor::GetScript()
     {
         return m_ownerEditor.GetGame().GetScript();
     }
 
-    const GTEngine::GameScript & SubEditor::GetScript() const
+    const GameScript & SubEditor::GetScript() const
     {
         return m_ownerEditor.GetGame().GetScript();
     }
@@ -260,19 +260,19 @@ namespace GTEngine
     {
     }
 
-    void SubEditor::OnKeyPressed(GTLib::Key)
+    void SubEditor::OnKeyPressed(Key)
     {
     }
 
-    void SubEditor::OnKeyReleased(GTLib::Key)
+    void SubEditor::OnKeyReleased(Key)
     {
     }
 
-    void SubEditor::OnMouseButtonDown(GTLib::MouseButton, int, int)
+    void SubEditor::OnMouseButtonDown(MouseButton, int, int)
     {
     }
 
-    void SubEditor::OnMouseButtonUp(GTLib::MouseButton, int, int)
+    void SubEditor::OnMouseButtonUp(MouseButton, int, int)
     {
     }
 
@@ -307,7 +307,7 @@ namespace GTEngine
     {
         // This is slightly annoying because the text needs to be set on a child of the main tab. We do it all via the scripting interface.
         auto &script = this->GetScript();
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GetTabElement()->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GetTabElement()->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("text");

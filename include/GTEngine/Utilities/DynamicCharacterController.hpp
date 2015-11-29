@@ -6,7 +6,7 @@
 #include "../SceneNode.hpp"
 #include "CharacterControllerEventHandler.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a dynamic character controller. This is not a kinematic body, but instead a rigid body with a set mass.
     ///
@@ -23,8 +23,8 @@ namespace GTEngine
 
 
         /// Retrieves the internal scene node.
-              GTEngine::SceneNode & GetSceneNode()       { return this->sceneNode; }
-        const GTEngine::SceneNode & GetSceneNode() const { return this->sceneNode; }
+              SceneNode & GetSceneNode()       { return this->sceneNode; }
+        const SceneNode & GetSceneNode() const { return this->sceneNode; }
 
 
         /// Sets the mass of the character.
@@ -86,10 +86,10 @@ namespace GTEngine
     private:
 
         /// The internal scene node.
-        GTEngine::SceneNode sceneNode;
+        SceneNode sceneNode;
 
         /// The event handler for the scene node. We need this so we can handle OnUpdate() and check whether or not the player is on the ground.
-        class SceneNodeEventHandler : public GTEngine::SceneNodeEventHandler
+        class SceneNodeEventHandler : public GT::SceneNodeEventHandler
         {
         public:
 
@@ -98,7 +98,7 @@ namespace GTEngine
             {
             }
 
-            void OnUpdate(GTEngine::SceneNode &, double deltaTimeInSeconds)
+            void OnUpdate(SceneNode &, double deltaTimeInSeconds)
             {
                 this->controller.OnUpdate(deltaTimeInSeconds);
             }

@@ -5,7 +5,7 @@
 
 #include "TimingCommon.hpp"
 
-namespace GTLib
+namespace GT
 {
     /// Class for performing simple benchmarking.
     ///
@@ -33,13 +33,13 @@ namespace GTLib
         /// Marks the beginning of the section being benchmarked.
         void Start()
         {
-            this->lastStartTime = GTLib::Timing::GetTimeInSeconds();
+            this->lastStartTime = Timing::GetTimeInSeconds();
         }
 
         /// Ends the current section, incrementing the total time and counter.
         void End()
         {
-            this->totalTime += GTLib::Timing::GetTimeInSeconds() - this->lastStartTime;
+            this->totalTime += Timing::GetTimeInSeconds() - this->lastStartTime;
             ++this->counter;
         }
 

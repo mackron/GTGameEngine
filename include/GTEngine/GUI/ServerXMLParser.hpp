@@ -59,7 +59,7 @@ namespace GTGUI
             {
                 if (this->deleteID)
                 {
-                    GTLib::Strings::Delete((char *)this->id);
+                    GT::Strings::Delete((char *)this->id);
                 }
             }
             
@@ -74,7 +74,7 @@ namespace GTGUI
             {
                 if (newID)
                 {
-                    this->id       = GTLib::Strings::Create(newID);
+                    this->id       = GT::Strings::Create(newID);
                     this->deleteID = true;
                 }
             }
@@ -171,7 +171,7 @@ namespace GTGUI
         GT::BasicBuffer buffer;
         
         /// The last error string.
-        GTLib::String lastError;
+        GT::String lastError;
         
     
     public:
@@ -183,15 +183,15 @@ namespace GTGUI
         Element* lastElement;
         
         /// The list of scripts.
-        GTLib::Strings::List<char> scripts;
-        GTLib::Strings::List<char> externalScripts;
+        GT::Strings::List<char> scripts;
+        GT::Strings::List<char> externalScripts;
         
         /// The list of style scripts.
-        GTLib::Strings::List<char> styles;
-        GTLib::Strings::List<char> externalStyles;
+        GT::Strings::List<char> styles;
+        GT::Strings::List<char> externalStyles;
 
         /// The list of includes.
-        GTLib::Strings::List<char> includes;
+        GT::Strings::List<char> includes;
         
         
     private:    // No copying.

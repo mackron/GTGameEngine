@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Windowing/Win32/Win32.hpp>
 
 
-namespace GTLib
+namespace GT
 {
     extern const char* WindowClassName;     // <-- Defined in WindowManagement.cpp
 
@@ -168,7 +168,7 @@ namespace GTLib
     #pragma GCC diagnostic ignored "-Wunreachable-code"
 #endif
 
-namespace GTLib
+namespace GT
 {
     Window::Window()
         : iwo()
@@ -293,7 +293,7 @@ namespace GTLib
         ::InvalidateRect(THIS_HWND, &newRect, true);
     }
 
-    void Window::SetCursor(GTLib::Cursor cursor)
+    void Window::SetCursor(Cursor cursor)
     {
         Win32::SetCursor(THIS_HWND, cursor);
     }

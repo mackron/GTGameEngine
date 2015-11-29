@@ -110,7 +110,7 @@ namespace GTGUI
     
     Element* ElementTree::FindByID(const char* id, ptrdiff_t idLengthInTs) const
     {
-        uint32_t hashedID = GTLib::Hash(id, idLengthInTs);
+        uint32_t hashedID = GT::Hash(id, idLengthInTs);
         
         auto currentNode = m_root;
         while (currentNode != nullptr)

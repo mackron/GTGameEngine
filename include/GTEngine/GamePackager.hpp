@@ -6,7 +6,7 @@
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class used for packaging a game for distribution.
     ///
@@ -69,13 +69,13 @@ namespace GTEngine
     private:
 
         /// The absolute path of the output directory.
-        GTLib::String outputDirectoryAbsolutePath;
+        String outputDirectoryAbsolutePath;
 
         /// The paths of data directories relative to 'outputDirectoryAbsolutePath'. These will be used when writing the config file.
-        GTLib::Vector<GTLib::String> dataDirectoryRelativePaths;
+        Vector<String> dataDirectoryRelativePaths;
 
         /// The relative path of the executable.
-        GTLib::String executableRelativePath;
+        String executableRelativePath;
     };
 }
 

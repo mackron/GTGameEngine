@@ -8,7 +8,7 @@
 
 #include "ShaderState_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class Shader_OpenGL21 : public Shader
     {

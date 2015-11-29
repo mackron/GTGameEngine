@@ -12,7 +12,7 @@
 #include <GTEngine/Logging.hpp>
 
 
-namespace GTEngine
+namespace GT
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(DynamicsComponent, "Dynamics")
 
@@ -170,7 +170,7 @@ namespace GTEngine
 
     glm::vec3 DynamicsComponent::GetLinearVelocity() const
     {
-        return GTEngine::ToGLMVector3(this->rigidBody->getLinearVelocity());
+        return ToGLMVector3(this->rigidBody->getLinearVelocity());
     }
 
 
@@ -181,7 +181,7 @@ namespace GTEngine
 
     glm::vec3 DynamicsComponent::GetAngularVelocity() const
     {
-        return GTEngine::ToGLMVector3(this->rigidBody->getAngularVelocity());
+        return ToGLMVector3(this->rigidBody->getAngularVelocity());
     }
 
 
@@ -314,7 +314,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void DynamicsComponent::Serialize(GTLib::Serializer &serializer) const
+    void DynamicsComponent::Serialize(Serializer &serializer) const
     {
         // The collision shapes need to be serialized first.
         CollisionShapeComponent::Serialize(serializer);
@@ -355,7 +355,7 @@ namespace GTEngine
         }
     }
 
-    void DynamicsComponent::Deserialize(GTLib::Deserializer &deserializer)
+    void DynamicsComponent::Deserialize(Deserializer &deserializer)
     {
         // When deserializing, it's much, much more efficient to first remove the object from the existing scene, change the settings, and then
         // re-add it than it is to call each individual method. Thus, that's what we're doing here.
@@ -414,7 +414,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::Log("DynamicsComponent deserialization error. The main chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
+                    Log("DynamicsComponent deserialization error. The main chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
                     break;
                 }
             }
@@ -504,11 +504,11 @@ namespace GTEngine
 
         if (this->GetCollisionShapeCount() == 1)
         {
-            inertia = GTEngine::BulletUtils::CalculateLocalInertia(this->mass, this->GetCollisionShapeAtIndex(0));
+            inertia = BulletUtils::CalculateLocalInertia(this->mass, this->GetCollisionShapeAtIndex(0));
         }
         else
         {
-            inertia = GTEngine::BulletUtils::CalculateLocalInertia(this->mass, this->collisionShape);
+            inertia = BulletUtils::CalculateLocalInertia(this->mass, this->collisionShape);
         }
 
         this->rigidBody->setMassProps(this->mass, inertia);

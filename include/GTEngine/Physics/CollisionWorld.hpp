@@ -5,7 +5,7 @@
 
 #include "BaseCollisionWorld.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a world for doing collision detection.
     class CollisionWorld : public BaseCollisionWorld

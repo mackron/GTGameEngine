@@ -71,16 +71,16 @@ namespace GTGUI
 
 
         /// Called when a key is pressed. This is different to OnKeyDown in that it will not be called for repeating keys.
-        virtual void OnKeyPressed(Element &element, GTLib::Key key);
+        virtual void OnKeyPressed(Element &element, GT::Key key);
 
         /// Called when a key is pushed down.
         ///
         /// @remarks
         ///     To cancel the key input, return false. Otherwise, return true. This is a good way to selectively ignore keys.
-        virtual bool OnKeyDown(Element &element, GTLib::Key key);
+        virtual bool OnKeyDown(Element &element, GT::Key key);
 
         /// Called when a key is released.
-        virtual void OnKeyUp(Element &element, GTLib::Key key);
+        virtual void OnKeyUp(Element &element, GT::Key key);
 
 
         /// Called when the element's text has changed.

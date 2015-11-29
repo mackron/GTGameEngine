@@ -2,7 +2,7 @@
 
 #include "RCDeleteFramebuffer_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     RCDeleteFramebuffer::RCDeleteFramebuffer()
         : framebufferState(nullptr)

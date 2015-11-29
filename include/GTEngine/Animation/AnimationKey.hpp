@@ -5,7 +5,7 @@
 
 #include "../Math.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Base class for animation keys.
     class AnimationKey

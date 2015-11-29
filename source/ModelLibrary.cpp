@@ -21,7 +21,7 @@
 
 
 // Startup/Shutdown
-namespace GTEngine
+namespace GT
 {
     ////////////////////////////////////////////////
     // Globals
@@ -52,10 +52,10 @@ namespace GTEngine
     };
 
     /// The list of loaded model definitions, index by the absolute path of the original source file.
-    static GTLib::Dictionary<ModelDefinitionReference> LoadedDefinitions;
+    static Dictionary<ModelDefinitionReference> LoadedDefinitions;
 
     /// The list of instantiated models. we need this so we can delete them on shutdown.
-    static GTLib::Vector<Model*> InstantiatedModels;
+    static Vector<Model*> InstantiatedModels;
 
 
     /// Creates a model from a primitive's vertex array.
@@ -116,7 +116,7 @@ namespace GTEngine
 
 
         // We will first find an existing model definition. If we don't find it, we create one and the load into it.
-        GTLib::String absolutePath;
+        String absolutePath;
         if (ModelLibrary::FindAbsolutePath(fileName, absolutePath))
         {
             ModelDefinition* definition = nullptr;
@@ -176,7 +176,7 @@ namespace GTEngine
     {
         // We need a unique identifier for this mesh. We will base it on the size of the box.
         char name[128];
-        GTLib::IO::snprintf(name, 128, "convexhull(%d)", ConvexHullCount++);
+        IO::snprintf(name, 128, "convexhull(%d)", ConvexHullCount++);
 
         // We create the model from a primitive. To do this we need a non-const vertex array.
         VertexArray* va = nullptr;
@@ -199,7 +199,7 @@ namespace GTEngine
 
 
             // The reference counter needs to be decremented. If this is the last reference to the model we'll delete it.
-            GTLib::String absolutePath(model->GetDefinition().GetAbsolutePath());
+            String absolutePath(model->GetDefinition().GetAbsolutePath());
 
             auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)
@@ -273,7 +273,7 @@ namespace GTEngine
     bool ModelLibrary::WriteToFile(const ModelDefinition &definition, const char* fileNameIn)
     {
         // We have a model, so now we need to check that we can open the file.
-        GTLib::String fileName(fileNameIn);
+        String fileName(fileNameIn);
         if (!easypath_extensionequal(fileNameIn, "gtmodel"))
         {
             fileName += ".gtmodel";
@@ -282,7 +282,7 @@ namespace GTEngine
         easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), fileName.c_str(), EASYVFS_WRITE, 0);
         if (pFile != nullptr)
         {
-            GTLib::FileSerializer serializer(pFile);
+            FileSerializer serializer(pFile);
             definition.Serialize(serializer);
 
             easyvfs_close(pFile);
@@ -327,7 +327,7 @@ namespace GTEngine
 
     bool ModelLibrary::IsExtensionSupported(const char* extension)
     {
-        if (GTLib::Strings::Equal<false>(extension, "gtmodel"))
+        if (Strings::Equal<false>(extension, "gtmodel"))
         {
             return true;
         }
@@ -335,12 +335,12 @@ namespace GTEngine
         {
             // Assimp actually supports XML by default, but we would rather them be text files. Thus, we're going
             // to return false if XML is specified.
-            if (GTLib::Strings::Equal<false>(extension, "xml"))
+            if (Strings::Equal<false>(extension, "xml"))
             {
                 return false;
             }
 
-            GTLib::String assimpExt(".");
+            String assimpExt(".");
             assimpExt += extension;
 
             Assimp::Importer importer;
@@ -353,7 +353,7 @@ namespace GTEngine
     ////////////////////////////////////////////////////////
     // Private
 
-    bool ModelLibrary::FindAbsolutePath(const char* relativePath, GTLib::String &absolutePath)
+    bool ModelLibrary::FindAbsolutePath(const char* relativePath, String &absolutePath)
     {
         char absolutePathTemp[EASYVFS_MAX_PATH];
         if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), relativePath, absolutePathTemp, sizeof(absolutePathTemp)))
@@ -393,7 +393,7 @@ namespace GTEngine
 
 
 // These are private functions implementations for ModelLibrary.
-namespace GTEngine
+namespace GT
 {
     Model* ModelLibrary_CreateFromPrimitive(const char* name, VertexArray* va)
     {

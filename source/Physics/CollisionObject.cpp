@@ -3,7 +3,7 @@
 #include <GTEngine/Physics/CollisionObject.hpp>
 #include <GTEngine/Physics/BaseCollisionWorld.hpp>
 
-namespace GTEngine
+namespace GT
 {
     CollisionObject::CollisionObject()
         : world(nullptr)

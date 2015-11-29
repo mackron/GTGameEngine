@@ -6,7 +6,7 @@
 #include "NextChar.hpp"
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {

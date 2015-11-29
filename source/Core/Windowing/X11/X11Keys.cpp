@@ -4,7 +4,7 @@
 
 #include <GTEngine/Core/Windowing/X11/X11Keys.hpp>
 
-namespace GTLib
+namespace GT
 {
     namespace X11
     {

@@ -25,16 +25,16 @@ namespace GT
 
 
         /// The name of the file or chunk of the script. This will usually be a file name or blank.
-        GTLib::String sourceName;
+        String sourceName;
 
         /// The line number of where the function was called.
         unsigned int lineNumber;
 
         /// The name of the function.
-        GTLib::String functionName;
+        String functionName;
 
         /// The function type name ("global", "local", "method", "field" or "").
-        GTLib::String functionTypeName;
+        String functionTypeName;
     };
 
 
@@ -73,7 +73,7 @@ namespace GT
         /// @param lineNumber [in] The line number where the error occured.
         /// @param message    [in] The error message.
         /// @param callstack  [in] The callstack.
-        virtual void OnRuntimeError(Script &script, const char* sourceName, int lineNumber, const char* message, const GTLib::Vector<ScriptCallstackItem> &callstack);
+        virtual void OnRuntimeError(Script &script, const char* sourceName, int lineNumber, const char* message, const Vector<ScriptCallstackItem> &callstack);
     };
 
 
@@ -129,13 +129,13 @@ namespace GT
         int lineNumber;
 
         /// The error message.
-        GTLib::String message;
+        String message;
 
 
     private:
 
         /// The line iterator.
-        GTLib::Strings::LineIterator lineIterator;
+        Strings::LineIterator lineIterator;
 
         /// Whether or not the iterator is done.
         bool isDone;
@@ -733,7 +733,7 @@ namespace GT
         /// @param lineNumber [in] The line number where the error occured.
         /// @param message    [in] The error message.
         /// @param callstack  [in] The callstack.
-        void OnRuntimeError(const char* sourceName, int lineNumber, const char* message, const GTLib::Vector<ScriptCallstackItem> &callstack);
+        void OnRuntimeError(const char* sourceName, int lineNumber, const char* message, const Vector<ScriptCallstackItem> &callstack);
 
 
 
@@ -749,7 +749,7 @@ namespace GT
         void* state;
 
         /// The list of error handlers that are currently attached to the script.
-        GTLib::Vector<ScriptErrorHandler*> errorHandlers;
+        Vector<ScriptErrorHandler*> errorHandlers;
 
 
     private:    // No copying.

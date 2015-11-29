@@ -5,7 +5,7 @@
 
 #include "../../DefaultScenePhysicsManager.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class SceneEditorPhysicsManager : public DefaultScenePhysicsManager
     {

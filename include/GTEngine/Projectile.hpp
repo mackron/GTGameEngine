@@ -5,7 +5,7 @@
 
 #include "Math.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Base class representing a modelled projectile.
     ///
@@ -145,7 +145,7 @@ namespace GTEngine
 
 
 // DefaultProjectile.
-namespace GTEngine
+namespace GT
 {
     class  Scene;
     class  SceneNode;

@@ -5,7 +5,7 @@
 
 #include "TimingCommon.hpp"
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  High-resolution stopwatch class.

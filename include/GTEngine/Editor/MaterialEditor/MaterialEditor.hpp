@@ -7,7 +7,7 @@
 #include "../Editor3DViewportEventHandler.hpp"
 #include "../../Scene.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// The material editor.
     class MaterialEditor : public SubEditor

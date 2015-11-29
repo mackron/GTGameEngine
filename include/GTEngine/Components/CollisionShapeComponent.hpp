@@ -7,14 +7,14 @@
 #include "../Component.hpp"
 #include "../ConvexHull.hpp"
 
-namespace GTEngine
+namespace GT
 {
     // Base class for components needing a collision shape.
     //
     // Classes inheritting from this class will need to setup the standard component properties manually.
     //
     // This class will call virtual methods when a certain action needs to take place such as removing and adding the object from the world.
-    class CollisionShapeComponent : public GTEngine::Component
+    class CollisionShapeComponent : public Component
     {
     public:
 
@@ -249,13 +249,13 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will be called from inheritted classes.
-        virtual void Serialize(GTLib::Serializer &serializer) const;
+        virtual void Serialize(Serializer &serializer) const;
 
         /// Deserializes the collision shapes.
         ///
         /// @remarks
         ///     This will be called from inheritted classes. This will not call OnPreCollisionShapeChanged() or OnPostCollisionShapeChanged().
-        virtual void Deserialize(GTLib::Deserializer &deserializer);
+        virtual void Deserialize(Deserializer &deserializer);
 
         /// Called when the owner scene node has finished deserializing.
         ///
@@ -302,10 +302,10 @@ namespace GTEngine
 
 
         /// The list of strings representing the collision groups this object is part of.
-        GTLib::Vector<GTLib::String> collisionGroupStrings;
+        Vector<String> collisionGroupStrings;
 
         /// The list of strings representing the collision groups this object will collide with.
-        GTLib::Vector<GTLib::String> collisionGroupMaskStrings;
+        Vector<String> collisionGroupMaskStrings;
     };
 }
 

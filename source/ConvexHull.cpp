@@ -10,7 +10,7 @@
 #include <GTEngine/ConvexHull.hpp>
 
 
-namespace GTEngine
+namespace GT
 {
     ConvexHull::ConvexHull()
         : vertices(), indices()
@@ -72,8 +72,8 @@ namespace GTEngine
             HACD::HACD* hacd = HACD::CreateHACD(nullptr);    // heh.
             if (hacd != nullptr)
             {
-                GTLib::Vector<HACD::Vec3<HACD::Real>> pointsHACD(vertexCount);
-                GTLib::Vector<HACD::Vec3<long>>       triangles(indexCount / 3);
+                Vector<HACD::Vec3<HACD::Real>> pointsHACD(vertexCount);
+                Vector<HACD::Vec3<long>>       triangles(indexCount / 3);
 
                 for (size_t i = 0; i < vertexCount; ++i)
                 {

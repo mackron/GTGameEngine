@@ -10,7 +10,7 @@
 #include "../GameScript.hpp"
 #include "../DataFilesWatcher.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class Editor;
 
@@ -78,8 +78,8 @@ namespace GTEngine
 
 
         /// A helper function for retrieving the game script object.
-              GTEngine::GameScript & GetScript();
-        const GTEngine::GameScript & GetScript() const;
+              GameScript & GetScript();
+        const GameScript & GetScript() const;
 
         /// A helper function for retreiving the game GUI object.
         GTGUI::Server & GetGUI();
@@ -114,16 +114,16 @@ namespace GTEngine
         virtual void OnUpdate(double deltaTimeInSeconds);
 
         /// Called when a key is pressed.
-        virtual void OnKeyPressed(GTLib::Key key);
+        virtual void OnKeyPressed(Key key);
 
         /// Called when a key is released.
-        virtual void OnKeyReleased(GTLib::Key key);
+        virtual void OnKeyReleased(Key key);
 
         /// Called when a mouse button is pressed.
-        virtual void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
+        virtual void OnMouseButtonDown(MouseButton button, int x, int y);
 
         /// Called when a mouse button is released.
-        virtual void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
+        virtual void OnMouseButtonUp(MouseButton button, int x, int y);
 
         /// Called when the main window received focus.
         virtual void OnMainWindowReceiveFocus();
@@ -162,10 +162,10 @@ namespace GTEngine
         Editor &m_ownerEditor;
 
         /// The absolute path of the file this editor is editting.
-        GTLib::String m_absolutePath;
+        String m_absolutePath;
 
         /// The relative path of the file this editor is editting.
-        GTLib::String m_relativePath;
+        String m_relativePath;
 
         /// A pointer to the tab element associated with this editor.
         GTGUI::Element* m_tabElement;

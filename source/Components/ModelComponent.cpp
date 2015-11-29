@@ -5,7 +5,7 @@
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/Logging.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ModelComponent, "Model")
 
@@ -134,7 +134,7 @@ namespace GTEngine
 
 
 
-    void ModelComponent::Serialize(GTLib::Serializer &serializer) const
+    void ModelComponent::Serialize(Serializer &serializer) const
     {
         // The model component is simple. We have only a single chunk here. The content on this chunk will depend on the state of the
         // model. If we have a model that was loaded from a file, we need to save the file name. If it was not loaded from a file (a
@@ -142,7 +142,7 @@ namespace GTEngine
         //
         // As usual, the header of this chunk needs an exact data size, so we'll need to use an intermediary serializer.
 
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
 
         // We'll save the flags first.
         intermediarySerializer.Write(static_cast<uint32_t>(this->flags));
@@ -171,7 +171,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ModelComponent::Deserialize(GTLib::Deserializer &deserializer)
+    void ModelComponent::Deserialize(Deserializer &deserializer)
     {
         uint32_t whatChanged = 0;
         this->LockOnChanged();
@@ -209,7 +209,7 @@ namespace GTEngine
                         auto oldModel = this->model;
 
 
-                        GTLib::String modelPath;
+                        String modelPath;
                         deserializer.ReadString(modelPath);
 
                         if (!modelPath.IsEmpty())
@@ -249,7 +249,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::Log("Error deserializing ModelComponent. Main chunk has an unsupported version (%d).", header.version);
+                    Log("Error deserializing ModelComponent. Main chunk has an unsupported version (%d).", header.version);
                     break;
                 }
             }

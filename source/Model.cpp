@@ -11,7 +11,7 @@
 #undef min
 #undef max
 
-namespace GTEngine
+namespace GT
 {
     static ModelDefinition NullModelDefinition;
 
@@ -67,7 +67,7 @@ namespace GTEngine
     }
 
 
-    void Model::CopyAndAttachBones(const GTLib::Vector<Bone*> &inputBones)
+    void Model::CopyAndAttachBones(const Vector<Bone*> &inputBones)
     {
         // We do this in two passes. The first pass makes copies but does not link with parents. The second pass will link the bones together.
         for (size_t i = 0; i < inputBones.count; ++i)
@@ -97,7 +97,7 @@ namespace GTEngine
         }
     }
 
-    void Model::CopyAnimation(const Animation &sourceAnimation, const GTLib::Map<Bone*, AnimationChannel*> &sourceAnimationChannelBones)
+    void Model::CopyAnimation(const Animation &sourceAnimation, const Map<Bone*, AnimationChannel*> &sourceAnimationChannelBones)
     {
         // We first need to create all of the key frames.
         for (size_t iKeyFrame = 0; iKeyFrame < sourceAnimation.GetKeyFrameCount(); ++iKeyFrame)
@@ -277,14 +277,14 @@ namespace GTEngine
 
 
 
-    void Model::Serialize(GTLib::Serializer &serializer) const
+    void Model::Serialize(Serializer &serializer) const
     {
         // A model has a fairly complex set of properties. Geometry, materials, bones, animation state, etc. We're going to have a null chunk
         // at the end so we can do an iteration-based deserializer.
 
         // The first chunk contains the mesh data. We save the mesh data differently depending on whether or not the model is procedural. If
         // it is, we need to save the geometry data.
-        GTLib::BasicSerializer meshesSerializer;
+        BasicSerializer meshesSerializer;
 
         bool serializeMeshGeometry = &this->definition == &NullModelDefinition;
         
@@ -323,7 +323,7 @@ namespace GTEngine
         // Now bones. We'll only write this chunk if we actually have bones.
         if (this->bones.count > 0)
         {
-            GTLib::BasicSerializer bonesSerializer;
+            BasicSerializer bonesSerializer;
             
             bonesSerializer.Write(static_cast<uint32_t>(bones.count));
             for (size_t i = 0; i < this->bones.count; ++i)
@@ -348,7 +348,7 @@ namespace GTEngine
         // Finally, the animation. We only write this chunk if we actually have animation key frames.
         if (this->animation.GetKeyFrameCount() > 0)
         {
-            GTLib::BasicSerializer animationSerializer;
+            BasicSerializer animationSerializer;
 
             this->animation.Serialize(animationSerializer);
             animationSerializer.Write(this->animationPlaybackSpeed);
@@ -371,7 +371,7 @@ namespace GTEngine
         serializer.Write(header);
     }
 
-    void Model::Deserialize(GTLib::Deserializer &deserializer)
+    void Model::Deserialize(Deserializer &deserializer)
     {
         // A model is tied to a definition. When a model is saved, it will be saved based on that definition. If the definition has changed
         // it will mean the serialized data isn't really valid. Thus, if the definition is any different, we going to skip everything and
@@ -472,7 +472,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing model. Meshes chunk has an unsupported version (%d).", header.version);
+                            Log("Error deserializing model. Meshes chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -518,7 +518,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing model. Bones chunk has an unsupported version (%d).", header.version);
+                            Log("Error deserializing model. Bones chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -546,7 +546,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing model. Animation chunk has an unsupported version (%d).", header.version);
+                            Log("Error deserializing model. Animation chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -666,7 +666,7 @@ namespace GTEngine
     {
         for (size_t i = 0; i < this->bones.count; ++i)
         {
-            if (GTLib::Strings::Equal(name, this->bones[i]->GetName()))
+            if (Strings::Equal(name, this->bones[i]->GetName()))
             {
                 if (indexOut != nullptr)
                 {
@@ -688,7 +688,7 @@ namespace GTEngine
 
 
 // Private
-namespace GTEngine
+namespace GT
 {
     void Model::Clear()
     {

@@ -4,7 +4,7 @@
 #include "Texture2D_OpenGL21.hpp"
 #include "TextureCube_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     Shader_OpenGL21::Shader_OpenGL21(ShaderState_OpenGL21* stateGLIn, const char* vertexShader, const char* fragmentShader, const char* geometryShader)
         : Shader(vertexShader, fragmentShader, geometryShader), stateGL(stateGLIn)

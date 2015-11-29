@@ -8,7 +8,7 @@
 #include <GTEngine/Core/Map.hpp>
 #include <cstdint>
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers/
     class RCSetFramebufferState : public RenderCommand
@@ -87,7 +87,7 @@ namespace GTEngine
 
 
         /// The list of attachments. We use a map here just to make it easier to overwrite existing attachments. Keyed by the attachment point.
-        GTLib::Map<GLenum, FramebufferState_OpenGL21::Attachment> attachments;
+        Map<GLenum, FramebufferState_OpenGL21::Attachment> attachments;
 
 
         /// Whether or not the write-only depth/stencil buffer should be attached.

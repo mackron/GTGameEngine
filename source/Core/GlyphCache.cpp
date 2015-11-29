@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/GlyphCache.hpp>
 
-namespace GTLib
+namespace GT
 {
     GlyphCache::GlyphCache(GlyphMapManager* glyphMapManager)
         : m_glyphMapManager(glyphMapManager),
@@ -44,7 +44,7 @@ namespace GTLib
                 {
                     m_glyphMapManager->SetGlyphMapData(glyphMap, glyphXPos, glyphYPos, bitmapWidth, bitmapHeight, bitmapData);
                     
-                    GTLib::Rect<unsigned int> bitmapRect;
+                    Rect<unsigned int> bitmapRect;
                     bitmapRect.left   = glyphXPos;
                     bitmapRect.top    = glyphYPos;
                     bitmapRect.right  = bitmapRect.left + bitmapWidth;
@@ -86,7 +86,7 @@ namespace GTLib
     }
     
     
-    void GlyphCache::OnGlyphCached(GlyphHandle glyph, GlyphMapHandle glyphMap, GTLib::Rect<unsigned int> &bitmapRect)
+    void GlyphCache::OnGlyphCached(GlyphHandle glyph, GlyphMapHandle glyphMap, Rect<unsigned int> &bitmapRect)
     {
         (void)glyph;
         (void)glyphMap;

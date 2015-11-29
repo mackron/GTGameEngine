@@ -5,7 +5,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/GTEngine.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GameStateManager::~GameStateManager()
     {
@@ -65,19 +65,19 @@ namespace GTEngine
     }
 
 
-    void GameStateManager::OnKeyPress(Game &, GTLib::Key)
+    void GameStateManager::OnKeyPress(Game &, Key)
     {
     }
 
-    void GameStateManager::OnKeyRelease(Game &, GTLib::Key)
+    void GameStateManager::OnKeyRelease(Game &, Key)
     {
     }
 
-    void GameStateManager::OnKeyDown(Game &, GTLib::Key)
+    void GameStateManager::OnKeyDown(Game &, Key)
     {
     }
 
-    void GameStateManager::OnKeyUp(Game &, GTLib::Key)
+    void GameStateManager::OnKeyUp(Game &, Key)
     {
     }
 
@@ -132,13 +132,13 @@ namespace GTEngine
 
 
 
-    bool GameStateManager::Serialize(Game &, GTLib::Serializer &)
+    bool GameStateManager::Serialize(Game &, Serializer &)
     {
         return false;
     }
 
     
-    bool GameStateManager::Deserialize(Game &, GTLib::Deserializer &)
+    bool GameStateManager::Deserialize(Game &, Deserializer &)
     {
         return false;
     }
@@ -209,7 +209,7 @@ namespace GTEngine
 
 
 
-    bool GenericGameStateManager::Serialize(Game &game, GTLib::Serializer &serializer)
+    bool GenericGameStateManager::Serialize(Game &game, Serializer &serializer)
     {
         // Three chunks:
         //   1 - Header data
@@ -220,7 +220,7 @@ namespace GTEngine
 
         // 1 - Header data.
         {
-            GTLib::BasicSerializer headerSerializer;
+            BasicSerializer headerSerializer;
             uint32_t version = this->SerializeHeaderData(game, headerSerializer);
 
             header.id          = Serialization::ChunkID_GameStateHeader;
@@ -234,7 +234,7 @@ namespace GTEngine
 
         // 2 - Scene data.
         {
-            GTLib::BasicSerializer sceneSerializer;
+            BasicSerializer sceneSerializer;
 
             // The scene data count.
             sceneSerializer.Write(static_cast<uint32_t>(m_sceneData.count));
@@ -261,7 +261,7 @@ namespace GTEngine
 
         // 3 - Global data.
         {
-            GTLib::BasicSerializer globalSerializer;
+            BasicSerializer globalSerializer;
             uint32_t version = this->SerializeGlobalData(game, globalSerializer);
 
             header.id          = Serialization::ChunkID_GameStateGlobal;
@@ -278,19 +278,19 @@ namespace GTEngine
         return true;
     }
 
-    uint32_t GenericGameStateManager::SerializeHeaderData(Game &, GTLib::Serializer &)
+    uint32_t GenericGameStateManager::SerializeHeaderData(Game &, Serializer &)
     {
         return 0;
     }
 
-    uint32_t GenericGameStateManager::SerializeGlobalData(Game &, GTLib::Serializer &)
+    uint32_t GenericGameStateManager::SerializeGlobalData(Game &, Serializer &)
     {
         return 0;
     }
 
 
 
-    bool GenericGameStateManager::Deserialize(Game &game, GTLib::Deserializer &deserializer)
+    bool GenericGameStateManager::Deserialize(Game &game, Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
 
@@ -328,7 +328,7 @@ namespace GTEngine
 
                         for (uint32_t iSceneData = 0; iSceneData < sceneDataCount; ++iSceneData)
                         {
-                            GTLib::String sceneRelativePath;
+                            String sceneRelativePath;
                             deserializer.ReadString(sceneRelativePath);
 
                             auto sceneData = new SceneStateStackRestoreCommands(0, 0);
@@ -364,12 +364,12 @@ namespace GTEngine
         return true;
     }
 
-    bool GenericGameStateManager::DeserializeHeaderData(Game &, GTLib::Deserializer &, uint32_t)
+    bool GenericGameStateManager::DeserializeHeaderData(Game &, Deserializer &, uint32_t)
     {
         return true;
     }
 
-    bool GenericGameStateManager::DeserializeGlobalData(Game &, GTLib::Deserializer &, uint32_t)
+    bool GenericGameStateManager::DeserializeGlobalData(Game &, Deserializer &, uint32_t)
     {
         return true;
     }
@@ -398,7 +398,7 @@ namespace GTEngine
     }
 
 
-    bool DefaultGameStateManager::OnStartup(GTEngine::Game &game)
+    bool DefaultGameStateManager::OnStartup(Game &game)
     {
         auto &script = game.GetScript();
         script.ExecuteFile(g_EngineContext->GetVFS(), "game-config.lua");
@@ -436,11 +436,11 @@ namespace GTEngine
 
         if (script.GetBoolean("Game.EnableVSync"))
         {
-            GTEngine::Renderer::SetSwapInterval(1);
+            Renderer::SetSwapInterval(1);
         }
         else
         {
-            GTEngine::Renderer::SetSwapInterval(0);
+            Renderer::SetSwapInterval(0);
         }
 
 
@@ -462,7 +462,7 @@ namespace GTEngine
     }
 
 
-    void DefaultGameStateManager::OnShutdown(GTEngine::Game &game)
+    void DefaultGameStateManager::OnShutdown(Game &game)
     {
         (void)game;
 
@@ -472,7 +472,7 @@ namespace GTEngine
         m_nextScene = nullptr;
     }
 
-    void DefaultGameStateManager::OnUpdate(GTEngine::Game &game, double deltaTimeInSeconds)
+    void DefaultGameStateManager::OnUpdate(Game &game, double deltaTimeInSeconds)
     {
         if (!game.IsEditorOpen())      // <-- Don't bother updating the scene if the editor is open.
         {
@@ -485,15 +485,15 @@ namespace GTEngine
             // With the scene drawn, we should draw a fullscreen triangle over the whole window to show the viewport contents.
             if (m_currentScene != nullptr)
             {
-                GTEngine::Renderer::SetCurrentFramebuffer(nullptr);
-                GTEngine::Renderer::Utils::DrawFullscreenQuad(m_currentScene->GetDefaultViewport().GetColourBuffer());
+                Renderer::SetCurrentFramebuffer(nullptr);
+                Renderer::Utils::DrawFullscreenQuad(m_currentScene->GetDefaultViewport().GetColourBuffer());
             }
         }
         
         //CALLGRIND_STOP_INSTRUMENTATION;
     }
 
-    void DefaultGameStateManager::OnStartFrame(GTEngine::Game &game)
+    void DefaultGameStateManager::OnStartFrame(Game &game)
     {
         // If a scene needs to be switched, it needs to be done so now.
         if (m_nextScene != nullptr)
@@ -518,7 +518,7 @@ namespace GTEngine
     }
 
 
-    void DefaultGameStateManager::OnSize(GTEngine::Game &game, unsigned int newWidth, unsigned int newHeight)
+    void DefaultGameStateManager::OnSize(Game &game, unsigned int newWidth, unsigned int newHeight)
     {
         (void)game;
 
@@ -529,7 +529,7 @@ namespace GTEngine
             auto cameraNode = m_currentScene->GetDefaultViewport().GetCameraNode();
             if (cameraNode != nullptr)
             {
-                auto cameraComponent = cameraNode->GetComponent<GTEngine::CameraComponent>();
+                auto cameraComponent = cameraNode->GetComponent<CameraComponent>();
                 if (cameraComponent != nullptr)
                 {
                     float fov    = cameraComponent->perspective.fov;
@@ -548,7 +548,7 @@ namespace GTEngine
         }
     }
 
-    bool DefaultGameStateManager::OnEditorClosing(GTEngine::Game &game)
+    bool DefaultGameStateManager::OnEditorClosing(Game &game)
     {
         (void)game;
 
@@ -558,12 +558,12 @@ namespace GTEngine
 
 
 
-    bool DefaultGameStateManager::LoadScene(GTEngine::Game &game, const char* sceneRelativePath)
+    bool DefaultGameStateManager::LoadScene(Game &game, const char* sceneRelativePath)
     {
         // Here we'll load the scene, but we don't actually do the switch until the next frame. The reason for this is that the current scene may be in
         // the middle of updating, so we don't want any mixups there. The actual switch will be done in OnStartFrame(), which is a synchronized call.
 
-        auto newScene = new GTEngine::Scene;
+        auto newScene = new Scene;
 
         // The scene should be registered to the script immediately. No real reason it shouldn't be. Later on, scenes will take an EngineContext object in their
         // constructors which will then allow us to register it with the script in the constructor.
@@ -614,7 +614,7 @@ namespace GTEngine
     ///////////////////////////////////////
     // Serialization
 
-    bool DefaultGameStateManager::Serialize(GTEngine::Game &game, GTLib::Serializer &serializer)
+    bool DefaultGameStateManager::Serialize(Game &game, Serializer &serializer)
     {
         // We need to update the current scene state so that it can be restored properly later.
         if (m_currentScene != nullptr)
@@ -626,7 +626,7 @@ namespace GTEngine
         return GenericGameStateManager::Serialize(game, serializer);
     }
 
-    uint32_t DefaultGameStateManager::SerializeHeaderData(GTEngine::Game &game, GTLib::Serializer &serializer)
+    uint32_t DefaultGameStateManager::SerializeHeaderData(Game &game, Serializer &serializer)
     {
         (void)game;
 
@@ -637,7 +637,7 @@ namespace GTEngine
         return 1;
     }
 
-    uint32_t DefaultGameStateManager::SerializeGlobalData(GTEngine::Game &game, GTLib::Serializer &serializer)
+    uint32_t DefaultGameStateManager::SerializeGlobalData(Game &game, Serializer &serializer)
     {
         (void)game;
 
@@ -655,7 +655,7 @@ namespace GTEngine
     ///////////////////////////////////////
     // Deserialization
 
-    bool DefaultGameStateManager::Deserialize(GTEngine::Game &game, GTLib::Deserializer &deserializer)
+    bool DefaultGameStateManager::Deserialize(Game &game, Deserializer &deserializer)
     {
         bool result;
 
@@ -671,7 +671,7 @@ namespace GTEngine
         return result;
     }
 
-    bool DefaultGameStateManager::DeserializeHeaderData(GTEngine::Game &game, GTLib::Deserializer &deserializer, uint32_t version)
+    bool DefaultGameStateManager::DeserializeHeaderData(Game &game, Deserializer &deserializer, uint32_t version)
     {
         (void)game;
 
@@ -685,7 +685,7 @@ namespace GTEngine
         return false;
     }
 
-    bool DefaultGameStateManager::DeserializeGlobalData(GTEngine::Game &game, GTLib::Deserializer &deserializer, uint32_t version)
+    bool DefaultGameStateManager::DeserializeGlobalData(Game &game, Deserializer &deserializer, uint32_t version)
     {
         (void)game;
         (void)deserializer;

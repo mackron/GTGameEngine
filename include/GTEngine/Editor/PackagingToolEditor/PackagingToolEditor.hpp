@@ -5,7 +5,7 @@
 
 #include "../SubEditor.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class PackagingToolEditor : public SubEditor
     {

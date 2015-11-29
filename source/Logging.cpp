@@ -4,7 +4,7 @@
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Core/Strings/Create.hpp>
 
-namespace GTEngine
+namespace GT
 {
     void LogString(const char* value)
     {
@@ -24,7 +24,7 @@ namespace GTEngine
         va_start(argList1, format);
         va_start(argList2, format);
         {
-            formattedStr = GTLib::Strings::CreateFormatted(format, argList1, argList2);
+            formattedStr = Strings::CreateFormatted(format, argList1, argList2);
         }
         va_end(argList1);
         va_end(argList2);
@@ -35,6 +35,6 @@ namespace GTEngine
         }
 
         // We're finished with the formatted string, so it needs to be deleted.
-        GTLib::Strings::Delete(formattedStr);
+        Strings::Delete(formattedStr);
     }
 }

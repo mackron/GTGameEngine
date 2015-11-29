@@ -3,7 +3,7 @@
 #ifndef __GTEngine_ShaderStages_hpp_
 #define __GTEngine_ShaderStages_hpp_
 
-namespace GTEngine
+namespace GT
 {
     enum ShaderStage
     {

@@ -109,7 +109,7 @@ namespace GTGUI
         // Remove the existing attribute. Don't want to replace, because we want to keep the order.
         for (size_t iAttribute = 0; iAttribute < this->m_attributes.count; ++iAttribute)
         {
-            if (GTLib::Strings::Equal(this->m_attributes[iAttribute].GetName(), attribute.GetName()))
+            if (GT::Strings::Equal(this->m_attributes[iAttribute].GetName(), attribute.GetName()))
             {
                 this->m_attributes.Remove(iAttribute);
                 break;
@@ -129,7 +129,7 @@ namespace GTGUI
     {
         for (size_t iAttribute = 0; iAttribute < this->m_attributes.count; ++iAttribute)
         {
-            if (GTLib::Strings::Equal(this->m_attributes[iAttribute].GetName(), name))
+            if (GT::Strings::Equal(this->m_attributes[iAttribute].GetName(), name))
             {
                 index = iAttribute;
                 return true;
@@ -455,7 +455,7 @@ namespace GTGUI
                             if (++token)
                             {
                                 // The string containing the includes.
-                                GTLib::Strings::List<char> includes;
+                                GT::Strings::List<char> includes;
 
                                 while (token)
                                 {
@@ -607,17 +607,17 @@ namespace GTGUI
 
                                                         // When loading a value, we need to ensure all occurances of 'url' values are translated into actual paths. Due to this translation, we
                                                         // will have to construct a new string.
-                                                        GTLib::String value;
+                                                        GT::String value;
 
                                                         while (token)
                                                         {
-                                                            if (GTLib::Strings::Equal(token.start, 3, "url", 3))   // This check will never go beyond a null-terminator. Thus, it's safe to specify an explicit size for token.start.
+                                                            if (GT::Strings::Equal(token.start, 3, "url", 3))   // This check will never go beyond a null-terminator. Thus, it's safe to specify an explicit size for token.start.
                                                             {
                                                                 if (++token)
                                                                 {
                                                                     if (token.Equals('('))
                                                                     {
-                                                                        GTLib::Strings::List<char> url;
+                                                                        GT::Strings::List<char> url;
 
                                                                         while (++token)
                                                                         {
@@ -630,7 +630,7 @@ namespace GTGUI
                                                                         }
 
                                                                         // We have the URL, so now it needs to translated into an absolute path and added to the value string.
-                                                                        //GTLib::Path translatedURL(url.c_str());
+                                                                        //Path translatedURL(url.c_str());
                                                                         //if (baseURLPath != nullptr) {
                                                                         //    translatedURL.MakeAbsolute(baseURLPath);
                                                                         //}
@@ -934,7 +934,7 @@ namespace GTGUI
         {
             assert(m_classes[iClass] != nullptr);
             
-            if (GTLib::Strings::Equal(this->m_classes[iClass]->GetName(), name, nameLengthInTs))
+            if (GT::Strings::Equal(this->m_classes[iClass]->GetName(), name, nameLengthInTs))
             {
                 return this->m_classes[iClass];
             }
@@ -969,7 +969,7 @@ namespace GTGUI
         {
             assert(m_variables[iClass] != nullptr);
             
-            if (GTLib::Strings::Equal(m_variables[iClass]->GetName(), name, nameLengthInTs))
+            if (GT::Strings::Equal(m_variables[iClass]->GetName(), name, nameLengthInTs))
             {
                 return m_variables[iClass];
             }

@@ -4,7 +4,7 @@
 #include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MultiPassPipeline.hpp>
 #include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_VisibilityProcessor.hpp>
 
-namespace GTEngine
+namespace GT
 {
     static const int ColourBuffer0Index          = DefaultSceneRendererFramebuffer::ColourBuffer0Index;
     static const int ColourBuffer1Index          = DefaultSceneRendererFramebuffer::ColourBuffer1Index;
@@ -65,7 +65,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer_MultiPassPipeline::BindObjects(const GTLib::Map<const MaterialDefinition*, GTLib::Vector<DefaultSceneRendererMesh>*>* opaqueObjectsIn, const GTLib::Vector<DefaultSceneRendererMesh>* transparentObjectsIn)
+    void DefaultSceneRenderer_MultiPassPipeline::BindObjects(const Map<const MaterialDefinition*, Vector<DefaultSceneRendererMesh>*>* opaqueObjectsIn, const Vector<DefaultSceneRendererMesh>* transparentObjectsIn)
     {
         this->opaqueObjects      = opaqueObjectsIn;
         this->transparentObjects = transparentObjectsIn;
@@ -91,7 +91,7 @@ namespace GTEngine
 
             // Now we need to render the objects that do not have depth writes enabled separately.
             DefaultSceneRenderer_LightGroup emptyLightGroup;
-            GTLib::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
+            Vector<DefaultSceneRenderer_LightGroup> lightGroups;
 
             for (size_t iMesh = 0; iMesh < this->opaqueMeshesWithNoDepthWrites.count; ++iMesh)
             {
@@ -153,7 +153,7 @@ namespace GTEngine
             }
         };
 
-        GTLib::SortedVector<SortedMesh> sortedMeshes;
+        SortedVector<SortedMesh> sortedMeshes;
 
 
         // Here is where we sort the meshes.
@@ -180,7 +180,7 @@ namespace GTEngine
 
         bool isBlendingEnabled = false;
         DefaultSceneRenderer_LightGroup emptyLightGroup;
-        GTLib::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
+        Vector<DefaultSceneRenderer_LightGroup> lightGroups;
 
         for (size_t iMesh = 0; iMesh < sortedMeshes.count; ++iMesh)
         {
@@ -509,7 +509,7 @@ namespace GTEngine
 
 
             // Now we just draw the remaining lights.
-            GTLib::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
+            Vector<DefaultSceneRenderer_LightGroup> lightGroups;
 
             for (size_t iMeshList = 0; iMeshList < this->opaqueObjects->count; ++iMeshList)
             {
@@ -580,7 +580,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer_MultiPassPipeline::SubdivideLightGroup(const DefaultSceneRenderer_LightGroup* sourceLightGroup, GTLib::Vector<DefaultSceneRenderer_LightGroup> &lightGroupsOut, uint32_t options)
+    void DefaultSceneRenderer_MultiPassPipeline::SubdivideLightGroup(const DefaultSceneRenderer_LightGroup* sourceLightGroup, Vector<DefaultSceneRenderer_LightGroup> &lightGroupsOut, uint32_t options)
     {
         const uint32_t maxComplexity               = 1000;     // <-- Increase this to generate bigger groups. Better GPU's can use bigger values.
         const uint32_t ambientComplexity           = 10;
@@ -852,7 +852,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer_MultiPassPipeline::RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const GTLib::Vector<DefaultSceneRenderer_LightGroup> &lightGroups)
+    void DefaultSceneRenderer_MultiPassPipeline::RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const Vector<DefaultSceneRenderer_LightGroup> &lightGroups)
     {
         int lightingBuffers[] = {DiffuseLightingBufferIndex, SpecularLightingBufferIndex};
         Renderer::SetDrawBuffers(2, lightingBuffers);
@@ -861,7 +861,7 @@ namespace GTEngine
         if (lightGroups.count > 1)
         {
             Renderer::SetBlendEquation(BlendEquation_Add);
-            Renderer::SetBlendFunction(BlendFunc_One, GTEngine::BlendFunc_One);
+            Renderer::SetBlendFunction(BlendFunc_One, BlendFunc_One);
         }
 
 

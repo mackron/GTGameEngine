@@ -75,10 +75,10 @@ namespace GTGUI
     private:
 
         /// The list of garbage elements.
-        GTLib::List<GCItem<Element>> garbageElements;
+        GT::List<GCItem<Element>> garbageElements;
 
         /// The list of garbage meshes.
-        GTLib::List<GCItem<Mesh>> garbageMeshes;
+        GT::List<GCItem<Mesh>> garbageMeshes;
     };
 }
 

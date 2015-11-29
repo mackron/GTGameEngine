@@ -11,7 +11,7 @@
 namespace GTGUI
 {
     Element::Element(const char* id, Server &server)
-        : id(GTLib::Strings::Create(id)), server(server), parent(nullptr), firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
+        : id(GT::Strings::Create(id)), server(server), parent(nullptr), firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
           style(*this), m_primaryStyleClass(nullptr),
           eventHandlers(),
           x(0), y(0), width(0), height(0),
@@ -27,7 +27,7 @@ namespace GTGUI
     {
         this->textManager.SetEventHandler(this->textManagerEventHandler);
         
-        this->bst.hashedID = GTLib::Hash(id);
+        this->bst.hashedID = GT::Hash(id);
     }
     
     Element::~Element()
@@ -41,7 +41,7 @@ namespace GTGUI
         this->server.UnacquireFont(this->GetFont());
 
         // Important we do this last because some stuff might need to reference it during this destructor.
-        GTLib::Strings::Delete(this->id);
+        GT::Strings::Delete(this->id);
     }
     
     void Element::AppendChild(Element &child)
@@ -246,7 +246,7 @@ namespace GTGUI
     {
         // This method is actually just a helper/convenience method. In order to avoid cyclic includes, we need to keep track
         // of every include that has already been included.
-        GTLib::Vector<StyleClass*> alreadyAttached;
+        GT::Vector<StyleClass*> alreadyAttached;
         this->AttachStyleClass(styleClass, alreadyAttached, refresh);
     }
 
@@ -259,7 +259,7 @@ namespace GTGUI
     void Element::DetachStyleClass(StyleClass &styleClass, bool refresh)
     {
         // This method works just like AttachStyleClass(), only we detach instead of attach.
-        GTLib::Vector<StyleClass*> alreadyDetached;
+        GT::Vector<StyleClass*> alreadyDetached;
         this->DetachStyleClass(styleClass, alreadyDetached, refresh);
     }
 
@@ -273,7 +273,7 @@ namespace GTGUI
     {
         if (m_primaryStyleClass == nullptr)
         {
-            GTLib::Strings::List<char> className;
+            GT::Strings::List<char> className;
             className.Append("#");
             className.Append(this->id);
 
@@ -465,7 +465,7 @@ namespace GTGUI
             {
                 if (i->DoesSizeAffectParent())
                 {
-                    result = GTLib::Max(result, i->GetOuterWidth());
+                    result = GT::Max(result, i->GetOuterWidth());
                 }
             }
         }
@@ -493,7 +493,7 @@ namespace GTGUI
             {
                 if (i->DoesSizeAffectParent())
                 {
-                    result = GTLib::Max(result, i->GetOuterHeight());
+                    result = GT::Max(result, i->GetOuterHeight());
                 }
             }
         }
@@ -583,9 +583,9 @@ namespace GTGUI
 
 
 
-    void Element::GetAbsoluteRect(GTLib::Rect<int> &rect) const
+    void Element::GetAbsoluteRect(GT::Rect<int> &rect) const
     {
-        GTLib::Rect<int> parentRect;
+        GT::Rect<int> parentRect;
         if (this->parent != nullptr)
         {
             this->parent->GetAbsoluteRect(parentRect);
@@ -597,7 +597,7 @@ namespace GTGUI
         rect.bottom = rect.top  + this->height;
     }
 
-    void Element::GetAbsoluteInnerRect(GTLib::Rect<int> &rect) const
+    void Element::GetAbsoluteInnerRect(GT::Rect<int> &rect) const
     {
         this->GetAbsoluteRect(rect);
 
@@ -676,7 +676,7 @@ namespace GTGUI
         }
     }
     
-    void Element::SetFont(GTLib::Font* font)
+    void Element::SetFont(GT::Font* font)
     {
         this->textManager.SetDefaultFont(font);
     }
@@ -684,7 +684,7 @@ namespace GTGUI
     
     void Element::UpdateFontFromStyle(bool blockOnTextChangedEvent)
     {
-        GTLib::FontInfo fi;
+        GT::FontInfo fi;
         this->server.GetFontInfoFromElement(*this, fi);
         
         auto font = this->server.AcquireFont(fi);
@@ -716,10 +716,10 @@ namespace GTGUI
     }
 
 
-    void Element::GetTextRect(GTLib::Rect<int> &rect) const
+    void Element::GetTextRect(GT::Rect<int> &rect) const
     {
         // We retrieve the text rectangle based on the text rect from the text manager. After retrieving, we just offset by the top/left padding.
-        GTLib::Rect<int> textRect;
+        GT::Rect<int> textRect;
         this->textManager.GetTextRect(textRect);
 
         int paddingLeft = this->GetLeftPadding();
@@ -751,7 +751,7 @@ namespace GTGUI
     }
 
 
-    void Element::FilterChildrenByPositioning(GTLib::List<Element *> &automatic, GTLib::List<Element *> &relative, GTLib::List<Element *> &absolute, bool ignoreHidden)
+    void Element::FilterChildrenByPositioning(GT::List<Element *> &automatic, GT::List<Element *> &relative, GT::List<Element *> &absolute, bool ignoreHidden)
     {
         for (Element *i = this->firstChild; i != nullptr; i = i->nextSibling)
         {
@@ -777,7 +777,7 @@ namespace GTGUI
     }
 
 
-    void Element::GetAncestors(GTLib::List<Element *> &ancestors)
+    void Element::GetAncestors(GT::List<Element *> &ancestors)
     {
         if (this->parent != nullptr)
         {
@@ -786,7 +786,7 @@ namespace GTGUI
         }
     }
 
-    void Element::GetRects(const GTLib::Rect<int> &parentRect, const GTLib::Rect<int> &parentScissorRect, GTLib::Rect<int> &rect, GTLib::Rect<int> &scissorRect, GTLib::Rect<int> &childrenScissorRect) const
+    void Element::GetRects(const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, GT::Rect<int> &rect, GT::Rect<int> &scissorRect, GT::Rect<int> &childrenScissorRect) const
     {
         if (this->style.positioning->value == Positioning_Auto)
         {
@@ -834,7 +834,7 @@ namespace GTGUI
 
     void Element::AbsoluteToRelative(int &xInOut, int &yInOut)
     {
-        GTLib::Rect<int> absRect;
+        GT::Rect<int> absRect;
         this->GetAbsoluteRect(absRect);
 
         xInOut -= absRect.left;
@@ -853,33 +853,33 @@ namespace GTGUI
 
     void Element::UpdateTextManagerAlignment()
     {
-        GTLib::Alignment horizontalAlign;
-        GTLib::Alignment verticalAlign;
+        GT::Alignment horizontalAlign;
+        GT::Alignment verticalAlign;
 
         if (this->style.horizontalAlign->value == Align_Right)
         {
-            horizontalAlign = GTLib::Alignment_Right;
+            horizontalAlign = GT::Alignment_Right;
         }
         else if (this->style.horizontalAlign->value == Align_Center)
         {
-            horizontalAlign = GTLib::Alignment_Center;
+            horizontalAlign = GT::Alignment_Center;
         }
         else
         {
-            horizontalAlign = GTLib::Alignment_Left;
+            horizontalAlign = GT::Alignment_Left;
         }
 
         if (this->style.verticalAlign->value == Align_Bottom)
         {
-            verticalAlign = GTLib::Alignment_Bottom;
+            verticalAlign = GT::Alignment_Bottom;
         }
         else if (this->style.verticalAlign->value == Align_Center)
         {
-            verticalAlign = GTLib::Alignment_Center;
+            verticalAlign = GT::Alignment_Center;
         }
         else
         {
-            verticalAlign = GTLib::Alignment_Top;
+            verticalAlign = GT::Alignment_Top;
         }
 
         this->textManager.SetHorizontalAlign(horizontalAlign);
@@ -1018,8 +1018,8 @@ namespace GTGUI
             }
             
             // Now we set the actual position.
-            styleClass->SetAttribute("left", GTLib::ToString(xIn).c_str());
-            styleClass->SetAttribute("top",  GTLib::ToString(yIn).c_str());
+            styleClass->SetAttribute("left", GT::ToString(xIn).c_str());
+            styleClass->SetAttribute("top",  GT::ToString(yIn).c_str());
         }
     }
 
@@ -1028,8 +1028,8 @@ namespace GTGUI
         auto styleClass = this->GetPrimaryStyleClass();
         if (styleClass != nullptr)
         {
-            styleClass->SetAttribute("width",  GTLib::ToString(widthIn).c_str());
-            styleClass->SetAttribute("height", GTLib::ToString(heightIn).c_str());
+            styleClass->SetAttribute("width",  GT::ToString(widthIn).c_str());
+            styleClass->SetAttribute("height", GT::ToString(heightIn).c_str());
         }
     }
 
@@ -1051,7 +1051,7 @@ namespace GTGUI
         auto styleClass = this->GetPrimaryStyleClass();
         if (styleClass != nullptr)
         {
-            styleClass->SetAttribute("opacity", GTLib::ToString(newOpacity).c_str());
+            styleClass->SetAttribute("opacity", GT::ToString(newOpacity).c_str());
         }
     }
 
@@ -1065,10 +1065,10 @@ namespace GTGUI
         // The absolute opacity is based on the parent.
         if (this->parent != nullptr && this->style.compoundOpacity->value == true)
         {
-            return GTLib::Clamp(this->parent->GetAbsoluteOpacity() * this->GetLocalOpacity(), 0.0f, 1.0f);
+            return GT::Clamp(this->parent->GetAbsoluteOpacity() * this->GetLocalOpacity(), 0.0f, 1.0f);
         }
 
-        return GTLib::Clamp(this->GetLocalOpacity(), 0.0f, 1.0f);
+        return GT::Clamp(this->GetLocalOpacity(), 0.0f, 1.0f);
     }
 
     void Element::UpdateAbsoluteOpacity()
@@ -1148,7 +1148,7 @@ namespace GTGUI
         assert(sc != nullptr);
        
         char absoluteURL[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), imageURL, absoluteURL, sizeof(absoluteURL)))
+        if (!easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), imageURL, absoluteURL, sizeof(absoluteURL)))
         {
             strcpy_s(absoluteURL, sizeof(absoluteURL), imageURL);
         }
@@ -1295,13 +1295,13 @@ namespace GTGUI
 // --- Private ---
 namespace GTGUI
 {
-    void Element::AttachStyleClass(StyleClass &styleClass, GTLib::Vector<StyleClass*> &alreadyAttached, bool refresh)
+    void Element::AttachStyleClass(StyleClass &styleClass, GT::Vector<StyleClass*> &alreadyAttached, bool refresh)
     {
         assert(alreadyAttached.Exists(&styleClass) == false);
         {
             alreadyAttached.PushBack(&styleClass);
 
-            GTLib::Strings::Tokenizer include(styleClass.includes);
+            GT::Strings::Tokenizer include(styleClass.includes);
             while (include)
             {
                 // We only attach the include if it hasn't already been included.
@@ -1319,13 +1319,13 @@ namespace GTGUI
         }
     }
 
-    void Element::DetachStyleClass(StyleClass &styleClass, GTLib::Vector<StyleClass*> &alreadyDetached, bool refresh)
+    void Element::DetachStyleClass(StyleClass &styleClass, GT::Vector<StyleClass*> &alreadyDetached, bool refresh)
     {
         assert(alreadyDetached.Exists(&styleClass) == false);
         {
             alreadyDetached.PushBack(&styleClass);
 
-            GTLib::Strings::Tokenizer include(styleClass.includes);
+            GT::Strings::Tokenizer include(styleClass.includes);
             while (include)
             {
                 // We only attach the include if it hasn't already been included.

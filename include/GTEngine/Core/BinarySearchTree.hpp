@@ -3,7 +3,7 @@
 #ifndef __GTLib_BinarySearchTree_hpp_
 #define __GTLib_BinarySearchTree_hpp_
 
-namespace GTLib
+namespace GT
 {
     template <typename T>
     class BinarySearchTree

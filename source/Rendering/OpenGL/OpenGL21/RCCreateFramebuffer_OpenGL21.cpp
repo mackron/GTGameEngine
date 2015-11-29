@@ -3,7 +3,7 @@
 #include "RCCreateFramebuffer_OpenGL21.hpp"
 #include <GTEngine/Logging.hpp>
 
-namespace GTEngine
+namespace GT
 {
     RCCreateFramebuffer::RCCreateFramebuffer()
         : framebufferState(nullptr)

@@ -9,7 +9,7 @@
 #include "ConvexHull.hpp"
 
 
-namespace GTEngine
+namespace GT
 {
     class VertexArrayLibrary
     {

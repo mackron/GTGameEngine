@@ -17,7 +17,7 @@
     #pragma warning(disable:4482)   // non-standard extension.
 #endif
 
-namespace GTLib
+namespace GT
 {
     void LogEventHandler::OnOpen(const char *)
     {
@@ -36,10 +36,10 @@ namespace GTLib
     }
 }
 
-namespace GTLib
+namespace GT
 {
     /// The instantiation of the global log object.
-    Log GlobalLog;
+    LogFile GlobalLog;
 
 
     namespace Detail
@@ -52,7 +52,7 @@ namespace GTLib
         Strings::Replacer LogReplacer;
 
         /// The mutex protecting access to the global objects.
-        Threading::Mutex LogMutex;
+        Mutex LogMutex;
     }
 
     #if defined(_WIN32)
@@ -70,18 +70,18 @@ namespace GTLib
         LogFormat_HTML
     };
 
-    Log::Log()
+    LogFile::LogFile()
         : file(nullptr), format(LogFormat_Text), isOpen(false), currentHTMLPosition(0), eventHandlers()
     {
     }
 
-    Log::Log(easyvfs_context* pVFS, const char *fileName, const char *title)
+    LogFile::LogFile(easyvfs_context* pVFS, const char *fileName, const char *title)
         : file(nullptr), format(LogFormat_Text), isOpen(false), currentHTMLPosition(0), eventHandlers()
     {
         this->Open(pVFS, fileName, title);
     }
 
-    bool Log::Open(easyvfs_context* pVFS, const char *fileName, const char *title)
+    bool LogFile::Open(easyvfs_context* pVFS, const char *fileName, const char *title)
     {
         if (fileName)
         {
@@ -133,7 +133,7 @@ namespace GTLib
         return false;
     }
 
-    void Log::Close()
+    void LogFile::Close()
     {
         this->OnClose();
 
@@ -145,7 +145,7 @@ namespace GTLib
         this->isOpen = false;
     }
 
-    Log & Log::WriteString(const char* value)
+    LogFile & LogFile::WriteString(const char* value)
     {
         if (this->file != nullptr)
         {
@@ -189,7 +189,7 @@ namespace GTLib
         return *this;
     }
 
-    Log & Log::Write(const char *value, ...)
+    LogFile & LogFile::Write(const char *value, ...)
     {
         // The text log.
         if (this->file != nullptr)
@@ -202,21 +202,21 @@ namespace GTLib
             va_start(argList1, value);
             va_start(argList2, value);
             {
-                transformedValue = GTLib::Strings::CreateFormatted(value, argList1, argList2);
+                transformedValue = Strings::CreateFormatted(value, argList1, argList2);
             }
             va_end(argList1);
             va_end(argList2);
 
             this->WriteString(transformedValue);
 
-            GTLib::Strings::Delete(transformedValue);
+            Strings::Delete(transformedValue);
         }
 
         return *this;
     }
 
 
-    void Log::AttachEventHandler(LogEventHandler *eventHandler)
+    void LogFile::AttachEventHandler(LogEventHandler *eventHandler)
     {
         if (eventHandler != nullptr)
         {
@@ -227,13 +227,13 @@ namespace GTLib
         }        
     }
 
-    void Log::DetachEventHandler(LogEventHandler *eventHandler)
+    void LogFile::DetachEventHandler(LogEventHandler *eventHandler)
     {
         this->eventHandlers.RemoveFirstOccuranceOf(eventHandler);
     }
 
 
-    const char * Log::BuildHTMLHead(const char *title) const
+    const char * LogFile::BuildHTMLHead(const char *title) const
     {
         Strings::List<char> head;
         head.Append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
@@ -262,7 +262,7 @@ namespace GTLib
         return reinterpret_cast<const char*>(Detail::LogTempBuffer.GetDataPointer());
     }
 
-    const char * Log::BuildHTMLTail() const
+    const char * LogFile::BuildHTMLTail() const
     {
         return
             "        </table>\n"
@@ -284,12 +284,12 @@ namespace GTLib
         return Detail::LogReplacer.GetBase();
     }
 
-    const char * Log::BuildHTMLEntry(const char *value) const
+    const char * LogFile::BuildHTMLEntry(const char *value) const
     {
         // Set the locale for the date.
         DateTime now(DateTime::Now());
         setlocale(LC_ALL, "");
-        GTLib::String date = now.ToShortString();
+        String date = now.ToShortString();
         setlocale(LC_ALL, "C");
 
         Strings::List<char> output;
@@ -308,17 +308,17 @@ namespace GTLib
         return reinterpret_cast<const char*>(Detail::LogTempBuffer.GetDataPointer());
     }
 
-    const char * Log::BuildTextEntry(const char *value) const
+    const char * LogFile::BuildTextEntry(const char *value) const
     {
         DateTime now(DateTime::Now());
         setlocale(LC_ALL, "");
-        GTLib::String date = now.ToShortString();
+        String date = now.ToShortString();
         setlocale(LC_ALL, "C");
 
         Strings::List<char> output;
         output.Append(date.c_str());
         output.Append(value);
-        output.Append(GTLib::newline);
+        output.Append(newline);
 
         Detail::LogTempBuffer.Allocate(output.BuildStringSize());
         output.BuildString((char *)Detail::LogTempBuffer.GetDataPointer());
@@ -327,7 +327,7 @@ namespace GTLib
     }
 
 
-    void Log::OnOpen(const char *filename, const char *title)
+    void LogFile::OnOpen(const char *filename, const char *title)
     {
         for (size_t iEventHandler = 0; iEventHandler < this->eventHandlers.count; ++iEventHandler)
         {
@@ -339,7 +339,7 @@ namespace GTLib
         }
     }
 
-    void Log::OnClose()
+    void LogFile::OnClose()
     {
         for (size_t iEventHandler = 0; iEventHandler < this->eventHandlers.count; ++iEventHandler)
         {
@@ -351,7 +351,7 @@ namespace GTLib
         }
     }
 
-    void Log::OnWrite(const char *msg)
+    void LogFile::OnWrite(const char *msg)
     {
         for (size_t iEventHandler = 0; iEventHandler < this->eventHandlers.count; ++iEventHandler)
         {

@@ -6,7 +6,7 @@
 #include "../Component.hpp"
 #include "../Model.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class ModelComponent : public Component
     {
@@ -113,10 +113,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
     private:

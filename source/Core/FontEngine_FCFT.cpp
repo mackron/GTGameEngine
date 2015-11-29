@@ -7,7 +7,7 @@
 #include <GTEngine/Core/GlyphCache.hpp>
 #include <GTEngine/Core/Math.hpp>          // For Abs().
 
-namespace GTLib
+namespace GT
 {
     struct FontHandle_FCFT : public GlyphCache
     {
@@ -227,7 +227,7 @@ namespace GTLib
             
             metricsOut.ascent     = static_cast<int>(static_cast<double>(fontFCFT->ftFace->ascender)  * y) + 1;
             metricsOut.descent    = static_cast<int>(static_cast<double>(fontFCFT->ftFace->descender) * y) - 1;
-            metricsOut.lineHeight = static_cast<unsigned int>(GTLib::Abs(metricsOut.ascent) + GTLib::Abs(metricsOut.descent));
+            metricsOut.lineHeight = static_cast<unsigned int>(Abs(metricsOut.ascent) + Abs(metricsOut.descent));
         }
     }
     
@@ -287,7 +287,7 @@ namespace GTLib
             
             Glyph_FCFT* prevGlyphFCFT = nullptr;
             
-            GTLib::Strings::Iterator<char> i(inputString);
+            Strings::Iterator<char> i(inputString);
             while (i)
             {
                 Glyph_FCFT*  glyphFCFT = nullptr;

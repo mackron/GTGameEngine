@@ -7,7 +7,7 @@
 #include "Particle.hpp"
 
 
-namespace GTEngine
+namespace GT
 {
     /// Base class representing a function that is run on a particle.
     class ParticleFunction

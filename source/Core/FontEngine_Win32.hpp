@@ -10,7 +10,7 @@
 
 #include <GTEngine/Core/windows.hpp>
 
-namespace GTLib
+namespace GT
 {
 	class FontEngine_Win32 : public FontEngine
 	{
@@ -38,7 +38,7 @@ namespace GTLib
 		GlyphHandle GetGlyph(FontHandle font, char32_t character) const;
 
 		/// FontEngine::GetGlyphMap().
-		GlyphMapHandle GetGlyphMap(GlyphHandle glyph, GTLib::Rect<float> &uvCoordsOut) const;
+		GlyphMapHandle GetGlyphMap(GlyphHandle glyph, Rect<float> &uvCoordsOut) const;
 
         /// FontEngine::GetGlyphMetrics().
         void GetGlyphMetrics(GlyphHandle glyph, GlyphMetrics &metricsOut) const;

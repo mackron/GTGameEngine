@@ -2,7 +2,7 @@
 
 #include <GTEngine/ScriptVariable.hpp>
 
-namespace GTEngine
+namespace GT
 {
     ScriptVariable::ScriptVariable(ScriptVariableType typeIn, const char* nameIn)
         : type(typeIn), name(nameIn)

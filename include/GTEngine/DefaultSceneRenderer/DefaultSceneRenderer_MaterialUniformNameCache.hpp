@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/String.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Enumerator representing the different material uniform names to cache.
     enum MaterialUniformNameID
@@ -81,55 +81,55 @@ namespace GTEngine
                 names.Resize(MaterialUniform_LightNamesCount);
 
                 // Ambient.
-                names[MaterialUniform_AmbientLightFS_Colour]                   = GTLib::String::CreateFormatted("AmbientLightFS%d.Colour",                   index);
+                names[MaterialUniform_AmbientLightFS_Colour]                   = String::CreateFormatted("AmbientLightFS%d.Colour",                   index);
 
                 // Directional.
-                names[MaterialUniform_DirectionalLightFS_Colour]               = GTLib::String::CreateFormatted("DirectionalLightFS%d.Colour",               index);
-                names[MaterialUniform_DirectionalLightFS_Direction]            = GTLib::String::CreateFormatted("DirectionalLightFS%d.Direction",            index);
+                names[MaterialUniform_DirectionalLightFS_Colour]               = String::CreateFormatted("DirectionalLightFS%d.Colour",               index);
+                names[MaterialUniform_DirectionalLightFS_Direction]            = String::CreateFormatted("DirectionalLightFS%d.Direction",            index);
 
                 // Point.
-                names[MaterialUniform_PointLightVS_PositionVS]                 = GTLib::String::CreateFormatted("PointLightVS%d.PositionVS",                 index);
-                names[MaterialUniform_PointLightFS_Colour]                     = GTLib::String::CreateFormatted("PointLightFS%d.Colour",                     index);
-                names[MaterialUniform_PointLightFS_Radius]                     = GTLib::String::CreateFormatted("PointLightFS%d.Radius",                     index);
-                names[MaterialUniform_PointLightFS_Falloff]                    = GTLib::String::CreateFormatted("PointLightFS%d.Falloff",                    index);
+                names[MaterialUniform_PointLightVS_PositionVS]                 = String::CreateFormatted("PointLightVS%d.PositionVS",                 index);
+                names[MaterialUniform_PointLightFS_Colour]                     = String::CreateFormatted("PointLightFS%d.Colour",                     index);
+                names[MaterialUniform_PointLightFS_Radius]                     = String::CreateFormatted("PointLightFS%d.Radius",                     index);
+                names[MaterialUniform_PointLightFS_Falloff]                    = String::CreateFormatted("PointLightFS%d.Falloff",                    index);
 
                 // Spot.
-                names[MaterialUniform_SpotLightFS_Position]                    = GTLib::String::CreateFormatted("SpotLightFS%d.Position",                    index);
-                names[MaterialUniform_SpotLightFS_Colour]                      = GTLib::String::CreateFormatted("SpotLightFS%d.Colour",                      index);
-                names[MaterialUniform_SpotLightFS_Direction]                   = GTLib::String::CreateFormatted("SpotLightFS%d.Direction",                   index);
-                names[MaterialUniform_SpotLightFS_Length]                      = GTLib::String::CreateFormatted("SpotLightFS%d.Length",                      index);
-                names[MaterialUniform_SpotLightFS_Falloff]                     = GTLib::String::CreateFormatted("SpotLightFS%d.Falloff",                     index);
-                names[MaterialUniform_SpotLightFS_CosAngleInner]               = GTLib::String::CreateFormatted("SpotLightFS%d.CosAngleInner",               index);
-                names[MaterialUniform_SpotLightFS_CosAngleOuter]               = GTLib::String::CreateFormatted("SpotLightFS%d.CosAngleOuter",               index);
+                names[MaterialUniform_SpotLightFS_Position]                    = String::CreateFormatted("SpotLightFS%d.Position",                    index);
+                names[MaterialUniform_SpotLightFS_Colour]                      = String::CreateFormatted("SpotLightFS%d.Colour",                      index);
+                names[MaterialUniform_SpotLightFS_Direction]                   = String::CreateFormatted("SpotLightFS%d.Direction",                   index);
+                names[MaterialUniform_SpotLightFS_Length]                      = String::CreateFormatted("SpotLightFS%d.Length",                      index);
+                names[MaterialUniform_SpotLightFS_Falloff]                     = String::CreateFormatted("SpotLightFS%d.Falloff",                     index);
+                names[MaterialUniform_SpotLightFS_CosAngleInner]               = String::CreateFormatted("SpotLightFS%d.CosAngleInner",               index);
+                names[MaterialUniform_SpotLightFS_CosAngleOuter]               = String::CreateFormatted("SpotLightFS%d.CosAngleOuter",               index);
 
                 // Shadow Directional.
-                names[MaterialUniform_ShadowDirectionalLightVS_ProjectionView] = GTLib::String::CreateFormatted("ShadowDirectionalLightVS%d.ProjectionView", index);
-                names[MaterialUniform_ShaderDirectionalLightFS_Colour]         = GTLib::String::CreateFormatted("ShadowDirectionalLightFS%d.Colour",         index);
-                names[MaterialUniform_ShaderDirectionalLightFS_Direction]      = GTLib::String::CreateFormatted("ShadowDirectionalLightFS%d.Direction",      index);
-                names[MaterialUniform_ShaderDirectionalLightFS_ShadowMap]      = GTLib::String::CreateFormatted("ShadowDirectionalLightFS%d_ShadowMap",      index);
+                names[MaterialUniform_ShadowDirectionalLightVS_ProjectionView] = String::CreateFormatted("ShadowDirectionalLightVS%d.ProjectionView", index);
+                names[MaterialUniform_ShaderDirectionalLightFS_Colour]         = String::CreateFormatted("ShadowDirectionalLightFS%d.Colour",         index);
+                names[MaterialUniform_ShaderDirectionalLightFS_Direction]      = String::CreateFormatted("ShadowDirectionalLightFS%d.Direction",      index);
+                names[MaterialUniform_ShaderDirectionalLightFS_ShadowMap]      = String::CreateFormatted("ShadowDirectionalLightFS%d_ShadowMap",      index);
 
                 // Shadow Point.
-                names[MaterialUniform_ShadowPointLightFS_PositionVS]           = GTLib::String::CreateFormatted("ShadowPointLightVS%d.PositionVS",           index);
-                names[MaterialUniform_ShadowPointLightFS_PositionWS]           = GTLib::String::CreateFormatted("ShadowPointLightVS%d.PositionWS",           index);
-                names[MaterialUniform_ShadowPointLightFS_Colour]               = GTLib::String::CreateFormatted("ShadowPointLightFS%d.Colour",               index);
-                names[MaterialUniform_ShadowPointLightFS_Radius]               = GTLib::String::CreateFormatted("ShadowPointLightFS%d.Radius",               index);
-                names[MaterialUniform_ShadowPointLightFS_Falloff]              = GTLib::String::CreateFormatted("ShadowPointLightFS%d.Falloff",              index);
-                names[MaterialUniform_ShadowPointLightFS_ShadowMap]            = GTLib::String::CreateFormatted("ShadowPointLightFS%d_ShadowMap",            index);
+                names[MaterialUniform_ShadowPointLightFS_PositionVS]           = String::CreateFormatted("ShadowPointLightVS%d.PositionVS",           index);
+                names[MaterialUniform_ShadowPointLightFS_PositionWS]           = String::CreateFormatted("ShadowPointLightVS%d.PositionWS",           index);
+                names[MaterialUniform_ShadowPointLightFS_Colour]               = String::CreateFormatted("ShadowPointLightFS%d.Colour",               index);
+                names[MaterialUniform_ShadowPointLightFS_Radius]               = String::CreateFormatted("ShadowPointLightFS%d.Radius",               index);
+                names[MaterialUniform_ShadowPointLightFS_Falloff]              = String::CreateFormatted("ShadowPointLightFS%d.Falloff",              index);
+                names[MaterialUniform_ShadowPointLightFS_ShadowMap]            = String::CreateFormatted("ShadowPointLightFS%d_ShadowMap",            index);
 
                 // Shadow Spot.
-                names[MaterialUniforms_ShadowSpotLightVS_ProjectionView]       = GTLib::String::CreateFormatted("ShadowSpotLightVS%d.ProjectionView",        index);
-                names[MaterialUniforms_ShadowSpotLightFS_Position]             = GTLib::String::CreateFormatted("ShadowSpotLightFS%d.Position",              index);
-                names[MaterialUniforms_ShadowSpotLightFS_Colour]               = GTLib::String::CreateFormatted("ShadowSpotLightFS%d.Colour",                index);
-                names[MaterialUniforms_ShadowSpotLightFS_Direction]            = GTLib::String::CreateFormatted("ShadowSpotLightFS%d.Direction",             index);
-                names[MaterialUniforms_ShadowSpotLightFS_Length]               = GTLib::String::CreateFormatted("ShadowSpotLightFS%d.Length",                index);
-                names[MaterialUniforms_ShadowSpotLightFS_Falloff]              = GTLib::String::CreateFormatted("ShadowSpotLightFS%d.Falloff",               index);
-                names[MaterialUniforms_ShadowSpotLightFS_CosAngleInner]        = GTLib::String::CreateFormatted("ShadowSpotLightFS%d.CosAngleInner",         index);
-                names[MaterialUniforms_ShadowSpotLightFS_CosAngleOuter]        = GTLib::String::CreateFormatted("ShadowSpotLightFS%d.CosAngleOuter",         index);
-                names[MaterialUniforms_ShadowSpotLightFS_ShadowMap]            = GTLib::String::CreateFormatted("ShadowSpotLightFS%d_ShadowMap",             index);
+                names[MaterialUniforms_ShadowSpotLightVS_ProjectionView]       = String::CreateFormatted("ShadowSpotLightVS%d.ProjectionView",        index);
+                names[MaterialUniforms_ShadowSpotLightFS_Position]             = String::CreateFormatted("ShadowSpotLightFS%d.Position",              index);
+                names[MaterialUniforms_ShadowSpotLightFS_Colour]               = String::CreateFormatted("ShadowSpotLightFS%d.Colour",                index);
+                names[MaterialUniforms_ShadowSpotLightFS_Direction]            = String::CreateFormatted("ShadowSpotLightFS%d.Direction",             index);
+                names[MaterialUniforms_ShadowSpotLightFS_Length]               = String::CreateFormatted("ShadowSpotLightFS%d.Length",                index);
+                names[MaterialUniforms_ShadowSpotLightFS_Falloff]              = String::CreateFormatted("ShadowSpotLightFS%d.Falloff",               index);
+                names[MaterialUniforms_ShadowSpotLightFS_CosAngleInner]        = String::CreateFormatted("ShadowSpotLightFS%d.CosAngleInner",         index);
+                names[MaterialUniforms_ShadowSpotLightFS_CosAngleOuter]        = String::CreateFormatted("ShadowSpotLightFS%d.CosAngleOuter",         index);
+                names[MaterialUniforms_ShadowSpotLightFS_ShadowMap]            = String::CreateFormatted("ShadowSpotLightFS%d_ShadowMap",             index);
             }
 
             /// The list of names for the light index.
-            GTLib::Vector<GTLib::String> names;
+            Vector<String> names;
         };
 
 
@@ -150,7 +150,7 @@ namespace GTEngine
     private:
 
         /// The caches for light uniforms.
-        GTLib::Vector<LightIndexUniformNames> lightUniforms;
+        Vector<LightIndexUniformNames> lightUniforms;
     };
 }
 

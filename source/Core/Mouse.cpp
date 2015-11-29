@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/Mouse.hpp>
 
-namespace GTLib
+namespace GT
 {
     namespace Mouse
     {

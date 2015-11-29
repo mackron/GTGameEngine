@@ -6,7 +6,7 @@
 #include "MouseButtons.hpp"
 #include "Keys.hpp"
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  Base class for the window event listener.

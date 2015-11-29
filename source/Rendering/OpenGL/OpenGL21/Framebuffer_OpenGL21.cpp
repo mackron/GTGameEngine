@@ -2,7 +2,7 @@
 
 #include "Framebuffer_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     Framebuffer_OpenGL21::Framebuffer_OpenGL21(FramebufferState_OpenGL21* stateGLIn)
         : Framebuffer(), stateGL(stateGLIn)

@@ -3,7 +3,7 @@
 #ifndef __GTLib_Timing_TimingCommon_hpp_
 #define __GTLib_Timing_TimingCommon_hpp_
 
-namespace GTLib
+namespace GT
 {
     namespace Timing
     {

@@ -6,7 +6,7 @@
 #include "ImageFormats.hpp"
 #include <easy_fs/easy_vfs.h>
 
-namespace GTLib
+namespace GT
 {
     struct ImageFileInfo : public easyvfs_file_info
     {

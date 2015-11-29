@@ -7,7 +7,7 @@
     #pragma warning(disable:4355)   // 'this' : used in base member initializer list
 #endif
 
-namespace GTEngine
+namespace GT
 {
     GameObject::GameObject()
         : sceneNode(), sceneNodeEventHandler(*this),
@@ -22,7 +22,7 @@ namespace GTEngine
 }
 
 // Default event handlers.
-namespace GTEngine
+namespace GT
 {
     void GameObject::OnTransform()
     {

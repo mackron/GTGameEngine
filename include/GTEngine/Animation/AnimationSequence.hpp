@@ -6,7 +6,7 @@
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing an individual frame in an animation sequence.
     struct AnimationSequenceFrame
@@ -19,7 +19,7 @@ namespace GTEngine
         }
 
         /// The name of the segment to play. Can be an empty string, in which case startKeyFrame and endKeyFrame will be used instead.
-        GTLib::String segmentName;
+        String segmentName;
 
         /// The index of the key frame to start at.
         size_t startKeyFrame;
@@ -35,7 +35,7 @@ namespace GTEngine
     };
 }
 
-namespace GTEngine
+namespace GT
 {
     /// Class used for playing a sequence of animations.
     ///
@@ -83,7 +83,7 @@ namespace GTEngine
 
 
         /// Returns a constant reference to the internal list of frames.
-        const GTLib::Vector<AnimationSequenceFrame> & GetFrames() const { return this->frames; }
+        const Vector<AnimationSequenceFrame> & GetFrames() const { return this->frames; }
 
         /// Retrieves the number of frames.
         size_t GetFrameCount() const { return this->frames.count; }
@@ -98,10 +98,10 @@ namespace GTEngine
     private:
 
         /// The name of the animation sequence.
-        GTLib::String name;
+        String name;
 
         /// The list of sequence frames.
-        GTLib::Vector<AnimationSequenceFrame> frames;
+        Vector<AnimationSequenceFrame> frames;
     };
 }
 

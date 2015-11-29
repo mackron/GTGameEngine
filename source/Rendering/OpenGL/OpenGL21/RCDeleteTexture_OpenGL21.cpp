@@ -3,7 +3,7 @@
 #include "RCDeleteTexture_OpenGL21.hpp"
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     RCDeleteTexture::RCDeleteTexture()
         : textureState(nullptr)

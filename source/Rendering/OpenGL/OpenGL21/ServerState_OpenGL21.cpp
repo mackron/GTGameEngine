@@ -2,7 +2,7 @@
 
 #include "ServerState_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     // Default objects.
     //GLuint ServerState_DefaultVAO = 0;

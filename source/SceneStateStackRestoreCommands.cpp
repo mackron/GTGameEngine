@@ -5,7 +5,7 @@
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/Logging.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneStateStackRestoreCommands::SceneStateStackRestoreCommands(unsigned int serializationFlags, unsigned int deserializationFlags)
         : inserts(), deletes(), updates(), hierarchy(), serializationFlags(serializationFlags), deserializationFlags(deserializationFlags)
@@ -43,7 +43,7 @@ namespace GTEngine
     }
 
 
-    void SceneStateStackRestoreCommands::AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, GTLib::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, BasicSerializer* sceneNodeSerializer)
     {
         // If a delete command with the scene node is already staged, all we want to do is remove it from the deletes and just
         // ignore everything.
@@ -68,7 +68,7 @@ namespace GTEngine
                         auto sceneNode = scene->GetSceneNodeByID(sceneNodeID);
                         if (sceneNode != nullptr)
                         {
-                            sceneNodeSerializer = new GTLib::BasicSerializer;
+                            sceneNodeSerializer = new BasicSerializer;
                             sceneNode->Serialize(*sceneNodeSerializer, this->serializationFlags);
 
                             ownsSerializer = true;
@@ -82,7 +82,7 @@ namespace GTEngine
         }
     }
 
-    void SceneStateStackRestoreCommands::AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, GTLib::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, BasicSerializer* sceneNodeSerializer)
     {
         (void)parentSceneNodeID;
         (void)scene;
@@ -111,7 +111,7 @@ namespace GTEngine
         this->RemoveFromHierarchy(sceneNodeID);
     }
 
-    void SceneStateStackRestoreCommands::AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, GTLib::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, BasicSerializer* sceneNodeSerializer)
     {
         // We ignore update commands if an insert or delete command is already present.
         if (!this->inserts.Exists(sceneNodeID) &&
@@ -127,7 +127,7 @@ namespace GTEngine
                     auto sceneNode = scene->GetSceneNodeByID(sceneNodeID);
                     if (sceneNode != nullptr)
                     {
-                        sceneNodeSerializer = new GTLib::BasicSerializer;
+                        sceneNodeSerializer = new BasicSerializer;
                         sceneNode->Serialize(*sceneNodeSerializer, this->serializationFlags);
 
                         ownsSerializer = true;
@@ -234,7 +234,7 @@ namespace GTEngine
             auto serializer = this->inserts.buffer[i]->value.serializer;
             assert(serializer != nullptr);
             {
-                GTLib::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+                BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
                 scene.CreateNewSceneNode(deserializer, this->deserializationFlags);
             }
         }
@@ -259,7 +259,7 @@ namespace GTEngine
                 auto sceneNode = scene.GetSceneNodeByID(sceneNodeID);
                 assert(sceneNode != nullptr);
                 {
-                    GTLib::BasicDeserializer deserializer(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
+                    BasicDeserializer deserializer(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
                     sceneNode->Deserialize(deserializer, this->deserializationFlags);
                 }
             }
@@ -299,9 +299,9 @@ namespace GTEngine
     /////////////////////////////////////////////////
     // Serialization/Deserialization
 
-    void SceneStateStackRestoreCommands::Serialize(GTLib::Serializer &serializer) const
+    void SceneStateStackRestoreCommands::Serialize(Serializer &serializer) const
     {
-        GTLib::BasicSerializer secondarySerializer;
+        BasicSerializer secondarySerializer;
 
         // Inserts.
         secondarySerializer.Write(static_cast<uint32_t>(this->inserts.count));
@@ -370,7 +370,7 @@ namespace GTEngine
         serializer.Write(secondarySerializer.GetBuffer(), secondarySerializer.GetBufferSizeInBytes());
     }
 
-    void SceneStateStackRestoreCommands::Deserialize(GTLib::Deserializer &deserializer)
+    void SceneStateStackRestoreCommands::Deserialize(Deserializer &deserializer)
     {
         // Clear first, just in case.
         this->Clear();
@@ -394,7 +394,7 @@ namespace GTEngine
                             deserializer.Read(sceneNodeID);
 
                             // The next chunk of data is the serialized data of the scene node. What we do here is ready the data into a temp buffer, and then
-                            // write that to a new GTLib::BasicSerializer object.
+                            // write that to a new BasicSerializer object.
                             uint32_t serializerSizeInBytes;
                             deserializer.Read(serializerSizeInBytes);
 
@@ -402,7 +402,7 @@ namespace GTEngine
                             deserializer.Read(serializerData, serializerSizeInBytes);
 
 
-                            auto sceneNodeSerializer = new GTLib::BasicSerializer;
+                            auto sceneNodeSerializer = new BasicSerializer;
                             sceneNodeSerializer->Write(serializerData, serializerSizeInBytes);
 
                             this->inserts.Add(sceneNodeID, Command(sceneNodeSerializer, true));
@@ -422,7 +422,7 @@ namespace GTEngine
                             deserializer.Read(sceneNodeID);
 
                             // The next chunk of data is the serialized data of the scene node. What we do here is ready the data into a temp buffer, and then
-                            // write that to a new GTLib::BasicSerializer object.
+                            // write that to a new BasicSerializer object.
                             uint32_t serializerSizeInBytes;
                             deserializer.Read(serializerSizeInBytes);
 
@@ -430,7 +430,7 @@ namespace GTEngine
                             deserializer.Read(serializerData, serializerSizeInBytes);
 
 
-                            auto sceneNodeSerializer = new GTLib::BasicSerializer;
+                            auto sceneNodeSerializer = new BasicSerializer;
                             sceneNodeSerializer->Write(serializerData, serializerSizeInBytes);
 
 
@@ -451,7 +451,7 @@ namespace GTEngine
                             deserializer.Read(sceneNodeID);
 
                             // The next chunk of data is the serialized data of the scene node. What we do here is ready the data into a temp buffer, and then
-                            // write that to a new GTLib::BasicSerializer object.
+                            // write that to a new BasicSerializer object.
                             uint32_t serializerSizeInBytes;
                             deserializer.Read(serializerSizeInBytes);
 
@@ -459,7 +459,7 @@ namespace GTEngine
                             deserializer.Read(serializerData, serializerSizeInBytes);
 
 
-                            auto sceneNodeSerializer = new GTLib::BasicSerializer;
+                            auto sceneNodeSerializer = new BasicSerializer;
                             sceneNodeSerializer->Write(serializerData, serializerSizeInBytes);
 
                             this->updates.Add(sceneNodeID, Command(sceneNodeSerializer, true));
@@ -492,7 +492,7 @@ namespace GTEngine
 
                 default:
                     {
-                        GTEngine::Log("Error deserializing SceneStateStackRestoreCommands. The main chunk is an unsupported version (%d).", header.version);
+                        Log("Error deserializing SceneStateStackRestoreCommands. The main chunk is an unsupported version (%d).", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         break;

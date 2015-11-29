@@ -7,7 +7,7 @@
 #include "../CapabilityBits.hpp"
 #include <GTEngine/Logging.hpp>
 
-namespace GTEngine
+namespace GT
 {
     #define VIEWPORT_BIT                    (1 << 1)
     #define SCISSOR_BIT                     (1 << 2)
@@ -37,7 +37,7 @@ namespace GTEngine
     void PostRedundancyMessage(const char* message)
     {
 #if 0
-        GTEngine::Log(message);
+        Log(message);
 #else
         (void)message;
 #endif

@@ -105,7 +105,7 @@ namespace GTGUI
         Element &owner;
         
         /// The list of classes in the stack.
-        GTLib::List<StyleClass*> classes;
+        GT::List<StyleClass*> classes;
 
         StyleAttribute_Number*         width;
         StyleAttribute_Number*         height;

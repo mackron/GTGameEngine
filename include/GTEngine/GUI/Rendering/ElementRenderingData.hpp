@@ -28,8 +28,8 @@ namespace GTGUI
 
 
         /// Retrieves a reference to the list of meshes used to render the text.
-              GTLib::Vector<Mesh*> & GetTextMeshes()       { return this->textMeshes; }
-        const GTLib::Vector<Mesh*> & GetTextMeshes() const { return this->textMeshes; }
+              GT::Vector<Mesh*> & GetTextMeshes()       { return this->textMeshes; }
+        const GT::Vector<Mesh*> & GetTextMeshes() const { return this->textMeshes; }
 
         /// Retrieves a pointer to the shadow mesh.
               Mesh* GetShadowMesh()       { return this->shadowMesh; }
@@ -57,7 +57,7 @@ namespace GTGUI
         /// Update the colour of every text mesh.
         ///
         /// @param colour [in] The new text colour.
-        void UpdateTextMeshesColour(const GTLib::Colour &colour);
+        void UpdateTextMeshesColour(const GT::Colour &colour);
 
 
         /// Updates the shadow mesh for the given element.
@@ -110,7 +110,7 @@ namespace GTGUI
         GarbageCollector &gc;
 
         /// The list of meshes used for rendering the text of the element.
-        GTLib::Vector<Mesh*> textMeshes;
+        GT::Vector<Mesh*> textMeshes;
 
         /// The mesh for the shadow volume. This will be null if there is no shadow.
         Mesh* shadowMesh;

@@ -3,7 +3,7 @@
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Physics.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(GenericConstraintComponent, "GenericConstraint")
 
@@ -23,7 +23,7 @@ namespace GTEngine
         RigidBody* bodyA = nullptr;
         RigidBody* bodyB = nullptr;
 
-        auto dynamicsComponent = sceneNodeA.GetComponent<GTEngine::DynamicsComponent>();
+        auto dynamicsComponent = sceneNodeA.GetComponent<DynamicsComponent>();
         if (dynamicsComponent != nullptr)
         {
             dynamicsComponent->ApplySceneNodeScaling();
@@ -31,7 +31,7 @@ namespace GTEngine
             bodyA = &dynamicsComponent->GetRigidBody();
         }
 
-        dynamicsComponent = sceneNodeB.GetComponent<GTEngine::DynamicsComponent>();
+        dynamicsComponent = sceneNodeB.GetComponent<DynamicsComponent>();
         if (dynamicsComponent != nullptr)
         {
             dynamicsComponent->ApplySceneNodeScaling();
@@ -63,7 +63,7 @@ namespace GTEngine
     {
         RigidBody* bodyB = nullptr;
 
-        auto dynamicsComponent = sceneNodeB.GetComponent<GTEngine::DynamicsComponent>();
+        auto dynamicsComponent = sceneNodeB.GetComponent<DynamicsComponent>();
         if (dynamicsComponent != nullptr)
         {
             dynamicsComponent->ApplySceneNodeScaling();

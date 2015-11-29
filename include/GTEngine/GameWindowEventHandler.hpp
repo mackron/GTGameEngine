@@ -5,11 +5,11 @@
 
 #include <GTEngine/Core/Window.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Game;
 
-    class GameWindowEventHandler : public GTLib::WindowEventHandler
+    class GameWindowEventHandler : public WindowEventHandler
     {
     public:
 
@@ -31,14 +31,14 @@ namespace GTEngine
         
         void OnMouseMove(int x, int y);
         void OnMouseWheel(int delta, int x, int y);
-        void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
-        void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
-        void OnMouseButtonDoubleClick(GTLib::MouseButton button, int x, int y);
+        void OnMouseButtonDown(MouseButton button, int x, int y);
+        void OnMouseButtonUp(MouseButton button, int x, int y);
+        void OnMouseButtonDoubleClick(MouseButton button, int x, int y);
 
-        void OnKeyPressed(GTLib::Key key);
-        void OnKeyReleased(GTLib::Key key);
-        void OnKeyDown(GTLib::Key key, unsigned int repeatCount);
-        void OnKeyUp(GTLib::Key key);
+        void OnKeyPressed(Key key);
+        void OnKeyReleased(Key key);
+        void OnKeyDown(Key key, unsigned int repeatCount);
+        void OnKeyUp(Key key);
         
         void OnReceiveFocus();
         void OnLoseFocus();

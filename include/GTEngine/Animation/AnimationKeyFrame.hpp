@@ -3,7 +3,7 @@
 #ifndef __GTEngine_AnimationKeyFrame_hpp_
 #define __GTEngine_AnimationKeyFrame_hpp_
 
-namespace GTEngine
+namespace GT
 {
     class AnimationKeyFrame
     {

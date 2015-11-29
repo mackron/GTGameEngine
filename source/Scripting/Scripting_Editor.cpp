@@ -202,7 +202,7 @@ namespace GT
     {
         int GetAbsolutePath(GT::Script &script)
         {
-            auto subEditor = reinterpret_cast<GTEngine::SubEditor*>(script.ToPointer(1));
+            auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
             if (subEditor != nullptr)
             {
                 script.Push(subEditor->GetAbsolutePath());
@@ -217,7 +217,7 @@ namespace GT
 
         int GetRelativePath(GT::Script &script)
         {
-            auto subEditor = reinterpret_cast<GTEngine::SubEditor*>(script.ToPointer(1));
+            auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
             if (subEditor != nullptr)
             {
                 script.Push(subEditor->GetRelativePath());
@@ -233,7 +233,7 @@ namespace GT
 
         int MarkAsModified(GT::Script &script)
         {
-            auto subEditor = reinterpret_cast<GTEngine::SubEditor*>(script.ToPointer(1));
+            auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
             if (subEditor != nullptr)
             {
                 subEditor->MarkAsModified();
@@ -244,7 +244,7 @@ namespace GT
 
         int UnmarkAsModified(GT::Script &script)
         {
-            auto subEditor = reinterpret_cast<GTEngine::SubEditor*>(script.ToPointer(1));
+            auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
             if (subEditor != nullptr)
             {
                 subEditor->UnmarkAsModified();
@@ -262,7 +262,7 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto &definition = modelEditor->GetModelDefinition();
@@ -281,10 +281,10 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
-                GTLib::Vector<GTLib::String> materials;
+                Vector<String> materials;
                 modelEditor->GetMaterials(materials);
 
                 for (size_t i = 0; i < materials.count; ++i)
@@ -298,7 +298,7 @@ namespace GT
 
         int GetMaterialRelativePath(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];     // Minus 1 because Lua is 1-based.
@@ -318,7 +318,7 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];     // Minus 1 because Lua is 1-based.
@@ -481,7 +481,7 @@ namespace GT
 
         int SetMaterial(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 script.Push(modelEditor->SetMaterial(script.ToInteger(2) - 1, script.ToString(3)));     // Minus 1 in the first argument because Lua is 1 based.
@@ -497,7 +497,7 @@ namespace GT
 
         int SetMaterialUniform_Float(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
@@ -521,7 +521,7 @@ namespace GT
 
         int SetMaterialUniform_Float2(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
@@ -545,7 +545,7 @@ namespace GT
 
         int SetMaterialUniform_Float3(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
@@ -569,7 +569,7 @@ namespace GT
 
         int SetMaterialUniform_Float4(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
@@ -593,7 +593,7 @@ namespace GT
 
         int SetMaterialUniform_Texture2D(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
@@ -601,14 +601,14 @@ namespace GT
                 auto uniformName         = script.ToString(3);
                 auto textureRelativePath = script.ToString(4);
 
-                auto texture = GTEngine::Texture2DLibrary::Acquire(textureRelativePath);
+                auto texture = Texture2DLibrary::Acquire(textureRelativePath);
                 if (texture != nullptr)
                 {
                     mesh.defaultUniforms.Set(uniformName, texture);
                     mesh.material->SetParameter(uniformName, texture);
                     modelEditor->RefreshViewport();
 
-                    GTEngine::Texture2DLibrary::Unacquire(texture);
+                    Texture2DLibrary::Unacquire(texture);
                     script.Push(true);
                 }
                 else
@@ -627,7 +627,7 @@ namespace GT
 
         int GetBoneCount(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 script.Push(static_cast<int>(modelEditor->GetModelDefinition().GetBoneCount()));
@@ -642,7 +642,7 @@ namespace GT
 
         int GetBones(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 script.PushNewTable();
@@ -687,7 +687,7 @@ namespace GT
             
         int PlayAnimationSegmentByIndex(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->PlayAnimationSegmentByIndex(static_cast<size_t>(script.ToInteger(2)));
@@ -698,7 +698,7 @@ namespace GT
 
         int PlayAnimation(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->PlayAnimation();
@@ -709,7 +709,7 @@ namespace GT
 
         int ResumeAnimation(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->ResumeAnimation();
@@ -720,7 +720,7 @@ namespace GT
 
         int StopAnimation(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->StopAnimation();
@@ -731,7 +731,7 @@ namespace GT
 
         int PauseAnimation(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->PauseAnimation();
@@ -742,7 +742,7 @@ namespace GT
 
         int IsAnimationPlaying(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 script.Push(modelEditor->IsAnimationPlaying());
@@ -757,7 +757,7 @@ namespace GT
 
         int IsAnimationPaused(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 script.Push(modelEditor->IsAnimationPaused());
@@ -773,7 +773,7 @@ namespace GT
 
         int AddNewAnimationSegment(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto name       = script.ToString(2);
@@ -788,7 +788,7 @@ namespace GT
 
         int RemoveAnimationSegmentByIndex(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->RemoveAnimationSegmentByIndex(static_cast<size_t>(script.ToInteger(2)));
@@ -799,7 +799,7 @@ namespace GT
 
         int SetAnimationSegmentName(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto segmentIndex = static_cast<size_t>(script.ToInteger(2));
@@ -813,7 +813,7 @@ namespace GT
 
         int GetAnimationSegmentName(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 script.Push(modelEditor->GetAnimationSegmentName(static_cast<size_t>(script.ToInteger(2))));
@@ -828,7 +828,7 @@ namespace GT
 
         int SetAnimationSegmentFrameIndices(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto segmentIndex = static_cast<size_t>(script.ToInteger(2));
@@ -843,7 +843,7 @@ namespace GT
 
         int GetAnimationSegmentFrameIndices(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 size_t startIndex;
@@ -866,7 +866,7 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 auto &definition = modelEditor->GetModelDefinition();
@@ -897,9 +897,9 @@ namespace GT
 
         int GetConvexHullBuildSettings(GT::Script &script)
         {
-            GTEngine::ConvexHullBuildSettings settings;
+            ConvexHullBuildSettings settings;
 
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->GetConvexHullBuildSettings(settings);
@@ -922,7 +922,7 @@ namespace GT
 
         int ShowConvexDecomposition(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->ShowConvexDecomposition();
@@ -933,7 +933,7 @@ namespace GT
 
         int HideConvexDecomposition(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->HideConvexDecomposition();
@@ -944,10 +944,10 @@ namespace GT
 
         int BuildConvexDecomposition(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
-                GTEngine::ConvexHullBuildSettings settings;
+                ConvexHullBuildSettings settings;
                 settings.compacityWeight               = script.ToFloat(2);
                 settings.volumeWeight                  = script.ToFloat(3);
                 settings.minClusters                   = static_cast<unsigned int>(script.ToInteger(4));
@@ -968,7 +968,7 @@ namespace GT
 
         int GetViewportCameraSceneNodePtr(GT::Script &script)
         {
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 script.Push(&modelEditor->GetViewportCameraSceneNode());
@@ -987,7 +987,7 @@ namespace GT
             glm::vec3 aabbMin;
             glm::vec3 aabbMax;
 
-            auto modelEditor = reinterpret_cast<GTEngine::ModelEditor*>(script.ToPointer(1));
+            auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
             if (modelEditor != nullptr)
             {
                 modelEditor->GetModelAABB(aabbMin, aabbMax);
@@ -1005,7 +1005,7 @@ namespace GT
     {
         int GetViewportCameraSceneNodePtr(GT::Script &script)
         {
-            auto materialEditor = reinterpret_cast<GTEngine::MaterialEditor*>(script.ToPointer(1));
+            auto materialEditor = reinterpret_cast<MaterialEditor*>(script.ToPointer(1));
             if (materialEditor != nullptr)
             {
                 script.Push(&materialEditor->GetViewportCameraSceneNode());
@@ -1024,7 +1024,7 @@ namespace GT
     {
         int GetScenePtr(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(&sceneEditor->GetScene());
@@ -1041,7 +1041,7 @@ namespace GT
 
         int SetInsertionPosition(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->SetInsertionPosition(ToVector3(script, 2));
@@ -1052,7 +1052,7 @@ namespace GT
 
         int GetInsertionPosition(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 PushNewVector3(script, sceneEditor->GetInsertionPosition());
@@ -1067,7 +1067,7 @@ namespace GT
 
         int UpdateInsertionPositionFromMouse(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->UpdateInsertionPositionFromMouse();
@@ -1078,7 +1078,7 @@ namespace GT
 
         int UpdateInsertionPositionToInFrontOfCamera(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->UpdateInsertionPositionToInFrontOfCamera();
@@ -1091,7 +1091,7 @@ namespace GT
 
         int DeselectAll(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->DeselectAll(0);
@@ -1102,16 +1102,16 @@ namespace GT
 
         int SelectSceneNode(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
-                auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                 if (sceneNode != nullptr)
                 {
                     unsigned int selectionOptions = 0;
                     if (script.ToBoolean(3))
                     {
-                        selectionOptions |= GTEngine::SceneEditor::SelectionOption_NoScriptNotify;
+                        selectionOptions |= SceneEditor::SelectionOption_NoScriptNotify;
                     }
 
                     sceneEditor->SelectSceneNode(*sceneNode, selectionOptions);
@@ -1123,16 +1123,16 @@ namespace GT
 
         int DeselectSceneNode(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
-                auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                 if (sceneNode != nullptr)
                 {
                     unsigned int selectionOptions = 0;
                     if (script.ToBoolean(3))
                     {
-                        selectionOptions |= GTEngine::SceneEditor::SelectionOption_NoScriptNotify;
+                        selectionOptions |= SceneEditor::SelectionOption_NoScriptNotify;
                     }
 
                     sceneEditor->DeselectSceneNode(*sceneNode, selectionOptions);
@@ -1144,7 +1144,7 @@ namespace GT
 
         int GetSelectedSceneNodeCount(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(static_cast<int>(sceneEditor->GetSelectedSceneNodeCount()));
@@ -1159,7 +1159,7 @@ namespace GT
 
         int GetFirstSelectedSceneNodePtr(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->GetFirstSelectedSceneNode());
@@ -1175,10 +1175,10 @@ namespace GT
 
         int GetSelectedSceneNodeIDs(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
-                GTLib::Vector<uint64_t> selectedSceneNodeIDs;
+                Vector<uint64_t> selectedSceneNodeIDs;
                 sceneEditor->GetSelectedSceneNodeIDs(selectedSceneNodeIDs);
 
                 script.PushNewTable();
@@ -1199,7 +1199,7 @@ namespace GT
 
         int IsSceneNodeSelectedByID(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 auto sceneNode = sceneEditor->GetSceneNodeByID(static_cast<uint64_t>(script.ToInteger(2)));
@@ -1223,7 +1223,7 @@ namespace GT
 
         int TryGizmoMouseSelect(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->TryGizmoMouseSelect());
@@ -1238,7 +1238,7 @@ namespace GT
 
         int DoMouseSelection(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->DoMouseSelection();
@@ -1250,7 +1250,7 @@ namespace GT
 
         int RemoveSelectedSceneNodes(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->RemoveSelectedSceneNodes();
@@ -1261,8 +1261,8 @@ namespace GT
 
         int RemoveSceneNode(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
-            auto sceneNode   = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+            auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (sceneEditor != nullptr && sceneNode != nullptr)
             {
@@ -1275,7 +1275,7 @@ namespace GT
 
         int DuplicateSelectedSceneNodes(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->DuplicateSelectedSceneNodes();
@@ -1286,8 +1286,8 @@ namespace GT
 
         int DuplicateSceneNode(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
-            auto sceneNode   = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+            auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (sceneEditor != nullptr && sceneNode != nullptr)
             {
@@ -1301,7 +1301,7 @@ namespace GT
 
         int SwitchGizmoToTranslateMode(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->SwitchGizmoToTranslateMode();
@@ -1312,7 +1312,7 @@ namespace GT
 
         int SwitchGizmoToRotateMode(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->SwitchGizmoToRotateMode();
@@ -1323,7 +1323,7 @@ namespace GT
 
         int SwitchGizmoToScaleMode(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->SwitchGizmoToScaleMode();
@@ -1334,7 +1334,7 @@ namespace GT
 
         int SwitchGizmoToLocalSpace(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->SwitchGizmoToLocalSpace();
@@ -1345,7 +1345,7 @@ namespace GT
 
         int SwitchGizmoToGlobalSpace(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->SwitchGizmoToGlobalSpace();
@@ -1356,7 +1356,7 @@ namespace GT
 
         int ToggleGizmoSpace(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->ToggleGizmoSpace();
@@ -1367,7 +1367,7 @@ namespace GT
 
         int IsGizmoInLocalSpace(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsGizmoInLocalSpace());
@@ -1382,7 +1382,7 @@ namespace GT
 
         int IsGizmoInGlobalSpace(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsGizmoInGlobalSpace());
@@ -1397,7 +1397,7 @@ namespace GT
 
         int UpdateSelectionGizmoTransform(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->UpdateGizmoTransform();
@@ -1408,7 +1408,7 @@ namespace GT
 
         int SetTranslationSnappingInterval(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->SetTranslationSnappingInterval(script.ToFloat(2));
@@ -1419,7 +1419,7 @@ namespace GT
 
         int GetTranslationSnappingInterval(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->GetTranslationSnappingInterval());
@@ -1435,7 +1435,7 @@ namespace GT
 
         int EnableSnapToGrid(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->EnableSnapToGrid();
@@ -1446,7 +1446,7 @@ namespace GT
 
         int DisableSnapToGrid(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->DisableSnapToGrid();
@@ -1457,7 +1457,7 @@ namespace GT
 
         int IsSnappingToGrid(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsSnappingToGrid());
@@ -1473,7 +1473,7 @@ namespace GT
 
         int StartPlaying(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->StartPlaying();
@@ -1484,7 +1484,7 @@ namespace GT
 
         int PausePlaying(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->PausePlaying();
@@ -1495,7 +1495,7 @@ namespace GT
 
         int StopPlaying(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->StopPlaying();
@@ -1506,7 +1506,7 @@ namespace GT
 
         int IsPlaying(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsPlaying());
@@ -1521,7 +1521,7 @@ namespace GT
 
         int IsPaused(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsPaused());
@@ -1536,7 +1536,7 @@ namespace GT
 
         int IsStopped(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsStopped());
@@ -1552,7 +1552,7 @@ namespace GT
 
         int PauseSceneUpdates(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->PauseSceneUpdates();
@@ -1563,7 +1563,7 @@ namespace GT
 
         int ResumeSceneUpdates(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->ResumeSceneUpdates();
@@ -1574,7 +1574,7 @@ namespace GT
 
         int IsSceneUpdatesPaused(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsSceneUpdatesPaused());
@@ -1590,7 +1590,7 @@ namespace GT
 
         int EnablePhysicsSimulation(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->EnablePhysicsSimulation();
@@ -1601,7 +1601,7 @@ namespace GT
 
         int DisablePhysicsSimulation(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->DisablePhysicsSimulation();
@@ -1612,7 +1612,7 @@ namespace GT
 
         int IsPhysicsSimulationEnabled(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsPhysicsSimulationEnabled());
@@ -1628,7 +1628,7 @@ namespace GT
 
         int CommitStateStackFrame(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->CommitStateStackFrame();
@@ -1639,7 +1639,7 @@ namespace GT
 
         int ClearStateStackStagingArea(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->ClearStateStackStagingArea();
@@ -1650,7 +1650,7 @@ namespace GT
 
         int Undo(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->Undo();
@@ -1661,7 +1661,7 @@ namespace GT
 
         int Redo(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->Redo();
@@ -1673,12 +1673,12 @@ namespace GT
 
         int CreatePrefab(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 auto absolutePath   = script.ToString(2);
                 auto makeRelativeTo = script.ToString(3);
-                auto sceneNode      = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(4));
+                auto sceneNode      = reinterpret_cast<SceneNode*>(script.ToPointer(4));
 
                 if (sceneNode != nullptr)
                 {
@@ -1691,7 +1691,7 @@ namespace GT
 
         int InstantiatePrefab(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->InstantiatePrefab(script.ToString(2)));
@@ -1706,10 +1706,10 @@ namespace GT
 
         int LinkSceneNodeToPrefab(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
-                auto sceneNode          = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+                auto sceneNode          = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                 auto prefabRelativePath = script.ToString(3);
                 auto isSourceSceneNode  = script.ToBoolean(4);
 
@@ -1724,10 +1724,10 @@ namespace GT
 
         int UnlinkSceneNodeFromPrefab(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
-                auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                 if (sceneNode != nullptr)
                 {
                     sceneEditor->UnlinkSceneNodeFromPrefab(*sceneNode);
@@ -1740,7 +1740,7 @@ namespace GT
 
         int GetSceneNodePtrByID(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 uint64_t sceneNodeID = static_cast<uint64_t>(script.ToInteger(2));
@@ -1759,7 +1759,7 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 auto &sceneNodes = sceneEditor->GetScene().GetSceneNodes();
@@ -1776,8 +1776,8 @@ namespace GT
 
         int PositionSceneNodeInFrontOfCamera(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
-            auto sceneNode   = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+            auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (sceneEditor != nullptr && sceneNode != nullptr)
             {
@@ -1792,8 +1792,8 @@ namespace GT
 
         int SetSceneNodePositionToInsertionPosition(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
-            auto sceneNode   = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+            auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (sceneEditor != nullptr && sceneNode != nullptr)
             {
@@ -1805,8 +1805,8 @@ namespace GT
 
         int SetSceneNodeTransformToCamera(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
-            auto sceneNode   = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+            auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (sceneEditor != nullptr && sceneNode != nullptr)
             {
@@ -1825,8 +1825,8 @@ namespace GT
 
         int SetSceneNodePositionToCamera(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
-            auto sceneNode   = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+            auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (sceneEditor != nullptr && sceneNode != nullptr)
             {
@@ -1838,8 +1838,8 @@ namespace GT
 
         int SetSceneNodeOrientationToCamera(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
-            auto sceneNode   = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+            auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (sceneEditor != nullptr && sceneNode != nullptr)
             {
@@ -1851,8 +1851,8 @@ namespace GT
 
         int SetSceneNodeScaleToCamera(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
-            auto sceneNode   = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+            auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (sceneEditor != nullptr && sceneNode != nullptr)
             {
@@ -1865,7 +1865,7 @@ namespace GT
 
         int ShowGrid(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->ShowGrid();
@@ -1876,7 +1876,7 @@ namespace GT
 
         int HideGrid(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->HideGrid();
@@ -1887,7 +1887,7 @@ namespace GT
 
         int IsShowingGrid(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsShowingGrid());
@@ -1903,7 +1903,7 @@ namespace GT
 
         int ShowAxisArrows(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->ShowAxisArrows();
@@ -1914,7 +1914,7 @@ namespace GT
 
         int HideAxisArrows(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->HideAxisArrows();
@@ -1925,7 +1925,7 @@ namespace GT
 
         int IsShowingAxisArrows(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsShowingAxisArrows());
@@ -1941,7 +1941,7 @@ namespace GT
 
         int GetViewportCameraSceneNodePtr(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(&sceneEditor->GetCameraSceneNode());
@@ -1957,7 +1957,7 @@ namespace GT
 
         int SetSceneName(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->SetSceneName(script.ToString(2));
@@ -1968,7 +1968,7 @@ namespace GT
 
         int GetSceneName(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->GetSceneName());
@@ -1984,7 +1984,7 @@ namespace GT
 
         int EnableSceneBackgroundClearing(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->EnableSceneBackgroundClearing(ToVector3(script, 2));
@@ -1995,7 +1995,7 @@ namespace GT
 
         int DisableSceneBackgroundClearing(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->DisableSceneBackgroundClearing();
@@ -2006,7 +2006,7 @@ namespace GT
 
         int IsSceneBackgroundClearingEnabled(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsSceneBackgroundClearingEnabled());
@@ -2021,7 +2021,7 @@ namespace GT
 
         int GetSceneBackgroundClearColour(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 PushNewVector3(script, sceneEditor->GetSceneBackgroundClearColour());
@@ -2037,7 +2037,7 @@ namespace GT
 
         int EnableSceneHDR(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->EnableSceneHDR();
@@ -2048,7 +2048,7 @@ namespace GT
 
         int DisableSceneHDR(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->DisableSceneHDR();
@@ -2059,7 +2059,7 @@ namespace GT
 
         int IsSceneHDREnabled(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsSceneHDREnabled());
@@ -2075,7 +2075,7 @@ namespace GT
 
         int EnableSceneBloom(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->EnableSceneBloom();
@@ -2086,7 +2086,7 @@ namespace GT
 
         int DisableSceneBloom(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->DisableSceneBloom();
@@ -2097,7 +2097,7 @@ namespace GT
 
         int IsSceneBloomEnabled(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 script.Push(sceneEditor->IsSceneBloomEnabled());
@@ -2113,7 +2113,7 @@ namespace GT
 
         int ShowNavigationMesh(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->ShowNavigationMesh(static_cast<size_t>(script.ToInteger(2)));
@@ -2124,7 +2124,7 @@ namespace GT
 
         int HideNavigationMesh(GT::Script &script)
         {
-            auto sceneEditor = reinterpret_cast<GTEngine::SceneEditor*>(script.ToPointer(1));
+            auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
             if (sceneEditor != nullptr)
             {
                 sceneEditor->HideNavigationMesh(static_cast<size_t>(script.ToInteger(2)));
@@ -2139,7 +2139,7 @@ namespace GT
     {
         int GetParticleSystemDefinitionPtr(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 script.Push(&particleEditor->GetParticleSystemDefinition());
@@ -2154,7 +2154,7 @@ namespace GT
 
         int RefreshViewport(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 particleEditor->RefreshViewport();
@@ -2166,7 +2166,7 @@ namespace GT
 
         int SetOrientation(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 particleEditor->SetOrientation(ToQuaternion(script, 2));
@@ -2178,7 +2178,7 @@ namespace GT
 
         int ShowGrid(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 particleEditor->ShowGrid();
@@ -2189,7 +2189,7 @@ namespace GT
 
         int HideGrid(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 particleEditor->HideGrid();
@@ -2200,7 +2200,7 @@ namespace GT
 
         int IsShowingGrid(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 script.Push(particleEditor->IsShowingGrid());
@@ -2216,7 +2216,7 @@ namespace GT
 
         int ShowAxisArrows(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 particleEditor->ShowAxisArrows();
@@ -2227,7 +2227,7 @@ namespace GT
 
         int HideAxisArrows(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 particleEditor->HideAxisArrows();
@@ -2238,7 +2238,7 @@ namespace GT
 
         int IsShowingAxisArrows(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 script.Push(particleEditor->IsShowingAxisArrows());
@@ -2254,7 +2254,7 @@ namespace GT
 
         int GetViewportCameraSceneNodePtr(GT::Script &script)
         {
-            auto particleEditor = reinterpret_cast<GTEngine::ParticleEditor*>(script.ToPointer(1));
+            auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
             if (particleEditor != nullptr)
             {
                 script.Push(&particleEditor->GetCameraSceneNode());

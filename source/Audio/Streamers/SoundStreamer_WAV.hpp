@@ -5,7 +5,7 @@
 
 #include <GTEngine/Audio/SoundStreamer.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class SoundStreamer_WAV : public SoundStreamer
     {

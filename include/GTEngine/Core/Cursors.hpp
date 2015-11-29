@@ -5,7 +5,7 @@
 
 #include <GTEngine/Core/Strings/Equal.hpp>
 
-namespace GTLib
+namespace GT
 {
     enum Cursor
     {
@@ -34,54 +34,54 @@ namespace GTLib
     /// Converts a style attribute cursor string identifier to a Cursor enumerator ID.
     inline Cursor StringToCursor(const char* str, ptrdiff_t strSizeInTs = -1)
     {
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "arrow"))
+        if (Strings::Equal<false>(str, strSizeInTs, "arrow"))
         {
             return Cursor_Arrow;
         }
 
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "beam"))
+        if (Strings::Equal<false>(str, strSizeInTs, "beam"))
         {
             return Cursor_Beam;
         }
 
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "hand"))
+        if (Strings::Equal<false>(str, strSizeInTs, "hand"))
         {
             return Cursor_Hand;
         }
 
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "cross"))
+        if (Strings::Equal<false>(str, strSizeInTs, "cross"))
         {
             return Cursor_Cross;
         }
 
 
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "vert-double-arrow"))
+        if (Strings::Equal<false>(str, strSizeInTs, "vert-double-arrow"))
         {
             return Cursor_VertDoubleArrow;
         }
 
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "horz-double-arrow"))
+        if (Strings::Equal<false>(str, strSizeInTs, "horz-double-arrow"))
         {
             return Cursor_HorzDoubleArrow;
         }
 
 
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "size-top"))
+        if (Strings::Equal<false>(str, strSizeInTs, "size-top"))
         {
             return Cursor_SizeArrowTop;
         }
 
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "size-bottom"))
+        if (Strings::Equal<false>(str, strSizeInTs, "size-bottom"))
         {
             return Cursor_SizeArrowBottom;
         }
 
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "size-left"))
+        if (Strings::Equal<false>(str, strSizeInTs, "size-left"))
         {
             return Cursor_SizeArrowLeft;
         }
 
-        if (GTLib::Strings::Equal<false>(str, strSizeInTs, "size-right"))
+        if (Strings::Equal<false>(str, strSizeInTs, "size-right"))
         {
             return Cursor_SizeArrowRight;
         }

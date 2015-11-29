@@ -7,7 +7,7 @@
 #include "CollisionObject.hpp"
 #include "../Math.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing the base class for CollisionWorld and DynamicsWorld.
     ///

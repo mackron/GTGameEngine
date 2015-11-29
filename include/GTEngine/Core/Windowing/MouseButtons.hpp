@@ -3,7 +3,7 @@
 #ifndef __GTLib_MouseButtons_hpp_
 #define __GTLib_MouseButtons_hpp_
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  Enumerator for different mouse buttons.

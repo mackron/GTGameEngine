@@ -8,7 +8,7 @@
 #include <GTEngine/Rendering/DrawModes.hpp>
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers/
     class RCDraw : public RenderCommand

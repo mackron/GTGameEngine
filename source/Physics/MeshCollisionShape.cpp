@@ -2,7 +2,7 @@
 
 #include <GTEngine/Physics/MeshCollisionShape.hpp>
 
-namespace GTEngine
+namespace GT
 {
     MeshCollisionShape::MeshCollisionShape()
         : btGImpactMeshShape(new btTriangleIndexVertexArray)

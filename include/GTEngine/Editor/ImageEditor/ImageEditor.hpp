@@ -7,7 +7,7 @@
 #include "../../Texture2DLibrary.hpp"
 #include "../../Rendering/VertexArray.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing an image editor.
     class ImageEditor : public SubEditor

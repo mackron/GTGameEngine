@@ -6,7 +6,7 @@
 #include <easy_path/easy_path.h>
 #include <easy_fs/easy_vfs.h>
 
-namespace GTEngine
+namespace GT
 {
     GamePackager::GamePackager(const char* outputDirectoryAbsolutePathIn)
         : outputDirectoryAbsolutePath(outputDirectoryAbsolutePathIn),
@@ -22,7 +22,7 @@ namespace GTEngine
 
     void GamePackager::CopyDataDirectory(const char* sourceAbsolutePath, const char* destinationRelativePath)
     {
-        GTLib::String directoryName = easypath_filename(sourceAbsolutePath);
+        String directoryName = easypath_filename(sourceAbsolutePath);
 
         bool isRootDataDirectory = false;
         if (destinationRelativePath == nullptr)
@@ -48,9 +48,9 @@ namespace GTEngine
                 if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                 {
                     // Recursive. Don't want to copy over "var" directories.
-                    if (!(isRootDataDirectory && GTLib::Strings::Equal<false>(fileName, "var")))
+                    if (!(isRootDataDirectory && Strings::Equal<false>(fileName, "var")))
                     {
-                        this->CopyDataDirectory((GTLib::String(sourceAbsolutePath) + "/" + fileName).c_str(), (GTLib::String(destinationRelativePath) + "/" + fileName).c_str());
+                        this->CopyDataDirectory((String(sourceAbsolutePath) + "/" + fileName).c_str(), (String(destinationRelativePath) + "/" + fileName).c_str());
                     }
                 }
                 else
@@ -63,7 +63,7 @@ namespace GTEngine
                     {
                         // It's a non-gtmodel file. We need to look for an associated .gtmodel file.
                         easyvfs_file_info gtmodelInfo;
-                        if (easyvfs_get_file_info(g_EngineContext->GetVFS(), (GTLib::String(fileAbsolutePath) + ".gtmodel").c_str(), &gtmodelInfo))
+                        if (easyvfs_get_file_info(g_EngineContext->GetVFS(), (String(fileAbsolutePath) + ".gtmodel").c_str(), &gtmodelInfo))
                         {
                             easyvfs_file_info originalInfo;
                             if (easyvfs_get_file_info(g_EngineContext->GetVFS(), fileAbsolutePath, &originalInfo))
@@ -77,7 +77,7 @@ namespace GTEngine
                         }
                     }
 
-                    this->CopyFile(fileAbsolutePath, (GTLib::String(destinationRelativePath) + "/" + fileName).c_str());
+                    this->CopyFile(fileAbsolutePath, (String(destinationRelativePath) + "/" + fileName).c_str());
                 }
             }
         }
@@ -120,21 +120,21 @@ namespace GTEngine
             easypath_copyandappend(executableDirectory, sizeof(executableDirectory), this->outputDirectoryAbsolutePath.c_str(), executableRelativePath.c_str());
             easypath_remove_file_name(executableDirectory);
 
-            //GTLib::Path executableDirectory(this->outputDirectoryAbsolutePath.c_str());
+            //Path executableDirectory(this->outputDirectoryAbsolutePath.c_str());
             //executableDirectory.Append(executableRelativePath.c_str());
             //executableDirectory.RemoveLast();            // <-- Remove the file name, leaving the executable directory.
 
             // With the executable directory determined we can determine the paths of the data directories.
-            GTLib::Vector<GTLib::String> dataDirectoryConfigPaths;
+            Vector<String> dataDirectoryConfigPaths;
             for (size_t iDataDirectory = 0; iDataDirectory < this->dataDirectoryRelativePaths.count; ++iDataDirectory)
             {
-                //GTLib::Path dataDirectoryAbsolutePath((this->outputDirectoryAbsolutePath + "/" + this->dataDirectoryRelativePaths[iDataDirectory]).c_str());
+                //Path dataDirectoryAbsolutePath((this->outputDirectoryAbsolutePath + "/" + this->dataDirectoryRelativePaths[iDataDirectory]).c_str());
                 //dataDirectoryAbsolutePath.Clean();
 
                 char dataDirectoryAbsolutePath[EASYVFS_MAX_PATH];
                 easypath_append_and_clean(dataDirectoryAbsolutePath, sizeof(dataDirectoryAbsolutePath), this->outputDirectoryAbsolutePath.c_str(), this->dataDirectoryRelativePaths[iDataDirectory].c_str());
 
-                //GTLib::Path dataDirectoryRelativePath(GTLib::IO::ToRelativePath(dataDirectoryAbsolutePath.c_str(), executableDirectory.c_str()).c_str());
+                //Path dataDirectoryRelativePath(IO::ToRelativePath(dataDirectoryAbsolutePath.c_str(), executableDirectory.c_str()).c_str());
                 //dataDirectoryRelativePath.Clean();
 
                 char dataDirectoryRelativePath[EASYVFS_MAX_PATH];
@@ -143,7 +143,7 @@ namespace GTEngine
                 dataDirectoryConfigPaths.PushBack(dataDirectoryRelativePath);
             }
 
-            //GTLib::Path configPath(executableDirectory.c_str());
+            //Path configPath(executableDirectory.c_str());
             //configPath.Append("config.lua");
 
             char configPath[EASYVFS_MAX_PATH];
@@ -157,7 +157,7 @@ namespace GTEngine
                     auto index = static_cast<int>(iDataDirectory + 1);       // +1 because Lua is 1 based.
                     auto path  = dataDirectoryConfigPaths[iDataDirectory].c_str();
 
-                    easyvfs_write_string(pFile, GTLib::String::CreateFormatted("Directories.Data[%d] = \"%s\";", index, path).c_str());
+                    easyvfs_write_string(pFile, String::CreateFormatted("Directories.Data[%d] = \"%s\";", index, path).c_str());
                 }
 
 

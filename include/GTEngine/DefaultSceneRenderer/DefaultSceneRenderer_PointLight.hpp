@@ -5,7 +5,7 @@
 
 #include "DefaultSceneRenderer_ShadowVisibilityProcessor.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Structure representing a shadow-casting point light.
     struct DefaultSceneRendererPointLight : public SceneRendererPointLight

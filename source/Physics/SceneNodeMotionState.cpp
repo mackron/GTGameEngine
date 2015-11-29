@@ -3,7 +3,7 @@
 #include <GTEngine/Physics/SceneNodeMotionState.hpp>
 #include <GTEngine/SceneNode.hpp>
 
-namespace GTEngine
+namespace GT
 {
     void SceneNodeMotionState::setWorldTransform(const btTransform &worldTrans)
     {

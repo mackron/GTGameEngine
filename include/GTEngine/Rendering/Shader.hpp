@@ -8,7 +8,7 @@
 #include "../ShaderParameterCache.hpp"
 #include <GTEngine/Core/String.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Texture2D;
     class TextureCube;
@@ -64,9 +64,9 @@ namespace GTEngine
     private:
 
         /// The source of the shader.
-        GTLib::String vertexSource;
-        GTLib::String fragmentSource;
-        GTLib::String geometrySource;
+        String vertexSource;
+        String fragmentSource;
+        String geometrySource;
 
 
 

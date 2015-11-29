@@ -5,7 +5,7 @@
 
 #include <GTEngine/GUI/ElementEventHandler.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class SubEditor;
 

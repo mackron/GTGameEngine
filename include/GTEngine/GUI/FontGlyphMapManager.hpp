@@ -11,7 +11,7 @@ namespace GTGUI
 {
     class Server;
     
-    class FontGlyphMapManager : public GTLib::GlyphMapManager
+    class FontGlyphMapManager : public GT::GlyphMapManager
     {
     public:
     
@@ -23,22 +23,22 @@ namespace GTGUI
     
     
         /// GlyphMapManager::CreateGlyphMap()
-        GTLib::GlyphMapHandle CreateGlyphMap(unsigned int width, unsigned int height);
+        GT::GlyphMapHandle CreateGlyphMap(unsigned int width, unsigned int height);
         
         /// GlyphMapManager::DeleteGlyphMap()
-        void DeleteGlyphMap(GTLib::GlyphMapHandle glyphMapHandle);
+        void DeleteGlyphMap(GT::GlyphMapHandle glyphMapHandle);
         
         /// GlyphMapManager::SetGlyphMapData()
-        void SetGlyphMapData(GTLib::GlyphMapHandle glyphMapHandle, int xPos, int yPos, unsigned int width, unsigned int height, void* data);
+        void SetGlyphMapData(GT::GlyphMapHandle glyphMapHandle, int xPos, int yPos, unsigned int width, unsigned int height, void* data);
 
         /// GlyphMapManager::MapGlyphMapData()
-        void* MapGlyphMapData(GTLib::GlyphMapHandle glyphMapHandle);
+        void* MapGlyphMapData(GT::GlyphMapHandle glyphMapHandle);
 
         /// GlyphMapManager::UnmapGlyphMapData()
-        void UnmapGlyphMapData(GTLib::GlyphMapHandle glyphMapHandle);
+        void UnmapGlyphMapData(GT::GlyphMapHandle glyphMapHandle);
         
         /// GlyphMapManager::GetGlyphMapDimensions()
-        void GetGlyphMapDimensions(GTLib::GlyphMapHandle glyphMapHandle, unsigned int &width, unsigned int &height) const;
+        void GetGlyphMapDimensions(GT::GlyphMapHandle glyphMapHandle, unsigned int &width, unsigned int &height) const;
     
     
     private:
@@ -47,7 +47,7 @@ namespace GTGUI
         Server &m_server;
         
         /// For now, glyph maps are just GTLib images.
-        GTLib::Vector<ImageHandle> m_glyphMaps;
+        GT::Vector<ImageHandle> m_glyphMaps;
 
 
 	private:	// No copying.

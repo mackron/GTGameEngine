@@ -6,7 +6,7 @@
 
 
 // Helpers
-namespace GTEngine
+namespace GT
 {
     inline glm::vec4 GetVertexAttribute4(const float* data, size_t componentCount, size_t offset)
     {
@@ -77,7 +77,7 @@ namespace GTEngine
 }
 
 
-namespace GTEngine
+namespace GT
 {
     void ProcessVertexShader(CPUVertexShader &shader, size_t firstVertexID, size_t lastVertexID)
     {
@@ -108,7 +108,7 @@ namespace GTEngine
 
 
     /// Class representing the threading job to execute for processing a chunk of vertices.
-    class ProcessVertexShaderJob : public GTLib::Threading::Job
+    class ProcessVertexShaderJob : public Job
     {
     public:
 
@@ -162,10 +162,10 @@ namespace GTEngine
 }
 
 
-namespace GTEngine
+namespace GT
 {
     // Temp benchmarker.
-    GTLib::Benchmarker benchmarker;
+    Benchmarker benchmarker;
 
     CPUVertexShader::CPUVertexShader()
         : m_input(nullptr), m_vertexCount(0), m_format(), m_vertexSizeInFloats(m_format.GetSize()), m_output(nullptr),
@@ -211,7 +211,7 @@ namespace GTEngine
                 --threadCount;
 
                 // This is a temporary buffer containing the threads we've acquired.
-                GTLib::Thread** threads      = new GTLib::Thread*[threadCount];
+                Thread** threads      = new Thread*[threadCount];
                 ProcessVertexShaderJob** jobs = new ProcessVertexShaderJob*[threadCount];
 
 
@@ -248,7 +248,7 @@ namespace GTEngine
 
                     assert(thread != nullptr && job != nullptr);
 
-                    size_t lastVertexID = GTLib::Min(firstVertexID + vertexChunkSize, m_vertexCount - 1);
+                    size_t lastVertexID = Min(firstVertexID + vertexChunkSize, m_vertexCount - 1);
                     job->SetVertexRange(*this, firstVertexID, lastVertexID);
                         
                     thread->Start(*job, false);     // <-- second argument specifies not to wait for the execution of the current procedure to complete. It will be guaranteed that the thread won't already be running.
@@ -310,7 +310,7 @@ namespace GTEngine
 
 
 // CPUVertexShader::Vertex
-namespace GTEngine
+namespace GT
 {
     CPUVertexShader::Vertex::Vertex(unsigned int id, float* data, const VertexFormat &format)
         : id(id), data(data), format(format),

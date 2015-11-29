@@ -2,7 +2,7 @@
 
 #include <GTEngine/Bone.hpp>
 
-namespace GTEngine
+namespace GT
 {
     Bone::Bone()
         : parent(nullptr), children(),
@@ -254,7 +254,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void Bone::Serialize(GTLib::Serializer &serializer) const
+    void Bone::Serialize(Serializer &serializer) const
     {
         serializer.WriteString(this->name);
         serializer.Write(m_position);
@@ -264,7 +264,7 @@ namespace GTEngine
         serializer.Write(this->skinningMatrix);
     }
 
-    void Bone::Deserialize(GTLib::Deserializer &deserializer)
+    void Bone::Deserialize(Deserializer &deserializer)
     {
         deserializer.ReadString(this->name);
         deserializer.Read(m_position);

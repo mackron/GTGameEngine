@@ -11,14 +11,14 @@
 #include <cassert>
 #include <locale>
 
-namespace GTLib
+namespace GT
 {
     /// Class representing a basic UTF string.
     ///
     /// We've decided to favour simplicity and ease-of-implementation over speed with this class. We simply reuse low-level, c-style functions
-    /// that are already implemented by GTLib::Strings. The result is a much simpler and easier-to-maintain implementation. The main
+    /// that are already implemented by Strings. The result is a much simpler and easier-to-maintain implementation. The main
     /// consequence of this is that the internal buffer will be reallocated whenever the string is modified. Complex concatinations will be
-    /// slow with this class. Consider GTLib::Strings::List for doing complex concatinations.
+    /// slow with this class. Consider Strings::List for doing complex concatinations.
     ///
     /// Unlike std::string, it is perfectly OK to specify a null pointer as the input string for an assignment. In this case, it will simply
     /// use an empty string as the value.

@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  Structure for an individual item in a list.

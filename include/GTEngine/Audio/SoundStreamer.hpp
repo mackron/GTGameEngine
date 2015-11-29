@@ -11,7 +11,7 @@ namespace GT
     class Asset;
 }
 
-namespace GTEngine
+namespace GT
 {
     class SoundStreamer
     {

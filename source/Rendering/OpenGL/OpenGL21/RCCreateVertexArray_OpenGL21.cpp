@@ -4,7 +4,7 @@
 #include "ServerState_OpenGL21.hpp"
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     RCCreateVertexArray::RCCreateVertexArray()
         : vertexBufferObject(nullptr), indexBufferObject(nullptr), format()

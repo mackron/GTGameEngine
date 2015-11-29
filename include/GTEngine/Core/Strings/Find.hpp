@@ -8,7 +8,7 @@
 #include "Size.hpp"
 #include "Iterator.hpp"
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {

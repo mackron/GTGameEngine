@@ -20,7 +20,7 @@
 #include <cassert>
 
 
-namespace GTLib
+namespace GT
 {
     enum WindowShowType
     {
@@ -36,7 +36,7 @@ namespace GTLib
     *
     *   \section X11-Specific
     *   With X11, GTLib does not use the notion of a Display. It will create a global display object when the first window
-    *   is constructed. You can specify your own display by calling GTLib::X11::SetGlobalDisplay() before constructing the
+    *   is constructed. You can specify your own display by calling X11::SetGlobalDisplay() before constructing the
     *   first window. GTLib does not support multiple displays. Specifying InternalWindowObjects::display does not do anything
     *   when constructing a window from an InternalWindowObjects structure.
     */
@@ -49,7 +49,7 @@ namespace GTLib
         *
         *   \remarks
         *       With X11, the global display object will be used as the display. If this is the first window to be constructed,
-        *       the global display will be created, unless it was explicatly set with GTLib::X11::SetGlobalDisplay().
+        *       the global display will be created, unless it was explicatly set with X11::SetGlobalDisplay().
         */
         Window();
 
@@ -58,7 +58,7 @@ namespace GTLib
         *
         *   \remarks
         *       With X11, the global display will be used as the display. If this is the first window to be constructed, the global
-        *       display will be created, unless it was explicatly set with GTLib::X11::SetGlobalDisplay().
+        *       display will be created, unless it was explicatly set with X11::SetGlobalDisplay().
         */
         Window(const InternalWindowObjects &iwo);
 
@@ -190,7 +190,7 @@ namespace GTLib
     };
 }
 
-namespace GTLib
+namespace GT
 {
     /// Structure representing a window.
     ///
@@ -254,7 +254,7 @@ namespace GTLib
         /// A vector containing the last time each mouse button was pressed. We need this in order to check for double-clicks. We use
         /// a vector here because there can be an arbitrary number of mouse buttons, and I don't like hard-coded sized arrays. Each entry
         /// in this list corresponds to a button index.
-        GTLib::Vector<Time> lastMouseButtonClickTimes;
+        Vector<Time> lastMouseButtonClickTimes;
         
         
         /// Constructor.

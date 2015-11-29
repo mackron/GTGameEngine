@@ -124,7 +124,7 @@ namespace GTGUI
     private:
 
         /// The elements that have an invalid layout property. We need fast insertions and removals here, so we'll use a linked list.
-        GTLib::List<Element*> invalidElements;
+        GT::List<Element*> invalidElements;
 
 
         /// Structure representing an element that has been validated. This is only used during the
@@ -182,10 +182,10 @@ namespace GTGUI
         };
 
         /// The list of elements who have had their layout validated.
-        GTLib::BinarySearchTree<ValidatedElement> validatedElements;
+        GT::BinarySearchTree<ValidatedElement> validatedElements;
 
         /// The list of top level elements that will recursively update absolute layouts during the post-process stage.
-        GTLib::Vector<Element*> topLevelValidatedElements;
+        GT::Vector<Element*> topLevelValidatedElements;
 
 
 

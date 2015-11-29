@@ -3,7 +3,7 @@
 #include <GTEngine/DefaultScenePhysicsManager.hpp>
 #include <GTEngine/SceneNode.hpp>
 
-namespace GTEngine
+namespace GT
 {
     DefaultScenePhysicsManager::DefaultScenePhysicsManager()
         : world(), speedScale(1.0)

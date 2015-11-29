@@ -3,7 +3,7 @@
 #include <GTEngine/Editor/SceneEditor/SceneEditorPrefabLinker.hpp>
 #include <GTEngine/Editor/SceneEditor/SceneEditor.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneEditorPrefabLinker::SceneEditorPrefabLinker(Scene &scene, SceneEditor &sceneEditorIn)
         : DefaultPrefabLinker(scene), sceneEditor(sceneEditorIn), wasSelected(false)

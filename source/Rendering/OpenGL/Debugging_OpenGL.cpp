@@ -3,10 +3,10 @@
 #include "Debugging_OpenGL.hpp"
 #include <GTEngine/Logging.hpp>
 
-namespace GTEngine
+namespace GT
 {
     void OpenGLDebugMessageHandler(const char* message)
     {
-        GTEngine::Log("%s", message);
+        Log("%s", message);
     }
 }

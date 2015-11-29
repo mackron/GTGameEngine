@@ -3,7 +3,7 @@
 #ifndef __GTLib_KerningVector_hpp_
 #define __GTLib_KerningVector_hpp_
 
-namespace GTLib
+namespace GT
 {
     /// Stores the kerning information of two characters.
     struct KerningVector

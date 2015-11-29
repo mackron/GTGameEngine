@@ -44,7 +44,7 @@
 #include "../../Cursors.hpp"
 #include "../../Vector.hpp"
 
-namespace GTLib
+namespace GT
 {
     namespace X11
     {
@@ -246,7 +246,7 @@ namespace GTLib
 
         /// Retrieves the X11 cursor from the given GTLib cursor.
         ///
-        /// @param cursor [in] The GTLib::SystemCursor whose X11 counterpart is being retrieved.
+        /// @param cursor [in] The SystemCursor whose X11 counterpart is being retrieved.
         ::Cursor GetX11Cursor(Cursor cursor);
 
 
@@ -308,7 +308,7 @@ namespace GTLib
             Atom                          type;
             int                           format;       // 8, 16, or 32.
             unsigned long                 itemCount;
-            GTLib::Vector<unsigned char> data;
+            Vector<unsigned char> data;
         };
 
         /// Retrieves a property from the given window.

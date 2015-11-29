@@ -6,7 +6,7 @@
 #include "SceneViewport.hpp"
 #include "Rendering/DrawModes.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Structure representing a mesh that can be attached to a scene renderer outside of those defined by the scene.
     ///
@@ -318,7 +318,7 @@ namespace GTEngine
         /// Retrieves the value of a generic property.
         ///
         /// @param name [in] The name of the property to retrieve.
-        virtual GTLib::String GetStringProperty(const char* name) const;
+        virtual String GetStringProperty(const char* name) const;
         virtual int            GetIntegerProperty(const char* name) const;
         virtual float          GetFloatProperty(const char* name) const;
         virtual bool           GetBooleanProperty(const char* name) const;

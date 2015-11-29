@@ -9,7 +9,7 @@
 #include "TextureState_OpenGL21.hpp"
 
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers/
     class RCCreateTexture : public RenderCommand

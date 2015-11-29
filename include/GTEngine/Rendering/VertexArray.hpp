@@ -7,7 +7,7 @@
 #include "../Math.hpp"
 #include "../Serialization.hpp"
 
-namespace GTEngine
+namespace GT
 {
     enum VertexArrayUsage
     {
@@ -123,12 +123,12 @@ namespace GTEngine
         /// Serializes the vertex array.
         ///
         /// @param serializer [in] A reference to the serializer to write to.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the vertex array.
         ///
         /// @param deserializer [in] A reference to the deserializer to read from.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 

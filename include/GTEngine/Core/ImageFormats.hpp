@@ -8,7 +8,7 @@
 #define GTIMAGE_GENIMAGEFORMATID(componentCount, componentSize, componentType) \
     (componentCount << 24) | (componentSize << 16) | (componentType << 8)
 
-namespace GTLib
+namespace GT
 {
     namespace ImageFormatDataTypes
     {

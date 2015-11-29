@@ -5,7 +5,7 @@
 
 #include <GTEngine/Core/Timing.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class doing profiling. There is one of these for each game.
     ///
@@ -112,13 +112,13 @@ namespace GTEngine
 
 
         /// The benchmarker for the whole frame.
-        GTLib::Benchmarker frameBenchmarker;
+        Benchmarker frameBenchmarker;
 
         /// The benchmarker for the update thread.
-        GTLib::Benchmarker updateBenchmarker;
+        Benchmarker updateBenchmarker;
 
         /// the benchmarker for the rendering thread.
-        GTLib::Benchmarker renderingBenchmarker;
+        Benchmarker renderingBenchmarker;
 
 
 

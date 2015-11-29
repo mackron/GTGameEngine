@@ -8,7 +8,7 @@
 #include <easy_path/easy_path.h>
 #include <utility>
 
-namespace GTEngine
+namespace GT
 {
     //////////////////////////////////////
     // Globals.
@@ -16,7 +16,7 @@ namespace GTEngine
     typedef std::pair<ScriptDefinition*, size_t> ScriptDefinitionReference;
 
     /// The list of loaded classes, indexed by the absolute path.
-    static GTLib::Dictionary<ScriptDefinitionReference> LoadedDefinitions;
+    static Dictionary<ScriptDefinitionReference> LoadedDefinitions;
 
     /// A pointer to the working script. This is instantiated in Startup() and deleted in Shutdown().
     static GT::Script* WorkingScript = nullptr;
@@ -64,7 +64,7 @@ namespace GTEngine
         {
             if (makeRelativeTo != nullptr)
             {
-                //relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
+                //relativePath = IO::ToRelativePath(fileName, makeRelativeTo);
                 easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else

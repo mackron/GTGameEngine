@@ -6,7 +6,7 @@
 #include "SceneStateStackRestoreCommands.hpp"
 #include "Serialization.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class Scene;
     class SceneStateStackBranch;
@@ -54,20 +54,20 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the insert commands.
-              GTLib::Vector<uint64_t> & GetInserts()       { return this->inserts; }
-        const GTLib::Vector<uint64_t> & GetInserts() const { return this->inserts; }
+              Vector<uint64_t> & GetInserts()       { return this->inserts; }
+        const Vector<uint64_t> & GetInserts() const { return this->inserts; }
 
         /// Retrieves a reference to the delete commands.
-              GTLib::Map<uint64_t, GTLib::BasicSerializer*> & GetDeletes()       { return this->deletes; }
-        const GTLib::Map<uint64_t, GTLib::BasicSerializer*> & GetDeletes() const { return this->deletes; }
+              Map<uint64_t, BasicSerializer*> & GetDeletes()       { return this->deletes; }
+        const Map<uint64_t, BasicSerializer*> & GetDeletes() const { return this->deletes; }
 
         /// Retrieves a reference to the update commands.
-              GTLib::Vector<uint64_t> & GetUpdates()       { return this->updates; }
-        const GTLib::Vector<uint64_t> & GetUpdates() const { return this->updates; }
+              Vector<uint64_t> & GetUpdates()       { return this->updates; }
+        const Vector<uint64_t> & GetUpdates() const { return this->updates; }
 
         /// Retrieves a reference to the hierarchy.
-              GTLib::Map<uint64_t, uint64_t> & GetHierarchy()       { return this->hierarchy; }
-        const GTLib::Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
+              Map<uint64_t, uint64_t> & GetHierarchy()       { return this->hierarchy; }
+        const Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
 
 
 
@@ -87,10 +87,10 @@ namespace GTEngine
         // Serialization/Deserialization
 
         /// Serializes the state stack staging area.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the state stack staging area.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 
@@ -123,17 +123,17 @@ namespace GTEngine
 
 
         /// The list of scene node ID's of newly inserted scene nodes in the staging area.
-        GTLib::Vector<uint64_t> inserts;
+        Vector<uint64_t> inserts;
 
         /// The list of scene node ID's of newly deleted scene nodes in the staging area. We need to keep track of the serialized data
         /// because the scene will want to delete the node, after which point we won't be able to retrieve the data.
-        GTLib::Map<uint64_t, GTLib::BasicSerializer*> deletes;
+        Map<uint64_t, BasicSerializer*> deletes;
 
         /// The list of scene node ID's of newly updated scene nodes in the staging area.
-        GTLib::Vector<uint64_t> updates;
+        Vector<uint64_t> updates;
 
         /// The hierarchy of the nodes containined in the staging area. The key is the child node ID and the value is the parent node ID.
-        GTLib::Map<uint64_t, uint64_t> hierarchy;
+        Map<uint64_t, uint64_t> hierarchy;
     };
 }
 

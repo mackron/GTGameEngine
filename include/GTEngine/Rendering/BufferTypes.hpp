@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_BufferTypes_hpp_
 #define __GTEngine_Rendering_BufferTypes_hpp_
 
-namespace GTEngine
+namespace GT
 {
     enum BufferTypes
     {

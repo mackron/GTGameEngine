@@ -5,7 +5,7 @@
 
 #include "ParticleSystem.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Static class for managing loaded particle systems.
     class ParticleSystemLibrary

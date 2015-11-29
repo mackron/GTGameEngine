@@ -27,13 +27,13 @@ namespace GT
     {
         int EnableVSync(GT::Script &)
         {
-            GTEngine::Renderer::SetSwapInterval(1);
+            Renderer::SetSwapInterval(1);
             return 0;
         }
 
         int DisableVSync(GT::Script &)
         {
-            GTEngine::Renderer::SetSwapInterval(0);
+            Renderer::SetSwapInterval(0);
             return 0;
         }
     }

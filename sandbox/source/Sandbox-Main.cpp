@@ -26,9 +26,9 @@ int main(int argc, char** argv)
     int retValue = 1;
 
     // First we start up the engine, specifying the Game class we want to instantiate. This uses the default constructor.
-    GTEngine::DefaultGameStateManager gameStateManager;
+    GT::DefaultGameStateManager gameStateManager;
 
-    auto game = GTEngine::Startup<GTEngine::Game>(argc, argv, gameStateManager);
+    auto game = GT::Startup<GT::Game>(argc, argv, gameStateManager);
     if (game != nullptr)
     {
         // Now we run the game, keeping track of the return value.
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     }
 
     // And now we shut down the engine, passing the game object returned by Startup().
-    GTEngine::Shutdown(game);
+    GT::Shutdown(game);
 
 
     return retValue;

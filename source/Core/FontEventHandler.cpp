@@ -3,7 +3,7 @@
 #include <GTEngine/Core/FontEventHandler.hpp>
 #include <GTEngine/Core/FontServer.hpp>
 
-namespace GTLib
+namespace GT
 {
     FontEventHandler::~FontEventHandler()
     {

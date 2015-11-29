@@ -70,16 +70,16 @@ namespace GTGUI
     }
 
 
-    void ElementEventHandler::OnKeyPressed(Element &, GTLib::Key)
+    void ElementEventHandler::OnKeyPressed(Element &, GT::Key)
     {
     }
 
-    bool ElementEventHandler::OnKeyDown(Element &, GTLib::Key)
+    bool ElementEventHandler::OnKeyDown(Element &, GT::Key)
     {
         return true;
     }
     
-    void ElementEventHandler::OnKeyUp(Element &, GTLib::Key)
+    void ElementEventHandler::OnKeyUp(Element &, GT::Key)
     {
     }
 

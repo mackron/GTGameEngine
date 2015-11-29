@@ -5,7 +5,7 @@
 #include <GTEngine/Physics/DynamicsWorld.hpp>
 #include <GTEngine/Physics.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GenericConstraint::GenericConstraint(RigidBody &bodyA, RigidBody &bodyB, const glm::mat4 &frameA, const glm::mat4 &frameB)
         : btGeneric6DofConstraint(bodyA, bodyB, BulletUtils::CreateTransform(frameA), BulletUtils::CreateTransform(frameB), false),

@@ -15,7 +15,7 @@ namespace GTGUI
     }
 
 
-    GTLib::GlyphMapHandle FontGlyphMapManager::CreateGlyphMap(unsigned int width, unsigned int height)
+    GT::GlyphMapHandle FontGlyphMapManager::CreateGlyphMap(unsigned int width, unsigned int height)
     {
         auto imageManager = m_server.GetImageManager();
         if (imageManager != nullptr)
@@ -26,7 +26,7 @@ namespace GTGUI
             size_t dataSize = width * height;
             auto initialData = malloc(dataSize);
             
-            GTLib::GlyphMapHandle newImage = static_cast<GTLib::GlyphMapHandle>(imageManager->CreateImage(width, height, GTGUI::ImageFormat_A8, initialData));
+            GT::GlyphMapHandle newImage = static_cast<GT::GlyphMapHandle>(imageManager->CreateImage(width, height, GTGUI::ImageFormat_A8, initialData));
             this->m_glyphMaps.PushBack(newImage);
             
             
@@ -37,7 +37,7 @@ namespace GTGUI
         return 0;
     }
 
-    void FontGlyphMapManager::DeleteGlyphMap(GTLib::GlyphMapHandle glyphMapHandle)
+    void FontGlyphMapManager::DeleteGlyphMap(GT::GlyphMapHandle glyphMapHandle)
     {
         auto imageManager = m_server.GetImageManager();
         if (imageManager != nullptr)
@@ -47,7 +47,7 @@ namespace GTGUI
         }
     }
 
-    void FontGlyphMapManager::SetGlyphMapData(GTLib::GlyphMapHandle glyphMapHandle, int xPos, int yPos, unsigned int width, unsigned int height, void* data)
+    void FontGlyphMapManager::SetGlyphMapData(GT::GlyphMapHandle glyphMapHandle, int xPos, int yPos, unsigned int width, unsigned int height, void* data)
     {
         auto imageManager = m_server.GetImageManager();
         if (imageManager != nullptr)
@@ -56,15 +56,15 @@ namespace GTGUI
         }
     }
 
-    void* FontGlyphMapManager::MapGlyphMapData(GTLib::GlyphMapHandle)
+    void* FontGlyphMapManager::MapGlyphMapData(GT::GlyphMapHandle)
     {
         return nullptr;
     }
-    void FontGlyphMapManager::UnmapGlyphMapData(GTLib::GlyphMapHandle)
+    void FontGlyphMapManager::UnmapGlyphMapData(GT::GlyphMapHandle)
     {
     }
     
-    void FontGlyphMapManager::GetGlyphMapDimensions(GTLib::GlyphMapHandle glyphMapHandle, unsigned int &widthOut, unsigned int &heightOut) const
+    void FontGlyphMapManager::GetGlyphMapDimensions(GT::GlyphMapHandle glyphMapHandle, unsigned int &widthOut, unsigned int &heightOut) const
     {
         auto imageManager = m_server.GetImageManager();
         if (imageManager != nullptr)

@@ -3,7 +3,7 @@
 #ifndef __GTLib_FontMetrics_hpp_
 #define __GTLib_FontMetrics_hpp_
 
-namespace GTLib
+namespace GT
 {
     /// Structure containing the relevant metrics of the given font.
     struct FontMetrics

@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_TextureFilters_hpp_
 #define __GTEngine_Rendering_TextureFilters_hpp_
 
-namespace GTEngine
+namespace GT
 {
     enum TextureFilter
     {

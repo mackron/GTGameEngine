@@ -6,7 +6,7 @@
 #include "Mipmap.hpp"
 #include "ImageUtils.hpp"
 
-namespace GTLib
+namespace GT
 {
     /// Static class for generating mipmaps.
     class MipmapGenerator

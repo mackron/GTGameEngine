@@ -5,7 +5,7 @@
 
 #include <cstdint>
 
-namespace GTEngine
+namespace GT
 {
     class Scene;
     class SceneObject;

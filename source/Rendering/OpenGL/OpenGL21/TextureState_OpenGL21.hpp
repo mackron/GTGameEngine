@@ -7,7 +7,7 @@
 #include <gtgl/gtgl.h>
 
 
-namespace GTEngine
+namespace GT
 {
     struct ShaderState_OpenGL21;
 
@@ -20,7 +20,7 @@ namespace GTEngine
 
         /// The list of shader states that belong to shaders that are currently references this texture as one it's uniform variables. We need to keep
         /// track of this so we can let the shader know when we are deleted so it can set it's uniform to a sane value.
-        GTLib::Vector<ShaderState_OpenGL21*> shaders;
+        Vector<ShaderState_OpenGL21*> shaders;
 
 
         /// Constructor.

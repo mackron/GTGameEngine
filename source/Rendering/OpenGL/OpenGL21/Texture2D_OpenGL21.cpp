@@ -2,7 +2,7 @@
 
 #include "Texture2D_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     Texture2D_OpenGL21::Texture2D_OpenGL21(TextureState_OpenGL21* stateGLIn, GLenum targetIn)
         : stateGL(stateGLIn), target(targetIn)

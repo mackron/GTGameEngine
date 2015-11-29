@@ -5,7 +5,7 @@
 
 #include "SceneNode.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Container class for storing pointers to scene nodes, indexed by their unique ID.
     ///

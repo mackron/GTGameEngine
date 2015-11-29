@@ -9,7 +9,7 @@
 #include "Find.hpp"
 #include "Copy.hpp"
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {

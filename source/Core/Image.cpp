@@ -10,7 +10,7 @@
 #include <GTEngine/Core/Timing.hpp>
 #include <cstdio>
 
-namespace GTLib
+namespace GT
 {
     Image::Image()
         : m_format(ImageFormat_Auto), m_mipmaps(), m_loader(nullptr), m_flipped(false)

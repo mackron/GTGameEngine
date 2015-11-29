@@ -5,7 +5,7 @@
 
 #include "Physics.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Base class for managing the physics in a scene.
     class ScenePhysicsManager

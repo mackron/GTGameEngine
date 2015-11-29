@@ -3,7 +3,7 @@
 #include <GTEngine/Components/OccluderComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(OccluderComponent, "Occluder")
 

@@ -6,7 +6,7 @@
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
-namespace GTEngine
+namespace GT
 {
     // Default objects.
     //extern GLuint ServerState_DefaultVAO;

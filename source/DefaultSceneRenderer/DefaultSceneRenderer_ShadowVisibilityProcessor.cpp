@@ -2,7 +2,7 @@
 
 #include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_ShadowVisibilityProcessor.hpp>
 
-namespace GTEngine
+namespace GT
 {
     DefaultSceneRenderer_ShadowVisibilityProcessor::DefaultSceneRenderer_ShadowVisibilityProcessor()
         : meshes()

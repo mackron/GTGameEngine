@@ -5,18 +5,18 @@
 #include <GTEngine/Core/stdlib.hpp>
 #include <cstring>      // For memcpy().
 
-namespace GTLib
+namespace GT
 {
     namespace ImageUtils
     {
         unsigned int CalculateMipmapWidth(unsigned int mipmapIndex, unsigned int baseWidth)
         {
-            return static_cast<unsigned int>(GTLib::Max(1.0, baseWidth / std::pow(2.0, (int)mipmapIndex)));
+            return static_cast<unsigned int>(Max(1.0, baseWidth / std::pow(2.0, (int)mipmapIndex)));
         }
 
         unsigned int CalculateMipmapHeight(unsigned int mipmapIndex, unsigned int baseHeight)
         {
-            return static_cast<unsigned int>(GTLib::Max(1.0, baseHeight / std::pow(2.0, (int)mipmapIndex)));
+            return static_cast<unsigned int>(Max(1.0, baseHeight / std::pow(2.0, (int)mipmapIndex)));
         }
 
         unsigned int CalculateMipmapCount(unsigned int baseWidth)
@@ -31,7 +31,7 @@ namespace GTLib
 
         unsigned int CalculateMipmapCount(unsigned int baseWidth, unsigned int baseHeight, unsigned int baseDepth)
         {
-            float maxsize = static_cast<float>(GTLib::Max(GTLib::Max(baseWidth, baseHeight), baseDepth));
+            float maxsize = static_cast<float>(Max(Max(baseWidth, baseHeight), baseDepth));
 
             return static_cast<unsigned int>((std::log(maxsize) / std::log(2.0f)) + 1);
         }

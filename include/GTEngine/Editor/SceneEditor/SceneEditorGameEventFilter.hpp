@@ -6,7 +6,7 @@
 #include "../../GameEventFilter.hpp"
 #include <GTEngine/GUI/Element.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class SceneEditorGameEventFilter : public GameEventFilter
     {
@@ -36,13 +36,13 @@ namespace GTEngine
         bool OnMouseWheel(int &delta, int &mousePosX, int &mousePosY);
 
         /// GameEventFilter::OnMouseButtonDown().
-        bool OnMouseButtonDown(GTLib::MouseButton &button, int &mousePosX, int &mousePosY);
+        bool OnMouseButtonDown(MouseButton &button, int &mousePosX, int &mousePosY);
 
         /// GameEventFilter::OnMouseButtonUp().
-        bool OnMouseButtonUp(GTLib::MouseButton &button, int &mousePosX, int &mousePosY);
+        bool OnMouseButtonUp(MouseButton &button, int &mousePosX, int &mousePosY);
 
         /// GameEventFilter::OnMouseButtonDoubleClick().
-        bool OnMouseButtonDoubleClick(GTLib::MouseButton &button, int &mousePosX, int &mousePosY);
+        bool OnMouseButtonDoubleClick(MouseButton &button, int &mousePosX, int &mousePosY);
         
         
     private:

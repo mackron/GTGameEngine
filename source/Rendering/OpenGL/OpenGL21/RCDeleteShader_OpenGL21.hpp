@@ -8,7 +8,7 @@
 #include "../../RenderCommand.hpp"
 #include "ShaderState_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers/
     class RCDeleteShader : public RenderCommand

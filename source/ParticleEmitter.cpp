@@ -13,7 +13,7 @@
     #endif
 #endif
 
-namespace GTEngine
+namespace GT
 {
     inline void MixFromOriginSin(float angle, float a, float &s0, float &s1, float &d)
     {
@@ -151,7 +151,7 @@ namespace GTEngine
                     {
                         assert(false);
                         
-                        GTEngine::Log("You've forgotten to handle the particle function in the ParticleEmitter copy constructor!");
+                        Log("You've forgotten to handle the particle function in the ParticleEmitter copy constructor!");
                         break;
                     }
                 }
@@ -744,9 +744,9 @@ namespace GTEngine
     ////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void ParticleEmitter::Serialize(GTLib::Serializer &serializer, bool serializeParticles)
+    void ParticleEmitter::Serialize(Serializer &serializer, bool serializeParticles)
     {
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
 
         // First chunk is the main information.
         intermediarySerializer.WriteString(this->name.c_str());
@@ -826,7 +826,7 @@ namespace GTEngine
     }
 
 
-    void ParticleEmitter::Deserialize(GTLib::Deserializer &deserializer)
+    void ParticleEmitter::Deserialize(Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -870,7 +870,7 @@ namespace GTEngine
                 deserializer.Read(this->lifetimeMin);
                 deserializer.Read(this->lifetimeMax);
 
-                GTLib::String materialRelativePath;
+                String materialRelativePath;
                 deserializer.ReadString(materialRelativePath);
                 this->SetMaterial(materialRelativePath.c_str());
 
@@ -957,7 +957,7 @@ namespace GTEngine
 
 
 
-    void ParticleEmitter::SerializeFunction(GTLib::Serializer &serializer, const ParticleFunction &function)
+    void ParticleEmitter::SerializeFunction(Serializer &serializer, const ParticleFunction &function)
     {
         serializer.Write(static_cast<uint32_t>(function.GetType()));
 
@@ -999,7 +999,7 @@ namespace GTEngine
         }
     }
 
-    ParticleFunction* ParticleEmitter::DeserializeFunction(GTLib::Deserializer &deserializer)
+    ParticleFunction* ParticleEmitter::DeserializeFunction(Deserializer &deserializer)
     {
         uint32_t serializedType;
         deserializer.Read(serializedType);
@@ -1050,12 +1050,12 @@ namespace GTEngine
     }
 
 
-    void ParticleEmitter::SerializeParticle(GTLib::Serializer &serializer, const Particle &particle)
+    void ParticleEmitter::SerializeParticle(Serializer &serializer, const Particle &particle)
     {
         serializer.Write(particle);
     }
 
-    void ParticleEmitter::DeserializeParticle(GTLib::Deserializer &deserializer, Particle &particle)
+    void ParticleEmitter::DeserializeParticle(Deserializer &deserializer, Particle &particle)
     {
         deserializer.Read(particle);
     }

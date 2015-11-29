@@ -11,7 +11,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     ParticleEditor::ParticleEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
@@ -24,9 +24,9 @@ namespace GTEngine
           isShowingGrid(false), isShowingAxisArrows(false)
     {
         // We use the camera for our lights.
-        this->camera.AddComponent<GTEngine::CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 100.0f);
-        this->camera.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.4f, 0.4f, 0.4f);
-        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
+        this->camera.AddComponent<CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 100.0f);
+        this->camera.AddComponent<DirectionalLightComponent>()->SetColour(0.4f, 0.4f, 0.4f);
+        this->camera.AddComponent<AmbientLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
 
         // Viewport and Renderer.
         this->scene.SetDefaultViewportCamera(this->camera);
@@ -64,7 +64,7 @@ namespace GTEngine
         assert(this->mainElement != nullptr);
         {
             // The main element is the ModelEditor element. We need to pass 'this' as the '_internalPtr' argument.
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("ParticleEditor");
@@ -123,7 +123,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("ResetCamera");
@@ -260,7 +260,7 @@ namespace GTEngine
             auto file = easyvfs_open(g_EngineContext->GetVFS(), this->GetAbsolutePath(), EASYVFS_WRITE, 0);
             if (file != nullptr)
             {
-                GTLib::FileSerializer serializer(file);
+                FileSerializer serializer(file);
                 this->particleSystemDefinition.Serialize(serializer);
 
                 this->UnmarkAsModified();

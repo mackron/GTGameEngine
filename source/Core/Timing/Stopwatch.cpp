@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/Timing/Stopwatch.hpp>
 
-namespace GTLib
+namespace GT
 {
     Stopwatch::Stopwatch()
         : startTime(0.0), elapsed(0.0)
@@ -11,12 +11,12 @@ namespace GTLib
     
     void Stopwatch::Start()
     {
-        this->startTime = GTLib::Timing::GetTimeInSeconds();
+        this->startTime = Timing::GetTimeInSeconds();
     }
     
     void Stopwatch::Stop()
     {
-        this->elapsed = GTLib::Timing::GetTimeInSeconds() - this->startTime;
+        this->elapsed = Timing::GetTimeInSeconds() - this->startTime;
     }
     
     void Stopwatch::Reset()

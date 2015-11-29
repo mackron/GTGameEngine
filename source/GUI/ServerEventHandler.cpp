@@ -22,15 +22,15 @@ namespace GTGUI
         // Application must define this so they can use their own logs without having to attach them to the server.
     }
 
-    void ServerEventHandler::OnChangeCursor(GTLib::Cursor)
+    void ServerEventHandler::OnChangeCursor(GT::Cursor)
     {
     }
 
-    void ServerEventHandler::OnLoadFont(GTLib::Font &)
+    void ServerEventHandler::OnLoadFont(GT::Font &)
     {
     }
 
-    void ServerEventHandler::OnUnloadFont(GTLib::Font &)
+    void ServerEventHandler::OnUnloadFont(GT::Font &)
     {
     }
 }

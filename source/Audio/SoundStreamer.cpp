@@ -6,7 +6,7 @@
 #include "Streamers/SoundStreamer_WAV.hpp"
 #include "Streamers/SoundStreamer_Vorbis.hpp"
 
-namespace GTEngine
+namespace GT
 {
     SoundStreamer::SoundStreamer()
     {
@@ -26,7 +26,7 @@ namespace GTEngine
 
     SoundStreamer* SoundStreamer::CreateFromAsset(GT::Asset* pAsset)
     {
-        GTEngine::SoundStreamer* pStreamer = nullptr;
+        SoundStreamer* pStreamer = nullptr;
 
         if (pAsset->GetClass() == GT::AssetClass_Sound)
         {
@@ -39,7 +39,7 @@ namespace GTEngine
             // We need to create a streamer based on the compressed format of the audio data.
             switch (pSoundAsset->GetCompressedDataFormat())
             {
-            case GT::CompressedAudioFormat::WAV:    pStreamer = new GTEngine::SoundStreamer_WAV(dataInfo.pData, dataInfo.sizeInBytes);      break;
+            case GT::CompressedAudioFormat::WAV:    pStreamer = new SoundStreamer_WAV(dataInfo.pData, dataInfo.sizeInBytes);      break;
             case GT::CompressedAudioFormat::Vorbis: pStreamer = new GT::Engine::SoundStreamer_Vorbis(dataInfo.pData, dataInfo.sizeInBytes); break;
 
             case GT::CompressedAudioFormat::FLAC:

@@ -20,7 +20,7 @@ extern "C"
 
 namespace GT
 {
-    static GTLib::RandomLCG g_Random;
+    static RandomLCG g_Random;
 
     // This is the code from the lua-bit-numberlua project at https://github.com/davidm/lua-bit-numberlua. Below is the licence.
     //
@@ -743,186 +743,186 @@ namespace GT
                 {
                     // This list of keys is already defined in Keys.hpp. We can do a Find and Replace on that list to quickly generate this one:
                     //
-                    // 1) Copy and paste the content inside the GTLib::Keys namespace exactly as is
+                    // 1) Copy and paste the content inside the Keys namespace exactly as is
                     // 2) Run the following Find and Replace in Visual Studio 2013 (might need slight modification in other versions)
                     //        Find:    const char32_t ([^ ]*)(.*)=.*
-                    //        Replace: script.Push("$1");$2script.Push(static_cast<int>(GTLib::Keys::$1));$2script.SetTableValue(-3);
+                    //        Replace: script.Push("$1");$2script.Push(static_cast<int>(Keys::$1));$2script.SetTableValue(-3);
                     //
                     // Be sure to use "Selection" for the Look In option - don't want to accidentally run it on the entire project or anything.
 
-                    script.Push("Null");         script.Push(static_cast<int>(GTLib::Keys::Null));         script.SetTableValue(-3);
+                    script.Push("Null");         script.Push(static_cast<int>(Keys::Null));         script.SetTableValue(-3);
 
                     // ASCII
-                    script.Push("Backspace");    script.Push(static_cast<int>(GTLib::Keys::Backspace));    script.SetTableValue(-3);
-                    script.Push("Tab");          script.Push(static_cast<int>(GTLib::Keys::Tab));          script.SetTableValue(-3);
-                    script.Push("Return");       script.Push(static_cast<int>(GTLib::Keys::Return));       script.SetTableValue(-3);
-                    script.Push("Enter");        script.Push(static_cast<int>(GTLib::Keys::Enter));        script.SetTableValue(-3);
-                    script.Push("Escape");       script.Push(static_cast<int>(GTLib::Keys::Escape));       script.SetTableValue(-3);
-                    script.Push("Space");        script.Push(static_cast<int>(GTLib::Keys::Space));        script.SetTableValue(-3);
-                    script.Push("Exclamation");  script.Push(static_cast<int>(GTLib::Keys::Exclamation));  script.SetTableValue(-3);
-                    script.Push("DoubleQuote");  script.Push(static_cast<int>(GTLib::Keys::DoubleQuote));  script.SetTableValue(-3);
-                    script.Push("Hash");         script.Push(static_cast<int>(GTLib::Keys::Hash));         script.SetTableValue(-3);
-                    script.Push("Dollar");       script.Push(static_cast<int>(GTLib::Keys::Dollar));       script.SetTableValue(-3);
-                    script.Push("Percent");      script.Push(static_cast<int>(GTLib::Keys::Percent));      script.SetTableValue(-3);
-                    script.Push("Ampersand");    script.Push(static_cast<int>(GTLib::Keys::Ampersand));    script.SetTableValue(-3);
-                    script.Push("Apostrophe");   script.Push(static_cast<int>(GTLib::Keys::Apostrophe));   script.SetTableValue(-3);
-                    script.Push("ParanLeft");    script.Push(static_cast<int>(GTLib::Keys::ParanLeft));    script.SetTableValue(-3);
-                    script.Push("ParanRight");   script.Push(static_cast<int>(GTLib::Keys::ParanRight));   script.SetTableValue(-3);
-                    script.Push("Asterisk");     script.Push(static_cast<int>(GTLib::Keys::Asterisk));     script.SetTableValue(-3);
-                    script.Push("Plus");         script.Push(static_cast<int>(GTLib::Keys::Plus));         script.SetTableValue(-3);
-                    script.Push("Comma");        script.Push(static_cast<int>(GTLib::Keys::Comma));        script.SetTableValue(-3);
-                    script.Push("Minus");        script.Push(static_cast<int>(GTLib::Keys::Minus));        script.SetTableValue(-3);
-                    script.Push("Period");       script.Push(static_cast<int>(GTLib::Keys::Period));       script.SetTableValue(-3);
-                    script.Push("Slash");        script.Push(static_cast<int>(GTLib::Keys::Slash));        script.SetTableValue(-3);
-                    script.Push("Zero");         script.Push(static_cast<int>(GTLib::Keys::Zero));         script.SetTableValue(-3);
-                    script.Push("One");          script.Push(static_cast<int>(GTLib::Keys::One));          script.SetTableValue(-3);
-                    script.Push("Two");          script.Push(static_cast<int>(GTLib::Keys::Two));          script.SetTableValue(-3);
-                    script.Push("Three");        script.Push(static_cast<int>(GTLib::Keys::Three));        script.SetTableValue(-3);
-                    script.Push("Four");         script.Push(static_cast<int>(GTLib::Keys::Four));         script.SetTableValue(-3);
-                    script.Push("Five");         script.Push(static_cast<int>(GTLib::Keys::Five));         script.SetTableValue(-3);
-                    script.Push("Six");          script.Push(static_cast<int>(GTLib::Keys::Six));          script.SetTableValue(-3);
-                    script.Push("Seven");        script.Push(static_cast<int>(GTLib::Keys::Seven));        script.SetTableValue(-3);
-                    script.Push("Eight");        script.Push(static_cast<int>(GTLib::Keys::Eight));        script.SetTableValue(-3);
-                    script.Push("Nine");         script.Push(static_cast<int>(GTLib::Keys::Nine));         script.SetTableValue(-3);
-                    script.Push("Colon");        script.Push(static_cast<int>(GTLib::Keys::Colon));        script.SetTableValue(-3);
-                    script.Push("Semicolon");    script.Push(static_cast<int>(GTLib::Keys::Semicolon));    script.SetTableValue(-3);
-                    script.Push("Less");         script.Push(static_cast<int>(GTLib::Keys::Less));         script.SetTableValue(-3);
-                    script.Push("Equal");        script.Push(static_cast<int>(GTLib::Keys::Equal));        script.SetTableValue(-3);
-                    script.Push("Greater");      script.Push(static_cast<int>(GTLib::Keys::Greater));      script.SetTableValue(-3);
-                    script.Push("Question");     script.Push(static_cast<int>(GTLib::Keys::Question));     script.SetTableValue(-3);
-                    script.Push("At");           script.Push(static_cast<int>(GTLib::Keys::At));           script.SetTableValue(-3);
-                    script.Push("A");            script.Push(static_cast<int>(GTLib::Keys::A));            script.SetTableValue(-3);
-                    script.Push("B");            script.Push(static_cast<int>(GTLib::Keys::B));            script.SetTableValue(-3);
-                    script.Push("C");            script.Push(static_cast<int>(GTLib::Keys::C));            script.SetTableValue(-3);
-                    script.Push("D");            script.Push(static_cast<int>(GTLib::Keys::D));            script.SetTableValue(-3);
-                    script.Push("E");            script.Push(static_cast<int>(GTLib::Keys::E));            script.SetTableValue(-3);
-                    script.Push("F");            script.Push(static_cast<int>(GTLib::Keys::F));            script.SetTableValue(-3);
-                    script.Push("G");            script.Push(static_cast<int>(GTLib::Keys::G));            script.SetTableValue(-3);
-                    script.Push("H");            script.Push(static_cast<int>(GTLib::Keys::H));            script.SetTableValue(-3);
-                    script.Push("I");            script.Push(static_cast<int>(GTLib::Keys::I));            script.SetTableValue(-3);
-                    script.Push("J");            script.Push(static_cast<int>(GTLib::Keys::J));            script.SetTableValue(-3);
-                    script.Push("K");            script.Push(static_cast<int>(GTLib::Keys::K));            script.SetTableValue(-3);
-                    script.Push("L");            script.Push(static_cast<int>(GTLib::Keys::L));            script.SetTableValue(-3);
-                    script.Push("M");            script.Push(static_cast<int>(GTLib::Keys::M));            script.SetTableValue(-3);
-                    script.Push("N");            script.Push(static_cast<int>(GTLib::Keys::N));            script.SetTableValue(-3);
-                    script.Push("O");            script.Push(static_cast<int>(GTLib::Keys::O));            script.SetTableValue(-3);
-                    script.Push("P");            script.Push(static_cast<int>(GTLib::Keys::P));            script.SetTableValue(-3);
-                    script.Push("Q");            script.Push(static_cast<int>(GTLib::Keys::Q));            script.SetTableValue(-3);
-                    script.Push("R");            script.Push(static_cast<int>(GTLib::Keys::R));            script.SetTableValue(-3);
-                    script.Push("S");            script.Push(static_cast<int>(GTLib::Keys::S));            script.SetTableValue(-3);
-                    script.Push("T");            script.Push(static_cast<int>(GTLib::Keys::T));            script.SetTableValue(-3);
-                    script.Push("U");            script.Push(static_cast<int>(GTLib::Keys::U));            script.SetTableValue(-3);
-                    script.Push("V");            script.Push(static_cast<int>(GTLib::Keys::V));            script.SetTableValue(-3);
-                    script.Push("W");            script.Push(static_cast<int>(GTLib::Keys::W));            script.SetTableValue(-3);
-                    script.Push("X");            script.Push(static_cast<int>(GTLib::Keys::X));            script.SetTableValue(-3);
-                    script.Push("Y");            script.Push(static_cast<int>(GTLib::Keys::Y));            script.SetTableValue(-3);
-                    script.Push("Z");            script.Push(static_cast<int>(GTLib::Keys::Z));            script.SetTableValue(-3);
-                    script.Push("LeftBracket");  script.Push(static_cast<int>(GTLib::Keys::LeftBracket));  script.SetTableValue(-3);
-                    script.Push("BackSlash");    script.Push(static_cast<int>(GTLib::Keys::BackSlash));    script.SetTableValue(-3);
-                    script.Push("RightBracket"); script.Push(static_cast<int>(GTLib::Keys::RightBracket)); script.SetTableValue(-3);
-                    script.Push("CircumAccent"); script.Push(static_cast<int>(GTLib::Keys::CircumAccent)); script.SetTableValue(-3);
-                    script.Push("Underscore");   script.Push(static_cast<int>(GTLib::Keys::Underscore));   script.SetTableValue(-3);
-                    script.Push("GraveAccent");  script.Push(static_cast<int>(GTLib::Keys::GraveAccent));  script.SetTableValue(-3);
-                    script.Push("a");            script.Push(static_cast<int>(GTLib::Keys::a));            script.SetTableValue(-3);
-                    script.Push("b");            script.Push(static_cast<int>(GTLib::Keys::b));            script.SetTableValue(-3);
-                    script.Push("c");            script.Push(static_cast<int>(GTLib::Keys::c));            script.SetTableValue(-3);
-                    script.Push("d");            script.Push(static_cast<int>(GTLib::Keys::d));            script.SetTableValue(-3);
-                    script.Push("e");            script.Push(static_cast<int>(GTLib::Keys::e));            script.SetTableValue(-3);
-                    script.Push("f");            script.Push(static_cast<int>(GTLib::Keys::f));            script.SetTableValue(-3);
-                    script.Push("g");            script.Push(static_cast<int>(GTLib::Keys::g));            script.SetTableValue(-3);
-                    script.Push("h");            script.Push(static_cast<int>(GTLib::Keys::h));            script.SetTableValue(-3);
-                    script.Push("i");            script.Push(static_cast<int>(GTLib::Keys::i));            script.SetTableValue(-3);
-                    script.Push("j");            script.Push(static_cast<int>(GTLib::Keys::j));            script.SetTableValue(-3);
-                    script.Push("k");            script.Push(static_cast<int>(GTLib::Keys::k));            script.SetTableValue(-3);
-                    script.Push("l");            script.Push(static_cast<int>(GTLib::Keys::l));            script.SetTableValue(-3);
-                    script.Push("m");            script.Push(static_cast<int>(GTLib::Keys::m));            script.SetTableValue(-3);
-                    script.Push("n");            script.Push(static_cast<int>(GTLib::Keys::n));            script.SetTableValue(-3);
-                    script.Push("o");            script.Push(static_cast<int>(GTLib::Keys::o));            script.SetTableValue(-3);
-                    script.Push("p");            script.Push(static_cast<int>(GTLib::Keys::p));            script.SetTableValue(-3);
-                    script.Push("q");            script.Push(static_cast<int>(GTLib::Keys::q));            script.SetTableValue(-3);
-                    script.Push("r");            script.Push(static_cast<int>(GTLib::Keys::r));            script.SetTableValue(-3);
-                    script.Push("s");            script.Push(static_cast<int>(GTLib::Keys::s));            script.SetTableValue(-3);
-                    script.Push("t");            script.Push(static_cast<int>(GTLib::Keys::t));            script.SetTableValue(-3);
-                    script.Push("u");            script.Push(static_cast<int>(GTLib::Keys::u));            script.SetTableValue(-3);
-                    script.Push("v");            script.Push(static_cast<int>(GTLib::Keys::v));            script.SetTableValue(-3);
-                    script.Push("w");            script.Push(static_cast<int>(GTLib::Keys::w));            script.SetTableValue(-3);
-                    script.Push("x");            script.Push(static_cast<int>(GTLib::Keys::x));            script.SetTableValue(-3);
-                    script.Push("y");            script.Push(static_cast<int>(GTLib::Keys::y));            script.SetTableValue(-3);
-                    script.Push("z");            script.Push(static_cast<int>(GTLib::Keys::z));            script.SetTableValue(-3);
-                    script.Push("LeftBrace");    script.Push(static_cast<int>(GTLib::Keys::LeftBrace));    script.SetTableValue(-3);
-                    script.Push("Bar");          script.Push(static_cast<int>(GTLib::Keys::Bar));          script.SetTableValue(-3);
-                    script.Push("RightBrace");   script.Push(static_cast<int>(GTLib::Keys::RightBrace));   script.SetTableValue(-3);
-                    script.Push("Tilde");        script.Push(static_cast<int>(GTLib::Keys::Tilde));        script.SetTableValue(-3);
-                    script.Push("Delete");       script.Push(static_cast<int>(GTLib::Keys::Delete));       script.SetTableValue(-3);
+                    script.Push("Backspace");    script.Push(static_cast<int>(Keys::Backspace));    script.SetTableValue(-3);
+                    script.Push("Tab");          script.Push(static_cast<int>(Keys::Tab));          script.SetTableValue(-3);
+                    script.Push("Return");       script.Push(static_cast<int>(Keys::Return));       script.SetTableValue(-3);
+                    script.Push("Enter");        script.Push(static_cast<int>(Keys::Enter));        script.SetTableValue(-3);
+                    script.Push("Escape");       script.Push(static_cast<int>(Keys::Escape));       script.SetTableValue(-3);
+                    script.Push("Space");        script.Push(static_cast<int>(Keys::Space));        script.SetTableValue(-3);
+                    script.Push("Exclamation");  script.Push(static_cast<int>(Keys::Exclamation));  script.SetTableValue(-3);
+                    script.Push("DoubleQuote");  script.Push(static_cast<int>(Keys::DoubleQuote));  script.SetTableValue(-3);
+                    script.Push("Hash");         script.Push(static_cast<int>(Keys::Hash));         script.SetTableValue(-3);
+                    script.Push("Dollar");       script.Push(static_cast<int>(Keys::Dollar));       script.SetTableValue(-3);
+                    script.Push("Percent");      script.Push(static_cast<int>(Keys::Percent));      script.SetTableValue(-3);
+                    script.Push("Ampersand");    script.Push(static_cast<int>(Keys::Ampersand));    script.SetTableValue(-3);
+                    script.Push("Apostrophe");   script.Push(static_cast<int>(Keys::Apostrophe));   script.SetTableValue(-3);
+                    script.Push("ParanLeft");    script.Push(static_cast<int>(Keys::ParanLeft));    script.SetTableValue(-3);
+                    script.Push("ParanRight");   script.Push(static_cast<int>(Keys::ParanRight));   script.SetTableValue(-3);
+                    script.Push("Asterisk");     script.Push(static_cast<int>(Keys::Asterisk));     script.SetTableValue(-3);
+                    script.Push("Plus");         script.Push(static_cast<int>(Keys::Plus));         script.SetTableValue(-3);
+                    script.Push("Comma");        script.Push(static_cast<int>(Keys::Comma));        script.SetTableValue(-3);
+                    script.Push("Minus");        script.Push(static_cast<int>(Keys::Minus));        script.SetTableValue(-3);
+                    script.Push("Period");       script.Push(static_cast<int>(Keys::Period));       script.SetTableValue(-3);
+                    script.Push("Slash");        script.Push(static_cast<int>(Keys::Slash));        script.SetTableValue(-3);
+                    script.Push("Zero");         script.Push(static_cast<int>(Keys::Zero));         script.SetTableValue(-3);
+                    script.Push("One");          script.Push(static_cast<int>(Keys::One));          script.SetTableValue(-3);
+                    script.Push("Two");          script.Push(static_cast<int>(Keys::Two));          script.SetTableValue(-3);
+                    script.Push("Three");        script.Push(static_cast<int>(Keys::Three));        script.SetTableValue(-3);
+                    script.Push("Four");         script.Push(static_cast<int>(Keys::Four));         script.SetTableValue(-3);
+                    script.Push("Five");         script.Push(static_cast<int>(Keys::Five));         script.SetTableValue(-3);
+                    script.Push("Six");          script.Push(static_cast<int>(Keys::Six));          script.SetTableValue(-3);
+                    script.Push("Seven");        script.Push(static_cast<int>(Keys::Seven));        script.SetTableValue(-3);
+                    script.Push("Eight");        script.Push(static_cast<int>(Keys::Eight));        script.SetTableValue(-3);
+                    script.Push("Nine");         script.Push(static_cast<int>(Keys::Nine));         script.SetTableValue(-3);
+                    script.Push("Colon");        script.Push(static_cast<int>(Keys::Colon));        script.SetTableValue(-3);
+                    script.Push("Semicolon");    script.Push(static_cast<int>(Keys::Semicolon));    script.SetTableValue(-3);
+                    script.Push("Less");         script.Push(static_cast<int>(Keys::Less));         script.SetTableValue(-3);
+                    script.Push("Equal");        script.Push(static_cast<int>(Keys::Equal));        script.SetTableValue(-3);
+                    script.Push("Greater");      script.Push(static_cast<int>(Keys::Greater));      script.SetTableValue(-3);
+                    script.Push("Question");     script.Push(static_cast<int>(Keys::Question));     script.SetTableValue(-3);
+                    script.Push("At");           script.Push(static_cast<int>(Keys::At));           script.SetTableValue(-3);
+                    script.Push("A");            script.Push(static_cast<int>(Keys::A));            script.SetTableValue(-3);
+                    script.Push("B");            script.Push(static_cast<int>(Keys::B));            script.SetTableValue(-3);
+                    script.Push("C");            script.Push(static_cast<int>(Keys::C));            script.SetTableValue(-3);
+                    script.Push("D");            script.Push(static_cast<int>(Keys::D));            script.SetTableValue(-3);
+                    script.Push("E");            script.Push(static_cast<int>(Keys::E));            script.SetTableValue(-3);
+                    script.Push("F");            script.Push(static_cast<int>(Keys::F));            script.SetTableValue(-3);
+                    script.Push("G");            script.Push(static_cast<int>(Keys::G));            script.SetTableValue(-3);
+                    script.Push("H");            script.Push(static_cast<int>(Keys::H));            script.SetTableValue(-3);
+                    script.Push("I");            script.Push(static_cast<int>(Keys::I));            script.SetTableValue(-3);
+                    script.Push("J");            script.Push(static_cast<int>(Keys::J));            script.SetTableValue(-3);
+                    script.Push("K");            script.Push(static_cast<int>(Keys::K));            script.SetTableValue(-3);
+                    script.Push("L");            script.Push(static_cast<int>(Keys::L));            script.SetTableValue(-3);
+                    script.Push("M");            script.Push(static_cast<int>(Keys::M));            script.SetTableValue(-3);
+                    script.Push("N");            script.Push(static_cast<int>(Keys::N));            script.SetTableValue(-3);
+                    script.Push("O");            script.Push(static_cast<int>(Keys::O));            script.SetTableValue(-3);
+                    script.Push("P");            script.Push(static_cast<int>(Keys::P));            script.SetTableValue(-3);
+                    script.Push("Q");            script.Push(static_cast<int>(Keys::Q));            script.SetTableValue(-3);
+                    script.Push("R");            script.Push(static_cast<int>(Keys::R));            script.SetTableValue(-3);
+                    script.Push("S");            script.Push(static_cast<int>(Keys::S));            script.SetTableValue(-3);
+                    script.Push("T");            script.Push(static_cast<int>(Keys::T));            script.SetTableValue(-3);
+                    script.Push("U");            script.Push(static_cast<int>(Keys::U));            script.SetTableValue(-3);
+                    script.Push("V");            script.Push(static_cast<int>(Keys::V));            script.SetTableValue(-3);
+                    script.Push("W");            script.Push(static_cast<int>(Keys::W));            script.SetTableValue(-3);
+                    script.Push("X");            script.Push(static_cast<int>(Keys::X));            script.SetTableValue(-3);
+                    script.Push("Y");            script.Push(static_cast<int>(Keys::Y));            script.SetTableValue(-3);
+                    script.Push("Z");            script.Push(static_cast<int>(Keys::Z));            script.SetTableValue(-3);
+                    script.Push("LeftBracket");  script.Push(static_cast<int>(Keys::LeftBracket));  script.SetTableValue(-3);
+                    script.Push("BackSlash");    script.Push(static_cast<int>(Keys::BackSlash));    script.SetTableValue(-3);
+                    script.Push("RightBracket"); script.Push(static_cast<int>(Keys::RightBracket)); script.SetTableValue(-3);
+                    script.Push("CircumAccent"); script.Push(static_cast<int>(Keys::CircumAccent)); script.SetTableValue(-3);
+                    script.Push("Underscore");   script.Push(static_cast<int>(Keys::Underscore));   script.SetTableValue(-3);
+                    script.Push("GraveAccent");  script.Push(static_cast<int>(Keys::GraveAccent));  script.SetTableValue(-3);
+                    script.Push("a");            script.Push(static_cast<int>(Keys::a));            script.SetTableValue(-3);
+                    script.Push("b");            script.Push(static_cast<int>(Keys::b));            script.SetTableValue(-3);
+                    script.Push("c");            script.Push(static_cast<int>(Keys::c));            script.SetTableValue(-3);
+                    script.Push("d");            script.Push(static_cast<int>(Keys::d));            script.SetTableValue(-3);
+                    script.Push("e");            script.Push(static_cast<int>(Keys::e));            script.SetTableValue(-3);
+                    script.Push("f");            script.Push(static_cast<int>(Keys::f));            script.SetTableValue(-3);
+                    script.Push("g");            script.Push(static_cast<int>(Keys::g));            script.SetTableValue(-3);
+                    script.Push("h");            script.Push(static_cast<int>(Keys::h));            script.SetTableValue(-3);
+                    script.Push("i");            script.Push(static_cast<int>(Keys::i));            script.SetTableValue(-3);
+                    script.Push("j");            script.Push(static_cast<int>(Keys::j));            script.SetTableValue(-3);
+                    script.Push("k");            script.Push(static_cast<int>(Keys::k));            script.SetTableValue(-3);
+                    script.Push("l");            script.Push(static_cast<int>(Keys::l));            script.SetTableValue(-3);
+                    script.Push("m");            script.Push(static_cast<int>(Keys::m));            script.SetTableValue(-3);
+                    script.Push("n");            script.Push(static_cast<int>(Keys::n));            script.SetTableValue(-3);
+                    script.Push("o");            script.Push(static_cast<int>(Keys::o));            script.SetTableValue(-3);
+                    script.Push("p");            script.Push(static_cast<int>(Keys::p));            script.SetTableValue(-3);
+                    script.Push("q");            script.Push(static_cast<int>(Keys::q));            script.SetTableValue(-3);
+                    script.Push("r");            script.Push(static_cast<int>(Keys::r));            script.SetTableValue(-3);
+                    script.Push("s");            script.Push(static_cast<int>(Keys::s));            script.SetTableValue(-3);
+                    script.Push("t");            script.Push(static_cast<int>(Keys::t));            script.SetTableValue(-3);
+                    script.Push("u");            script.Push(static_cast<int>(Keys::u));            script.SetTableValue(-3);
+                    script.Push("v");            script.Push(static_cast<int>(Keys::v));            script.SetTableValue(-3);
+                    script.Push("w");            script.Push(static_cast<int>(Keys::w));            script.SetTableValue(-3);
+                    script.Push("x");            script.Push(static_cast<int>(Keys::x));            script.SetTableValue(-3);
+                    script.Push("y");            script.Push(static_cast<int>(Keys::y));            script.SetTableValue(-3);
+                    script.Push("z");            script.Push(static_cast<int>(Keys::z));            script.SetTableValue(-3);
+                    script.Push("LeftBrace");    script.Push(static_cast<int>(Keys::LeftBrace));    script.SetTableValue(-3);
+                    script.Push("Bar");          script.Push(static_cast<int>(Keys::Bar));          script.SetTableValue(-3);
+                    script.Push("RightBrace");   script.Push(static_cast<int>(Keys::RightBrace));   script.SetTableValue(-3);
+                    script.Push("Tilde");        script.Push(static_cast<int>(Keys::Tilde));        script.SetTableValue(-3);
+                    script.Push("Delete");       script.Push(static_cast<int>(Keys::Delete));       script.SetTableValue(-3);
 
-                    script.Push("Pause");        script.Push(static_cast<int>(GTLib::Keys::Pause));        script.SetTableValue(-3);
-                    script.Push("ScrollLock");   script.Push(static_cast<int>(GTLib::Keys::ScrollLock));   script.SetTableValue(-3);
+                    script.Push("Pause");        script.Push(static_cast<int>(Keys::Pause));        script.SetTableValue(-3);
+                    script.Push("ScrollLock");   script.Push(static_cast<int>(Keys::ScrollLock));   script.SetTableValue(-3);
 
                     // Non-printable keyboard keys. These are on the PUA in plane 15.
-                    script.Push("Shift");        script.Push(static_cast<int>(GTLib::Keys::Shift));        script.SetTableValue(-3);
-                    script.Push("Ctrl");         script.Push(static_cast<int>(GTLib::Keys::Ctrl));         script.SetTableValue(-3);
-                    script.Push("Alt");          script.Push(static_cast<int>(GTLib::Keys::Alt));          script.SetTableValue(-3);
-                    script.Push("Super");        script.Push(static_cast<int>(GTLib::Keys::Super));        script.SetTableValue(-3);
-                    script.Push("CapsLock");     script.Push(static_cast<int>(GTLib::Keys::CapsLock));     script.SetTableValue(-3);
+                    script.Push("Shift");        script.Push(static_cast<int>(Keys::Shift));        script.SetTableValue(-3);
+                    script.Push("Ctrl");         script.Push(static_cast<int>(Keys::Ctrl));         script.SetTableValue(-3);
+                    script.Push("Alt");          script.Push(static_cast<int>(Keys::Alt));          script.SetTableValue(-3);
+                    script.Push("Super");        script.Push(static_cast<int>(Keys::Super));        script.SetTableValue(-3);
+                    script.Push("CapsLock");     script.Push(static_cast<int>(Keys::CapsLock));     script.SetTableValue(-3);
 
-                    script.Push("ArrowLeft");    script.Push(static_cast<int>(GTLib::Keys::ArrowLeft));    script.SetTableValue(-3);
-                    script.Push("ArrowRight");   script.Push(static_cast<int>(GTLib::Keys::ArrowRight));   script.SetTableValue(-3);
-                    script.Push("ArrowUp");      script.Push(static_cast<int>(GTLib::Keys::ArrowUp));      script.SetTableValue(-3);
-                    script.Push("ArrowDown");    script.Push(static_cast<int>(GTLib::Keys::ArrowDown));    script.SetTableValue(-3);
+                    script.Push("ArrowLeft");    script.Push(static_cast<int>(Keys::ArrowLeft));    script.SetTableValue(-3);
+                    script.Push("ArrowRight");   script.Push(static_cast<int>(Keys::ArrowRight));   script.SetTableValue(-3);
+                    script.Push("ArrowUp");      script.Push(static_cast<int>(Keys::ArrowUp));      script.SetTableValue(-3);
+                    script.Push("ArrowDown");    script.Push(static_cast<int>(Keys::ArrowDown));    script.SetTableValue(-3);
 
-                    script.Push("F1");           script.Push(static_cast<int>(GTLib::Keys::F1));           script.SetTableValue(-3);
-                    script.Push("F2");           script.Push(static_cast<int>(GTLib::Keys::F2));           script.SetTableValue(-3);
-                    script.Push("F3");           script.Push(static_cast<int>(GTLib::Keys::F3));           script.SetTableValue(-3);
-                    script.Push("F4");           script.Push(static_cast<int>(GTLib::Keys::F4));           script.SetTableValue(-3);
-                    script.Push("F5");           script.Push(static_cast<int>(GTLib::Keys::F5));           script.SetTableValue(-3);
-                    script.Push("F6");           script.Push(static_cast<int>(GTLib::Keys::F6));           script.SetTableValue(-3);
-                    script.Push("F7");           script.Push(static_cast<int>(GTLib::Keys::F7));           script.SetTableValue(-3);
-                    script.Push("F8");           script.Push(static_cast<int>(GTLib::Keys::F8));           script.SetTableValue(-3);
-                    script.Push("F9");           script.Push(static_cast<int>(GTLib::Keys::F9));           script.SetTableValue(-3);
-                    script.Push("F10");          script.Push(static_cast<int>(GTLib::Keys::F10));          script.SetTableValue(-3);
-                    script.Push("F11");          script.Push(static_cast<int>(GTLib::Keys::F11));          script.SetTableValue(-3);
-                    script.Push("F12");          script.Push(static_cast<int>(GTLib::Keys::F12));          script.SetTableValue(-3);
-                    script.Push("F13");          script.Push(static_cast<int>(GTLib::Keys::F13));          script.SetTableValue(-3);
-                    script.Push("F14");          script.Push(static_cast<int>(GTLib::Keys::F14));          script.SetTableValue(-3);
-                    script.Push("F15");          script.Push(static_cast<int>(GTLib::Keys::F15));          script.SetTableValue(-3);
-                    script.Push("F16");          script.Push(static_cast<int>(GTLib::Keys::F16));          script.SetTableValue(-3);
-                    script.Push("F17");          script.Push(static_cast<int>(GTLib::Keys::F17));          script.SetTableValue(-3);
-                    script.Push("F18");          script.Push(static_cast<int>(GTLib::Keys::F18));          script.SetTableValue(-3);
-                    script.Push("F19");          script.Push(static_cast<int>(GTLib::Keys::F19));          script.SetTableValue(-3);
-                    script.Push("F20");          script.Push(static_cast<int>(GTLib::Keys::F20));          script.SetTableValue(-3);
-                    script.Push("F21");          script.Push(static_cast<int>(GTLib::Keys::F21));          script.SetTableValue(-3);
-                    script.Push("F22");          script.Push(static_cast<int>(GTLib::Keys::F22));          script.SetTableValue(-3);
-                    script.Push("F23");          script.Push(static_cast<int>(GTLib::Keys::F23));          script.SetTableValue(-3);
-                    script.Push("F24");          script.Push(static_cast<int>(GTLib::Keys::F24));          script.SetTableValue(-3);
+                    script.Push("F1");           script.Push(static_cast<int>(Keys::F1));           script.SetTableValue(-3);
+                    script.Push("F2");           script.Push(static_cast<int>(Keys::F2));           script.SetTableValue(-3);
+                    script.Push("F3");           script.Push(static_cast<int>(Keys::F3));           script.SetTableValue(-3);
+                    script.Push("F4");           script.Push(static_cast<int>(Keys::F4));           script.SetTableValue(-3);
+                    script.Push("F5");           script.Push(static_cast<int>(Keys::F5));           script.SetTableValue(-3);
+                    script.Push("F6");           script.Push(static_cast<int>(Keys::F6));           script.SetTableValue(-3);
+                    script.Push("F7");           script.Push(static_cast<int>(Keys::F7));           script.SetTableValue(-3);
+                    script.Push("F8");           script.Push(static_cast<int>(Keys::F8));           script.SetTableValue(-3);
+                    script.Push("F9");           script.Push(static_cast<int>(Keys::F9));           script.SetTableValue(-3);
+                    script.Push("F10");          script.Push(static_cast<int>(Keys::F10));          script.SetTableValue(-3);
+                    script.Push("F11");          script.Push(static_cast<int>(Keys::F11));          script.SetTableValue(-3);
+                    script.Push("F12");          script.Push(static_cast<int>(Keys::F12));          script.SetTableValue(-3);
+                    script.Push("F13");          script.Push(static_cast<int>(Keys::F13));          script.SetTableValue(-3);
+                    script.Push("F14");          script.Push(static_cast<int>(Keys::F14));          script.SetTableValue(-3);
+                    script.Push("F15");          script.Push(static_cast<int>(Keys::F15));          script.SetTableValue(-3);
+                    script.Push("F16");          script.Push(static_cast<int>(Keys::F16));          script.SetTableValue(-3);
+                    script.Push("F17");          script.Push(static_cast<int>(Keys::F17));          script.SetTableValue(-3);
+                    script.Push("F18");          script.Push(static_cast<int>(Keys::F18));          script.SetTableValue(-3);
+                    script.Push("F19");          script.Push(static_cast<int>(Keys::F19));          script.SetTableValue(-3);
+                    script.Push("F20");          script.Push(static_cast<int>(Keys::F20));          script.SetTableValue(-3);
+                    script.Push("F21");          script.Push(static_cast<int>(Keys::F21));          script.SetTableValue(-3);
+                    script.Push("F22");          script.Push(static_cast<int>(Keys::F22));          script.SetTableValue(-3);
+                    script.Push("F23");          script.Push(static_cast<int>(Keys::F23));          script.SetTableValue(-3);
+                    script.Push("F24");          script.Push(static_cast<int>(Keys::F24));          script.SetTableValue(-3);
 
-                    script.Push("End");          script.Push(static_cast<int>(GTLib::Keys::End));          script.SetTableValue(-3);
-                    script.Push("Home");         script.Push(static_cast<int>(GTLib::Keys::Home));         script.SetTableValue(-3);
-                    script.Push("PageUp");       script.Push(static_cast<int>(GTLib::Keys::PageUp));       script.SetTableValue(-3);
-                    script.Push("PageDown");     script.Push(static_cast<int>(GTLib::Keys::PageDown));     script.SetTableValue(-3);
+                    script.Push("End");          script.Push(static_cast<int>(Keys::End));          script.SetTableValue(-3);
+                    script.Push("Home");         script.Push(static_cast<int>(Keys::Home));         script.SetTableValue(-3);
+                    script.Push("PageUp");       script.Push(static_cast<int>(Keys::PageUp));       script.SetTableValue(-3);
+                    script.Push("PageDown");     script.Push(static_cast<int>(Keys::PageDown));     script.SetTableValue(-3);
 
-                    script.Push("Select");       script.Push(static_cast<int>(GTLib::Keys::Select));       script.SetTableValue(-3);
-                    script.Push("Print");        script.Push(static_cast<int>(GTLib::Keys::Print));        script.SetTableValue(-3);
-                    script.Push("Execute");      script.Push(static_cast<int>(GTLib::Keys::Execute));      script.SetTableValue(-3);
-                    script.Push("Insert");       script.Push(static_cast<int>(GTLib::Keys::Insert));       script.SetTableValue(-3);
-                    script.Push("Undo");         script.Push(static_cast<int>(GTLib::Keys::Undo));         script.SetTableValue(-3);
-                    script.Push("Redo");         script.Push(static_cast<int>(GTLib::Keys::Redo));         script.SetTableValue(-3);
-                    script.Push("Menu");         script.Push(static_cast<int>(GTLib::Keys::Menu));         script.SetTableValue(-3);
-                    script.Push("Find");         script.Push(static_cast<int>(GTLib::Keys::Find));         script.SetTableValue(-3);
-                    script.Push("Cancel");       script.Push(static_cast<int>(GTLib::Keys::Cancel));       script.SetTableValue(-3);
-                    script.Push("Help");         script.Push(static_cast<int>(GTLib::Keys::Help));         script.SetTableValue(-3);
-                    script.Push("Break");        script.Push(static_cast<int>(GTLib::Keys::Break));        script.SetTableValue(-3);
-                    script.Push("ModeSwitch");   script.Push(static_cast<int>(GTLib::Keys::ModeSwitch));   script.SetTableValue(-3);
-                    script.Push("NumLock");      script.Push(static_cast<int>(GTLib::Keys::NumLock));      script.SetTableValue(-3);
+                    script.Push("Select");       script.Push(static_cast<int>(Keys::Select));       script.SetTableValue(-3);
+                    script.Push("Print");        script.Push(static_cast<int>(Keys::Print));        script.SetTableValue(-3);
+                    script.Push("Execute");      script.Push(static_cast<int>(Keys::Execute));      script.SetTableValue(-3);
+                    script.Push("Insert");       script.Push(static_cast<int>(Keys::Insert));       script.SetTableValue(-3);
+                    script.Push("Undo");         script.Push(static_cast<int>(Keys::Undo));         script.SetTableValue(-3);
+                    script.Push("Redo");         script.Push(static_cast<int>(Keys::Redo));         script.SetTableValue(-3);
+                    script.Push("Menu");         script.Push(static_cast<int>(Keys::Menu));         script.SetTableValue(-3);
+                    script.Push("Find");         script.Push(static_cast<int>(Keys::Find));         script.SetTableValue(-3);
+                    script.Push("Cancel");       script.Push(static_cast<int>(Keys::Cancel));       script.SetTableValue(-3);
+                    script.Push("Help");         script.Push(static_cast<int>(Keys::Help));         script.SetTableValue(-3);
+                    script.Push("Break");        script.Push(static_cast<int>(Keys::Break));        script.SetTableValue(-3);
+                    script.Push("ModeSwitch");   script.Push(static_cast<int>(Keys::ModeSwitch));   script.SetTableValue(-3);
+                    script.Push("NumLock");      script.Push(static_cast<int>(Keys::NumLock));      script.SetTableValue(-3);
 
 
                     // Aliases
-                    script.Push("LeftRoundBracket");   script.Push(static_cast<int>(GTLib::Keys::LeftRoundBracket));   script.SetTableValue(-3);
-                    script.Push("RightRoundBracket");  script.Push(static_cast<int>(GTLib::Keys::RightRoundBracket));  script.SetTableValue(-3);
-                    script.Push("LeftSquareBracket");  script.Push(static_cast<int>(GTLib::Keys::LeftSquareBracket));  script.SetTableValue(-3);
-                    script.Push("RightSquareBracket"); script.Push(static_cast<int>(GTLib::Keys::RightSquareBracket)); script.SetTableValue(-3);
-                    script.Push("Grave");              script.Push(static_cast<int>(GTLib::Keys::Grave));              script.SetTableValue(-3);
-                    script.Push("LeftCurlyBracket");   script.Push(static_cast<int>(GTLib::Keys::LeftCurlyBracket));   script.SetTableValue(-3);
-                    script.Push("RightCurlyBracket");  script.Push(static_cast<int>(GTLib::Keys::RightCurlyBracket));  script.SetTableValue(-3);
+                    script.Push("LeftRoundBracket");   script.Push(static_cast<int>(Keys::LeftRoundBracket));   script.SetTableValue(-3);
+                    script.Push("RightRoundBracket");  script.Push(static_cast<int>(Keys::RightRoundBracket));  script.SetTableValue(-3);
+                    script.Push("LeftSquareBracket");  script.Push(static_cast<int>(Keys::LeftSquareBracket));  script.SetTableValue(-3);
+                    script.Push("RightSquareBracket"); script.Push(static_cast<int>(Keys::RightSquareBracket)); script.SetTableValue(-3);
+                    script.Push("Grave");              script.Push(static_cast<int>(Keys::Grave));              script.SetTableValue(-3);
+                    script.Push("LeftCurlyBracket");   script.Push(static_cast<int>(Keys::LeftCurlyBracket));   script.SetTableValue(-3);
+                    script.Push("RightCurlyBracket");  script.Push(static_cast<int>(Keys::RightCurlyBracket));  script.SetTableValue(-3);
                 }
                 script.SetTableValue(-3);
 
@@ -933,18 +933,18 @@ namespace GT
                 {
                     // This list of mouse buttons is already defined in MouseButtons.hpp. We can do a Find and Replace on that list to quickly generate this one:
                     //
-                    // 1) Copy and paste the content inside the GTLib::MouseButtons enum exactly as is (not including the surrounding "enum { }".
+                    // 1) Copy and paste the content inside the MouseButtons enum exactly as is (not including the surrounding "enum { }".
                     // 2) Run the following Find and Replace in Visual Studio 2013 (might need slight modification in other versions)
                     //        Find:    .*_([^ ]*)(.*)=.*
-                    //        Replace: script.Push("$1");$2script.Push(static_cast<int>(GTLib::MouseButton_$1));$2script.SetTableValue(-3);
+                    //        Replace: script.Push("$1");$2script.Push(static_cast<int>(MouseButton_$1));$2script.SetTableValue(-3);
                     //
                     // Be sure to use "Selection" for the Look In option - don't want to accidentally run it on the entire project or anything.
 
-                    script.Push("Unknown"); script.Push(static_cast<int>(GTLib::MouseButton_Unknown)); script.SetTableValue(-3);
+                    script.Push("Unknown"); script.Push(static_cast<int>(MouseButton_Unknown)); script.SetTableValue(-3);
 
-                    script.Push("Left");    script.Push(static_cast<int>(GTLib::MouseButton_Left));    script.SetTableValue(-3);
-                    script.Push("Right");   script.Push(static_cast<int>(GTLib::MouseButton_Right));   script.SetTableValue(-3);
-                    script.Push("Middle");  script.Push(static_cast<int>(GTLib::MouseButton_Middle));  script.SetTableValue(-3);
+                    script.Push("Left");    script.Push(static_cast<int>(MouseButton_Left));    script.SetTableValue(-3);
+                    script.Push("Right");   script.Push(static_cast<int>(MouseButton_Right));   script.SetTableValue(-3);
+                    script.Push("Middle");  script.Push(static_cast<int>(MouseButton_Middle));  script.SetTableValue(-3);
                 }
                 script.SetTableValue(-3);
 
@@ -1369,18 +1369,18 @@ namespace GT
             script.Push("CollisionShapeTypes");
             script.PushNewTable();
             {
-                script.SetTableValue(-1, "None",             GTEngine::CollisionShapeType_None);
-                script.SetTableValue(-1, "Box",              GTEngine::CollisionShapeType_Box);
-                script.SetTableValue(-1, "Sphere",           GTEngine::CollisionShapeType_Sphere);
-                script.SetTableValue(-1, "Ellipsoid",        GTEngine::CollisionShapeType_Ellipsoid);
-                script.SetTableValue(-1, "CylinderX",        GTEngine::CollisionShapeType_CylinderX);
-                script.SetTableValue(-1, "CylinderY",        GTEngine::CollisionShapeType_CylinderY);
-                script.SetTableValue(-1, "CylinderZ",        GTEngine::CollisionShapeType_CylinderZ);
-                script.SetTableValue(-1, "CapsuleX",         GTEngine::CollisionShapeType_CapsuleX);
-                script.SetTableValue(-1, "CapsuleY",         GTEngine::CollisionShapeType_CapsuleY);
-                script.SetTableValue(-1, "CapsuleZ",         GTEngine::CollisionShapeType_CapsuleZ);
-                script.SetTableValue(-1, "ConvexHull",       GTEngine::CollisionShapeType_ConvexHull);
-                script.SetTableValue(-1, "ModelConvexHulls", GTEngine::CollisionShapeType_ModelConvexHulls);       // A special type representing the case when the convex hulls from the model is being used.
+                script.SetTableValue(-1, "None",             CollisionShapeType_None);
+                script.SetTableValue(-1, "Box",              CollisionShapeType_Box);
+                script.SetTableValue(-1, "Sphere",           CollisionShapeType_Sphere);
+                script.SetTableValue(-1, "Ellipsoid",        CollisionShapeType_Ellipsoid);
+                script.SetTableValue(-1, "CylinderX",        CollisionShapeType_CylinderX);
+                script.SetTableValue(-1, "CylinderY",        CollisionShapeType_CylinderY);
+                script.SetTableValue(-1, "CylinderZ",        CollisionShapeType_CylinderZ);
+                script.SetTableValue(-1, "CapsuleX",         CollisionShapeType_CapsuleX);
+                script.SetTableValue(-1, "CapsuleY",         CollisionShapeType_CapsuleY);
+                script.SetTableValue(-1, "CapsuleZ",         CollisionShapeType_CapsuleZ);
+                script.SetTableValue(-1, "ConvexHull",       CollisionShapeType_ConvexHull);
+                script.SetTableValue(-1, "ModelConvexHulls", CollisionShapeType_ModelConvexHulls);       // A special type representing the case when the convex hulls from the model is being used.
             }
             script.SetTableValue(-3);
 
@@ -1392,15 +1392,15 @@ namespace GT
             script.Push("ScriptVariableTypes");
             script.PushNewTable();
             {
-                script.SetTableValue(-1, "Unknown", GTEngine::ScriptVariableType_Unknown);
-                script.SetTableValue(-1, "None",    GTEngine::ScriptVariableType_None);
-                script.SetTableValue(-1, "Number",  GTEngine::ScriptVariableType_Number);
-                script.SetTableValue(-1, "Vec2",    GTEngine::ScriptVariableType_Vec2);
-                script.SetTableValue(-1, "Vec3",    GTEngine::ScriptVariableType_Vec3);
-                script.SetTableValue(-1, "Vec4",    GTEngine::ScriptVariableType_Vec4);
-                script.SetTableValue(-1, "Boolean", GTEngine::ScriptVariableType_Boolean);
-                script.SetTableValue(-1, "String",  GTEngine::ScriptVariableType_String);
-                script.SetTableValue(-1, "Prefab",  GTEngine::ScriptVariableType_Prefab);
+                script.SetTableValue(-1, "Unknown", ScriptVariableType_Unknown);
+                script.SetTableValue(-1, "None",    ScriptVariableType_None);
+                script.SetTableValue(-1, "Number",  ScriptVariableType_Number);
+                script.SetTableValue(-1, "Vec2",    ScriptVariableType_Vec2);
+                script.SetTableValue(-1, "Vec3",    ScriptVariableType_Vec3);
+                script.SetTableValue(-1, "Vec4",    ScriptVariableType_Vec4);
+                script.SetTableValue(-1, "Boolean", ScriptVariableType_Boolean);
+                script.SetTableValue(-1, "String",  ScriptVariableType_String);
+                script.SetTableValue(-1, "Prefab",  ScriptVariableType_Prefab);
             }
             script.SetTableValue(-3);
 
@@ -1412,21 +1412,21 @@ namespace GT
             script.Push("ShaderParameterTypes");
             script.PushNewTable();
             {
-                script.SetTableValue(-1, "Float",       GTEngine::ShaderParameterType_Float);
-                script.SetTableValue(-1, "Float2",      GTEngine::ShaderParameterType_Float2);
-                script.SetTableValue(-1, "Float3",      GTEngine::ShaderParameterType_Float3);
-                script.SetTableValue(-1, "Float4",      GTEngine::ShaderParameterType_Float4);
-                script.SetTableValue(-1, "Integer",     GTEngine::ShaderParameterType_Integer);
-                script.SetTableValue(-1, "Integer2",    GTEngine::ShaderParameterType_Integer2);
-                script.SetTableValue(-1, "Integer3",    GTEngine::ShaderParameterType_Integer3);
-                script.SetTableValue(-1, "Integer4",    GTEngine::ShaderParameterType_Integer4);
-                script.SetTableValue(-1, "Float2x2",    GTEngine::ShaderParameterType_Float2x2);
-                script.SetTableValue(-1, "Float3x3",    GTEngine::ShaderParameterType_Float3x3);
-                script.SetTableValue(-1, "Float4x4",    GTEngine::ShaderParameterType_Float4x4);
-                script.SetTableValue(-1, "Texture1D",   GTEngine::ShaderParameterType_Texture1D);
-                script.SetTableValue(-1, "Texture2D",   GTEngine::ShaderParameterType_Texture2D);
-                script.SetTableValue(-1, "Texture3D",   GTEngine::ShaderParameterType_Texture3D);
-                script.SetTableValue(-1, "TextureCube", GTEngine::ShaderParameterType_TextureCube);
+                script.SetTableValue(-1, "Float",       ShaderParameterType_Float);
+                script.SetTableValue(-1, "Float2",      ShaderParameterType_Float2);
+                script.SetTableValue(-1, "Float3",      ShaderParameterType_Float3);
+                script.SetTableValue(-1, "Float4",      ShaderParameterType_Float4);
+                script.SetTableValue(-1, "Integer",     ShaderParameterType_Integer);
+                script.SetTableValue(-1, "Integer2",    ShaderParameterType_Integer2);
+                script.SetTableValue(-1, "Integer3",    ShaderParameterType_Integer3);
+                script.SetTableValue(-1, "Integer4",    ShaderParameterType_Integer4);
+                script.SetTableValue(-1, "Float2x2",    ShaderParameterType_Float2x2);
+                script.SetTableValue(-1, "Float3x3",    ShaderParameterType_Float3x3);
+                script.SetTableValue(-1, "Float4x4",    ShaderParameterType_Float4x4);
+                script.SetTableValue(-1, "Texture1D",   ShaderParameterType_Texture1D);
+                script.SetTableValue(-1, "Texture2D",   ShaderParameterType_Texture2D);
+                script.SetTableValue(-1, "Texture3D",   ShaderParameterType_Texture3D);
+                script.SetTableValue(-1, "TextureCube", ShaderParameterType_TextureCube);
             }
             script.SetTableValue(-3);
 
@@ -1540,7 +1540,7 @@ namespace GT
 
 
 
-    void PushNewSerializer(Script &script, GTLib::Serializer &serializer)
+    void PushNewSerializer(Script &script, Serializer &serializer)
     {
         script.GetGlobal("GT");
         assert(script.IsTable(-1));
@@ -1565,7 +1565,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PushNewDeserializer(Script &script, GTLib::Deserializer &deserializer)
+    void PushNewDeserializer(Script &script, Deserializer &deserializer)
     {
         script.GetGlobal("GT");
         assert(script.IsTable(-1));
@@ -1709,7 +1709,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostEvent_OnMouseButtonDown(GT::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button)
+    void PostEvent_OnMouseButtonDown(GT::Script &script, int mousePosX, int mousePosY, MouseButton button)
     {
         // Game.
         script.GetGlobal("Game");
@@ -1770,7 +1770,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostEvent_OnMouseButtonUp(GT::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button)
+    void PostEvent_OnMouseButtonUp(GT::Script &script, int mousePosX, int mousePosY, MouseButton button)
     {
         // Game.
         script.GetGlobal("Game");
@@ -1831,7 +1831,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostEvent_OnMouseButtonDoubleClick(GT::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button)
+    void PostEvent_OnMouseButtonDoubleClick(GT::Script &script, int mousePosX, int mousePosY, MouseButton button)
     {
         // Game.
         script.GetGlobal("Game");
@@ -1892,7 +1892,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostEvent_OnKeyPressed(GT::Script &script, GTLib::Key key)
+    void PostEvent_OnKeyPressed(GT::Script &script, Key key)
     {
         // Game.
         script.GetGlobal("Game");
@@ -1943,7 +1943,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostEvent_OnKeyReleased(GT::Script &script, GTLib::Key key)
+    void PostEvent_OnKeyReleased(GT::Script &script, Key key)
     {
         // Game.
         script.GetGlobal("Game");
@@ -2087,7 +2087,7 @@ namespace GT
     bool LoadScriptDefinition(GT::Script &script, const char* scriptRelativePath, const char* scriptString)
     {
         // We actually want to do this as a text script for now.
-        GTLib::Strings::List<char> fullScriptString;
+        Strings::List<char> fullScriptString;
         fullScriptString.Append("GTEngine.__CreateScriptClass = function()");
         fullScriptString.Append("    local self = {}");
         fullScriptString.Append("    "); fullScriptString.Append(scriptString);
@@ -2127,17 +2127,17 @@ namespace GT
             auto directoryName = script.ToString(1);
             if (directoryName != nullptr)
             {
-                GTLib::Dictionary<bool> directories;
-                GTLib::Dictionary<bool> files;
+                Dictionary<bool> directories;
+                Dictionary<bool> files;
 
-                GTLib::String query(directoryName);
+                String query(directoryName);
                 query.Append(".*");
 
                 easyvfs_iterator iFile;
-                if (easyvfs_begin_iteration(GTEngine::g_EngineContext->GetVFS(), directoryName, &iFile))
+                if (easyvfs_begin_iteration(g_EngineContext->GetVFS(), directoryName, &iFile))
                 {
                     easyvfs_file_info fi;
-                    while (easyvfs_next_iteration(GTEngine::g_EngineContext->GetVFS(), &iFile, &fi))
+                    while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
                     {
                         if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                         {
@@ -2189,13 +2189,13 @@ namespace GT
 
         int GetExecutableDirectory(GT::Script &script)
         {
-            script.Push(GTEngine::GetExecutableDirectory());
+            script.Push(g_EngineContext->GetExecutableDirectoryAbsolutePath());
             return 1;
         }
 
         int GetVersionString(GT::Script &script)
         {
-            script.Push(GTEngine::GetVersionString());
+            script.Push(GTENGINE_VERSION_STRING);
             return 1;
         }
 
@@ -2242,13 +2242,13 @@ namespace GT
 
             const char* extension = easypath_extension(script.ToString(1));
 
-            bool result = GTLib::Strings::Equal<false>(extension, "")       ||
-                          GTLib::Strings::Equal<false>(extension, "txt")    ||
-                          GTLib::Strings::Equal<false>(extension, "lua")    ||
-                          GTLib::Strings::Equal<false>(extension, "cfg")    ||
-                          GTLib::Strings::Equal<false>(extension, "xml")    ||
-                          GTLib::Strings::Equal<false>(extension, "script") ||
-                          GTLib::Strings::Equal<false>(extension, "style");
+            bool result = Strings::Equal<false>(extension, "")       ||
+                          Strings::Equal<false>(extension, "txt")    ||
+                          Strings::Equal<false>(extension, "lua")    ||
+                          Strings::Equal<false>(extension, "cfg")    ||
+                          Strings::Equal<false>(extension, "xml")    ||
+                          Strings::Equal<false>(extension, "script") ||
+                          Strings::Equal<false>(extension, "style");
 
             script.Push(result);
             return 1;
@@ -2259,17 +2259,17 @@ namespace GT
         {
             auto absolutePath   = script.ToString(1);
             auto makeRelativeTo = script.ToString(2);
-            auto sceneNode      = static_cast<GTEngine::SceneNode*>(script.ToPointer(3));
+            auto sceneNode      = static_cast<SceneNode*>(script.ToPointer(3));
 
             if (absolutePath != nullptr && makeRelativeTo != nullptr && sceneNode != nullptr)
             {
-                auto prefab = GTEngine::PrefabLibrary::Acquire(absolutePath, makeRelativeTo);
+                auto prefab = PrefabLibrary::Acquire(absolutePath, makeRelativeTo);
                 if (prefab != nullptr)
                 {
                     prefab->SetFromSceneNode(*sceneNode);
                     prefab->WriteToFile();
 
-                    GTEngine::PrefabLibrary::Unacquire(prefab);
+                    PrefabLibrary::Unacquire(prefab);
                 }
             }
 
@@ -2278,7 +2278,7 @@ namespace GT
 
         int ExecuteFile(GT::Script &script)
         {
-            script.Push(GameFFI::GetGame(script).GetScript().ExecuteFile(GTEngine::g_EngineContext->GetVFS(), script.ToString(1)));
+            script.Push(GameFFI::GetGame(script).GetScript().ExecuteFile(g_EngineContext->GetVFS(), script.ToString(1)));
             return 1;
         }
 
@@ -2316,7 +2316,7 @@ namespace GT
             int __GetFileInfo(Script &script)
             {
                 easyvfs_file_info info;
-                if (easyvfs_get_file_info(GTEngine::g_EngineContext->GetVFS(), script.ToString(1), &info))
+                if (easyvfs_get_file_info(g_EngineContext->GetVFS(), script.ToString(1), &info))
                 {
                     script.Push(script.ToString(1));
                     script.Push(info.absolutePath);
@@ -2363,20 +2363,20 @@ namespace GT
 
             int FileExists(Script &script)
             {
-                script.Push(easyvfs_exists(GTEngine::g_EngineContext->GetVFS(), script.ToString(1)));
+                script.Push(easyvfs_exists(g_EngineContext->GetVFS(), script.ToString(1)));
                 return 1;
             }
 
             int CreateDirectory(Script &script)
             {
-                easyvfs_mkdir_recursive(GTEngine::g_EngineContext->GetVFS(), script.ToString(1));
+                easyvfs_mkdir_recursive(g_EngineContext->GetVFS(), script.ToString(1));
                 return 0;
             }
 
             int DeleteDirectory(Script &script)
             {
-                if (easyvfs_is_existing_directory(GTEngine::g_EngineContext->GetVFS(), script.ToString(1))) {
-                    easyvfs_delete_file(GTEngine::g_EngineContext->GetVFS(), script.ToString(1));
+                if (easyvfs_is_existing_directory(g_EngineContext->GetVFS(), script.ToString(1))) {
+                    easyvfs_delete_file(g_EngineContext->GetVFS(), script.ToString(1));
                 }
 
                 return 0;
@@ -2384,7 +2384,7 @@ namespace GT
 
             int CreateEmptyFile(Script &script)
             {
-                easyvfs_file* pFile = easyvfs_open(GTEngine::g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
+                easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
                 if (pFile != nullptr)
                 {
                     easyvfs_close(pFile);
@@ -2395,7 +2395,7 @@ namespace GT
 
             int DeleteFile(Script &script)
             {
-                easyvfs_delete_file(GTEngine::g_EngineContext->GetVFS(), script.ToString(1));
+                easyvfs_delete_file(g_EngineContext->GetVFS(), script.ToString(1));
                 return 0;
             }
         }
@@ -2405,13 +2405,13 @@ namespace GT
         {
             int GetTimeInSeconds(Script &script)
             {
-                script.Push(GTLib::Timing::GetTimeInSeconds());
+                script.Push(Timing::GetTimeInSeconds());
                 return 1;
             }
 
             int GetTimeInMilliseconds(Script &script)
             {
-                script.Push(GTLib::Timing::GetTimeInMilliseconds());
+                script.Push(Timing::GetTimeInMilliseconds());
                 return 1;
             }
         }
@@ -2421,7 +2421,7 @@ namespace GT
         {
             int OpenFileOrURL(Script &script)
             {
-                script.Push(GTLib::System::OpenFileOrURL(script.ToString(1)));
+                script.Push(System::OpenFileOrURL(script.ToString(1)));
                 return 1;
             }
         }
@@ -2434,7 +2434,7 @@ namespace GT
         {
             int WriteInt8(Script &script)
             {
-                auto serializer = reinterpret_cast<GTLib::Serializer*>(script.ToPointer(1));
+                auto serializer = reinterpret_cast<Serializer*>(script.ToPointer(1));
                 if (serializer != nullptr)
                 {
                     serializer->Write(static_cast<int16_t>(script.ToInteger(2)));
@@ -2445,7 +2445,7 @@ namespace GT
 
             int WriteInt16(Script &script)
             {
-                auto serializer = reinterpret_cast<GTLib::Serializer*>(script.ToPointer(1));
+                auto serializer = reinterpret_cast<Serializer*>(script.ToPointer(1));
                 if (serializer != nullptr)
                 {
                     serializer->Write(static_cast<int16_t>(script.ToInteger(2)));
@@ -2456,7 +2456,7 @@ namespace GT
 
             int WriteInt32(Script &script)
             {
-                auto serializer = reinterpret_cast<GTLib::Serializer*>(script.ToPointer(1));
+                auto serializer = reinterpret_cast<Serializer*>(script.ToPointer(1));
                 if (serializer != nullptr)
                 {
                     serializer->Write(static_cast<int32_t>(script.ToInteger(2)));
@@ -2467,7 +2467,7 @@ namespace GT
 
             int WriteFloat32(Script &script)
             {
-                auto serializer = reinterpret_cast<GTLib::Serializer*>(script.ToPointer(1));
+                auto serializer = reinterpret_cast<Serializer*>(script.ToPointer(1));
                 if (serializer != nullptr)
                 {
                     serializer->Write(script.ToFloat(2));
@@ -2478,7 +2478,7 @@ namespace GT
 
             int WriteFloat64(Script &script)
             {
-                auto serializer = reinterpret_cast<GTLib::Serializer*>(script.ToPointer(1));
+                auto serializer = reinterpret_cast<Serializer*>(script.ToPointer(1));
                 if (serializer != nullptr)
                 {
                     serializer->Write(script.ToDouble(2));
@@ -2489,7 +2489,7 @@ namespace GT
 
             int WriteBool(Script &script)
             {
-                auto serializer = reinterpret_cast<GTLib::Serializer*>(script.ToPointer(1));
+                auto serializer = reinterpret_cast<Serializer*>(script.ToPointer(1));
                 if (serializer != nullptr)
                 {
                     serializer->Write(script.ToBoolean(2));
@@ -2500,7 +2500,7 @@ namespace GT
 
             int WriteString(Script &script)
             {
-                auto serializer = reinterpret_cast<GTLib::Serializer*>(script.ToPointer(1));
+                auto serializer = reinterpret_cast<Serializer*>(script.ToPointer(1));
                 if (serializer != nullptr)
                 {
                     serializer->WriteString(script.ToString(2));
@@ -2518,10 +2518,10 @@ namespace GT
         {
             int CreateFromFile(Script &script)
             {
-                easyvfs_file* pFile = easyvfs_open(GTEngine::g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_READ, 0);
+                easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_READ, 0);
                 if (pFile != nullptr)
                 {
-                    auto deserializer = new GTLib::FileDeserializer(pFile);
+                    auto deserializer = new FileDeserializer(pFile);
 
                     script.Push(deserializer);
                     script.Push(reinterpret_cast<void*>(pFile));
@@ -2534,7 +2534,7 @@ namespace GT
 
             int DeleteFromFile(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 auto file         = reinterpret_cast<easyvfs_file*>(script.ToPointer(2));
 
                 easyvfs_close(file);
@@ -2545,7 +2545,7 @@ namespace GT
 
             int ReadInt8(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
                     int8_t value;
@@ -2563,7 +2563,7 @@ namespace GT
 
             int ReadInt16(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
                     int16_t value;
@@ -2581,7 +2581,7 @@ namespace GT
 
             int ReadInt32(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
                     int32_t value;
@@ -2599,7 +2599,7 @@ namespace GT
 
             int ReadFloat32(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
                     float value;
@@ -2617,7 +2617,7 @@ namespace GT
 
             int ReadFloat64(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
                     double value;
@@ -2635,7 +2635,7 @@ namespace GT
 
             int ReadBool(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
                     bool value;
@@ -2653,10 +2653,10 @@ namespace GT
 
             int ReadString(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
-                    GTLib::String value;
+                    String value;
                     deserializer->ReadString(value);
 
                     script.Push(value.c_str());
@@ -2672,7 +2672,7 @@ namespace GT
 
             int StartChunk(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
                     deserializer->StartChunk(script.ToInteger(2));
@@ -2683,7 +2683,7 @@ namespace GT
 
             int EndChunk(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
                     deserializer->EndChunk();
@@ -2694,7 +2694,7 @@ namespace GT
 
             int HasRoomInChunk(Script &script)
             {
-                auto deserializer = reinterpret_cast<GTLib::Deserializer*>(script.ToPointer(1));
+                auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
                 if (deserializer != nullptr)
                 {
                     deserializer->HasRoomInChunk(script.ToInteger(2));

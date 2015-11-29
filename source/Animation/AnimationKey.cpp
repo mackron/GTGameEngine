@@ -2,7 +2,7 @@
 
 #include <GTEngine/Animation/AnimationKey.hpp>
 
-namespace GTEngine
+namespace GT
 {
     AnimationKey::AnimationKey()
     {
@@ -17,7 +17,7 @@ namespace GTEngine
 //////////////////////////////////////////////////////////////
 // TransformAnimationKey
 
-namespace GTEngine
+namespace GT
 {
     TransformAnimationKey::TransformAnimationKey(const glm::vec3 &positionIn, const glm::quat &rotationIn, const glm::vec3 &scaleIn)
         : position(positionIn), rotation(rotationIn), scale(scaleIn)

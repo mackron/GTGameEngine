@@ -27,7 +27,7 @@
 #include "Rendering/VertexArray.hpp"    // <-- Remove this later.
 
 
-namespace GTEngine
+namespace GT
 {
     class Scene;
 
@@ -85,7 +85,7 @@ namespace GTEngine
         /// @param output [in] The vector that will receive the positions of the points on the path.
         ///
         /// @return True if the path is generated successfully; false otherwise.
-        bool FindPath(const glm::vec3 &start, const glm::vec3 &end, GTLib::Vector<glm::vec3> &output);
+        bool FindPath(const glm::vec3 &start, const glm::vec3 &end, Vector<glm::vec3> &output);
 
 
         /// Builds the visualization of the navigation mesh into a mesh builder.
@@ -100,10 +100,10 @@ namespace GTEngine
         // Serialization/Deserialization
 
         /// Serializes the navigation mesh.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the navigation mesh.
-        bool Deserialize(GTLib::Deserializer &deserializer);
+        bool Deserialize(Deserializer &deserializer);
 
 
     private:

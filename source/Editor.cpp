@@ -17,7 +17,7 @@ using namespace GT;     // <-- Delete me later when we change to the GT namespac
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     // The "paths" of special editors such as the packaging tool.
     static const char* PackagingToolPath = "@PackagingTool";
@@ -351,7 +351,7 @@ namespace GTEngine
                     {
                         // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
                         // a SubEditor object for it.
-                        GTEngine::Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
+                        Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
                         newSubEditor = new SubEditor(*this, absolutePath, relativePath);
                     }
                 }
@@ -359,7 +359,7 @@ namespace GTEngine
             else
             {
                 // Specials.
-                if (GTLib::Strings::Equal<false>(absolutePath, PackagingToolPath))
+                if (Strings::Equal<false>(absolutePath, PackagingToolPath))
                 {
                     newSubEditor = new PackagingToolEditor(*this, absolutePath);
                 }
@@ -398,7 +398,7 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -441,7 +441,7 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -521,7 +521,7 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -620,7 +620,7 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -685,7 +685,7 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -719,7 +719,7 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -844,7 +844,7 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -879,9 +879,9 @@ namespace GTEngine
 
 
         // We need to update the profiling GUI.
-        if (GTLib::Timing::GetTimeInSeconds() - this->lastProfilingUpdateTime > 1.0)
+        if (Timing::GetTimeInSeconds() - this->lastProfilingUpdateTime > 1.0)
         {
-            this->lastProfilingUpdateTime = GTLib::Timing::GetTimeInSeconds();
+            this->lastProfilingUpdateTime = Timing::GetTimeInSeconds();
 
 
             double delta = this->game.GetProfiler().GetAverageFrameTime();
@@ -894,10 +894,10 @@ namespace GTEngine
 
 
             char deltaStr[64];
-            GTLib::IO::snprintf(deltaStr, 64, "%f", delta);
+            IO::snprintf(deltaStr, 64, "%f", delta);
 
             char fpsStr[64];
-            GTLib::IO::snprintf(fpsStr, 64, "%.1f", fps);
+            IO::snprintf(fpsStr, 64, "%.1f", fps);
 
 
             this->GUI.Editor_Delta->SetText(deltaStr);
@@ -905,7 +905,7 @@ namespace GTEngine
         }
     }
 
-    void Editor::OnKeyPressed(GTLib::Key key)
+    void Editor::OnKeyPressed(Key key)
     {
         if (this->currentlyShownEditor != nullptr)
         {
@@ -913,7 +913,7 @@ namespace GTEngine
         }
     }
 
-    void Editor::OnKeyReleased(GTLib::Key key)
+    void Editor::OnKeyReleased(Key key)
     {
         if (this->currentlyShownEditor != nullptr)
         {
@@ -921,7 +921,7 @@ namespace GTEngine
         }
     }
 
-    void Editor::OnMouseButtonDown(GTLib::MouseButton button, int x, int y)
+    void Editor::OnMouseButtonDown(MouseButton button, int x, int y)
     {
         if (this->currentlyShownEditor != nullptr)
         {
@@ -929,7 +929,7 @@ namespace GTEngine
         }
     }
 
-    void Editor::OnMouseButtonUp(GTLib::MouseButton button, int x, int y)
+    void Editor::OnMouseButtonUp(MouseButton button, int x, int y)
     {
         if (this->currentlyShownEditor != nullptr)
         {
@@ -1227,7 +1227,7 @@ namespace GTEngine
 
     bool Editor::IsSpecialPath(const char* path) const
     {
-        return GTLib::Strings::Equal<false>(path, PackagingToolPath);
+        return Strings::Equal<false>(path, PackagingToolPath);
     }
 
 

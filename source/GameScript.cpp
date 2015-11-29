@@ -12,7 +12,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     GameScript::GameScript(Game &game)
         : game(game), lastError(), loadedFiles(), errorHandler(*this)

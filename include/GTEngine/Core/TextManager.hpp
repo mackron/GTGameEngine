@@ -11,7 +11,7 @@
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/List.hpp>
 
-namespace GTLib
+namespace GT
 {
     enum Alignment
     {
@@ -76,7 +76,7 @@ namespace GTLib
 
 
         /// The list of meshes making up the visible text.
-        GTLib::List<TextMesh*> meshes;
+        List<TextMesh*> meshes;
     };
 
 
@@ -102,7 +102,7 @@ namespace GTLib
         TextCommandType type;
 
         /// The text.
-        GTLib::String text;
+        String text;
 
         /// The location of the first character in the text at the time of deleting.
         int lineStart;
@@ -117,7 +117,7 @@ namespace GTLib
     };
 }
 
-namespace GTLib
+namespace GT
 {
     /// Class representing a line of text in the text manager.
     ///
@@ -217,7 +217,7 @@ namespace GTLib
         /// @remarks
         ///     endCharIndex should be 1 past the last character to include. As an example, setting this to this->GetCharacterCount() will include
         ///     the very last character in the line.
-        GTLib::String GetTextInRange(size_t startCharIndex, size_t endCharIndex);
+        String GetTextInRange(size_t startCharIndex, size_t endCharIndex);
 
         /// Retrieves the characters in the given range as a string.
         ///
@@ -247,7 +247,7 @@ namespace GTLib
 
 
         /// The line's text.
-        GTLib::String text;
+        String text;
 
         /// The width of the line, in pixels. This is recalculated whenever the text has changed.
         int width;
@@ -269,7 +269,7 @@ namespace GTLib
     };
 }
 
-namespace GTLib
+namespace GT
 {
     /// Manages a group of text, making it easier for an application to work on text.
     ///
@@ -338,7 +338,7 @@ namespace GTLib
     public:
 
         /// Constructor.
-        TextManager(GTLib::Font* defaultFont);
+        TextManager(Font* defaultFont);
 
         /// Destructor.
         ~TextManager();
@@ -361,10 +361,10 @@ namespace GTLib
 
 
         /// Sets the default font to use with the manager.
-        void SetDefaultFont(GTLib::Font* defaultFont);
+        void SetDefaultFont(Font* defaultFont);
 
         /// Retrieves the default font.
-        GTLib::Font* GetDefaultFont();
+        Font* GetDefaultFont();
 
 
         /// Sets the size of the area the contains the text.
@@ -397,7 +397,7 @@ namespace GTLib
 
 
         /// Retrieves the rectangle area containing the text, relative to the container area.
-        void GetTextRect(GTLib::Rect<int> &rect) const;
+        void GetTextRect(Rect<int> &rect) const;
 
         /// Retrieves the total width of the text.
         unsigned int GetTextWidth() const;
@@ -410,7 +410,7 @@ namespace GTLib
         ///
         /// @param line [in] The line whose rectangle is being retrieved.
         /// @param rect [in] A reference to the Rect object that will receive the rectangle.
-        void GetLineRect(const TextManagerLine *line, GTLib::Rect<int> &rect) const;
+        void GetLineRect(const TextManagerLine *line, Rect<int> &rect) const;
 
 
         /// Retrieves the line that comes before the given line.
@@ -435,7 +435,7 @@ namespace GTLib
 
 
         /// Retrieves the text in the given range.
-        GTLib::String GetTextInRange(const Marker &markerA, const Marker &markerB) const;
+        String GetTextInRange(const Marker &markerA, const Marker &markerB) const;
 
 
         /// Retrieves the total number of lines.
@@ -745,7 +745,7 @@ namespace GTLib
         mutable bool isTextValid;
 
         /// The default font. Needs to be a pointer internally since it can be changed. Will never be null.
-        GTLib::Font* defaultFont;
+        Font* defaultFont;
 
         unsigned int containerWidth;    ///< The width of the container.
         unsigned int containerHeight;   ///< The height of the container.
@@ -754,10 +754,10 @@ namespace GTLib
         int containerOffsetY;           ///< The y offset of the container.
 
         /// The list of lines.
-        GTLib::Vector<TextManagerLine*> lines;
+        Vector<TextManagerLine*> lines;
 
         /// The rectangle encompassing the area taken up by actual text.
-        GTLib::Rect<int> textRect;
+        Rect<int> textRect;
 
         Alignment horizontalAlign;      ///< The horizontal alignment (left, center or right).
         Alignment verticalAlign;        ///< The vertical alingment (top, center or bottom).
@@ -778,10 +778,10 @@ namespace GTLib
 
 
         /// The default text colour.
-        GTLib::Colour defaultTextColour;
+        Colour defaultTextColour;
 
         /// The selection background colour.
-        GTLib::Colour selectionBackgroundColour;
+        Colour selectionBackgroundColour;
 
 
         /// Keeps track of the cursors last horizontal character index before doing vertical movements. Needed to place the cursor relative to
@@ -790,7 +790,7 @@ namespace GTLib
 
 
         /// The command stack for undo/redo.
-        GTLib::Vector<TextCommand> commandStack;
+        Vector<TextCommand> commandStack;
 
         /// The index of the command that we're currently sitting on. We move this as we undo or redo. This always sits at 1 above the command that
         /// will be the next to be undone. New commands will be placed at this index.

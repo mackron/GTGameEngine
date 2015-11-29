@@ -6,7 +6,7 @@
 #include <BulletCollision/CollisionShapes/btCylinderShape.h>
 #include <BulletCollision/CollisionShapes/btCapsuleShape.h>
 
-namespace GTEngine
+namespace GT
 {
     enum CollisionShapeType
     {

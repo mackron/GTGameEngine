@@ -7,12 +7,12 @@
 
 #include <cstdio>
 
-namespace GTLib
+namespace GT
 {
     namespace Win32
     {
         /// The list of handles for every created window.
-        static GTLib::Vector<HWND> WindowHandles;
+        static Vector<HWND> WindowHandles;
 
 
         /// The class name of the window.
@@ -184,7 +184,7 @@ namespace GTLib
         /// The window procedure for the window.
         LRESULT WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
-            WindowEventHandler *eventHandler = (GTLib::WindowEventHandler *)::GetPropW(hWnd, L"__eventhandler");
+            WindowEventHandler *eventHandler = (WindowEventHandler *)::GetPropW(hWnd, L"__eventhandler");
             if (eventHandler == nullptr)
             {
                 eventHandler = &WindowEventHandler::GetDefault();
@@ -267,7 +267,7 @@ namespace GTLib
             case WM_MBUTTONDBLCLK:
                 {
                     // Windows does not post a button down event for the second click when a double click event is posted. We want this.
-                    GTLib::MouseButton button = FromWin32MouseButtonMSGCode(msg);
+                    MouseButton button = FromWin32MouseButtonMSGCode(msg);
                     WORD xPos = LOWORD(lParam);
                     WORD yPos = HIWORD(lParam);
 
@@ -291,17 +291,17 @@ namespace GTLib
                     // these messages from this event.
 
                     // First we need to convert the key.
-                    GTLib::Key key = FromWin32VirtualKey(wParam);
+                    Key key = FromWin32VirtualKey(wParam);
 
-                    if (key == GTLib::Keys::Ctrl)
+                    if (key == Keys::Ctrl)
                     {
                         ::SetPropW(hWnd, L"__ctrldown", (HANDLE)1);
                     }
 
-                    if (key != GTLib::Keys::Null)
+                    if (key != Keys::Null)
                     {
                         // Don't post printable characters if the Ctrl key is up.
-                        if (!GTLib::IsKeyPrintable(key) || ::GetPropW(hWnd, L"__ctrldown") != 0)
+                        if (!IsKeyPrintable(key) || ::GetPropW(hWnd, L"__ctrldown") != 0)
                         {
                             // Only if the key was previously up do we want to post this message...
                             if ((lParam & (1 << 30)) == 0)
@@ -319,9 +319,9 @@ namespace GTLib
 
             case WM_KEYUP:
                 {
-                    GTLib::Key key = FromWin32VirtualKey(wParam);
+                    Key key = FromWin32VirtualKey(wParam);
 
-                    if (key == GTLib::Keys::Ctrl)
+                    if (key == Keys::Ctrl)
                     {
                         ::SetPropW(hWnd, L"__ctrldown", 0);
                     }
@@ -336,18 +336,18 @@ namespace GTLib
                 {
                     // Some keys will fall-through to this message even if they've been handled by WM_KEYDOWN. We absolutely do not
                     // want to post duplicate messages. We will filter them out here.
-                    if (wParam != GTLib::Keys::Backspace &&
-                        wParam != GTLib::Keys::Return    &&
-                        wParam != GTLib::Keys::Delete    &&
-                        wParam != GTLib::Keys::Escape    &&
-                        wParam != GTLib::Keys::Tab)
+                    if (wParam != Keys::Backspace &&
+                        wParam != Keys::Return    &&
+                        wParam != Keys::Delete    &&
+                        wParam != Keys::Escape    &&
+                        wParam != Keys::Tab)
                     {
                         bool isCTRLDown = ::GetPropW(hWnd, L"__ctrldown") != 0;
                         if (!(isCTRLDown && wParam < 0x20))       // <-- This filters those annoying translations as a result of the CTRL key being pressed while on an ascii character.
                         {
                             if ((lParam & (1 << 31)) != 0)
                             {
-                                eventHandler->OnKeyUp(static_cast<GTLib::Key>(wParam));
+                                eventHandler->OnKeyUp(static_cast<Key>(wParam));
                             }
                             else
                             {
@@ -361,10 +361,10 @@ namespace GTLib
                                         wParam_OnKeyPress -= 0x20;
                                     }
 
-                                    eventHandler->OnKeyPressed(static_cast<GTLib::Key>(wParam_OnKeyPress));
+                                    eventHandler->OnKeyPressed(static_cast<Key>(wParam_OnKeyPress));
                                 }
 
-                                eventHandler->OnKeyDown(static_cast<GTLib::Key>(wParam), (lParam & 0xFFFF));
+                                eventHandler->OnKeyDown(static_cast<Key>(wParam), (lParam & 0xFFFF));
                             }
                         }
                     }
@@ -567,7 +567,7 @@ namespace GTLib
     }
 }
 
-namespace GTLib
+namespace GT
 {
     extern MSG g_MSG;
     bool PumpNextWindowEvent(bool wait)

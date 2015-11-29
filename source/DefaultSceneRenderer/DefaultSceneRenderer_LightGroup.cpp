@@ -2,7 +2,7 @@
 
 #include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_LightGroup.hpp>
 
-namespace GTEngine
+namespace GT
 {
     DefaultSceneRenderer_LightGroup::DefaultSceneRenderer_LightGroup()
         : id(), lightIDs()

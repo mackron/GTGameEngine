@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Threading.hpp>
 #include <cstddef>
 
-namespace GTEngine
+namespace GT
 {
     /// Static class representing the engine's global thread pool
     ///
@@ -35,15 +35,15 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If <force> is false, this will return null if no threads are available. When <force> is set to true, it's possible, and highly likely, that
-        ///     a new GTLib::Thread object will be instantiated. Be aware of this overhead.
+        ///     a new Thread object will be instantiated. Be aware of this overhead.
         ///     @par
         ///     Unacquire the thread with UnacquireThread().
-        static GTLib::Thread* AcquireThread(bool force = false);
+        static Thread* AcquireThread(bool force = false);
 
         /// Unacquires a thread that was acquired with AcquireThread().
         ///
         /// @param thread [in] A pointer to the thread to unacquire.
-        static void UnacquireThread(GTLib::Thread* thread);
+        static void UnacquireThread(Thread* thread);
     };
 }
 

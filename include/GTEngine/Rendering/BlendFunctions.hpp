@@ -5,7 +5,7 @@
 
 #include <GTEngine/Core/Strings/Equal.hpp>
 
-namespace GTEngine
+namespace GT
 {
     enum BlendFunc
     {
@@ -43,67 +43,67 @@ namespace GTEngine
     /// Converts a string to a BlendFunction value. Returns Zero if it is invalid. Not case sensitive.
     inline BlendFunc ToBlendFunction(const char* value)
     {
-        if (GTLib::Strings::Equal<false>("Zero", value))
+        if (Strings::Equal<false>("Zero", value))
         {
             return BlendFunc_Zero;
         }
-        else if (GTLib::Strings::Equal<false>("One", value))
+        else if (Strings::Equal<false>("One", value))
         {
             return BlendFunc_One;
         }
 
-        else if (GTLib::Strings::Equal<false>("SourceColour", value))
+        else if (Strings::Equal<false>("SourceColour", value))
         {
             return BlendFunc_SourceColour;
         }
-        else if (GTLib::Strings::Equal<false>("OneMinusSourceColour", value))
+        else if (Strings::Equal<false>("OneMinusSourceColour", value))
         {
             return BlendFunc_OneMinusSourceColour;
         }
-        else if (GTLib::Strings::Equal<false>("SourceAlpha", value))
+        else if (Strings::Equal<false>("SourceAlpha", value))
         {
             return BlendFunc_SourceAlpha;
         }
-        else if (GTLib::Strings::Equal<false>("OneMinusSourceAlpha", value))
+        else if (Strings::Equal<false>("OneMinusSourceAlpha", value))
         {
             return BlendFunc_OneMinusSourceAlpha;
         }
 
-        else if (GTLib::Strings::Equal<false>("DestColour", value))
+        else if (Strings::Equal<false>("DestColour", value))
         {
             return BlendFunc_DestColour;
         }
-        else if (GTLib::Strings::Equal<false>("OneMinusDestColour", value))
+        else if (Strings::Equal<false>("OneMinusDestColour", value))
         {
             return BlendFunc_OneMinusDestColour;
         }
-        else if (GTLib::Strings::Equal<false>("DestAlpha", value))
+        else if (Strings::Equal<false>("DestAlpha", value))
         {
             return BlendFunc_DestAlpha;
         }
-        else if (GTLib::Strings::Equal<false>("OneMinusDestAlpha", value))
+        else if (Strings::Equal<false>("OneMinusDestAlpha", value))
         {
             return BlendFunc_OneMinusDestAlpha;
         }
 
-        else if (GTLib::Strings::Equal<false>("ConstantColour", value))
+        else if (Strings::Equal<false>("ConstantColour", value))
         {
             return BlendFunc_ConstantColour;
         }
-        else if (GTLib::Strings::Equal<false>("OneMinusConstantColour", value))
+        else if (Strings::Equal<false>("OneMinusConstantColour", value))
         {
             return BlendFunc_OneMinusConstantColour;
         }
-        else if (GTLib::Strings::Equal<false>("ConstantAlpha", value))
+        else if (Strings::Equal<false>("ConstantAlpha", value))
         {
             return BlendFunc_ConstantAlpha;
         }
-        else if (GTLib::Strings::Equal<false>("OneMinusConstantAlpha", value))
+        else if (Strings::Equal<false>("OneMinusConstantAlpha", value))
         {
             return BlendFunc_OneMinusConstantAlpha;
         }
 
-        else if (GTLib::Strings::Equal<false>("SourceAlphaSaturate", value))
+        else if (Strings::Equal<false>("SourceAlphaSaturate", value))
         {
             return BlendFunc_SourceAlphaSaturate;
         }

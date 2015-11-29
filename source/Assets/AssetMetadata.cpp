@@ -32,7 +32,7 @@ namespace GT
         memcpy(m_pData, pData, dataSizeInBytes);
     }
 
-    AssetMetadataChunk::AssetMetadataChunk(GTLib::Deserializer &deserializer)
+    AssetMetadataChunk::AssetMetadataChunk(Deserializer &deserializer)
         : m_pData(nullptr), m_name(), m_dataSizeInBytes(0)
     {
         // Name.
@@ -92,7 +92,7 @@ namespace GT
     }
 
 
-    void AssetMetadataChunk::Serialize(GTLib::Serializer &serializer) const
+    void AssetMetadataChunk::Serialize(Serializer &serializer) const
     {
         serializer.Write(m_name, 32);
         serializer.Write(m_dataSizeInBytes);
@@ -109,7 +109,7 @@ namespace GT
     {
     }
 
-    AssetMetadata::AssetMetadata(GTLib::Deserializer &deserializer)
+    AssetMetadata::AssetMetadata(Deserializer &deserializer)
         : m_chunks()
     {
         uint32_t chunkCount;
@@ -208,7 +208,7 @@ namespace GT
     }
 
 
-    void AssetMetadata::Serialize(GTLib::Serializer &serializer) const
+    void AssetMetadata::Serialize(Serializer &serializer) const
     {
         serializer.Write(static_cast<uint32_t>(m_chunks.GetCount()));
 
@@ -222,7 +222,7 @@ namespace GT
         }
     }
 
-    void AssetMetadata::Deserialize(GTLib::Deserializer &deserializer)
+    void AssetMetadata::Deserialize(Deserializer &deserializer)
     {
         // Clear.
         this->Clear();

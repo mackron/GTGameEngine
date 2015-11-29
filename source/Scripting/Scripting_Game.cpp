@@ -5,7 +5,7 @@
 
 namespace GT
 {
-    bool LoadGameLibrary(GT::Script &script, GTEngine::Game &game)
+    bool LoadGameLibrary(GT::Script &script, Game &game)
     {
         bool successful = true;
 
@@ -187,10 +187,10 @@ namespace GT
 
     namespace GameFFI
     {
-        GTEngine::Game & GetGame(GT::Script &script)
+        Game & GetGame(GT::Script &script)
         {
             script.GetGlobal("__GamePtr");
-            auto game = static_cast<GTEngine::Game*>(script.ToPointer(-1));
+            auto game = static_cast<Game*>(script.ToPointer(-1));
             script.Pop(1);
 
             assert(game != nullptr);
@@ -200,13 +200,13 @@ namespace GT
 
         int GetExecutableDirectoryAbsolutePath(GT::Script &script)
         {
-            script.Push(GTEngine::g_EngineContext->GetExecutableDirectoryAbsolutePath());
+            script.Push(g_EngineContext->GetExecutableDirectoryAbsolutePath());
             return 1;
         }
 
         int GetExecutableAbsolutePath(GT::Script &script)
         {
-            script.Push(GTEngine::g_EngineContext->GetExecutableAbsolutePath());
+            script.Push(g_EngineContext->GetExecutableAbsolutePath());
             return 1;
         }
 
@@ -275,13 +275,13 @@ namespace GT
 
         int IsKeyDown(GT::Script &script)
         {
-            script.Push(GetGame(script).IsKeyDown(static_cast<GTLib::Key>(script.ToInteger(1))));
+            script.Push(GetGame(script).IsKeyDown(static_cast<Key>(script.ToInteger(1))));
             return 1;
         }
 
         int IsMouseButtonDown(GT::Script &script)
         {
-            script.Push(GetGame(script).IsMouseButtonDown(static_cast<GTLib::MouseButton>(script.ToInteger(1))));
+            script.Push(GetGame(script).IsMouseButtonDown(static_cast<MouseButton>(script.ToInteger(1))));
             return 1;
         }
 
@@ -355,7 +355,7 @@ namespace GT
             auto element = GetGame(script).GetGameWindowGUIElement();
             if (element != nullptr)
             {
-                script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", element->id).c_str());
+                script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", element->id).c_str());
             }
             else
             {

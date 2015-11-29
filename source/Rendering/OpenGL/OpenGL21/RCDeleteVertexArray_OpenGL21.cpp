@@ -3,7 +3,7 @@
 #include "RCDeleteVertexArray_OpenGL21.hpp"
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     RCDeleteVertexArray::RCDeleteVertexArray()
         : vertexBufferObject(nullptr), indexBufferObject(nullptr)

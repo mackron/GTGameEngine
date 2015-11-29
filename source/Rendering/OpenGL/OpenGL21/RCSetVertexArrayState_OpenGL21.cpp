@@ -5,7 +5,7 @@
 #include <gtgl/gtgl.h>
 #include <assert.h>
 
-namespace GTEngine
+namespace GT
 {
     #define VERTEX_DATA_BIT         (1 << 1)
     #define INDEX_DATA_BIT          (1 << 2)

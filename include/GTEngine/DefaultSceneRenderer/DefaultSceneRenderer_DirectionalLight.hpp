@@ -5,7 +5,7 @@
 
 #include "DefaultSceneRenderer_ShadowVisibilityProcessor.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Structure representing a directional light in the default scene renderer.
     struct DefaultSceneRendererDirectionalLight : public SceneRendererDirectionalLight

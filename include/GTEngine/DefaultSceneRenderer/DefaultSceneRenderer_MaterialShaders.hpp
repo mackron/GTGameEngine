@@ -6,7 +6,7 @@
 #include "../Rendering/Shader.hpp"
 #include "DefaultSceneRenderer_MaterialShaderID.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Structure containing the shaders associated with a material.
     struct DefaultSceneRenderer_MaterialShaders
@@ -20,7 +20,7 @@ namespace GTEngine
 
 
         /// The map of shaders, keyed by a material shader ID.
-        GTLib::Map<DefaultSceneRenderer_MaterialShaderID, Shader*> shaders;
+        Map<DefaultSceneRenderer_MaterialShaderID, Shader*> shaders;
 
 
     private:    // No copying.

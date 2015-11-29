@@ -5,8 +5,8 @@
 #include <GTEngine/Core/Strings/Equal.hpp>
 #include <cstring>
 
-// A hate the using command, but it's such a pain doing GTLib::Strings all the time...
-using namespace GTLib;
+// A hate the using command, but it's such a pain doing Strings all the time...
+using namespace GT;
 
 
 #if defined(__GNUC__)

@@ -18,9 +18,9 @@ namespace GTGUI
     
     
     
-    bool MarkupLoader::Load(const char* markup, const char* absoluteDirectory, GTLib::String &topElementID)
+    bool MarkupLoader::Load(const char* markup, const char* absoluteDirectory, GT::String &topElementID)
     {
-        GTLib::Vector<Element*> loadedElements(1);
+        GT::Vector<Element*> loadedElements(1);
         if (this->Load(markup, static_cast<size_t>(-1), absoluteDirectory, loadedElements))
         {
             if (loadedElements.count > 0)
@@ -41,7 +41,7 @@ namespace GTGUI
     
     bool MarkupLoader::LoadFile(const char* filePath)
     {
-        GTLib::Vector<Element*> loadedElements(32);
+        GT::Vector<Element*> loadedElements(32);
         if (this->LoadFile(filePath, loadedElements))
         {
             this->PostLoad(loadedElements);
@@ -55,7 +55,7 @@ namespace GTGUI
     void MarkupLoader::UnloadFile(const char* filePath)
     {
         char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
+        if (easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
         {
             m_loadedFiles.Remove(absolutePath);
         }
@@ -72,7 +72,7 @@ namespace GTGUI
     ////////////////////////////////////////////////
     // Private
     
-    bool MarkupLoader::Load(const char* markup, size_t markupSizeInBytes, const char* absoluteDirectory, GTLib::Vector<Element*> &loadedElementsOut)
+    bool MarkupLoader::Load(const char* markup, size_t markupSizeInBytes, const char* absoluteDirectory, GT::Vector<Element*> &loadedElementsOut)
     {
         // We just create a server XML parser and look at it's results.
         ServerXMLParser parser;
@@ -91,7 +91,7 @@ namespace GTGUI
                 }
                 else
                 {
-                    easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), i->start, absURL, sizeof(absURL));
+                    easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), i->start, absURL, sizeof(absURL));
                 }
 
                 // Step 2: Load the include file.
@@ -121,7 +121,7 @@ namespace GTGUI
                 }
                 else
                 {
-                    easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), i->start, absURL, sizeof(absURL));
+                    easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), i->start, absURL, sizeof(absURL));
                 }
 
                 // Step 2: Load the file.
@@ -160,7 +160,7 @@ namespace GTGUI
                     else
                     {
                         // If the element is the root, it won't need a parent.
-                        if (!GTLib::Strings::Equal(element->id, "_Root"))
+                        if (!GT::Strings::Equal(element->id, "_Root"))
                         {
                             element->parentid = "_Root";
                         }
@@ -170,7 +170,7 @@ namespace GTGUI
 
 
                 // Now the actual style.
-                GTLib::Strings::List<char> stylingScript;
+                GT::Strings::List<char> stylingScript;
                 stylingScript.Append("#");
                 stylingScript.Append(element->id);
                 stylingScript.Append("\n{\n");
@@ -179,7 +179,7 @@ namespace GTGUI
 
                 // Now we need to ensure there is at least an empty style class instantiation for each style class in the
                 // styleclass attribute.
-                GTLib::Strings::WhitespaceTokenizerUTF8 token(element->styleclass);
+                GT::Strings::WhitespaceTokenizerUTF8 token(element->styleclass);
                 while (token)
                 {
                     stylingScript.Append(token.start, token.GetSizeInTs());
@@ -216,25 +216,25 @@ namespace GTGUI
                     // Styles.
                     newElement->AttachStyleClass(m_server.GetStyleServer().GetDefaultStyleClass(), false);
 
-                    GTLib::Strings::WhitespaceTokenizerUTF8 token(element->styleclass);
+                    GT::Strings::WhitespaceTokenizerUTF8 token(element->styleclass);
                     while (token)
                     {
-                        newElement->AttachStyleClass(GTLib::String(token.start, token.GetSizeInTs()).c_str(), false);
+                        newElement->AttachStyleClass(GT::String(token.start, token.GetSizeInTs()).c_str(), false);
 
                         ++token;
                     }
 
-                    newElement->AttachStyleClass((GTLib::String("#") + element->id).c_str());
+                    newElement->AttachStyleClass((GT::String("#") + element->id).c_str());
 
 
                     // Text.
                     //
                     // We're going to use HTML's whitespace system, where all whitespace is ignore except for a single space between words. To achieve
                     // this we simply tokenize against whitespace.
-                    GTLib::Strings::List<char> elementText;
+                    GT::Strings::List<char> elementText;
 
                     bool doneFirstToken = false;
-                    token = GTLib::Strings::WhitespaceTokenizerUTF8(element->text);
+                    token = GT::Strings::WhitespaceTokenizerUTF8(element->text);
                     while (token)
                     {
                         if (doneFirstToken)
@@ -285,7 +285,7 @@ namespace GTGUI
                 }
                 else
                 {
-                    easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), i->start, absURL, sizeof(absURL));
+                    easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), i->start, absURL, sizeof(absURL));
                 }
 
                 // Step 2: Load the file.
@@ -306,10 +306,10 @@ namespace GTGUI
         return false;
     }
     
-    bool MarkupLoader::LoadFile(const char* filePath, GTLib::Vector<Element*> &loadedElementsOut)
+    bool MarkupLoader::LoadFile(const char* filePath, GT::Vector<Element*> &loadedElementsOut)
     {
         char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
+        if (easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
         {
             if (this->IsFileLoaded(absolutePath))
             {
@@ -318,7 +318,7 @@ namespace GTGUI
             else
             {
                 size_t fileSize;
-                char* pFileData = easyvfs_open_and_read_text_file(GTEngine::g_EngineContext->GetVFS(), absolutePath, &fileSize);
+                char* pFileData = easyvfs_open_and_read_text_file(GT::g_EngineContext->GetVFS(), absolutePath, &fileSize);
                 if (pFileData != nullptr)
                 {
                     char absoluteDir[EASYVFS_MAX_PATH];
@@ -339,7 +339,7 @@ namespace GTGUI
         else
         {
             char msg[256];
-            GTLib::IO::snprintf(msg, 256, "Could not find file: %s", filePath);
+            GT::IO::snprintf(msg, 256, "Could not find file: %s", filePath);
             
             m_server.PostError(msg);
         }
@@ -348,7 +348,7 @@ namespace GTGUI
     }
     
     
-    void MarkupLoader::PostLoad(const GTLib::Vector<Element*> &loadedElements)
+    void MarkupLoader::PostLoad(const GT::Vector<Element*> &loadedElements)
     {
         //m_server.UpdateLayout();
         

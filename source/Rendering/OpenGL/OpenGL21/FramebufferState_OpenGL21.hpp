@@ -9,7 +9,7 @@
 #include "TextureState_OpenGL21.hpp"
 
 
-namespace GTEngine
+namespace GT
 {
     /// Structure containing some state information about framebuffers.
     ///
@@ -46,7 +46,7 @@ namespace GTEngine
         };
 
         /// The map containing the attached colour buffers. This is keyed by the attachment point.
-        GTLib::Map<GLenum, Attachment> attachments;
+        Map<GLenum, Attachment> attachments;
 
 
         /// Constructor.

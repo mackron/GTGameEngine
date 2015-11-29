@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <GTEngine/Core/String.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Simple struct representing a segment in an animation. It contains a start and end key frame index.
     struct AnimationSegment
@@ -35,7 +35,7 @@ namespace GTEngine
 
 
         /// The name of the animation segment.
-        GTLib::String name;
+        String name;
 
         /// The first key frame of the segment.
         size_t startKeyFrame;

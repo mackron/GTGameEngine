@@ -11,7 +11,7 @@
 #include "Rendering/VertexArray.hpp"
 #include <GTEngine/Core/Random.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class used for emitting particles.
     ///
@@ -283,10 +283,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Serializes the particle emitter.
-        void Serialize(GTLib::Serializer &serializer, bool serializeParticles);
+        void Serialize(Serializer &serializer, bool serializeParticles);
 
         /// Deserializes the particle emitter.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 
@@ -303,25 +303,25 @@ namespace GTEngine
         ///
         /// @param serializer [in] A reference to the serializer to write the data to.
         /// @param function   [in] A reference to the function to serailize.
-        void SerializeFunction(GTLib::Serializer &serializer, const ParticleFunction &function);
+        void SerializeFunction(Serializer &serializer, const ParticleFunction &function);
 
         /// Deserializes the function defined by the deserializer, returning an instantiation of that function.
         ///
         /// @param deserializer [in] A reference to the deserializer to read the function data from.
-        ParticleFunction* DeserializeFunction(GTLib::Deserializer &deserializer);
+        ParticleFunction* DeserializeFunction(Deserializer &deserializer);
 
 
         /// Serializes the given particle.
         ///
         /// @param serializer [in] A reference to the serializer to write the data to.
         /// @param function   [in] A reference to the particle to serialize.
-        void SerializeParticle(GTLib::Serializer &serializer, const Particle &particle);
+        void SerializeParticle(Serializer &serializer, const Particle &particle);
 
         /// Deserializes the particle defined by the given deserializer.
         ///
         /// @param deserializer [in]  A reference to the deserialier to read the particle data from.
         /// @param particle     [out] A reference to the Particle object that will receive the particle data.
-        void DeserializeParticle(GTLib::Deserializer &deserializer, Particle &particle);
+        void DeserializeParticle(Deserializer &deserializer, Particle &particle);
 
 
         /// Instantiates a function by it's type, but does not add it to the internal function list.
@@ -374,7 +374,7 @@ namespace GTEngine
 
 
         /// The name of the emitter. The name is only used for identification for humans. This does not need to be unique.
-        GTLib::String name;
+        String name;
 
 
 
@@ -444,13 +444,13 @@ namespace GTEngine
 
 
         /// The list of functions to apply to each particle as time goes on.
-        GTLib::Vector<ParticleFunction*> functions;
+        Vector<ParticleFunction*> functions;
 
 
 
 
         /// The random number generator for spawning particles randomly.
-        GTLib::Random random;
+        Random random;
 
         /// The time since the last time a particle was emitted.
         double timeSinceLastEmission;

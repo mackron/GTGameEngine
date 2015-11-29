@@ -6,7 +6,7 @@
 #include "Material.hpp"
 #include <GTEngine/Core/Map.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Shader;
 
@@ -45,14 +45,14 @@ namespace GTEngine
         ///         delete shaders.buffer[i]->value;
         ///     }
         ///     \endcode
-        GTLib::Map<const MaterialDefinition*, Shader*> & GetShaders() { return this->shaders; }
+        Map<const MaterialDefinition*, Shader*> & GetShaders() { return this->shaders; }
 
 
     private:
 
         /// A map of MaterialDefinition/Shader combinations. We index with a material definition point, with the shader as
         /// the value. We use a map here for fast searching.
-        GTLib::Map<const MaterialDefinition*, Shader*> shaders;
+        Map<const MaterialDefinition*, Shader*> shaders;
     };
 }
 #endif

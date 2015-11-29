@@ -5,7 +5,7 @@
 
 #include "../../DefaultPrefabLinker.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class SceneEditor;
 

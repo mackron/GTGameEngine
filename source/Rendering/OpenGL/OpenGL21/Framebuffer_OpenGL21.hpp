@@ -6,7 +6,7 @@
 #include <GTEngine/Rendering/Framebuffer.hpp>
 #include "FramebufferState_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class Framebuffer_OpenGL21 : public Framebuffer
     {

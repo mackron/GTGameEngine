@@ -6,7 +6,7 @@
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/Logging.hpp>
 
-namespace GTEngine
+namespace GT
 {
     static const bool DontPostOnChange = true;
 
@@ -30,7 +30,7 @@ namespace GTEngine
         {
             // If we get here it means the script does not already exist and needs to be added. Note that we want to add these even
             // if we get a null pointer. We do this so the names remain persistant for things like editting tools.
-            definition = GTEngine::ScriptLibrary::Acquire(relativePath, nullptr, true);
+            definition = ScriptLibrary::Acquire(relativePath, nullptr, true);
             if (definition != nullptr)
             {
                 this->scripts.PushBack(definition);
@@ -106,7 +106,7 @@ namespace GTEngine
             auto definition = this->scripts[i];
             if (definition != nullptr)
             {
-                if (GTLib::Strings::Equal(definition->GetAbsolutePath(), absolutePath))
+                if (Strings::Equal(definition->GetAbsolutePath(), absolutePath))
                 {
                     indexOut = i;
                     return definition;
@@ -124,7 +124,7 @@ namespace GTEngine
             auto definition = this->scripts[i];
             if (definition != nullptr)
             {
-                if (GTLib::Strings::Equal(definition->GetRelativePath(), relativePath))
+                if (Strings::Equal(definition->GetRelativePath(), relativePath))
                 {
                     indexOut = i;
                     return definition;
@@ -584,7 +584,7 @@ namespace GTEngine
             auto variable = this->publicVariables[i];
             assert(variable != nullptr);
             {
-                if (GTLib::Strings::Equal(variable->GetName(), name))
+                if (Strings::Equal(variable->GetName(), name))
                 {
                     indexOut = i;
                     return variable;
@@ -703,10 +703,10 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void ScriptComponent::Serialize(GTLib::Serializer &serializer, unsigned int flags) const
+    void ScriptComponent::Serialize(Serializer &serializer, unsigned int flags) const
     {
         // We will use an intermediary serializer like normal. All we need to save is the relative paths of the scripts we're using.
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
 
 
         // Script paths.
@@ -802,7 +802,7 @@ namespace GTEngine
         // This section needs to be skippable in case OnDeserialize() is not implemented properly. To do this we basically need to do this as a sub-chunk.
         if ((flags & SceneNode::NoScriptOnSerialize) == 0)
         {
-            GTLib::BasicSerializer onSerializeSerializer;
+            BasicSerializer onSerializeSerializer;
 
             // We want to use the scripting module to retrieve the serialized data because that is the part that's responsible for calling scene node events
             // on the scripting side.
@@ -837,7 +837,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ScriptComponent::Deserialize(GTLib::Deserializer &deserializer, bool noPublicVariableOverride, bool noOnDeserialize)
+    void ScriptComponent::Deserialize(Deserializer &deserializer, bool noPublicVariableOverride, bool noOnDeserialize)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -856,7 +856,7 @@ namespace GTEngine
 
                     for (uint32_t i = 0; i < scriptCount; ++i)
                     {
-                        GTLib::String relativePath;
+                        String relativePath;
                         deserializer.ReadString(relativePath);
 
                         this->AddScript(relativePath.c_str(), DontPostOnChange);
@@ -871,7 +871,7 @@ namespace GTEngine
                         uint32_t type;
                         deserializer.Read(type);
 
-                        GTLib::String name;
+                        String name;
                         deserializer.ReadString(name);
 
 
@@ -965,7 +965,7 @@ namespace GTEngine
 
                         case ScriptVariableType_String:
                             {
-                                GTLib::String value;
+                                String value;
                                 deserializer.ReadString(value);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
@@ -980,7 +980,7 @@ namespace GTEngine
 
                         case ScriptVariableType_Prefab:
                             {
-                                GTLib::String value;
+                                String value;
                                 deserializer.ReadString(value);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
@@ -1056,7 +1056,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::Log("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
+                    Log("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
 
                     deserializer.Seek(header.sizeInBytes);
                     break;

@@ -49,7 +49,7 @@ namespace GTGUI
         /**
         *   \brief  Virtual function for retrieving the value of an attribute as a string.
         */
-        virtual GTLib::String Get(StyleClass &styleClass) const = 0;
+        virtual GT::String Get(StyleClass &styleClass) const = 0;
 
 
         /// Unsets the attribute.
@@ -79,7 +79,7 @@ namespace GTGUI
         const char* GetAttributeName() const { return attribName; } \
         \
         bool Set(StyleClass &sc, const char* value, ptrdiff_t valueSize); \
-        GTLib::String Get(StyleClass &sc) const; \
+        GT::String Get(StyleClass &sc) const; \
         \
         void Unset(StyleClass &sc) \
         { \
@@ -163,7 +163,7 @@ namespace GTGUI
         const char* GetAttributeName() const { return attribName; } \
         \
         bool Set(StyleClass &sc, const char* value, ptrdiff_t valueSize); \
-        GTLib::String Get(StyleClass &sc) const; \
+        GT::String Get(StyleClass &sc) const; \
         \
         void Unset(StyleClass &sc); \
         \

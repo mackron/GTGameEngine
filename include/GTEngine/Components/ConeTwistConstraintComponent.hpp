@@ -6,7 +6,7 @@
 #include "../Component.hpp"
 #include "../Physics.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Component class for a cone twist phsics constraint.
     class ConeTwistConstraintComponent : public Component

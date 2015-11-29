@@ -10,7 +10,7 @@
 #include <cstdio>
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     Font::Font(FontServer &serverIn, FontHandle fontHandleIn)
         : server(serverIn), fontHandle(fontHandleIn), metrics(), glyphMaps(), glyphs()

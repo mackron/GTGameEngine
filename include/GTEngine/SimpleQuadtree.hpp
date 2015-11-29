@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Vector.hpp>
 #include <cstdio>
 
-namespace GTEngine
+namespace GT
 {
     /// A simple, generic quadtree.
     ///
@@ -138,7 +138,7 @@ namespace GTEngine
         /// @param otherRight  [in ] The right position of the box to query.
         /// @param otherBottom [in ] The bottom position of the box to query.
         /// @param output      [out] A reference to the list to store the items in.
-        void QueryRange(int otherLeft, int otherTop, int otherRight, int otherBottom, GTLib::Vector<T*> &output) const
+        void QueryRange(int otherLeft, int otherTop, int otherRight, int otherBottom, Vector<T*> &output) const
         {
             if (this->Intersects(otherLeft, otherTop, otherRight, otherBottom))
             {
@@ -158,7 +158,7 @@ namespace GTEngine
         /// Retrieves every data pointer that is contained within the bounds of this node.
         ///
         /// @param output [out] A reference to the list to store the results.
-        void QueryAll(GTLib::Vector<T*> &output) const
+        void QueryAll(Vector<T*> &output) const
         {
             this->QueryRange(this->left, this->top, this->right, this->bottom, output);
         }
@@ -316,7 +316,7 @@ namespace GTEngine
 
 
         /// Scans for empty spacing across the X axis, left to right.
-        void ScanEmptySpacesX(int left, int top, int right, int bottom, int minWidth, GTLib::Vector<Rect> &output) const
+        void ScanEmptySpacesX(int left, int top, int right, int bottom, int minWidth, Vector<Rect> &output) const
         {
             assert(left < right);
             assert(top  < bottom);
@@ -359,7 +359,7 @@ namespace GTEngine
         }
 
         /// Scans for empty spacing down the Y axis, top to bottom.
-        void ScanEmptySpacesY(int left, int top, int right, int bottom, int minHeight, GTLib::Vector<Rect> &output) const
+        void ScanEmptySpacesY(int left, int top, int right, int bottom, int minHeight, Vector<Rect> &output) const
         {
             assert(left < right);
             assert(top  < bottom);

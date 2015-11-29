@@ -19,7 +19,7 @@
     #pragma GCC diagnostic ignored "-Wunreachable-code"
 #endif
 
-namespace GTEngine
+namespace GT
 {
     inline GLint ToOpenGLTextureFilter(TextureFilter filter)
     {
@@ -88,152 +88,152 @@ namespace GTEngine
         return GL_REPEAT;
     }
 
-    inline GLint ToOpenGLInternalFormat(GTLib::ImageFormat format)
+    inline GLint ToOpenGLInternalFormat(ImageFormat format)
     {
         switch (format)
         {
-        case GTLib::ImageFormat_R8:               return GL_R8;
-        case GTLib::ImageFormat_RG8:              return GL_RG8;
-        case GTLib::ImageFormat_RGB8:             return GL_RGB8;
-        case GTLib::ImageFormat_RGBA8:            return GL_RGBA8;
-        case GTLib::ImageFormat_RGBA16:           return GL_RGBA16;
-        case GTLib::ImageFormat_RGBA32:           return GL_RGBA32UI;
-        case GTLib::ImageFormat_R16F:             return GL_R16F;
-        case GTLib::ImageFormat_RG16F:            return GL_RG16F;
-        case GTLib::ImageFormat_RGB16F:           return GL_RGB16F;
-        case GTLib::ImageFormat_RGBA16F:          return GL_RGBA16F;
-        case GTLib::ImageFormat_R32F:             return GL_R32F;
-        case GTLib::ImageFormat_RG32F:            return GL_RG32F;
-        case GTLib::ImageFormat_RGB32F:           return GL_RGB32F;
-        case GTLib::ImageFormat_RGBA32F:          return GL_RGBA32F;
+        case ImageFormat_R8:               return GL_R8;
+        case ImageFormat_RG8:              return GL_RG8;
+        case ImageFormat_RGB8:             return GL_RGB8;
+        case ImageFormat_RGBA8:            return GL_RGBA8;
+        case ImageFormat_RGBA16:           return GL_RGBA16;
+        case ImageFormat_RGBA32:           return GL_RGBA32UI;
+        case ImageFormat_R16F:             return GL_R16F;
+        case ImageFormat_RG16F:            return GL_RG16F;
+        case ImageFormat_RGB16F:           return GL_RGB16F;
+        case ImageFormat_RGBA16F:          return GL_RGBA16F;
+        case ImageFormat_R32F:             return GL_R32F;
+        case ImageFormat_RG32F:            return GL_RG32F;
+        case ImageFormat_RGB32F:           return GL_RGB32F;
+        case ImageFormat_RGBA32F:          return GL_RGBA32F;
 
-        case GTLib::ImageFormat_Depth16:          return GL_DEPTH_COMPONENT16;
-        case GTLib::ImageFormat_Depth24:          return GL_DEPTH_COMPONENT24;
-        case GTLib::ImageFormat_Depth32:          return GL_DEPTH_COMPONENT32;
-        case GTLib::ImageFormat_Depth24_Stencil8: return GL_DEPTH24_STENCIL8;
+        case ImageFormat_Depth16:          return GL_DEPTH_COMPONENT16;
+        case ImageFormat_Depth24:          return GL_DEPTH_COMPONENT24;
+        case ImageFormat_Depth32:          return GL_DEPTH_COMPONENT32;
+        case ImageFormat_Depth24_Stencil8: return GL_DEPTH24_STENCIL8;
 
-        case GTLib::ImageFormat_R10G10B10A2:      return GL_RGB10_A2;
+        case ImageFormat_R10G10B10A2:      return GL_RGB10_A2;
 
-        case GTLib::ImageFormat_Auto:
+        case ImageFormat_Auto:
         default: break;
         }
 
         return GL_RGBA8;
     }
 
-    inline GLenum ToOpenGLFormat(GTLib::ImageFormat format)
+    inline GLenum ToOpenGLFormat(ImageFormat format)
     {
         switch (format)
         {
-        case GTLib::ImageFormat_R8:
-        case GTLib::ImageFormat_R16F:
-        case GTLib::ImageFormat_R32F:
+        case ImageFormat_R8:
+        case ImageFormat_R16F:
+        case ImageFormat_R32F:
             {
                 return GL_RED;
             }
 
-        case GTLib::ImageFormat_RG8:
-        case GTLib::ImageFormat_RG16F:
-        case GTLib::ImageFormat_RG32F:
+        case ImageFormat_RG8:
+        case ImageFormat_RG16F:
+        case ImageFormat_RG32F:
             {
                 return GL_RG;
             }
 
-        case GTLib::ImageFormat_RGB8:
-        case GTLib::ImageFormat_RGB16F:
-        case GTLib::ImageFormat_RGB32F:
+        case ImageFormat_RGB8:
+        case ImageFormat_RGB16F:
+        case ImageFormat_RGB32F:
             {
                 return GL_RGB;
             }
 
-        case GTLib::ImageFormat_RGBA8:
-        case GTLib::ImageFormat_RGBA16:
-        case GTLib::ImageFormat_RGBA32:
-        case GTLib::ImageFormat_RGBA16F:
-        case GTLib::ImageFormat_RGBA32F:
-        case GTLib::ImageFormat_R10G10B10A2:
+        case ImageFormat_RGBA8:
+        case ImageFormat_RGBA16:
+        case ImageFormat_RGBA32:
+        case ImageFormat_RGBA16F:
+        case ImageFormat_RGBA32F:
+        case ImageFormat_R10G10B10A2:
             {
                 return GL_RGBA;
             }
 
-        case GTLib::ImageFormat_Depth16:
-        case GTLib::ImageFormat_Depth24:
-        case GTLib::ImageFormat_Depth32:
+        case ImageFormat_Depth16:
+        case ImageFormat_Depth24:
+        case ImageFormat_Depth32:
             {
                 return GL_DEPTH_COMPONENT;
             }
 
-        case GTLib::ImageFormat_Depth24_Stencil8:
+        case ImageFormat_Depth24_Stencil8:
             {
                 return GL_DEPTH_STENCIL;
             }
 
-        case GTLib::ImageFormat_Auto:
+        case ImageFormat_Auto:
         default: break;
         }
 
         return GL_RGBA;
     }
 
-    inline GLenum ToOpenGLType(GTLib::ImageFormat format)
+    inline GLenum ToOpenGLType(ImageFormat format)
     {
         switch (format)
         {
-        case GTLib::ImageFormat_R8:
-        case GTLib::ImageFormat_RG8:
-        case GTLib::ImageFormat_RGB8:
-        case GTLib::ImageFormat_RGBA8:
+        case ImageFormat_R8:
+        case ImageFormat_RG8:
+        case ImageFormat_RGB8:
+        case ImageFormat_RGBA8:
             {
                 return GL_UNSIGNED_BYTE;
             }
 
-        case GTLib::ImageFormat_RGBA16:
+        case ImageFormat_RGBA16:
             {
                 return GL_UNSIGNED_SHORT;
             }
 
-        case GTLib::ImageFormat_RGBA32:
+        case ImageFormat_RGBA32:
             {
                 return GL_UNSIGNED_INT;
             }
 
-        case GTLib::ImageFormat_R16F:
-        case GTLib::ImageFormat_RG16F:
-        case GTLib::ImageFormat_RGB16F:
-        case GTLib::ImageFormat_RGBA16F:
+        case ImageFormat_R16F:
+        case ImageFormat_RG16F:
+        case ImageFormat_RGB16F:
+        case ImageFormat_RGBA16F:
             {
                 return GL_HALF_FLOAT;
             }
 
-        case GTLib::ImageFormat_R32F:
-        case GTLib::ImageFormat_RG32F:
-        case GTLib::ImageFormat_RGB32F:
-        case GTLib::ImageFormat_RGBA32F:
+        case ImageFormat_R32F:
+        case ImageFormat_RG32F:
+        case ImageFormat_RGB32F:
+        case ImageFormat_RGBA32F:
             {
                 return GL_FLOAT;
             }
 
 
-        case GTLib::ImageFormat_Depth16:
-        case GTLib::ImageFormat_Depth24:
-        case GTLib::ImageFormat_Depth32:
+        case ImageFormat_Depth16:
+        case ImageFormat_Depth24:
+        case ImageFormat_Depth32:
             {
                 return GL_FLOAT;
             }
 
-        case GTLib::ImageFormat_Depth24_Stencil8:
+        case ImageFormat_Depth24_Stencil8:
             {
                 return GL_UNSIGNED_INT_24_8;
             }
 
 
-        case GTLib::ImageFormat_R10G10B10A2:
+        case ImageFormat_R10G10B10A2:
             {
                 return GL_UNSIGNED_INT_10_10_10_2;
             }
 
 
-        case GTLib::ImageFormat_Auto:
+        case ImageFormat_Auto:
         default: break;
         }
 

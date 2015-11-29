@@ -57,12 +57,12 @@ namespace GTGUI
 
 
         /// Retrieves a string object containing the token.
-        GTLib::String GetString() const;
+        GT::String GetString() const;
 
         /// Builds and returns a string containing the current line.
         ///
         /// @return A string containing the line the tokenizer is currently sitting on.
-        GTLib::String GetCurrentLineString() const;
+        GT::String GetCurrentLineString() const;
 
         /// Retrieves the number of the current line.
         unsigned int GetCurrentLineNumber() const { return this->lineNumber; }

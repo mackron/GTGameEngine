@@ -9,7 +9,7 @@
 #include "Threading/JobQueue.hpp"
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     namespace Threading
     {

@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/Serializer.hpp>
 
-namespace GTEngine
+namespace GT
 {
     enum SceneEditorCommandType
     {
@@ -24,13 +24,13 @@ namespace GTEngine
 
         /// The unique ID's of the relevant scene nodes for this command. We need to use IDs here because sometimes the actual C++ objects
         /// won't actually exist and will need to be recreated.
-        GTLib::Vector<size_t> sceneNodeIDs;
+        Vector<size_t> sceneNodeIDs;
 
         /// The nodes that were selected at the time of this command.
-        GTLib::Vector<size_t> selectedNodes;
+        Vector<size_t> selectedNodes;
 
         /// The serialized data. This will be deserialized where appropriate.
-        GTLib::BasicSerializer serializer;
+        BasicSerializer serializer;
     };
 }
 

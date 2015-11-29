@@ -20,7 +20,7 @@ namespace GT
             GT::Asset* pAsset;
 
             // A pointer to the streamer.
-            GTEngine::SoundStreamer* pStreamer;
+            SoundStreamer* pStreamer;
         };
 
         static void EA_OnSoundDelete(easyaudio_sound* pSound)
@@ -29,7 +29,7 @@ namespace GT
             EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(easyaudio_get_sound_extra_data(pSound));
             assert(pSoundData != NULL);
 
-            GTEngine::SoundStreamer::Delete(pSoundData->pStreamer);
+            SoundStreamer::Delete(pSoundData->pStreamer);
             pSoundData->pStreamer = NULL;
 
             pSoundData->pEngineContext->GetAssetLibrary().Unload(pSoundData->pAsset);
@@ -99,7 +99,7 @@ namespace GT
             {
                 // TODO: Don't use streaming for tiny sounds.
 
-                GTEngine::SoundStreamer* pStreamer = GTEngine::SoundStreamer::CreateFromAsset(pAsset);
+                SoundStreamer* pStreamer = SoundStreamer::CreateFromAsset(pAsset);
                 if (pStreamer != nullptr && pStreamer->Initialize())
                 {
                     EA_SoundData extraData;

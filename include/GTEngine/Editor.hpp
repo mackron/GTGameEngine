@@ -18,7 +18,7 @@ namespace GTGUI
     class Server;
 }
 
-namespace GTEngine
+namespace GT
 {
     class Game;
 
@@ -217,26 +217,26 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not auto repeat.
-        void OnKeyPressed(GTLib::Key key);
+        void OnKeyPressed(Key key);
 
         /// Called when a key is released.
         ///
         /// @param key [in] The key that was just released.
-        void OnKeyReleased(GTLib::Key Key);
+        void OnKeyReleased(Key Key);
 
         /// Called when a mouse button is pusehd.
         ///
         /// @param button [in] The button that was pushed.
         /// @param x      [in] The x position of the mouse at the time it was pushed.
         /// @param y      [in] The y position of the mouse at the time it was pushed.
-        void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
+        void OnMouseButtonDown(MouseButton button, int x, int y);
 
         /// Called when a mouse button is released.
         ///
         /// @param button [in] The button that was released.
         /// @param x      [in] The x position of the mouse at the time it was released.
         /// @param y      [in] The y position of the mouse at the time it was released.
-        void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
+        void OnMouseButtonUp(MouseButton button, int x, int y);
 
         /// Called when the main window received focus.
         void OnReceiveFocus();
@@ -286,7 +286,7 @@ namespace GTEngine
 
         /// The list of open files. This is indexed by the full, absolute file path. We need to index like this since we need to support
         /// multiple data directories, which may result in something having the same relative path.
-        GTLib::Dictionary<SubEditor*> openedFiles;
+        Dictionary<SubEditor*> openedFiles;
 
         /// A pointer to the sub-editor that is currently being shown.
         SubEditor* currentlyShownEditor;

@@ -2,7 +2,7 @@
 
 #include <GTEngine/Editor/EditorGrid.hpp>
 
-namespace GTEngine
+namespace GT
 {
     EditorGrid::EditorGrid(float spacing, unsigned int subdivisions, unsigned int lineCount)
         : innerSpacingMesh(), subdivisionMesh(), materialDefinition()
@@ -78,11 +78,11 @@ namespace GTEngine
         float bottomEdge =  halfLineCount * spacing;
 
 
-        GTLib::Vector<glm::vec3> innerSpacingVertices;
-        GTLib::Vector<glm::vec3> subdivisionVertices;
+        Vector<glm::vec3> innerSpacingVertices;
+        Vector<glm::vec3> subdivisionVertices;
         
-        GTLib::Vector<unsigned int> innerSpacingIndices;
-        GTLib::Vector<unsigned int> subdivisionIndices;
+        Vector<unsigned int> innerSpacingIndices;
+        Vector<unsigned int> subdivisionIndices;
 
 
 

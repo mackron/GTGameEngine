@@ -147,11 +147,11 @@ namespace GTGUI
         *       when constructing absolute paths.
         *       \par
         *       The topID parameter can be used to get a pointer to that element. This is required so we can do
-        *       a return value for the GTGUI.Server.New() script function. Delete this string with GTLib::Strings::Delete().
+        *       a return value for the GTGUI.Server.New() script function. Delete this string with Strings::Delete().
         */
-        bool Load(const char* xml, const char* absDirectory, GTLib::String &topID);
+        bool Load(const char* xml, const char* absDirectory, GT::String &topID);
         bool Load(const char* xml, const char* absDirectory = nullptr);
-        bool Load(const char* xml, GTLib::String &topID);
+        bool Load(const char* xml, GT::String &topID);
         
         /**
         *   \brief                Loads and parses an XML script from a file.
@@ -312,28 +312,28 @@ namespace GTGUI
         void UpdateLayout();
 
         
-        /// Fills the given GTLib::FontInfo object based on the given element.
+        /// Fills the given FontInfo object based on the given element.
         ///
         /// @param element [in]  The element whose style will be used to retrieve th font information.
-        /// @param fi      [out] A reference to the GTLib::FontInfo object that will receive the data.
-        void GetFontInfoFromElement(const Element &element, GTLib::FontInfo &fi) const;
+        /// @param fi      [out] A reference to the FontInfo object that will receive the data.
+        void GetFontInfoFromElement(const Element &element, GT::FontInfo &fi) const;
         
         
         /// Acquires a font from the given font info.
         ///
-        /// @param fi [in] The GTLib::FontInfo object representing the font to acquire.
+        /// @param fi [in] The FontInfo object representing the font to acquire.
         ///
         /// @return A pointer to the font.
         ///
         /// @remarks
         ///     If a font has already been acquired from the same font info, a pointer to the already-acquired font
         ///     will be returned.
-        GTLib::Font* AcquireFont(const GTLib::FontInfo &fi);
+        GT::Font* AcquireFont(const GT::FontInfo &fi);
         
         /// Unacquires a font that was previously acquired with AcquireFont().
         ///
         /// @param font [in] A pointer to the font to unacquire.
-        void UnacquireFont(const GTLib::Font* font);
+        void UnacquireFont(const GT::Font* font);
 
 
         /// Acquires an image based on an absolute URL or ID.
@@ -393,17 +393,17 @@ namespace GTGUI
         /// Called by applications when a key is pressed initially pressed.
         ///
         /// @param key [in] The key that was pressed.
-        void OnKeyPressed(EventContext eventContext, GTLib::Key key);
+        void OnKeyPressed(EventContext eventContext, GT::Key key);
         
         /// Called by applications when a key is down, taking auto-repeat into account.
         ///
         /// @param key [in] The key that was pressed.
-        void OnKeyDown(EventContext eventContext, GTLib::Key key);
+        void OnKeyDown(EventContext eventContext, GT::Key key);
         
         /// Called when a key is raised.
         ///
         /// @param key [in] The key that was raised.
-        void OnKeyUp(EventContext eventContext, GTLib::Key key);
+        void OnKeyUp(EventContext eventContext, GT::Key key);
 
 
 
@@ -839,16 +839,16 @@ namespace GTGUI
         void RemoveFromZIndexList(Element &element);
 
         /// Retrieves a pointer to the list of elements for the given z-index.
-        GTLib::List<Element*>* GetElementListByZIndex(int zIndex);
+        GT::List<Element*>* GetElementListByZIndex(int zIndex);
 
         /// Retrieves a pointer to the list of elements that the given element is currently in.
-        GTLib::List<Element*>* FindListContainingElement(Element &element);
+        GT::List<Element*>* FindListContainingElement(Element &element);
 
         /// Helper function for finding the element under the given point. This will run through each element recursively.
         ///
         /// @remarks
         ///     This does not check relative or absolute elements, since that will be done during a different stage.
-        void GetElementUnderPoint(int x, int y, bool fromMouseInput, Element &base, const GTLib::Rect<int> &parentRect, const GTLib::Rect<int> &parentScissorRect, Element * &result);
+        void GetElementUnderPoint(int x, int y, bool fromMouseInput, Element &base, const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, Element * &result);
 
 
         /// Sets the cursor.
@@ -857,7 +857,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     This method will not do anything if the cursor is the same as the current one.
-        void SetCursor(GTLib::Cursor newCursor);
+        void SetCursor(GT::Cursor newCursor);
 
     
         /// Releases the pushed element, if any.
@@ -918,13 +918,13 @@ namespace GTGUI
         ElementTree elements;
 
         /// The list of absolute positioned elements. These are also in the main 'elements' list.
-        GTLib::List<Element*> absoluteElements;
+        GT::List<Element*> absoluteElements;
 
 
         /// We need to keep track of all the elements that use the z-index property. We use a map whose key is
         /// the z-index, and value is a pointer to a list of all the elements that are using that z-index. The
         /// only elements that will use the z-index are relative and absolute elements.
-        GTLib::Map<int, GTLib::List<Element*>*> elementsUsingZIndex;
+        GT::Map<int, GT::List<Element*>*> elementsUsingZIndex;
 
 
         /// The layout manager.
@@ -933,28 +933,28 @@ namespace GTGUI
 
         /// The timer that will keep track of the time between each step. This is required for the parameterless version of Step(), which
         /// will use the time since the last update for it's delta.
-        GTLib::Timer stepTimer;
+        GT::Timer stepTimer;
 
         /// The event queue. Access to this queue is thread-safe. Use PostEvent() to add an event to the queue. This will be emptied at
         /// the beginning of each call to Step().
         EventQueue eventQueue;
 
         /// The lock we'll use to keep access to 'eventQueue' thread-safe.
-        GTLib::Mutex eventLock;
+        GT::Mutex eventLock;
 
 
         unsigned int viewportWidth;     //< The width of the working area.
         unsigned int viewportHeight;    //< The height of the working area.
 
         /// The font server.
-        GTLib::FontServer fontServer;
+        GT::FontServer fontServer;
         
         /// The font cache.
         FontCache fontCache;
 
 
         /// The list of elements that have the mouse over them.
-        GTLib::List<Element*> hoveredElements;
+        GT::List<Element*> hoveredElements;
 
 
         /// Structure containing proeprties for tooltips.
@@ -974,7 +974,7 @@ namespace GTGUI
         };
 
         /// A map of hover times for elements that are currently hovered.
-        GTLib::Map<Element*, ElementTooltipProperties> elementTooltipProperties;
+        GT::Map<Element*, ElementTooltipProperties> elementTooltipProperties;
 
         /// The tooltip delay.
         float tooltipDelay;
@@ -1052,14 +1052,14 @@ namespace GTGUI
         int lastMouseClickPosY;
 
         /// The current cursor.
-        GTLib::Cursor currentCursor;
+        GT::Cursor currentCursor;
 
 
         /// The list of images currently loaded by the server. These are keyed by the file name.
-        GTLib::Dictionary<ImageHandle> loadedImages;
+        GT::Dictionary<ImageHandle> loadedImages;
 
         /// The map of registered images. The key is the ID of the image that is used by styles.
-        GTLib::Dictionary<ImageHandle> registeredImages;
+        GT::Dictionary<ImageHandle> registeredImages;
 
 
         /// An integer representing the detail of the error messages.
@@ -1084,14 +1084,14 @@ namespace GTGUI
         Element* dragAndDropProxyElement;
 
         /// The offset to apply to the drag-and-drop proxy element when positioning it against the mouse.
-        GTLib::Point<int> dragAndDropProxyElementOffset;
+        GT::Point<int> dragAndDropProxyElementOffset;
 
 
         /// The list of elements that need to have OnShow events posted.
-        GTLib::SortedVector<Element*> elementsNeedingOnShow;
+        GT::SortedVector<Element*> elementsNeedingOnShow;
 
         /// The list of elements that need to have OnHide events posted.
-        GTLib::SortedVector<Element*> elementsNeedingOnHide;
+        GT::SortedVector<Element*> elementsNeedingOnHide;
         
         
         /// A counter for creating unique ID's for anonymous elements.

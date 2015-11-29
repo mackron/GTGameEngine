@@ -36,7 +36,7 @@ namespace GTGUI
             auto currentNode = m_root;
             while (currentNode != nullptr)
             {
-                //auto compareResult = GTLib::Strings::FastCompare(styleClass.name, currentNode->name);
+                //auto compareResult = Strings::FastCompare(styleClass.name, currentNode->name);
                 //if (compareResult < 0)
                 if (styleClass.bst.hashedName < currentNode->bst.hashedName)
                 {
@@ -118,13 +118,13 @@ namespace GTGUI
     
     StyleClass* StyleClassTree::FindByName(const char* name, ptrdiff_t nameLengthInTs)
     {
-        uint32_t hashedName = GTLib::Hash(name, nameLengthInTs);
+        uint32_t hashedName = GT::Hash(name, nameLengthInTs);
         
         auto currentNode = m_root;
         while (currentNode != nullptr)
         {
             /*
-            auto compareResult = GTLib::Strings::FastCompare(name, nameLengthInTs, currentNode->name);
+            auto compareResult = Strings::FastCompare(name, nameLengthInTs, currentNode->name);
             if (compareResult < 0)
             {
                 currentNode = currentNode->bst.left;

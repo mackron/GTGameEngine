@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <cassert>
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {
@@ -341,7 +341,7 @@ namespace GTLib
     }
 }
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {

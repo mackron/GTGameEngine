@@ -12,7 +12,7 @@ namespace GT
         easyvfs_file* pFile;
     };
 
-    int STBI_Read(void* user, char *data, int size)
+    static int STBI_Read(void* user, char *data, int size)
     {
         STBICallbackData* pCallbackData = reinterpret_cast<STBICallbackData*>(user);
         assert(pCallbackData != nullptr);
@@ -31,7 +31,7 @@ namespace GT
         }
     }
 
-    void STBI_Skip(void* user, int n)
+    static void STBI_Skip(void* user, int n)
     {
         STBICallbackData* pCallbackData = reinterpret_cast<STBICallbackData*>(user);
         assert(pCallbackData != nullptr);
@@ -41,7 +41,7 @@ namespace GT
         }
     }
 
-    int STBI_EOF(void* user)
+    static int STBI_EOF(void* user)
     {
         STBICallbackData* pCallbackData = reinterpret_cast<STBICallbackData*>(user);
         assert(pCallbackData != nullptr);

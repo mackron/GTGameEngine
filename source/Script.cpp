@@ -38,7 +38,7 @@ namespace GT
     {
     }
 
-    void ScriptErrorHandler::OnRuntimeError(Script &, const char*, int, const char*, const GTLib::Vector<ScriptCallstackItem> &)
+    void ScriptErrorHandler::OnRuntimeError(Script &, const char*, int, const char*, const Vector<ScriptCallstackItem> &)
     {
     }
 
@@ -72,17 +72,17 @@ namespace GT
                 //   1 = The line number
                 //   2 = The error message
 
-                GTLib::String lineNumberPrefix("\"]:");
-                GTLib::String line(this->lineIterator.start, this->lineIterator.end - this->lineIterator.start);
+                String lineNumberPrefix("\"]:");
+                String line(this->lineIterator.start, this->lineIterator.end - this->lineIterator.start);
 
-                auto lineNumberStart = GTLib::Strings::FindFirst(line.c_str(), lineNumberPrefix.c_str());
+                auto lineNumberStart = Strings::FindFirst(line.c_str(), lineNumberPrefix.c_str());
                 if (lineNumberStart != nullptr)
                 {
-                    GTLib::Strings::Tokenizer iToken(lineNumberStart + lineNumberPrefix.GetLength(), ":");
+                    Strings::Tokenizer iToken(lineNumberStart + lineNumberPrefix.GetLength(), ":");
 
                     // 1 - The line numer.
-                    GTLib::String lineNumberStr(iToken.start, iToken.end - iToken.start);
-                    this->lineNumber = GTLib::Parse<int>(lineNumberStr.c_str());
+                    String lineNumberStr(iToken.start, iToken.end - iToken.start);
+                    this->lineNumber = Parse<int>(lineNumberStr.c_str());
                     ++iToken;
 
                     // 2 - The error message.
@@ -187,12 +187,12 @@ namespace GT
         auto errorMessage = script.ToString(1);
         assert(errorMessage != nullptr);
         {
-            GTLib::String formattedMessage;
+            String formattedMessage;
             formattedMessage += errorMessage;
             formattedMessage += "\n";
 
 
-            GTLib::Vector<ScriptCallstackItem> callstack;
+            Vector<ScriptCallstackItem> callstack;
 
             lua_State* state = reinterpret_cast<lua_State*>(script.GetInernalLuaState());
             lua_Debug  entry;
@@ -222,7 +222,7 @@ namespace GT
 
             // Now we're going to grab all of the required data to post a properly formatted runtime error. The original message will contain the line
             // number and error message, but not the full source path. The full source path will be specified in the last item in the callstack.
-            GTLib::String sourceName = callstack.GetBack().sourceName;
+            String sourceName = callstack.GetBack().sourceName;
 
             ScriptErrorMessageIterator iError(errorMessage);
             assert(iError);
@@ -288,7 +288,7 @@ namespace GT
         else
         {
             char buffer[256];
-            GTLib::IO::snprintf(buffer, 256, "Could not find file: %s", fileName);
+            IO::snprintf(buffer, 256, "Could not find file: %s", fileName);
 
             this->Push(buffer);
         }
@@ -424,7 +424,7 @@ namespace GT
 
     bool Script::Get(const char* statement)
     {
-        GTLib::Strings::List<char> command;
+        Strings::List<char> command;
         command.Append("return ");
         command.Append(statement);
 
@@ -433,9 +433,9 @@ namespace GT
 
     bool Script::Set(const char* dest, int value)
     {
-        GTLib::String valueStr = GTLib::ToString(value);
+        String valueStr = ToString(value);
 
-        GTLib::Strings::List<char> command;
+        Strings::List<char> command;
         command.Append(dest);
         command.Append("=");
         command.Append(valueStr.c_str());
@@ -446,9 +446,9 @@ namespace GT
 
     bool Script::Set(const char* dest, double value)
     {
-        GTLib::String valueStr = GTLib::ToString(value);
+        String valueStr = ToString(value);
 
-        GTLib::Strings::List<char> command;
+        Strings::List<char> command;
         command.Append(dest);
         command.Append("=");
         command.Append(valueStr.c_str());
@@ -459,7 +459,7 @@ namespace GT
 
     bool Script::Set(const char* dest, bool value)
     {
-        GTLib::Strings::List<char> command;
+        Strings::List<char> command;
         command.Append(dest);
         command.Append("=");
         command.Append(value ? "true;" : "false;");
@@ -469,7 +469,7 @@ namespace GT
 
     bool Script::Set(const char* dest, const char* value)
     {
-        GTLib::Strings::List<char> command;
+        Strings::List<char> command;
         command.Append(dest);
         command.Append("='");
         command.Append(value);
@@ -830,7 +830,7 @@ namespace GT
         }
     }
 
-    void Script::OnRuntimeError(const char* sourceName, int lineNumber, const char* message, const GTLib::Vector<ScriptCallstackItem> &callstack)
+    void Script::OnRuntimeError(const char* sourceName, int lineNumber, const char* message, const Vector<ScriptCallstackItem> &callstack)
     {
         for (size_t i = 0; i < this->errorHandlers.count; ++i)
         {

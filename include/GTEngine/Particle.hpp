@@ -5,7 +5,7 @@
 
 #include "Math.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing an individual particle emitted by an emitter.
     class Particle

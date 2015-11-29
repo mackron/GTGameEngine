@@ -4,7 +4,7 @@
 #include <GTEngine/Physics.hpp>
 
 
-namespace GTEngine
+namespace GT
 {
     PointToPointConstraint::PointToPointConstraint(RigidBody &bodyA, RigidBody &bodyB, const glm::vec3 &pivotInA, const glm::vec3 &pivotInB)
         : btPoint2PointConstraint(bodyA, bodyB, ToBulletVector3(pivotInA), ToBulletVector3(pivotInB)),

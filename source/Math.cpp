@@ -2,7 +2,7 @@
 
 #include <GTEngine/Math.hpp>
 
-namespace GTEngine
+namespace GT
 {
     namespace Math
     {

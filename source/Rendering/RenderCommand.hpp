@@ -3,7 +3,7 @@
 #ifndef __GTEngine_RenderCommand_hpp_
 #define __GTEngine_RenderCommand_hpp_
 
-namespace GTEngine
+namespace GT
 {
     /// The base class for render commands. Note the simplicity of this class. The only method an inheritted class needs
     /// to implement is Execute(), which will be called when the command is run on the rendering thread.

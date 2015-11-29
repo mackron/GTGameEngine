@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/GlyphMapManager.hpp>
 
-namespace GTLib
+namespace GT
 {
     GlyphMapManager::GlyphMapManager()
     {

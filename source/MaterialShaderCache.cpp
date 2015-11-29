@@ -2,7 +2,7 @@
 
 #include <GTEngine/MaterialShaderCache.hpp>
 
-namespace GTEngine
+namespace GT
 {
     MaterialShaderCache::MaterialShaderCache()
         : shaders()

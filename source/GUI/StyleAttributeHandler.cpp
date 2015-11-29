@@ -30,7 +30,7 @@ namespace GTGUI
         
             return false;
         }
-        GTLib::String width::Get(StyleClass &sc) const
+        GT::String width::Get(StyleClass &sc) const
         {
             return sc.width.GetValueAsString();
         }
@@ -56,7 +56,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String height::Get(StyleClass &sc) const
+        GT::String height::Get(StyleClass &sc) const
         {
             return sc.height.GetValueAsString();
         }
@@ -83,7 +83,7 @@ namespace GTGUI
         
             return false;
         }
-        GTLib::String minWidth::Get(StyleClass &sc) const
+        GT::String minWidth::Get(StyleClass &sc) const
         {
             return sc.minWidth.GetValueAsString();
         }
@@ -109,7 +109,7 @@ namespace GTGUI
         
             return false;
         }
-        GTLib::String maxWidth::Get(StyleClass &sc) const
+        GT::String maxWidth::Get(StyleClass &sc) const
         {
             return sc.maxWidth.GetValueAsString();
         }
@@ -136,7 +136,7 @@ namespace GTGUI
         
             return false;
         }
-        GTLib::String minHeight::Get(StyleClass &sc) const
+        GT::String minHeight::Get(StyleClass &sc) const
         {
             return sc.minHeight.GetValueAsString();
         }
@@ -162,7 +162,7 @@ namespace GTGUI
         
             return false;
         }
-        GTLib::String maxHeight::Get(StyleClass &sc) const
+        GT::String maxHeight::Get(StyleClass &sc) const
         {
             return sc.maxHeight.GetValueAsString();
         }
@@ -183,7 +183,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String relativeWidthMode::Get(StyleClass &sc) const
+        GT::String relativeWidthMode::Get(StyleClass &sc) const
         {
             return sc.relativeWidthMode.GetValueAsString();
         }
@@ -203,7 +203,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String relativeHeightMode::Get(StyleClass &sc) const
+        GT::String relativeHeightMode::Get(StyleClass &sc) const
         {
             return sc.relativeHeightMode.GetValueAsString();
         }
@@ -223,7 +223,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String flexChildWidth::Get(StyleClass &sc) const
+        GT::String flexChildWidth::Get(StyleClass &sc) const
         {
             return sc.flexChildWidth.GetValueAsString();
         }
@@ -244,7 +244,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String flexChildHeight::Get(StyleClass &sc) const
+        GT::String flexChildHeight::Get(StyleClass &sc) const
         {
             return sc.flexChildHeight.GetValueAsString();
         }
@@ -265,7 +265,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String backgroundColour::Get(StyleClass &sc) const
+        GT::String backgroundColour::Get(StyleClass &sc) const
         {
             return sc.backgroundColour.GetValueAsString();
         }
@@ -286,7 +286,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String backgroundImage::Get(StyleClass &sc) const
+        GT::String backgroundImage::Get(StyleClass &sc) const
         {
             return sc.backgroundImage.GetValueAsString();
         }
@@ -307,7 +307,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String backgroundImageColour::Get(StyleClass &sc) const
+        GT::String backgroundImageColour::Get(StyleClass &sc) const
         {
             return sc.backgroundImageColour.GetValueAsString();
         }
@@ -328,7 +328,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String backgroundAlignX::Get(StyleClass &sc) const
+        GT::String backgroundAlignX::Get(StyleClass &sc) const
         {
             return sc.backgroundAlignX.GetValueAsString();
         }
@@ -349,7 +349,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String backgroundAlignY::Get(StyleClass &sc) const
+        GT::String backgroundAlignY::Get(StyleClass &sc) const
         {
             return sc.backgroundAlignY.GetValueAsString();
         }
@@ -370,7 +370,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String backgroundRepeatX::Get(StyleClass &sc) const
+        GT::String backgroundRepeatX::Get(StyleClass &sc) const
         {
             return sc.backgroundRepeatX.GetValueAsString();
         }
@@ -391,7 +391,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String backgroundRepeatY::Get(StyleClass &sc) const
+        GT::String backgroundRepeatY::Get(StyleClass &sc) const
         {
             return sc.backgroundRepeatY.GetValueAsString();
         }
@@ -412,7 +412,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String borderLeftWidth::Get(StyleClass &sc) const
+        GT::String borderLeftWidth::Get(StyleClass &sc) const
         {
             return sc.borderLeftWidth.GetValueAsString();
         }
@@ -434,7 +434,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String borderRightWidth::Get(StyleClass &sc) const
+        GT::String borderRightWidth::Get(StyleClass &sc) const
         {
             return sc.borderRightWidth.GetValueAsString();
         }
@@ -456,7 +456,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String borderTopWidth::Get(StyleClass &sc) const
+        GT::String borderTopWidth::Get(StyleClass &sc) const
         {
             return sc.borderTopWidth.GetValueAsString();
         }
@@ -478,7 +478,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String borderBottomWidth::Get(StyleClass &sc) const
+        GT::String borderBottomWidth::Get(StyleClass &sc) const
         {
             return sc.borderBottomWidth.GetValueAsString();
         }
@@ -500,7 +500,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String borderLeftColour::Get(StyleClass &sc) const
+        GT::String borderLeftColour::Get(StyleClass &sc) const
         {
             return sc.borderLeftColour.GetValueAsString();
         }
@@ -521,7 +521,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String borderRightColour::Get(StyleClass &sc) const
+        GT::String borderRightColour::Get(StyleClass &sc) const
         {
             return sc.borderRightColour.GetValueAsString();
         }
@@ -542,7 +542,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String borderTopColour::Get(StyleClass &sc) const
+        GT::String borderTopColour::Get(StyleClass &sc) const
         {
             return sc.borderTopColour.GetValueAsString();
         }
@@ -563,7 +563,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String borderBottomColour::Get(StyleClass &sc) const
+        GT::String borderBottomColour::Get(StyleClass &sc) const
         {
             return sc.borderBottomColour.GetValueAsString();
         }
@@ -584,7 +584,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String paddingLeft::Get(StyleClass &sc) const
+        GT::String paddingLeft::Get(StyleClass &sc) const
         {
             return sc.paddingLeft.GetValueAsString();
         }
@@ -605,7 +605,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String paddingRight::Get(StyleClass &sc) const
+        GT::String paddingRight::Get(StyleClass &sc) const
         {
             return sc.paddingRight.GetValueAsString();
         }
@@ -626,7 +626,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String paddingTop::Get(StyleClass &sc) const
+        GT::String paddingTop::Get(StyleClass &sc) const
         {
             return sc.paddingTop.GetValueAsString();
         }
@@ -647,7 +647,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String paddingBottom::Get(StyleClass &sc) const
+        GT::String paddingBottom::Get(StyleClass &sc) const
         {
             return sc.paddingBottom.GetValueAsString();
         }
@@ -668,7 +668,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String marginLeft::Get(StyleClass &sc) const
+        GT::String marginLeft::Get(StyleClass &sc) const
         {
             return sc.marginLeft.GetValueAsString();
         }
@@ -689,7 +689,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String marginRight::Get(StyleClass &sc) const
+        GT::String marginRight::Get(StyleClass &sc) const
         {
             return sc.marginRight.GetValueAsString();
         }
@@ -710,7 +710,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String marginTop::Get(StyleClass &sc) const
+        GT::String marginTop::Get(StyleClass &sc) const
         {
             return sc.marginTop.GetValueAsString();
         }
@@ -731,7 +731,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String marginBottom::Get(StyleClass &sc) const
+        GT::String marginBottom::Get(StyleClass &sc) const
         {
             return sc.marginBottom.GetValueAsString();
         }
@@ -744,8 +744,8 @@ namespace GTGUI
         // child-plane
         bool childPlane::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
-            if (GTLib::Strings::Equal(value, valueSize, "horizontal") ||
-                GTLib::Strings::Equal(value, valueSize, "vertical"))
+            if (GT::Strings::Equal(value, valueSize, "horizontal") ||
+                GT::Strings::Equal(value, valueSize, "vertical"))
             {
                 if (sc.childPlane.SetFromString(value, valueSize))
                 {
@@ -756,7 +756,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String childPlane::Get(StyleClass &sc) const
+        GT::String childPlane::Get(StyleClass &sc) const
         {
             return sc.childPlane.GetValueAsString();
         }
@@ -769,9 +769,9 @@ namespace GTGUI
         // horizontal-align
         bool horizontalAlign::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
-            if (GTLib::Strings::Equal(value, valueSize, "left")  ||
-                GTLib::Strings::Equal(value, valueSize, "right") ||
-                GTLib::Strings::Equal(value, valueSize, "center"))
+            if (GT::Strings::Equal(value, valueSize, "left")  ||
+                GT::Strings::Equal(value, valueSize, "right") ||
+                GT::Strings::Equal(value, valueSize, "center"))
             {
                 if (sc.horizontalAlign.SetFromString(value, valueSize))
                 {
@@ -782,7 +782,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String horizontalAlign::Get(StyleClass &sc) const
+        GT::String horizontalAlign::Get(StyleClass &sc) const
         {
             return sc.horizontalAlign.GetValueAsString();
         }
@@ -795,9 +795,9 @@ namespace GTGUI
         // vertical-align
         bool verticalAlign::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
-            if (GTLib::Strings::Equal(value, valueSize, "top")    ||
-                GTLib::Strings::Equal(value, valueSize, "bottom") ||
-                GTLib::Strings::Equal(value, valueSize, "center"))
+            if (GT::Strings::Equal(value, valueSize, "top")    ||
+                GT::Strings::Equal(value, valueSize, "bottom") ||
+                GT::Strings::Equal(value, valueSize, "center"))
             {
                 if (sc.verticalAlign.SetFromString(value, valueSize))
                 {
@@ -808,7 +808,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String verticalAlign::Get(StyleClass &sc) const
+        GT::String verticalAlign::Get(StyleClass &sc) const
         {
             return sc.verticalAlign.GetValueAsString();
         }
@@ -821,9 +821,9 @@ namespace GTGUI
         // cursor
         bool cursor::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
-            if (GTLib::Strings::Equal(value, valueSize, "arrow") ||
-                GTLib::Strings::Equal(value, valueSize, "beam")  ||
-                GTLib::Strings::Equal(value, valueSize, "hand"))
+            if (GT::Strings::Equal(value, valueSize, "arrow") ||
+                GT::Strings::Equal(value, valueSize, "beam")  ||
+                GT::Strings::Equal(value, valueSize, "hand"))
             {
                 if (sc.cursor.SetFromString(value, valueSize))
                 {
@@ -834,7 +834,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String cursor::Get(StyleClass &sc) const
+        GT::String cursor::Get(StyleClass &sc) const
         {
             return sc.cursor.GetValueAsString();
         }
@@ -854,7 +854,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String visible::Get(StyleClass &sc) const
+        GT::String visible::Get(StyleClass &sc) const
         {
             return sc.visible.GetValueAsString();
         }
@@ -881,7 +881,7 @@ namespace GTGUI
         
             return false;
         }
-        GTLib::String zIndex::Get(StyleClass &sc) const
+        GT::String zIndex::Get(StyleClass &sc) const
         {
             return sc.zIndex.GetValueAsString();
         }
@@ -902,7 +902,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String transparentMouseInput::Get(StyleClass &sc) const
+        GT::String transparentMouseInput::Get(StyleClass &sc) const
         {
             return sc.transparentMouseInput.GetValueAsString();
         }
@@ -956,7 +956,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String enabled::Get(StyleClass &sc) const
+        GT::String enabled::Get(StyleClass &sc) const
         {
             return sc.enabled.GetValueAsString();
         }
@@ -988,7 +988,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String textCursorColour::Get(StyleClass &sc) const
+        GT::String textCursorColour::Get(StyleClass &sc) const
         {
             return sc.textCursorColour.GetValueAsString();
         }
@@ -1008,7 +1008,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String canReceiveFocusFromMouse::Get(StyleClass &sc) const
+        GT::String canReceiveFocusFromMouse::Get(StyleClass &sc) const
         {
             return sc.canReceiveFocusFromMouse.GetValueAsString();
         }
@@ -1020,9 +1020,9 @@ namespace GTGUI
         // positioning
         bool positioning::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
-            if (GTLib::Strings::Equal(value, valueSize, "auto")     ||
-                GTLib::Strings::Equal(value, valueSize, "relative") ||
-                GTLib::Strings::Equal(value, valueSize, "absolute"))
+            if (GT::Strings::Equal(value, valueSize, "auto")     ||
+                GT::Strings::Equal(value, valueSize, "relative") ||
+                GT::Strings::Equal(value, valueSize, "absolute"))
             {
                 if (sc.positioning.SetFromString(value, valueSize))
                 {
@@ -1033,7 +1033,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String positioning::Get(StyleClass &sc) const
+        GT::String positioning::Get(StyleClass &sc) const
         {
             return sc.positioning.GetValueAsString();
         }
@@ -1056,7 +1056,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String left::Get(StyleClass &sc) const
+        GT::String left::Get(StyleClass &sc) const
         {
             return sc.left.GetValueAsString();
         }
@@ -1079,7 +1079,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String right::Get(StyleClass &sc) const
+        GT::String right::Get(StyleClass &sc) const
         {
             return sc.right.GetValueAsString();
         }
@@ -1102,7 +1102,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String top::Get(StyleClass &sc) const
+        GT::String top::Get(StyleClass &sc) const
         {
             return sc.top.GetValueAsString();
         }
@@ -1125,7 +1125,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String bottom::Get(StyleClass &sc) const
+        GT::String bottom::Get(StyleClass &sc) const
         {
             return sc.bottom.GetValueAsString();
         }
@@ -1146,7 +1146,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String positionOrigin::Get(StyleClass &sc) const
+        GT::String positionOrigin::Get(StyleClass &sc) const
         {
             return sc.positionOrigin.GetValueAsString();
         }
@@ -1183,7 +1183,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String innerOffsetX::Get(StyleClass &sc) const
+        GT::String innerOffsetX::Get(StyleClass &sc) const
         {
             return sc.innerOffsetX.GetValueAsString();
         }
@@ -1204,7 +1204,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String innerOffsetY::Get(StyleClass &sc) const
+        GT::String innerOffsetY::Get(StyleClass &sc) const
         {
             return sc.innerOffsetY.GetValueAsString();
         }
@@ -1225,7 +1225,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String fontFamily::Get(StyleClass &sc) const
+        GT::String fontFamily::Get(StyleClass &sc) const
         {
             return sc.fontFamily.GetValueAsString();
         }
@@ -1246,7 +1246,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String fontSize::Get(StyleClass &sc) const
+        GT::String fontSize::Get(StyleClass &sc) const
         {
             return sc.fontSize.GetValueAsString();
         }
@@ -1267,7 +1267,7 @@ namespace GTGUI
             
             return false;
         }
-        GTLib::String fontWeight::Get(StyleClass &sc) const
+        GT::String fontWeight::Get(StyleClass &sc) const
         {
             return sc.fontWeight.GetValueAsString();
         }
@@ -1288,7 +1288,7 @@ namespace GTGUI
             
             return false;
         }
-        GTLib::String fontSlant::Get(StyleClass &sc) const
+        GT::String fontSlant::Get(StyleClass &sc) const
         {
             return sc.fontSlant.GetValueAsString();
         }
@@ -1309,7 +1309,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String textColour::Get(StyleClass &sc) const
+        GT::String textColour::Get(StyleClass &sc) const
         {
             return sc.textColour.GetValueAsString();
         }
@@ -1329,7 +1329,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String textSelectionColour::Get(StyleClass &sc) const
+        GT::String textSelectionColour::Get(StyleClass &sc) const
         {
             return sc.textSelectionColour.GetValueAsString();
         }
@@ -1349,7 +1349,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String textSelectionBackgroundColour::Get(StyleClass &sc) const
+        GT::String textSelectionBackgroundColour::Get(StyleClass &sc) const
         {
             return sc.textSelectionBackgroundColour.GetValueAsString();
         }
@@ -1369,7 +1369,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String textSelectionBackgroundColourBlurred::Get(StyleClass &sc) const
+        GT::String textSelectionBackgroundColourBlurred::Get(StyleClass &sc) const
         {
             return sc.textSelectionBackgroundColourBlurred.GetValueAsString();
         }
@@ -1392,7 +1392,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String editableText::Get(StyleClass &sc) const
+        GT::String editableText::Get(StyleClass &sc) const
         {
             return sc.editableText.GetValueAsString();
         }
@@ -1412,7 +1412,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String singleLineText::Get(StyleClass &sc) const
+        GT::String singleLineText::Get(StyleClass &sc) const
         {
             return sc.singleLineText.GetValueAsString();
         }
@@ -1434,7 +1434,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String opacity::Get(StyleClass &sc) const
+        GT::String opacity::Get(StyleClass &sc) const
         {
             return sc.opacity.GetValueAsString();
         }
@@ -1455,7 +1455,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String compoundOpacity::Get(StyleClass &sc) const
+        GT::String compoundOpacity::Get(StyleClass &sc) const
         {
             return sc.compoundOpacity.GetValueAsString();
         }
@@ -1476,7 +1476,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String enableShadow::Get(StyleClass &sc) const
+        GT::String enableShadow::Get(StyleClass &sc) const
         {
             return sc.enableShadow.GetValueAsString();
         }
@@ -1497,7 +1497,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String shadowColour::Get(StyleClass &sc) const
+        GT::String shadowColour::Get(StyleClass &sc) const
         {
             return sc.shadowColour.GetValueAsString();
         }
@@ -1518,7 +1518,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String shadowBlurRadius::Get(StyleClass &sc) const
+        GT::String shadowBlurRadius::Get(StyleClass &sc) const
         {
             return sc.shadowBlurRadius.GetValueAsString();
         }
@@ -1539,7 +1539,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String shadowOffsetX::Get(StyleClass &sc) const
+        GT::String shadowOffsetX::Get(StyleClass &sc) const
         {
             return sc.shadowOffsetX.GetValueAsString();
         }
@@ -1560,7 +1560,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String shadowOffsetY::Get(StyleClass &sc) const
+        GT::String shadowOffsetY::Get(StyleClass &sc) const
         {
             return sc.shadowOffsetY.GetValueAsString();
         }
@@ -1581,7 +1581,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String shadowExtrusionX::Get(StyleClass &sc) const
+        GT::String shadowExtrusionX::Get(StyleClass &sc) const
         {
             return sc.shadowExtrusionX.GetValueAsString();
         }
@@ -1602,7 +1602,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String shadowExtrusionY::Get(StyleClass &sc) const
+        GT::String shadowExtrusionY::Get(StyleClass &sc) const
         {
             return sc.shadowExtrusionY.GetValueAsString();
         }
@@ -1623,7 +1623,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String shadowOpacity::Get(StyleClass &sc) const
+        GT::String shadowOpacity::Get(StyleClass &sc) const
         {
             return sc.shadowOpacity.GetValueAsString();
         }
@@ -1644,7 +1644,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String allowMouseDrag::Get(StyleClass &sc) const
+        GT::String allowMouseDrag::Get(StyleClass &sc) const
         {
             return sc.allowMouseDrag.GetValueAsString();
         }
@@ -1664,7 +1664,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String constrainMouseDragX::Get(StyleClass &sc) const
+        GT::String constrainMouseDragX::Get(StyleClass &sc) const
         {
             return sc.constrainMouseDragX.GetValueAsString();
         }
@@ -1683,7 +1683,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String constrainMouseDragY::Get(StyleClass &sc) const
+        GT::String constrainMouseDragY::Get(StyleClass &sc) const
         {
             return sc.constrainMouseDragY.GetValueAsString();
         }
@@ -1703,7 +1703,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String mouseDragClampModeX::Get(StyleClass &sc) const
+        GT::String mouseDragClampModeX::Get(StyleClass &sc) const
         {
             return sc.mouseDragClampModeX.GetValueAsString();
         }
@@ -1722,7 +1722,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String mouseDragClampModeY::Get(StyleClass &sc) const
+        GT::String mouseDragClampModeY::Get(StyleClass &sc) const
         {
             return sc.mouseDragClampModeY.GetValueAsString();
         }
@@ -1742,7 +1742,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String allowMouseResize::Get(StyleClass &sc) const
+        GT::String allowMouseResize::Get(StyleClass &sc) const
         {
             return sc.allowMouseResize.GetValueAsString();
         }
@@ -1761,7 +1761,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String leftGripperWidth::Get(StyleClass &sc) const
+        GT::String leftGripperWidth::Get(StyleClass &sc) const
         {
             return sc.leftGripperWidth.GetValueAsString();
         }
@@ -1780,7 +1780,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String rightGripperWidth::Get(StyleClass &sc) const
+        GT::String rightGripperWidth::Get(StyleClass &sc) const
         {
             return sc.rightGripperWidth.GetValueAsString();
         }
@@ -1799,7 +1799,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String topGripperWidth::Get(StyleClass &sc) const
+        GT::String topGripperWidth::Get(StyleClass &sc) const
         {
             return sc.topGripperWidth.GetValueAsString();
         }
@@ -1818,7 +1818,7 @@ namespace GTGUI
 
             return false;
         }
-        GTLib::String bottomGripperWidth::Get(StyleClass &sc) const
+        GT::String bottomGripperWidth::Get(StyleClass &sc) const
         {
             return sc.bottomGripperWidth.GetValueAsString();
         }
@@ -1843,7 +1843,7 @@ namespace GTGUI
             const char* yStart = nullptr;
             const char* yEnd   = nullptr;
 
-            GTLib::Strings::Tokenizer token(value, valueSize);
+            GT::Strings::Tokenizer token(value, valueSize);
 
             // First token (X)
             if (token)
@@ -1878,7 +1878,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "background-align-x");
             sc.server.UnsetStyleAttribute(sc, "background-align-y");
         }
-        GTLib::String backgroundAlign::Get(StyleClass &sc) const
+        GT::String backgroundAlign::Get(StyleClass &sc) const
         {
             return sc.backgroundAlignX.GetValueAsString() + " " + sc.backgroundAlignY.GetValueAsString();
         }
@@ -1902,7 +1902,7 @@ namespace GTGUI
         {
             // If only a single token is present, we set the alignment for both X and Y. Otherwise, the first token is the X
             // alignment and the second is the Y alignment.
-            GTLib::Strings::Tokenizer token(value, valueSize);
+            GT::Strings::Tokenizer token(value, valueSize);
             if (token)
             {
                 const char* xStart = token.start;
@@ -1933,7 +1933,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "background-repeat-x");
             sc.server.UnsetStyleAttribute(sc, "background-repeat-y");
         }
-        GTLib::String backgroundRepeat::Get(StyleClass &sc) const
+        GT::String backgroundRepeat::Get(StyleClass &sc) const
         {
             return sc.backgroundRepeatX.GetValueAsString() + " " + sc.backgroundRepeatY.GetValueAsString();
         }
@@ -1968,7 +1968,7 @@ namespace GTGUI
         {
             sc.server.UnsetStyleAttribute(sc, "background-color");
         }
-        GTLib::String background::Get(StyleClass &sc) const
+        GT::String background::Get(StyleClass &sc) const
         {
             return sc.backgroundColour.GetValueAsString();
         }
@@ -1996,7 +1996,7 @@ namespace GTGUI
             const char* tokensEnd[4]   = {nullptr, nullptr, nullptr, nullptr};
         
             int i = 0;
-            GTLib::Strings::Tokenizer token(value, valueSize);
+            GT::Strings::Tokenizer token(value, valueSize);
             while (i < 4 && token)
             {
                 tokensStart[i] = token.start;
@@ -2055,7 +2055,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "border-top-width");
             sc.server.UnsetStyleAttribute(sc, "border-bottom-width");
         }
-        GTLib::String borderWidth::Get(StyleClass &sc) const
+        GT::String borderWidth::Get(StyleClass &sc) const
         {
             return sc.borderLeftWidth.GetValueAsString() + " " + sc.borderRightWidth.GetValueAsString() + " " + sc.borderTopWidth.GetValueAsString() + " " + sc.borderBottomWidth.GetValueAsString();
         }
@@ -2088,7 +2088,7 @@ namespace GTGUI
             const char* tokensEnd[4]   = {nullptr, nullptr, nullptr, nullptr};
         
             int i = 0;
-            GTLib::Strings::Tokenizer token(value, valueSize);
+            GT::Strings::Tokenizer token(value, valueSize);
             while (i < 4 && token)
             {
                 tokensStart[i] = token.start;
@@ -2147,7 +2147,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "border-top-color");
             sc.server.UnsetStyleAttribute(sc, "border-bottom-color");
         }
-        GTLib::String borderColour::Get(StyleClass &sc) const
+        GT::String borderColour::Get(StyleClass &sc) const
         {
             return sc.borderLeftColour.GetValueAsString() + " " + sc.borderRightColour.GetValueAsString() + " " + sc.borderTopColour.GetValueAsString() + " " + sc.borderBottomColour.GetValueAsString();
         }
@@ -2175,17 +2175,17 @@ namespace GTGUI
         // border-left
         bool borderLeft::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
-            if (!GTLib::Strings::Equal(value, valueSize, "none"))
+            if (!GT::Strings::Equal(value, valueSize, "none"))
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GTLib::Colour colour;
+                GT::Colour colour;
         
                 int i = 0;
-                GTLib::Strings::Tokenizer token(value, valueSize);
+                GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GTLib::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderLeftColour = colour;
                     }
@@ -2213,7 +2213,7 @@ namespace GTGUI
             }
             else
             {
-                sc.borderLeftColour = GTLib::Colour::TransparentBlack;
+                sc.borderLeftColour = GT::Colour::TransparentBlack;
                 sc.borderLeftWidth  = 0;
 
                 borderLeftWidth::Refresh(sc);
@@ -2227,7 +2227,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "border-left-width");
             sc.server.UnsetStyleAttribute(sc, "border-left-color");
         }
-        GTLib::String borderLeft::Get(StyleClass &sc) const
+        GT::String borderLeft::Get(StyleClass &sc) const
         {
             return sc.borderLeftWidth.GetValueAsString() + " " + sc.borderLeftColour.GetValueAsString();
         }
@@ -2249,17 +2249,17 @@ namespace GTGUI
         // border-right
         bool borderRight::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
-            if (!GTLib::Strings::Equal(value, valueSize, "none"))
+            if (!GT::Strings::Equal(value, valueSize, "none"))
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GTLib::Colour colour;
+                GT::Colour colour;
         
                 int i = 0;
-                GTLib::Strings::Tokenizer token(value, valueSize);
+                GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GTLib::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderRightColour = colour;
                     }
@@ -2288,7 +2288,7 @@ namespace GTGUI
             }
             else
             {
-                sc.borderRightColour = GTLib::Colour::TransparentBlack;
+                sc.borderRightColour = GT::Colour::TransparentBlack;
                 sc.borderRightWidth  = 0;
 
                 borderRightWidth::Refresh(sc);
@@ -2302,7 +2302,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "border-right-width");
             sc.server.UnsetStyleAttribute(sc, "border-right-color");
         }
-        GTLib::String borderRight::Get(StyleClass &sc) const
+        GT::String borderRight::Get(StyleClass &sc) const
         {
             return sc.borderRightWidth.GetValueAsString() + " " + sc.borderRightColour.GetValueAsString();
         }
@@ -2324,17 +2324,17 @@ namespace GTGUI
         // border-top
         bool borderTop::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
-            if (!GTLib::Strings::Equal(value, valueSize, "none"))
+            if (!GT::Strings::Equal(value, valueSize, "none"))
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GTLib::Colour colour;
+                GT::Colour colour;
         
                 int i = 0;
-                GTLib::Strings::Tokenizer token(value, valueSize);
+                GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GTLib::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderTopColour = colour;
                     }
@@ -2363,7 +2363,7 @@ namespace GTGUI
             }
             else
             {
-                sc.borderTopColour = GTLib::Colour::TransparentBlack;
+                sc.borderTopColour = GT::Colour::TransparentBlack;
                 sc.borderTopWidth  = 0;
 
                 borderTopWidth::Refresh(sc);
@@ -2377,7 +2377,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "border-top-width");
             sc.server.UnsetStyleAttribute(sc, "border-top-color");
         }
-        GTLib::String borderTop::Get(StyleClass &sc) const
+        GT::String borderTop::Get(StyleClass &sc) const
         {
             return sc.borderTopWidth.GetValueAsString() + " " + sc.borderTopColour.GetValueAsString();
         }
@@ -2399,17 +2399,17 @@ namespace GTGUI
         // border-bottom
         bool borderBottom::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
-            if (!GTLib::Strings::Equal(value, valueSize, "none"))
+            if (!GT::Strings::Equal(value, valueSize, "none"))
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GTLib::Colour colour;
+                GT::Colour colour;
         
                 int i = 0;
-                GTLib::Strings::Tokenizer token(value, valueSize);
+                GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GTLib::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderBottomColour = colour;
                     }
@@ -2438,7 +2438,7 @@ namespace GTGUI
             }
             else
             {
-                sc.borderBottomColour = GTLib::Colour::TransparentBlack;
+                sc.borderBottomColour = GT::Colour::TransparentBlack;
                 sc.borderBottomWidth  = 0;
 
                 borderBottomWidth::Refresh(sc);
@@ -2452,7 +2452,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "border-bottom-width");
             sc.server.UnsetStyleAttribute(sc, "border-bottom-color");
         }
-        GTLib::String borderBottom::Get(StyleClass &sc) const
+        GT::String borderBottom::Get(StyleClass &sc) const
         {
             return sc.borderBottomWidth.GetValueAsString() + " " + sc.borderBottomColour.GetValueAsString();
         }
@@ -2476,12 +2476,12 @@ namespace GTGUI
         {
             bool success = false;
 
-            if (GTLib::Strings::Equal(value, valueSize, "none"))
+            if (GT::Strings::Equal(value, valueSize, "none"))
             {
-                sc.borderLeftColour   = GTLib::Colour::TransparentBlack;
-                sc.borderRightColour  = GTLib::Colour::TransparentBlack;
-                sc.borderTopColour    = GTLib::Colour::TransparentBlack;
-                sc.borderBottomColour = GTLib::Colour::TransparentBlack;
+                sc.borderLeftColour   = GT::Colour::TransparentBlack;
+                sc.borderRightColour  = GT::Colour::TransparentBlack;
+                sc.borderTopColour    = GT::Colour::TransparentBlack;
+                sc.borderBottomColour = GT::Colour::TransparentBlack;
             
                 sc.borderLeftWidth   = 0;
                 sc.borderRightWidth  = 0;
@@ -2494,13 +2494,13 @@ namespace GTGUI
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GTLib::Colour colour;
+                GT::Colour colour;
             
                 int i = 0;
-                GTLib::Strings::Tokenizer token(value, valueSize);
+                GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GTLib::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderLeftColour   = colour;
                         sc.borderRightColour  = colour;
@@ -2538,7 +2538,7 @@ namespace GTGUI
 
             return success;
         }
-        GTLib::String border::Get(StyleClass &sc) const
+        GT::String border::Get(StyleClass &sc) const
         {
             return sc.borderLeftWidth.GetValueAsString() + " " + sc.borderLeftColour.GetValueAsString();
         }
@@ -2597,7 +2597,7 @@ namespace GTGUI
             const char* tokensEnd[4]   = {nullptr, nullptr, nullptr, nullptr};
         
             int i = 0;
-            GTLib::Strings::Tokenizer token(value, valueSize);
+            GT::Strings::Tokenizer token(value, valueSize);
             while (i < 4 && token)
             {
                 tokensStart[i] = token.start;
@@ -2656,7 +2656,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "padding-top");
             sc.server.UnsetStyleAttribute(sc, "padding-bottom");
         }
-        GTLib::String padding::Get(StyleClass &sc) const
+        GT::String padding::Get(StyleClass &sc) const
         {
             return sc.paddingLeft.GetValueAsString() + " " + sc.paddingRight.GetValueAsString() + " " + sc.paddingTop.GetValueAsString() + " " + sc.paddingBottom.GetValueAsString();
         }
@@ -2689,7 +2689,7 @@ namespace GTGUI
             const char* tokensEnd[4]   = {nullptr, nullptr, nullptr, nullptr};
         
             int i = 0;
-            GTLib::Strings::Tokenizer token(value, valueSize);
+            GT::Strings::Tokenizer token(value, valueSize);
             while (i < 4 && token)
             {
                 tokensStart[i] = token.start;
@@ -2748,7 +2748,7 @@ namespace GTGUI
             sc.server.UnsetStyleAttribute(sc, "margin-top");
             sc.server.UnsetStyleAttribute(sc, "margin-bottom");
         }
-        GTLib::String margin::Get(StyleClass &sc) const
+        GT::String margin::Get(StyleClass &sc) const
         {
             return sc.marginLeft.GetValueAsString() + " " + sc.marginRight.GetValueAsString() + " " + sc.marginTop.GetValueAsString() + " " + sc.marginBottom.GetValueAsString();
         }

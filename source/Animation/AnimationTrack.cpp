@@ -3,7 +3,7 @@
 #include <GTEngine/Animation/AnimationTrack.hpp>
 #include <GTEngine/Logging.hpp>
 
-namespace GTEngine
+namespace GT
 {
     AnimationTrack::AnimationTrack()
         : localKeyFrames()
@@ -120,7 +120,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void AnimationTrack::Serialize(GTLib::Serializer &serializer) const
+    void AnimationTrack::Serialize(Serializer &serializer) const
     {
         Serialization::ChunkHeader header;
         header.id = Serialization::ChunkID_AnimationKeyFrameQueue;
@@ -138,7 +138,7 @@ namespace GTEngine
         }
     }
 
-    void AnimationTrack::Deserialize(GTLib::Deserializer &deserializer)
+    void AnimationTrack::Deserialize(Deserializer &deserializer)
     {
         this->localKeyFrames.Clear();
 
@@ -159,7 +159,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::Log("Error deserializing AnimationTrack. Chunk version is unsupported (%d).", header.version);
+                Log("Error deserializing AnimationTrack. Chunk version is unsupported (%d).", header.version);
             }
         }
     }

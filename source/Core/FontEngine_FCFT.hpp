@@ -12,7 +12,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-namespace GTLib
+namespace GT
 {
     /// Structure representing a cached glyph in the FCFT font engine.
     struct Glyph_FCFT

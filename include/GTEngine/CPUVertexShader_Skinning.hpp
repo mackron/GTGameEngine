@@ -6,7 +6,7 @@
 #include "CPUVertexShader.hpp"
 #include "SkinningVertexAttribute.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// A CPU vertex shader for applying skeletal vertex blending.
     ///

@@ -7,7 +7,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialiser list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     BaseCollisionWorld::BaseCollisionWorld()
         : configuration(),
@@ -96,8 +96,8 @@ namespace GTEngine
 
     void BaseCollisionWorld::ConvexSweepTest(const btConvexShape &shape, const glm::mat4 &from, const glm::mat4 &to, btCollisionWorld::ConvexResultCallback &resultCallback, float allowedCCDPenetration)
     {
-        btTransform fromTransform = GTEngine::BulletUtils::CreateTransform(from);
-        btTransform toTransform   = GTEngine::BulletUtils::CreateTransform(to);
+        btTransform fromTransform = BulletUtils::CreateTransform(from);
+        btTransform toTransform   = BulletUtils::CreateTransform(to);
 
         this->ConvexSweepTest(shape, fromTransform, toTransform, resultCallback, allowedCCDPenetration);
     }

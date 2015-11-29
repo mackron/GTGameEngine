@@ -2,7 +2,7 @@
 
 #include <GTEngine/GameObjectGC.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GameObjectGC::GameObjectGC()
         : objects()

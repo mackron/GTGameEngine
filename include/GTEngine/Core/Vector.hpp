@@ -10,7 +10,7 @@
 #include <cassert>
 #include <new>
 
-namespace GTLib
+namespace GT
 {
     template <typename T>
     class Vector
@@ -59,7 +59,7 @@ namespace GTLib
 
             if (this->bufferSize == this->count)
             {
-                this->Reserve(GTLib::Max(static_cast<size_t>(1), this->count * 2));
+                this->Reserve(Max(static_cast<size_t>(1), this->count * 2));
             }
 
             new (this->buffer + this->count) T(value);
@@ -99,7 +99,7 @@ namespace GTLib
             if (this->bufferSize == this->count)
             {
                 // This is the annoying case where we need to do a resize. We double the size of the buffer here.
-                size_t newBufferSize = GTLib::Max(static_cast<size_t>(1), this->count * 2);
+                size_t newBufferSize = Max(static_cast<size_t>(1), this->count * 2);
 
                 T* oldBuffer = this->buffer;
                 T* newBuffer = static_cast<T*>(malloc(newBufferSize * sizeof(T)));
@@ -242,7 +242,7 @@ namespace GTLib
         */
         void OptimizeBuffer()
         {
-            this->Reserve(GTLib::Max(this->count, static_cast<size_t>(1U)));
+            this->Reserve(Max(this->count, static_cast<size_t>(1U)));
         }
 
 

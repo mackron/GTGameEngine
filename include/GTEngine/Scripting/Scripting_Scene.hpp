@@ -20,13 +20,13 @@ namespace GT
     ///
     /// @param script [in] A reference to the script object to register the scene with.
     /// @param scene  [in] A reference to the scene to register.
-    bool RegisterScene(GT::Script &script, GTEngine::Scene &scene);
+    bool RegisterScene(GT::Script &script, Scene &scene);
 
     /// Unregisters the given scene from the given script.
     ///
     /// @param script [in] A reference to the script object to unregister the scene from.
     /// @param scene  [in] A reference to the scene to unregister.
-    void UnregisterScene(GT::Script &script, GTEngine::Scene &scene);
+    void UnregisterScene(GT::Script &script, Scene &scene);
 
 
     namespace SceneFFI

@@ -5,7 +5,7 @@
 #include <GTEngine/Errors.hpp>
 #include <easy_path/easy_path.h>
 
-namespace GTEngine
+namespace GT
 {
     ParticleSystemDefinition::ParticleSystemDefinition()
         : absolutePath(), relativePath(),
@@ -53,7 +53,7 @@ namespace GTEngine
         easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), newAbsolutePath, EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
-            GTLib::FileDeserializer deserializer(pFile);
+            FileDeserializer deserializer(pFile);
             this->Deserialize(deserializer);
 
 
@@ -118,9 +118,9 @@ namespace GTEngine
     //////////////////////////////////////
     // Serialization/Deserialization
 
-    void ParticleSystemDefinition::Serialize(GTLib::Serializer &serializer)
+    void ParticleSystemDefinition::Serialize(Serializer &serializer)
     {
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
 
         uint32_t emitterCount = static_cast<uint32_t>(this->emitters.count);
         intermediarySerializer.Write(emitterCount);
@@ -147,7 +147,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ParticleSystemDefinition::Deserialize(GTLib::Deserializer &deserializer)
+    void ParticleSystemDefinition::Deserialize(Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);

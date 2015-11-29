@@ -30,7 +30,7 @@ with malloc(). It will be free with free().
     #pragma GCC diagnostic pop
 #endif
 
-namespace GTLib
+namespace GT
 {
     namespace System
     {
@@ -48,7 +48,7 @@ namespace GTLib
                 }
             }
 
-            return GTLib::Strings::Create(path);
+            return Strings::Create(path);
         }
 
         Vector<const char*>* CreateFontDirectories()
@@ -79,7 +79,7 @@ namespace GTLib
                 path[i++] = 's';
                 path[i]   = '\0';
 
-                directories->PushBack(GTLib::Strings::Create(path));
+                directories->PushBack(Strings::Create(path));
             }
 
             return directories;
@@ -91,7 +91,7 @@ namespace GTLib
             {
                 for (size_t i = 0; i < directories->count; ++i)
                 {
-                    GTLib::Strings::Delete(const_cast<char*>((*directories)[i]));
+                    Strings::Delete(const_cast<char*>((*directories)[i]));
                 }
 
                 delete directories;
@@ -100,7 +100,7 @@ namespace GTLib
     }
 }
 
-namespace GTLib
+namespace GT
 {
     namespace System
     {
@@ -137,7 +137,7 @@ namespace GTLib
 
 #include <GTEngine/Core/Strings/List.hpp>
 
-namespace GTLib
+namespace GT
 {
     namespace System
     {
@@ -156,15 +156,15 @@ namespace GTLib
             auto directories = new Vector<const char*>;
 
             // We'll manually fill our list with common values.
-            directories->PushBack(GTLib::Strings::Create("/usr/share/fonts"));
-            directories->PushBack(GTLib::Strings::Create("/usr/local/share/fonts"));
+            directories->PushBack(Strings::Create("/usr/share/fonts"));
+            directories->PushBack(Strings::Create("/usr/local/share/fonts"));
 
             // There is also the "~/.fonts" directory...
             Strings::List<char> homeFontDir;
             homeFontDir.Append(System::Directories::Home());
             homeFontDir.Append("/.fonts");
 
-            directories->PushBack(GTLib::Strings::Create(homeFontDir.c_str()));
+            directories->PushBack(Strings::Create(homeFontDir.c_str()));
 
             return directories;
         }
@@ -175,7 +175,7 @@ namespace GTLib
             {
                 for (size_t i = 0; i < directories->count; ++i)
                 {
-                    GTLib::Strings::Delete(const_cast<char*>((*directories)[i]));
+                    Strings::Delete(const_cast<char*>((*directories)[i]));
                 }
 
                 delete directories;
@@ -184,7 +184,7 @@ namespace GTLib
     }
 }
 
-namespace GTLib
+namespace GT
 {
     namespace System
     {
@@ -218,7 +218,7 @@ namespace GTLib
 
 #endif
 
-namespace GTLib
+namespace GT
 {
     namespace System
     {
@@ -266,7 +266,7 @@ namespace GTLib
             */
             void ClearMemory()
             {
-                GTLib::Strings::Delete((char *)this->home);
+                Strings::Delete((char *)this->home);
                 this->home = nullptr;
 
                 DeleteFontDirectories(fonts);

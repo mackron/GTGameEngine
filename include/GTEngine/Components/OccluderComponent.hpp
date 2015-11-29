@@ -7,7 +7,7 @@
 #include "../Physics.hpp"
 #include "../AlignedType.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a component for objects that act as occluders.
     ///

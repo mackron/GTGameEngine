@@ -6,7 +6,7 @@
 #include <GTEngine/Rendering/VertexArray.hpp>
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     /// OpenGL 3.3 vertex array.
     ///

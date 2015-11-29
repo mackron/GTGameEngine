@@ -9,7 +9,7 @@
 #include <GTEngine/GTEngine.hpp>
 #include <easy_fs/easy_vfs.h>
 
-namespace GTLib
+namespace GT
 {
     ImageFormat GetImageFormatFromSTBChannels(int channels)
     {
@@ -30,7 +30,7 @@ namespace GTLib
         easyvfs_file* pFile;
     };
 
-    int STBI_Read(void* user, char *data, int size)
+    static int STBI_Read(void* user, char *data, int size)
     {
         auto callbackData = reinterpret_cast<STBICallbackData*>(user);
         assert(callbackData != nullptr);
@@ -46,7 +46,7 @@ namespace GTLib
         }
     }
 
-    void STBI_Skip(void* user, int n)
+    static void STBI_Skip(void* user, int n)
     {
         auto callbackData = reinterpret_cast<STBICallbackData*>(user);
         assert(callbackData != nullptr);
@@ -56,7 +56,7 @@ namespace GTLib
         }
     }
 
-    int STBI_EOF(void* user)
+    static int STBI_EOF(void* user)
     {
         auto callbackData = reinterpret_cast<STBICallbackData*>(user);
         assert(callbackData != nullptr);
@@ -80,8 +80,8 @@ namespace GTLib
 
     bool ImageLoader_PNG::Open()
     {
-        //FILE* pFile = GTLib::IO::Open(this->absolutePath.c_str(), GTLib::IO::OpenMode::Read);
-        easyvfs_file* pFile = easyvfs_open(GTEngine::g_EngineContext->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
+        //FILE* pFile = IO::Open(this->absolutePath.c_str(), IO::OpenMode::Read);
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
             STBICallbackData callbackData;
@@ -97,7 +97,7 @@ namespace GTLib
             m_pImageData = stbi_load_from_callbacks(&stbiCallbacks, &callbackData, &imageWidth, &imageHeight, &m_channelCount, 0);
             if (m_pImageData != nullptr)
             {
-                easyvfs_get_file_info(GTEngine::g_EngineContext->GetVFS(), this->absolutePath.c_str(), &m_info);
+                easyvfs_get_file_info(g_EngineContext->GetVFS(), this->absolutePath.c_str(), &m_info);
 
                 m_info.format = GetImageFormatFromSTBChannels(m_channelCount);
                 m_info.width  = static_cast<unsigned int>(imageWidth);
@@ -141,7 +141,7 @@ namespace GTLib
     {
         // We just need to check the last modified data. If it's different, the file has changed.
         easyvfs_file_info tempInfo;
-        easyvfs_get_file_info(GTEngine::g_EngineContext->GetVFS(), this->absolutePath.c_str(), &tempInfo);
+        easyvfs_get_file_info(g_EngineContext->GetVFS(), this->absolutePath.c_str(), &tempInfo);
 
         if (tempInfo.lastModifiedTime != m_info.lastModifiedTime)
         {

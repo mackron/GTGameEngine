@@ -6,7 +6,7 @@
 #include "Bullet.hpp"
 #include "../Math.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class DynamicsWorld;
     class RigidBody;

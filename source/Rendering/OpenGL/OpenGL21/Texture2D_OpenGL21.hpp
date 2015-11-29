@@ -9,7 +9,7 @@
 #include "TextureState_OpenGL21.hpp"
 
 
-namespace GTEngine
+namespace GT
 {
     class Texture2D_OpenGL21 : public Texture2D
     {

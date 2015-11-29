@@ -11,7 +11,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     ModelEditor::ModelEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
@@ -27,9 +27,9 @@ namespace GTEngine
           isSaving(false), isReloading(false)
     {
         // We use the camera for our lights.
-        this->camera.AddComponent<GTEngine::CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
-        this->camera.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
-        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.6f, 0.6f, 0.6f);
+        this->camera.AddComponent<CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
+        this->camera.AddComponent<DirectionalLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
+        this->camera.AddComponent<AmbientLightComponent>()->SetColour(0.6f, 0.6f, 0.6f);
 
         // Viewport and Renderer.
         this->scene.SetDefaultViewportCamera(this->camera);
@@ -57,7 +57,7 @@ namespace GTEngine
         m_model.OnDefinitionChanged();
 
         // Add a model component to the scene node.
-        this->modelNode.AddComponent<GTEngine::ModelComponent>()->SetModel(m_model);
+        this->modelNode.AddComponent<ModelComponent>()->SetModel(m_model);
 
 
         auto &gui    = this->GetGUI();
@@ -67,7 +67,7 @@ namespace GTEngine
         assert(this->mainElement != nullptr);
         {
             // The main element is the ModelEditor element. We need to pass 'this' as the '_internalPtr' argument.
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("ModelEditor");
@@ -159,7 +159,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("ResetCamera");
@@ -200,7 +200,7 @@ namespace GTEngine
     }
 
 
-    void ModelEditor::GetMaterials(GTLib::Vector<GTLib::String> &materialsOut)
+    void ModelEditor::GetMaterials(Vector<String> &materialsOut)
     {
         auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
         if (modelComponent != nullptr)
@@ -368,7 +368,7 @@ namespace GTEngine
         // If we have content in our convex hull scene node list, it means we don't have to create anything.
         if (this->convexHullNodes.count == 0)
         {
-            auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+            auto model = this->modelNode.GetComponent<ModelComponent>()->GetModel();
             if (model != nullptr)
             {
                 auto &convexHulls = model->GetConvexHulls();
@@ -381,7 +381,7 @@ namespace GTEngine
                         hullModel->meshes[0]->GetMaterial()->SetParameter("DiffuseColour", this->random.Next<float>(0.0f, 1.0f), this->random.Next<float>(0.0f, 1.0f), this->random.Next<float>(0.0f, 1.0f));
 
                         auto node = new SceneNode;
-                        node->AddComponent<GTEngine::ModelComponent>()->SetModel(hullModel);
+                        node->AddComponent<ModelComponent>()->SetModel(hullModel);
 
                         this->convexHullNodes.PushBack(node);
 
@@ -534,7 +534,7 @@ namespace GTEngine
 
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("Refresh");
@@ -571,7 +571,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("UpdateAnimationPlaybackControls");

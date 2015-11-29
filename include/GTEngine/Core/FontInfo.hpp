@@ -8,7 +8,7 @@
 #include <GTEngine/Core/String.hpp>
 #include <cstddef>
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  Structure containing information about the font.
@@ -60,7 +60,7 @@ namespace GTLib
         
         
         /// The font family (Arial, Times, Courier, etc)
-        GTLib::String family;
+        String family;
         
         /// The style flags of the font.
         uint32_t styleFlags;

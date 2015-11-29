@@ -31,7 +31,7 @@ THE SOFTWARE.
 
 #define GTENGINE_VERSION_STRING "0.0.4"
 
-namespace GTEngine
+namespace GT
 {
     extern Game* GlobalGame;
 
@@ -86,11 +86,11 @@ namespace GTEngine
     /// Retrieves the directory containing the executable.
     ///
     /// @return The directory containing the executable.
-    const char* GetExecutableDirectory();
+    //const char* GetExecutableDirectory();
 
     
     /// Retrieves the version string.
-    inline const char* GetVersionString() { return GTENGINE_VERSION_STRING; }
+    //inline const char* GetVersionString() { return GTENGINE_VERSION_STRING; }
 }
 
 #endif

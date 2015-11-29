@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/FontEngine.hpp>
 
-namespace GTLib
+namespace GT
 {
     FontEngine::FontEngine(GlyphMapManager* glyphMapManager)
         : m_glyphMapManager(glyphMapManager)

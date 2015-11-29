@@ -3,7 +3,7 @@
 #ifndef __GTEngine_VertexAttributes_hpp_
 #define __GTEngine_VertexAttributes_hpp_
 
-namespace GTEngine
+namespace GT
 {
     namespace VertexAttribs
     {

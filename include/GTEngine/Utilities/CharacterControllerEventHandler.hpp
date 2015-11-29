@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Utilities_CharacterControllerEventHandler_hpp_
 #define __GTEngine_Utilities_CharacterControllerEventHandler_hpp_
 
-namespace GTEngine
+namespace GT
 {
     /// Event handler for character controllers.
     class CharacterControllerEventHandler

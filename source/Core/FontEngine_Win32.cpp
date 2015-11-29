@@ -5,7 +5,7 @@
 #include <GTEngine/Core/GlyphCache.hpp>
 #include <GTEngine/Core/Map.hpp>
 
-namespace GTLib
+namespace GT
 {
 	/// Structure representing a glyph in the Win32 implementation.
 	struct Glyph_Win32
@@ -40,7 +40,7 @@ namespace GTLib
 		}
 
 		/// GlyphCache::OnGlyphCached().
-        void OnGlyphCached(GlyphHandle glyph, GlyphMapHandle glyphMap, GTLib::Rect<unsigned int> &bitmapRect)
+        void OnGlyphCached(GlyphHandle glyph, GlyphMapHandle glyphMap, Rect<unsigned int> &bitmapRect)
         {
 			auto glyphWin32 = reinterpret_cast<Glyph_Win32*>(glyph);
             assert(glyphWin32 != nullptr);
@@ -67,7 +67,7 @@ namespace GTLib
 
 		/// Kerning pairs. The high-order uint32_t is the character code of the first character. The low order uint32_t is the character code
 		/// of the second character. The value is the kerning amount.
-		GTLib::Map<uint64_t, int> m_kerningPairs;
+		Map<uint64_t, int> m_kerningPairs;
 
 
     private:    // No copying.
@@ -245,7 +245,7 @@ namespace GTLib
         }
 	}
 
-	GlyphMapHandle FontEngine_Win32::GetGlyphMap(GlyphHandle glyph, GTLib::Rect<float> &uvCoordsOut) const
+	GlyphMapHandle FontEngine_Win32::GetGlyphMap(GlyphHandle glyph, Rect<float> &uvCoordsOut) const
 	{
 		auto glyphWin32 = reinterpret_cast<Glyph_Win32*>(glyph);
 		assert(glyphWin32 != nullptr);
@@ -285,12 +285,12 @@ namespace GTLib
 
             char32_t prevCharacter = 0;
 
-            GTLib::Strings::Iterator<char> i(inputString);
+            Strings::Iterator<char> i(inputString);
             while (i)
             {
                 Glyph_Win32*     glyphWin32 = nullptr;
                 GlyphMetrics     glyphMetrics;
-                GTLib::Rect<int> glyphRect;
+                Rect<int> glyphRect;
 
                 if (i.character == '\t')
                 {
@@ -361,12 +361,12 @@ namespace GTLib
 
             char32_t prevCharacter = 0;
 
-            GTLib::Strings::Iterator<char> i(inputString);
+            Strings::Iterator<char> i(inputString);
             while (i)
             {
                 Glyph_Win32*     glyphWin32 = nullptr;
                 GlyphMetrics     glyphMetrics;
-                GTLib::Rect<int> glyphRect;
+                Rect<int> glyphRect;
 
                 if (i.character == '\t')
                 {

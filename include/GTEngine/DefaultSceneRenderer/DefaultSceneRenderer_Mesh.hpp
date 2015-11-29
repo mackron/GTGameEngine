@@ -6,7 +6,7 @@
 #include "../SceneRenderer.hpp"
 #include "DefaultSceneRenderer_LightGroup.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Structure representing a mesh in the default renderer.
     struct DefaultSceneRendererMesh : public SceneRendererMesh

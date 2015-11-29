@@ -14,7 +14,7 @@
     #pragma warning(disable:4351)
 #endif
 
-namespace GTEngine
+namespace GT
 {
     /// Structure containing the skinning information of a mesh.
     struct MeshSkinningData
@@ -61,7 +61,7 @@ namespace GTEngine
     };
 }
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a mesh.
     ///
@@ -182,12 +182,12 @@ namespace GTEngine
         ///
         /// @param serializer        [in] A reference ot the serializer to write to.
         /// @param serializeGeometry [in] Whether or not the geometry should be serialized.
-        void Serialize(GTLib::Serializer &serializer, bool serializeGeometry) const;
+        void Serialize(Serializer &serializer, bool serializeGeometry) const;
 
         /// Deserializes the mesh.
         ///
         /// @param deserializer [in] A reference to the deserializer for reading the data from.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 

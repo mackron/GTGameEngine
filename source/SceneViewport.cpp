@@ -11,7 +11,7 @@
     #pragma warning(disable:4351)   // Unsigned is still unsigned after negation.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     SceneViewport::SceneViewport()
         : scene(nullptr), cameraNodes(),
@@ -74,8 +74,8 @@ namespace GTEngine
 
     void SceneViewport::Resize(unsigned int newWidth, unsigned int newHeight)
     {
-        this->width  = GTLib::Max(newWidth,  1U);
-        this->height = GTLib::Max(newHeight, 1U);
+        this->width  = Max(newWidth,  1U);
+        this->height = Max(newHeight, 1U);
 
 
         // If the viewport is attached to a scene, we will let it's renderer know that the viewport needs a resize.
@@ -93,7 +93,7 @@ namespace GTEngine
         auto cameraNode = this->GetCameraNode(layer);
         if (cameraNode != nullptr)
         {
-            auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
+            auto viewportCamera = cameraNode->GetComponent<CameraComponent>();
             assert(viewportCamera != nullptr);
 
             const glm::mat4 &projection = viewportCamera->GetProjectionMatrix();
@@ -122,7 +122,7 @@ namespace GTEngine
         auto cameraNode = this->GetCameraNode(layer);
         if (cameraNode != nullptr)
         {
-            auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
+            auto viewportCamera = cameraNode->GetComponent<CameraComponent>();
             assert(viewportCamera != nullptr);
 
             return glm::project(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
@@ -136,7 +136,7 @@ namespace GTEngine
         auto cameraNode = this->GetCameraNode(layer);
         if (cameraNode != nullptr)
         {
-            auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
+            auto viewportCamera = cameraNode->GetComponent<CameraComponent>();
             assert(viewportCamera != nullptr);
 
             return glm::unProject(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
@@ -162,7 +162,7 @@ namespace GTEngine
         auto cameraNode = this->GetCameraNode(layer);
         if (cameraNode != nullptr)
         {
-            auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
+            auto viewportCamera = cameraNode->GetComponent<CameraComponent>();
             if (viewportCamera != nullptr)
             {
                 return viewportCamera->GetProjectionMatrix() * viewportCamera->GetViewMatrix();

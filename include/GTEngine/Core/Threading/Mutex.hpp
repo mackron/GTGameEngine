@@ -3,62 +3,56 @@
 #ifndef __GTLib_Threading_Mutex_hpp_
 #define __GTLib_Threading_Mutex_hpp_
 
-namespace GTLib
+namespace GT
 {
-    namespace Threading
+    /**
+    *   \brief  Class representing a mutex.
+    *
+    *   A mutex is a simple sycnronization object prevents more than one thread from executing the same code at the same time.
+    *
+    *   These mutexes do not work across processes.
+    */
+    class Mutex
     {
+    public:
+        
         /**
-        *   \brief  Class representing a mutex.
+        *   \brief  Constructor.
         *
-        *   A mutex is a simple sycnronization object prevents more than one thread from executing the same code at the same time.
-        *
-        *   These mutexes do not work across processes.
+        *   \remarks
+        *       The mutex will be in a signaled/unlocked state by default.
         */
-        class Mutex
-        {
-        public:
-        
-            /**
-            *   \brief  Constructor.
-            *
-            *   \remarks
-            *       The mutex will be in a signaled/unlocked state by default.
-            */
-            Mutex();
+        Mutex();
             
-            /**
-            *   \brief  Destructor.
-            *
-            *   Remember that once the mutex is destructed, wait() and release() will be undefined. Ensure any threads
-            *   using the mutex do not try to use it after it has been destructed.
-            */
-            ~Mutex();
+        /**
+        *   \brief  Destructor.
+        *
+        *   Remember that once the mutex is destructed, wait() and release() will be undefined. Ensure any threads
+        *   using the mutex do not try to use it after it has been destructed.
+        */
+        ~Mutex();
             
-            /**
-            *   \brief  Waits for the mutex to become signaled. This function will automatically put the mutex back into a non-signaled state.
-            */
-            void Lock();
+        /**
+        *   \brief  Waits for the mutex to become signaled. This function will automatically put the mutex back into a non-signaled state.
+        */
+        void Lock();
             
-            /**
-            *   \brief  Releases the mutex, putting it into a signaled state.
-            */
-            void Unlock();
+        /**
+        *   \brief  Releases the mutex, putting it into a signaled state.
+        */
+        void Unlock();
         
         
-        private:
+    private:
         
-            /// The data associated with the mutex. Only used internally.
-            void *data;
+        /// The data associated with the mutex. Only used internally.
+        void *data;
             
             
-        private:    // No copying.
-            Mutex(const Mutex &);
-            Mutex & operator=(const Mutex &);
-        };
-    }
-    
-    // Convenience typedef.
-    typedef Threading::Mutex Mutex;
+    private:    // No copying.
+        Mutex(const Mutex &);
+        Mutex & operator=(const Mutex &);
+    };
 }
 
 

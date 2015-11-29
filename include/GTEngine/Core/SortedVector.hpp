@@ -6,7 +6,7 @@
 #include "stdlib.hpp"
 #include <cstring>          // For memcpy().
 
-namespace GTLib
+namespace GT
 {
     /// Class representing a sorted vector, in ascending order.
     ///
@@ -63,7 +63,7 @@ namespace GTLib
             if (this->count == this->bufferSize)
             {
                 // We need to allocate a new buffer, leaving a space at the insertion point.
-                auto newBufferSize = GTLib::Max(static_cast<size_t>(1), this->count * 2);
+                auto newBufferSize = Max(static_cast<size_t>(1), this->count * 2);
 
                 auto oldBuffer = this->buffer;
                 auto newBuffer = static_cast<T*>(malloc(newBufferSize * sizeof(T)));

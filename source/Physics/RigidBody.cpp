@@ -2,7 +2,7 @@
 
 #include <GTEngine/Physics.hpp>
 
-namespace GTEngine
+namespace GT
 {
     RigidBody::RigidBody(btScalar mass, const btCollisionShape &collisionShape, const btVector3 &localInertia, btMotionState* motionState)
         : btRigidBody(mass, motionState, (btCollisionShape *)&collisionShape, localInertia), world(nullptr)

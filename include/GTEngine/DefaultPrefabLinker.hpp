@@ -5,7 +5,7 @@
 
 #include "PrefabLinker.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class Scene;
 
@@ -77,7 +77,7 @@ namespace GTEngine
             SceneNode* sceneNode;
 
             /// The name of the scene node before deserialization.
-            GTLib::String name;
+            String name;
 
             /// The world position of the scene node before deserialization.
             glm::vec3 worldPosition;

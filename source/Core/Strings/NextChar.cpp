@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/Strings/NextChar.hpp>
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {

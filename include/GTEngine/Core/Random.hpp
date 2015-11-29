@@ -18,7 +18,7 @@
     #pragma GCC diagnostic ignored "-Wtype-limits"
 #endif
 
-namespace GTLib
+namespace GT
 {
     /// Class representing a 32-bit Linear congruential generator (LCG).
     class RandomLCG
@@ -27,7 +27,7 @@ namespace GTLib
 
         /// Default constructor. This will seed using the current time.
         RandomLCG()
-            : x(static_cast<int32_t>(GTLib::Timing::GetTimeInMilliseconds()))
+            : x(static_cast<int32_t>(Timing::GetTimeInMilliseconds()))
         {
         }
 
@@ -59,7 +59,7 @@ namespace GTLib
 
         void Seed()
         {
-            this->Seed(static_cast<int32_t>(GTLib::Timing::GetTimeInMilliseconds()));
+            this->Seed(static_cast<int32_t>(Timing::GetTimeInMilliseconds()));
         }
 
 
@@ -75,7 +75,7 @@ namespace GTLib
             this->x = (GT_LCG_A * this->x + GT_LCG_C) % GT_LCG_M;
 
             uint32_t uX = static_cast<uint32_t>(this->x);
-            return static_cast<T>(uX + GTLib::Abs(MinValue<int32_t>())) / MaxValue<uint32_t>();
+            return static_cast<T>(uX + Abs(MinValue<int32_t>())) / MaxValue<uint32_t>();
         }
 
         /// Generates a number in the bounds of <min> and <max>

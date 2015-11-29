@@ -7,7 +7,7 @@
 #include "Math.hpp"
 #include "Rendering/TextureCube.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class Texture2D;
     class TextureCube;

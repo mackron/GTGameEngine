@@ -2,7 +2,7 @@
 
 #include <GTEngine/SceneNodeMap.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneNodeMap::SceneNodeMap()
         : buffer(nullptr),
@@ -39,7 +39,7 @@ namespace GTEngine
             if (this->count > this->bufferSize)
             {
                 // Need a new buffer...
-                this->bufferSize = GTLib::Max(this->bufferSize * 2, static_cast<size_t>(1));
+                this->bufferSize = Max(this->bufferSize * 2, static_cast<size_t>(1));
                 auto newbuffer = static_cast<SceneNode**>(malloc(sizeof(SceneNode*) * this->bufferSize));
 
                 // Copying over is done in three parts...
@@ -170,7 +170,7 @@ namespace GTEngine
             auto sceneNode = this->buffer[i];
             assert(sceneNode != nullptr);
             {
-                if (GTLib::Strings::Equal(sceneNode->GetName(), sceneNodeName))
+                if (Strings::Equal(sceneNode->GetName(), sceneNodeName))
                 {
                     index = i;
                     return sceneNode;

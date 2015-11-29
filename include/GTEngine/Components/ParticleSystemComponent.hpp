@@ -7,7 +7,7 @@
 #include "../ParticleSystem.hpp"
 #include "../SceneNodeEventHandler.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class ParticleSystemComponent : public Component
     {
@@ -88,10 +88,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 

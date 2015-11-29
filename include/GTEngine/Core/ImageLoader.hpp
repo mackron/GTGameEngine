@@ -7,7 +7,7 @@
 #include "Mipmap.hpp"
 #include <GTEngine/Core/String.hpp>
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  Base class for image file loaders.
@@ -75,11 +75,11 @@ namespace GTLib
     protected:
 
         /// The file name used to load the image file, as given in the constructor.
-        GTLib::String fileName;
+        String fileName;
 
         /// The absolute file path of the image file. This is set during the ImageLoader constructor and can be used by
         /// inheritted classes.
-        GTLib::String absolutePath;
+        String absolutePath;
 
 
 

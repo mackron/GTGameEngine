@@ -2,7 +2,7 @@
 
 #include <GTEngine/Serialization.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Virtual class for handling non-standard chunks when deserializing a scene.
     ///
@@ -40,6 +40,6 @@ namespace GTEngine
         /// @remarks
         ///     This deserializer will be sitting at the first byte of the main chunk data, just past the header. Implementations
         ///     of this method should not deserialize the header.
-        virtual bool HandleChunk(const Serialization::ChunkHeader &header, GTLib::Deserializer &deserializer);
+        virtual bool HandleChunk(const Serialization::ChunkHeader &header, Deserializer &deserializer);
     };
 }

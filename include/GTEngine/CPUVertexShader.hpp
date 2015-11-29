@@ -8,7 +8,7 @@
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/Threading.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Base class that can do vertex operations on the CPU.
     ///

@@ -5,7 +5,7 @@
 
 #include "ImageFormats.hpp"
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  Base class for data converters.

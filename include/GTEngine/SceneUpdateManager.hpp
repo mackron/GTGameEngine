@@ -6,7 +6,7 @@
 #include "SceneNode.hpp"
 #include "SceneCullingManager.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Base class used for managing the updating of scene objects.
     ///

@@ -31,12 +31,12 @@ namespace GTGUI
 
             struct
             {
-                GTLib::Key key;
+                GT::Key key;
             }keypressed;
 
             struct
             {
-                GTLib::Key  key;
+                GT::Key  key;
             }keydown, keyup;
 
             struct
@@ -54,7 +54,7 @@ namespace GTGUI
 
             struct
             {
-                GTLib::MouseButton button;
+                GT::MouseButton button;
                 int x;
                 int y;
             }mousedown, mouseup, mousedoubleclick;

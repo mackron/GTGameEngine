@@ -4,7 +4,7 @@
 #include "ServerState_OpenGL21.hpp"
 #include "ShaderState_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     TextureState_OpenGL21::~TextureState_OpenGL21()
     {

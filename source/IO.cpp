@@ -10,52 +10,52 @@ namespace GT
 {
     bool IsSupportedImageExtension(const char* fileName)
     {
-        return GTLib::ImageLoader::IsExtensionSupported(easypath_extension(fileName));
+        return ImageLoader::IsExtensionSupported(easypath_extension(fileName));
     }
 
     bool IsSupportedModelExtension(const char* fileName)
     {
-        return GTEngine::ModelLibrary::IsExtensionSupported(easypath_extension(fileName));
+        return ModelLibrary::IsExtensionSupported(easypath_extension(fileName));
     }
 
     bool IsSupportedMaterialExtension(const char* fileName)
     {
         const char* extension = easypath_extension(fileName);
 
-        return GTLib::Strings::Equal<false>(extension, "material") ||
-               GTLib::Strings::Equal<false>(extension, "gtmaterial");
+        return Strings::Equal<false>(extension, "material") ||
+               Strings::Equal<false>(extension, "gtmaterial");
     }
 
     bool IsSupportedSoundExtension(const char* fileName)
     {
         const char* extension = easypath_extension(fileName);
             
-        return GTLib::Strings::Equal<false>(extension, "wav") ||
-               GTLib::Strings::Equal<false>(extension, "ogg");
+        return Strings::Equal<false>(extension, "wav") ||
+               Strings::Equal<false>(extension, "ogg");
     }
 
     bool IsSupportedParticleSystemExtension(const char* fileName)
     {
-        return GTLib::Strings::Equal<false>(easypath_extension(fileName), "gtparticle");
+        return Strings::Equal<false>(easypath_extension(fileName), "gtparticle");
     }
 
     bool IsSupportedSceneExtension(const char* fileName)
     {
-        return GTLib::Strings::Equal<false>(easypath_extension(fileName), "gtscene");
+        return Strings::Equal<false>(easypath_extension(fileName), "gtscene");
     }
 
     bool IsSupportedPrefabExtension(const char* fileName)
     {
-        return GTLib::Strings::Equal<false>(easypath_extension(fileName), "gtprefab");
+        return Strings::Equal<false>(easypath_extension(fileName), "gtprefab");
     }
 
     bool IsSupportedScriptExtension(const char* fileName)
     {
         auto extension = easypath_extension(fileName);
 
-        return GTLib::Strings::Equal<false>(extension, "gtscript") ||
-               GTLib::Strings::Equal<false>(extension, "script")   ||
-               GTLib::Strings::Equal<false>(extension, "lua");
+        return Strings::Equal<false>(extension, "gtscript") ||
+               Strings::Equal<false>(extension, "script")   ||
+               Strings::Equal<false>(extension, "lua");
     }
 
 
@@ -63,7 +63,7 @@ namespace GT
     AssetType GetAssetClassFromExtension(const char* fileName)
     {
         // If the path is a directory instead of a file, we need to return AssetType_None.
-        if (GTLib::Strings::IsNullOrEmpty(easypath_filename(fileName)))
+        if (Strings::IsNullOrEmpty(easypath_filename(fileName)))
         {
             return AssetClass_Unknown;
         }
@@ -112,12 +112,12 @@ namespace GT
 
 
 
-    GTLib::String GetBasePath(const char* absolutePath, const char* relativePath)
+    String GetBasePath(const char* absolutePath, const char* relativePath)
     {
         // All we're going to do is remove the 'relativePath' part from the absolute path.
         const char* start = absolutePath;
-        const char* end   = GTLib::Strings::FindFirst(absolutePath, relativePath);
+        const char* end   = Strings::FindFirst(absolutePath, relativePath);
 
-        return GTLib::String(start, end - start - 1);      // Minus 1 to remove the trailing slash.
+        return String(start, end - start - 1);      // Minus 1 to remove the trailing slash.
     }
 }

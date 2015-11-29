@@ -36,9 +36,9 @@ namespace GT
     }
 
 
-    GTEngine::AnimationSequence ToAnimationSequence(GT::Script &script, int position)
+    AnimationSequence ToAnimationSequence(GT::Script &script, int position)
     {
-        GTEngine::AnimationSequence result;
+        AnimationSequence result;
 
         if (script.IsTable(position))
         {
@@ -57,7 +57,7 @@ namespace GT
             {
                 for (script.PushNil(); script.Next(-2); script.Pop(1))
                 {
-                    GTLib::String segmentName;
+                    String segmentName;
                     double         transitionTime = 0.0;
                     bool           loop = false;
 

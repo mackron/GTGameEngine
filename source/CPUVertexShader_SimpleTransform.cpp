@@ -2,7 +2,7 @@
 
 #include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
 
-namespace GTEngine
+namespace GT
 {
     CPUVertexShader_SimpleTransform::CPUVertexShader_SimpleTransform(const glm::mat4 &transform)
         : CPUVertexShader(), m_transform(), m_normalTransform()

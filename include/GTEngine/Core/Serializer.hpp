@@ -5,11 +5,11 @@
 
 #include <cstdlib>
 #include <cstring>      // For memcpy()
-#include "Math.hpp"     // For GTLib::Max().
-#include "String.hpp"   // For GTLib::String specialization.
+#include "Math.hpp"     // For Max().
+#include "String.hpp"   // For String specialization.
 #include <easy_fs/easy_vfs.h>
 
-namespace GTLib
+namespace GT
 {
     /// Class for doing basic serialization.
     ///
@@ -65,14 +65,14 @@ namespace GTLib
             this->Write(reinterpret_cast<const void*>(value), length);
         }
 
-        /// @copydoc GTLib::Serializer::WriteString(const char*, ptrdiff_t)
-        void WriteString(const GTLib::String &value)
+        /// @copydoc Serializer::WriteString(const char*, ptrdiff_t)
+        void WriteString(const String &value)
         {
             this->WriteString(value.c_str(), value.GetLengthInTs());
         }
     };
 
-    template <> inline void Serializer::Write<GTLib::String>(const GTLib::String &)
+    template <> inline void Serializer::Write<String>(const String &)
     {
         // Must use WriteString().
         assert(false);
@@ -212,7 +212,7 @@ namespace GTLib
         {
             if (this->GetAvailableBufferSpaceInBytes() < bytesToAdd)
             {
-                this->Allocate(this->bufferSizeInBytes + GTLib::Max(bytesToAdd, this->bufferSizeInBytes * 2U));
+                this->Allocate(this->bufferSizeInBytes + Max(bytesToAdd, this->bufferSizeInBytes * 2U));
             }
         }
 
@@ -229,7 +229,7 @@ namespace GTLib
         size_t writePointer;
     };
 
-    template <> inline void BasicSerializer::Write<GTLib::String>(const GTLib::String &)
+    template <> inline void BasicSerializer::Write<String>(const String &)
     {
         // Must use WriteString().
         assert(false);
@@ -295,7 +295,7 @@ namespace GTLib
         FileSerializer & operator=(const FileSerializer &);
     };
 
-    template <> inline void FileSerializer::Write<GTLib::String>(const GTLib::String &)
+    template <> inline void FileSerializer::Write<String>(const String &)
     {
         // Must use WriteString().
         assert(false);

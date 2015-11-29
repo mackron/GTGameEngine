@@ -29,7 +29,7 @@
     #endif
 #endif
 
-namespace GTEngine
+namespace GT
 {
     static const bool DontMarkAsModified = false;   // <-- Passed to 'markAsModified' boolean parameters.
 
@@ -89,7 +89,7 @@ namespace GTEngine
             assert(this->GUI.Main != nullptr);
             {
                 // The main element has been created, but we need to run a script to have it turn it into a proper SceneEditor object.
-                script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+                script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
                 assert(script.IsTable(-1));
                 {
                     script.Push("SceneEditor");
@@ -177,7 +177,7 @@ namespace GTEngine
             // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
             if (easyvfs_file_size(file) > 0)
             {
-                GTLib::FileDeserializer deserializer(file);
+                FileDeserializer deserializer(file);
                 this->DeserializeScene(deserializer);
             }
             else
@@ -214,7 +214,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("ResetCamera");
@@ -303,7 +303,7 @@ namespace GTEngine
                 // that is contained within the viewport.
                 auto &script = this->GetScript();
 
-                script.Execute(GTLib::String::CreateFormatted("GTEngine.Editor.__CurrentSceneEditorViewportElement = GTGUI.Server.GetElementByID('%s')", this->GUI.Viewport->id).c_str());
+                script.Execute(String::CreateFormatted("GTEngine.Editor.__CurrentSceneEditorViewportElement = GTGUI.Server.GetElementByID('%s')", this->GUI.Viewport->id).c_str());
                 script.Execute
                 (
                     "Game.GetGameWindowGUIElement = function()"
@@ -583,7 +583,7 @@ namespace GTEngine
         // We need to disable on the scripting side, too.
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("DisableViewportControls");
@@ -606,7 +606,7 @@ namespace GTEngine
         // We need to enable on the scripting side, too.
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("EnableViewportControls");
@@ -1089,7 +1089,7 @@ namespace GTEngine
 
                     // The way we do the selection depends on what we're doing. If shift is being held down, we don't want to deselect anything and instead just add
                     // or remove the node to the selection. If the selected node is already selected, it needs to be deselected. Otherwise it needs to be selected.
-                    if (this->GetOwnerEditor().GetGame().IsKeyDown(GTLib::Keys::Shift))
+                    if (this->GetOwnerEditor().GetGame().IsKeyDown(Keys::Shift))
                     {
                         if (this->IsSceneNodeSelected(selectedNode))
                         {
@@ -1247,7 +1247,7 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::SelectSceneNodes(const GTLib::Vector<uint64_t> &selectedNodeIDs, unsigned int options)
+    void SceneEditor::SelectSceneNodes(const Vector<uint64_t> &selectedNodeIDs, unsigned int options)
     {
         for (size_t i = 0; i < selectedNodeIDs.count; ++i)
         {
@@ -1391,7 +1391,7 @@ namespace GTEngine
         return nullptr;
     }
 
-    void SceneEditor::GetSelectedSceneNodeIDs(GTLib::Vector<uint64_t> &sceneNodeIDsOut)
+    void SceneEditor::GetSelectedSceneNodeIDs(Vector<uint64_t> &sceneNodeIDsOut)
     {
         // TODO: When we migrate the scene node ID system over to the new one, we will want to optimize this to a simple copy. Might event change this to a simple getter.
 
@@ -1425,7 +1425,7 @@ namespace GTEngine
         m_scene.RemoveSceneNode(sceneNodeToRemove);
     }
 
-    void SceneEditor::RemoveSceneNodes(const GTLib::Vector<uint64_t> &sceneNodeIDs)
+    void SceneEditor::RemoveSceneNodes(const Vector<uint64_t> &sceneNodeIDs)
     {
         for (size_t i = 0; i < sceneNodeIDs.count; ++i)
         {
@@ -1437,13 +1437,13 @@ namespace GTEngine
     {
         if (this->selectedNodes.count > 0)
         {
-            GTLib::Vector<uint64_t>   prevSelectedNodes(this->selectedNodes);
-            GTLib::Vector<SceneNode*> newNodes(prevSelectedNodes.count);
+            Vector<uint64_t>   prevSelectedNodes(this->selectedNodes);
+            Vector<SceneNode*> newNodes(prevSelectedNodes.count);
 
 
 
             // What we're going to do is grab the IDs of all of the scene nodes we want to copy. We include all descendants.
-            GTLib::Vector<SceneNode*> sceneNodesToCopy;
+            Vector<SceneNode*> sceneNodesToCopy;
 
             for (size_t iNode = 0; iNode < prevSelectedNodes.count; ++iNode)
             {
@@ -2180,13 +2180,13 @@ namespace GTEngine
 
     void SceneEditor::OnSceneNodeComponentAdded(SceneNode &node, Component &component)
     {
-        if (GTLib::Strings::Equal(component.GetName(), PrefabComponent::Name))     // Prefab
+        if (Strings::Equal(component.GetName(), PrefabComponent::Name))     // Prefab
         {
             this->PostOnSceneNodePrefabChanged(node);
         }
         else
         {
-            if (GTLib::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
+            if (Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
             {
                 auto &metadata = static_cast<EditorMetadataComponent &>(component);
 
@@ -2203,7 +2203,7 @@ namespace GTEngine
             }
             else
             {
-                if (GTLib::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+                if (Strings::Equal(component.GetName(), DynamicsComponent::Name))
                 {
                     auto metadata = node.GetComponent<EditorMetadataComponent>();
                     if (metadata != nullptr)
@@ -2217,7 +2217,7 @@ namespace GTEngine
                         }
                     }
                 }
-                else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
+                else if (Strings::Equal(component.GetName(), ProximityComponent::Name))
                 {
                     auto metadata = node.GetComponent<EditorMetadataComponent>();
                     if (metadata != nullptr)
@@ -2247,13 +2247,13 @@ namespace GTEngine
         auto metadata = node.GetComponent<EditorMetadataComponent>();
         assert(metadata != nullptr);
         {
-            if (GTLib::Strings::Equal(component.GetName(), PrefabComponent::Name))    // Prefab
+            if (Strings::Equal(component.GetName(), PrefabComponent::Name))    // Prefab
             {
                 this->PostOnSceneNodePrefabChanged(node);
             }
             else
             {
-                if (GTLib::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
+                if (Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
                 {
                     auto scene = node.GetScene();
                     assert(scene != nullptr);
@@ -2264,14 +2264,14 @@ namespace GTEngine
                 }
                 else
                 {
-                    if (GTLib::Strings::Equal(component.GetName(), ModelComponent::Name))
+                    if (Strings::Equal(component.GetName(), ModelComponent::Name))
                     {
                         if (metadata->UseModelForPickingShape())
                         {
                             metadata->ClearPickingCollisionShape();
                         }
                     }
-                    else if (GTLib::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+                    else if (Strings::Equal(component.GetName(), DynamicsComponent::Name))
                     {
                         if (metadata->IsSelected())
                         {
@@ -2279,7 +2279,7 @@ namespace GTEngine
                             m_scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
                         }
                     }
-                    else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
+                    else if (Strings::Equal(component.GetName(), ProximityComponent::Name))
                     {
                         if (metadata->IsSelected())
                         {
@@ -2302,7 +2302,7 @@ namespace GTEngine
     void SceneEditor::OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags)
     {
         // If the component is editor metadata, we need to check the selection state.
-        if (GTLib::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
+        if (Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
         {
             auto &metadata = static_cast<EditorMetadataComponent &>(component);
 
@@ -2372,13 +2372,13 @@ namespace GTEngine
         }
         else
         {
-            if (GTLib::Strings::Equal(component.GetName(), PrefabComponent::Name))
+            if (Strings::Equal(component.GetName(), PrefabComponent::Name))
             {
                 this->PostOnSceneNodePrefabChanged(node);
             }
             else
             {
-                if (GTLib::Strings::Equal(component.GetName(), ModelComponent::Name))
+                if (Strings::Equal(component.GetName(), ModelComponent::Name))
                 {
                     // The picking shape needs to be updated.
                     auto metadata = node.GetComponent<EditorMetadataComponent>();
@@ -2395,7 +2395,7 @@ namespace GTEngine
                         }
                     }
                 }
-                else if (GTLib::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+                else if (Strings::Equal(component.GetName(), DynamicsComponent::Name))
                 {
                     auto metadata = node.GetComponent<EditorMetadataComponent>();
                     assert(metadata != nullptr);
@@ -2403,7 +2403,7 @@ namespace GTEngine
                         metadata->MarkCollisionShapeMeshAsDirty();
                     }
                 }
-                else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
+                else if (Strings::Equal(component.GetName(), ProximityComponent::Name))
                 {
                     auto metadata = node.GetComponent<EditorMetadataComponent>();
                     assert(metadata != nullptr);
@@ -2518,7 +2518,7 @@ namespace GTEngine
             }
 
 
-            GTLib::FileSerializer serializer(file);
+            FileSerializer serializer(file);
             this->SerializeScene(serializer);
 
             easyvfs_close(file);
@@ -2698,30 +2698,30 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::OnKeyPressed(GTLib::Key key)
+    void SceneEditor::OnKeyPressed(Key key)
     {
-        if (key == GTLib::Keys::Ctrl)
+        if (key == Keys::Ctrl)
         {
             this->pivotPoint.EnableAllSnapping();
         }
     }
 
-    void SceneEditor::OnKeyReleased(GTLib::Key key)
+    void SceneEditor::OnKeyReleased(Key key)
     {
-        if (key == GTLib::Keys::Ctrl)
+        if (key == Keys::Ctrl)
         {
             this->pivotPoint.DisableAllSnapping();
         }
     }
 
 
-    void SceneEditor::OnMouseButtonDown(GTLib::MouseButton, int, int)
+    void SceneEditor::OnMouseButtonDown(MouseButton, int, int)
     {
     }
 
-    void SceneEditor::OnMouseButtonUp(GTLib::MouseButton button, int, int)
+    void SceneEditor::OnMouseButtonUp(MouseButton button, int, int)
     {
-        if (button == GTLib::MouseButton_Left)
+        if (button == MouseButton_Left)
         {
             this->gizmoDragMode = GizmoDragMode_None;
             this->transformGizmo.RestoreColours();
@@ -2875,7 +2875,7 @@ namespace GTEngine
         assert(m_scene.GetMinAutoSceneNodeID() == 1);
         {
             this->camera.AttachEventHandler(this->cameraEventHandler);
-            this->camera.AddComponent<GTEngine::CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
+            this->camera.AddComponent<CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
             this->camera.DisableSerialization();
             this->camera.DisableStateStackStaging();
 
@@ -2891,14 +2891,14 @@ namespace GTEngine
         this->UpdateGizmoTransform();
     }
 
-    void SceneEditor::SerializeScene(GTLib::Serializer &serializer, bool serializeMetadata) const
+    void SceneEditor::SerializeScene(Serializer &serializer, bool serializeMetadata) const
     {
         m_scene.Serialize(serializer);
 
         // We now want to save our own chunk. This will contain metadata such as the camera position and whatnot.
         if (serializeMetadata)
         {
-            GTLib::BasicSerializer metadataSerializer;
+            BasicSerializer metadataSerializer;
 
             this->camera.Serialize(metadataSerializer);
 
@@ -2926,7 +2926,7 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::DeserializeScene(GTLib::Deserializer &deserializer)
+    void SceneEditor::DeserializeScene(Deserializer &deserializer)
     {
         m_scene.DisableStateStack();
         this->LockParentChangedEvents();
@@ -2951,7 +2951,7 @@ namespace GTEngine
                     return header.id == Serialization::ChunkID_Scene_EditorMetadata;
                 }
 
-                bool HandleChunk(const Serialization::ChunkHeader &header, GTLib::Deserializer &deserializer)
+                bool HandleChunk(const Serialization::ChunkHeader &header, Deserializer &deserializer)
                 {
                     if (header.id == Serialization::ChunkID_Scene_EditorMetadata)
                     {
@@ -3040,7 +3040,7 @@ namespace GTEngine
         this->RefreshScenePropertiesPanel();
     }
 
-    void SceneEditor::SerializeSceneNodes(const GTLib::Vector<size_t> &sceneNodeIDs, GTLib::Serializer &serializer)
+    void SceneEditor::SerializeSceneNodes(const Vector<size_t> &sceneNodeIDs, Serializer &serializer)
     {
         for (size_t i = 0; i < sceneNodeIDs.count; ++i)
         {
@@ -3052,7 +3052,7 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::DeserializeSceneNodes(const GTLib::Vector<size_t> &sceneNodeIDs, GTLib::Deserializer &deserializer)
+    void SceneEditor::DeserializeSceneNodes(const Vector<size_t> &sceneNodeIDs, Deserializer &deserializer)
     {
         for (size_t i = 0; i < sceneNodeIDs.count; ++i)
         {
@@ -3181,7 +3181,7 @@ namespace GTEngine
         {
             auto &script = this->GetScript();
 
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("OnSelectionChanged");
@@ -3202,7 +3202,7 @@ namespace GTEngine
         {
             auto &script = this->GetScript();
 
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("OnSceneNodeAdded");
@@ -3224,7 +3224,7 @@ namespace GTEngine
         {
             auto &script = this->GetScript();
 
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("OnSceneNodeRemoved");
@@ -3246,7 +3246,7 @@ namespace GTEngine
         {
             auto &script = this->GetScript();
 
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("OnSceneNodeNameChanged");
@@ -3268,7 +3268,7 @@ namespace GTEngine
         {
             auto &script = this->GetScript();
 
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("OnSceneNodeParentChanged");
@@ -3291,7 +3291,7 @@ namespace GTEngine
         {
             auto &script = this->GetScript();
 
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("OnSceneNodePrefabChanged");
@@ -3311,7 +3311,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("UpdatePropertiesTransformPanel");
@@ -3329,7 +3329,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("UpdateScriptProperties");
@@ -3348,7 +3348,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("UpdateViewportMenu");
@@ -3367,7 +3367,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("RefreshSceneProperties");
@@ -3386,7 +3386,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("EnableViewportCameraControls");
@@ -3404,7 +3404,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("DisableViewportCameraControls");
@@ -3423,7 +3423,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("SetViewportCameraRotation");
@@ -3441,9 +3441,9 @@ namespace GTEngine
 
     void SceneEditor::GetViewportCameraRotation(float &rotationX, float &rotationY) const
     {
-        auto &script = const_cast<GTEngine::GameScript &>(this->GetScript());
+        auto &script = const_cast<GameScript &>(this->GetScript());
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("GetViewportCameraRotation");
@@ -3466,7 +3466,7 @@ namespace GTEngine
     void SceneEditor::ReselectSceneNodes(unsigned int options)
     {
         // Grab the nodes marked as selected.
-        GTLib::Vector<SceneNode*> nodesForReselection;
+        Vector<SceneNode*> nodesForReselection;
 
         size_t sceneNodeCount = m_scene.GetSceneNodeCount();
         for (size_t i = 0; i < sceneNodeCount; ++i)
@@ -3515,11 +3515,11 @@ namespace GTEngine
 
         this->LockParentChangedEvents();
         {
-            GTLib::BasicSerializer serializer;
+            BasicSerializer serializer;
             nodeToCopy.Serialize(serializer);
 
 
-            GTLib::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
+            BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
             newNode = m_scene.CreateNewSceneNode(deserializer, 0, true);      // <-- 'true' means to generate a new ID if a node of the same ID already exists (spoiler: it does already exist).
 
 
@@ -3555,7 +3555,7 @@ namespace GTEngine
         {
             auto &script = this->GetScript();
 
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("UpdatePlaybackControls");
@@ -3573,7 +3573,7 @@ namespace GTEngine
     void SceneEditor::RelinkSceneNodesLinkedToPrefab(const char* prefabRelativePath)
     {
         // The first step is to extract the root nodes that are linked to the prefab.
-        GTLib::Vector<SceneNode*> rootSceneNodes;
+        Vector<SceneNode*> rootSceneNodes;
         for (size_t iSceneNode = 0; iSceneNode < m_scene.GetSceneNodeCount(); ++iSceneNode)
         {
             auto sceneNode = m_scene.GetSceneNodeByIndex(iSceneNode);
@@ -3582,7 +3582,7 @@ namespace GTEngine
                 auto prefabComponent = sceneNode->GetComponent<PrefabComponent>();
                 if (prefabComponent != nullptr)
                 {
-                    if (GTLib::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath))
+                    if (Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath))
                     {
                         if (prefabComponent->GetLocalHierarchyID() == 1)    // Is it the root node in the prefab?
                         {
@@ -3643,7 +3643,7 @@ namespace GTEngine
                         auto script = scriptComponent->GetScriptDefinitionByIndex(iScript);
                         assert(script != nullptr);
                         {
-                            if (GTLib::Strings::Equal(script->GetRelativePath(), scriptRelativePath))
+                            if (Strings::Equal(script->GetRelativePath(), scriptRelativePath))
                             {
                                 scriptComponent->ReloadScript(iScript);
 

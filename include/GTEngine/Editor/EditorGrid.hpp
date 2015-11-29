@@ -5,7 +5,7 @@
 
 #include "../SceneRenderer.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a grid in a 3D editing tool.
     ///

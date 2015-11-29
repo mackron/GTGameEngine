@@ -7,7 +7,7 @@
 #include <gtgl/gtgl.h>
 #include <assert.h>
 
-namespace GTEngine
+namespace GT
 {
     #define SET_DATA_1D_BIT         (1 << 1)
     #define SET_DATA_2D_BIT         (1 << 2)
@@ -55,7 +55,7 @@ namespace GTEngine
     }
 
 
-    void RCSetTextureState::SetTexture1DData(TextureState_OpenGL21* textureStateIn, GLenum targetIn, int mipmap, GTLib::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes)
+    void RCSetTextureState::SetTexture1DData(TextureState_OpenGL21* textureStateIn, GLenum targetIn, int mipmap, ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes)
     {
         assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
@@ -83,7 +83,7 @@ namespace GTEngine
         }
     }
 
-    void RCSetTextureState::SetTexture2DData(TextureState_OpenGL21* textureStateIn, GLenum targetIn, int mipmap, GTLib::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip)
+    void RCSetTextureState::SetTexture2DData(TextureState_OpenGL21* textureStateIn, GLenum targetIn, int mipmap, ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip)
     {
         assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
@@ -97,7 +97,7 @@ namespace GTEngine
             if (data != nullptr && dataSizeInBytes > 0)
             {
                 this->textureData.data = static_cast<GLvoid*>(malloc(dataSizeInBytes));
-                GTLib::ImageUtils::CopyImageData(this->textureData.data, data, width, height, format, flip);
+                ImageUtils::CopyImageData(this->textureData.data, data, width, height, format, flip);
             }
             else
             {
@@ -112,7 +112,7 @@ namespace GTEngine
         }
     }
     
-    void RCSetTextureState::SetTexture2DSubData(TextureState_OpenGL21* textureStateIn, GLenum targetIn, int mipmap, GTLib::ImageFormat format, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip)
+    void RCSetTextureState::SetTexture2DSubData(TextureState_OpenGL21* textureStateIn, GLenum targetIn, int mipmap, ImageFormat format, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip)
     {
         assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
@@ -128,7 +128,7 @@ namespace GTEngine
             if (data != nullptr && dataSizeInBytes > 0)
             {
                 this->textureData.data = static_cast<GLvoid*>(malloc(dataSizeInBytes));
-                GTLib::ImageUtils::CopyImageData(this->textureData.data, data, width, height, format, flip);
+                ImageUtils::CopyImageData(this->textureData.data, data, width, height, format, flip);
             }
             else
             {
@@ -143,7 +143,7 @@ namespace GTEngine
         }
     }
 
-    void RCSetTextureState::SetTexture3DData(TextureState_OpenGL21* textureStateIn, GLenum targetIn, int mipmap, GTLib::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes)
+    void RCSetTextureState::SetTexture3DData(TextureState_OpenGL21* textureStateIn, GLenum targetIn, int mipmap, ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes)
     {
         assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
@@ -173,7 +173,7 @@ namespace GTEngine
         }
     }
 
-    void RCSetTextureState::SetTextureCubeData(TextureState_OpenGL21* textureStateIn, GTLib::ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
+    void RCSetTextureState::SetTextureCubeData(TextureState_OpenGL21* textureStateIn, ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
         const void* positiveXData, const void* negativeXData,
         const void* positiveYData, const void* negativeYData,
         const void* positiveZData, const void* negativeZData)

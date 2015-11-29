@@ -6,11 +6,11 @@
 
 #if defined(_MSC_VER)
     #pragma warning(push)
-    #pragma warning(disable:4351)       // new behavior: elements of array 'GTEngine::DefaultSceneCullingManager::DbvtPolicy::mvp' will be default initialized
+    #pragma warning(disable:4351)       // new behavior: elements of array 'DefaultSceneCullingManager::DbvtPolicy::mvp' will be default initialized
     #pragma warning(disable:4355)       // 'this' used in initializer list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     DefaultSceneCullingManager::DefaultSceneCullingManager()
         : m_world(), models(), pointLights(), spotLights(), ambientLights(), directionalLights(), particleSystems(),

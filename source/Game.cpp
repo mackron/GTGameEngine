@@ -29,7 +29,7 @@
     #pragma warning(disable:4482)   // nonstandard extension used: enum used in qualified name
 #endif
 
-namespace GTEngine
+namespace GT
 {
     Game::Game(GameStateManager &gameStateManager)
         : m_gameStateManager(gameStateManager),
@@ -55,8 +55,8 @@ namespace GTEngine
           mousePosX(0), mousePosY(0), mouseMoveLockCounter(0),
           dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false),
           dataFilesWatcherEventHandler(*this),
-          profilerToggleKey(GTLib::Keys::F11),
-          editorToggleKeyCombination(GTLib::Keys::Shift, GTLib::Keys::Tab)
+          profilerToggleKey(Keys::F11),
+          editorToggleKeyCombination(Keys::Shift, Keys::Tab)
     {
         // The main game window GUI element needs to be created. It is just a 100% x 100% invisible element off the root element.
         this->gui.Load("<div id='MainGameWindow' style='width:100%; height:100%' />");
@@ -315,7 +315,7 @@ namespace GTEngine
     }
 
 
-    bool Game::IsKeyDown(GTLib::Key key) const
+    bool Game::IsKeyDown(Key key) const
     {
         if (this->focused)  // Keys will never be down if we're not focused...
         {
@@ -329,7 +329,7 @@ namespace GTEngine
         return false;
     }
 
-    bool Game::IsMouseButtonDown(GTLib::MouseButton button) const
+    bool Game::IsMouseButtonDown(MouseButton button) const
     {
         if (this->focused)  // Keys will never be down if we're not focused...
         {
@@ -536,7 +536,7 @@ namespace GTEngine
             }
         }
 
-        GTEngine::GamePackager packager(absoluteOutputDirectory);
+        GamePackager packager(absoluteOutputDirectory);
 
 
         // We will start by copying over the data directories.
@@ -556,7 +556,7 @@ namespace GTEngine
             }
             else
             {
-                packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), (GTLib::String(executableName) + ".exe").c_str());
+                packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), (String(executableName) + ".exe").c_str());
             }
         }
         else
@@ -624,23 +624,23 @@ namespace GTEngine
     }
 
 
-    GTLib::Key Game::GetProfilerToggleKey() const
+    Key Game::GetProfilerToggleKey() const
     {
         return this->profilerToggleKey;
     }
 
-    void Game::SetProfilerToggleKey(GTLib::Key key)
+    void Game::SetProfilerToggleKey(Key key)
     {
         this->profilerToggleKey = key;
     }
 
 
-    const GTLib::KeyCombination & Game::GetEditorToggleKeyCombination() const
+    const KeyCombination & Game::GetEditorToggleKeyCombination() const
     {
         return this->editorToggleKeyCombination;
     }
 
-    void Game::SetEditorToggleKeyCombination(const GTLib::KeyCombination &newCombination)
+    void Game::SetEditorToggleKeyCombination(const KeyCombination &newCombination)
     {
         this->editorToggleKeyCombination = newCombination;
     }
@@ -658,12 +658,12 @@ namespace GTEngine
     /////////////////////////////////////
     // Game State Management
 
-    bool Game::SerializeGameState(GTLib::Serializer &serializer)
+    bool Game::SerializeGameState(Serializer &serializer)
     {
         return m_gameStateManager.Serialize(*this, serializer);
     }
 
-    bool Game::DeserializeGameState(GTLib::Deserializer &deserializer)
+    bool Game::DeserializeGameState(Deserializer &deserializer)
     {
         return m_gameStateManager.Deserialize(*this, deserializer);
     }
@@ -673,7 +673,7 @@ namespace GTEngine
         easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), destinationFilePath, EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
         if (pFile != nullptr)
         {
-            GTLib::FileSerializer serializer(pFile);
+            FileSerializer serializer(pFile);
             bool result = this->SerializeGameState(serializer);
 
             easyvfs_close(pFile);
@@ -688,7 +688,7 @@ namespace GTEngine
         easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), sourceFilePath, EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
-            GTLib::FileDeserializer deserializer(pFile);
+            FileDeserializer deserializer(pFile);
             bool result = this->DeserializeGameState(deserializer);
 
             easyvfs_close(pFile);
@@ -751,7 +751,7 @@ namespace GTEngine
             if (this->window != nullptr)
             {
                 // We'll need to grab the update thread object. We grab this from the thread cache which will have been initialised
-                // in GTEngine::Startup(). It's important that we have a thread here, so we need to force it (first argument = true).
+                // in Startup(). It's important that we have a thread here, so we need to force it (first argument = true).
                 this->updateThread = ThreadCache::AcquireThread(true);
 
 
@@ -864,7 +864,7 @@ namespace GTEngine
 
 
             // First we need to handle any pending window messages. We do not want to wait here (first argument).
-            while (GTLib::PumpNextWindowEvent(false));
+            while (PumpNextWindowEvent(false));
 
 
             // If we're watching the data directories, we want to check for changes now.
@@ -872,7 +872,7 @@ namespace GTEngine
             {
                 float checkInterval = this->GetDataFilesWatchInterval();
 
-                if (GTLib::Timing::GetTimeInSeconds() - this->lastDataFilesWatchTime >= checkInterval)
+                if (Timing::GetTimeInSeconds() - this->lastDataFilesWatchTime >= checkInterval)
                 {
                     if (this->dataFilesWatcher.EventsReady())
                     {
@@ -880,7 +880,7 @@ namespace GTEngine
                         this->dataFilesWatcher.CheckForChanges(true);       // <-- 'true' means to go asynchronous.
                     }
 
-                    this->lastDataFilesWatchTime = static_cast<float>(GTLib::Timing::GetTimeInSeconds());
+                    this->lastDataFilesWatchTime = static_cast<float>(Timing::GetTimeInSeconds());
                 }
             }
 
@@ -917,7 +917,7 @@ namespace GTEngine
     void Game::StartFrame() // [Main Thread]
     {
         // The first thing we do is retrieve the delta time...
-        this->deltaTimeInSeconds = GTLib::Min(this->updateTimer.Update(), 1.0);
+        this->deltaTimeInSeconds = Min(this->updateTimer.Update(), 1.0);
 
         // We also need to increment the total running time, but only if we're not paused.
         if (!this->IsPaused())
@@ -1024,7 +1024,7 @@ namespace GTEngine
     }
 
 
-    bool Game::IsKeyCombinationDown(const GTLib::KeyCombination &combination) const
+    bool Game::IsKeyCombinationDown(const KeyCombination &combination) const
     {
         // We ignore keys that are set to null, but we need to always return false if all of them are null.
         if (!combination.IsAnyKeySet())
@@ -1035,10 +1035,10 @@ namespace GTEngine
 
         bool down = true;
 
-        down = down && (combination.systemKey1    == GTLib::Keys::Null || this->IsKeyDown(combination.systemKey1));
-        down = down && (combination.systemKey2    == GTLib::Keys::Null || this->IsKeyDown(combination.systemKey2));
-        down = down && (combination.printableKey1 == GTLib::Keys::Null || this->IsKeyDown(combination.printableKey1));
-        down = down && (combination.printableKey2 == GTLib::Keys::Null || this->IsKeyDown(combination.printableKey2));
+        down = down && (combination.systemKey1    == Keys::Null || this->IsKeyDown(combination.systemKey1));
+        down = down && (combination.systemKey2    == Keys::Null || this->IsKeyDown(combination.systemKey2));
+        down = down && (combination.printableKey1 == Keys::Null || this->IsKeyDown(combination.printableKey1));
+        down = down && (combination.printableKey2 == Keys::Null || this->IsKeyDown(combination.printableKey2));
 
         return down;
     }

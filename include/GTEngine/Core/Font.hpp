@@ -13,7 +13,7 @@
 #include <GTEngine/Core/Map.hpp>
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     class FontServer;
     
@@ -47,7 +47,7 @@ namespace GTLib
         
         /// The rectangle defining the position in the texture where the visual representation of the glyph is located.
         /// The rectangle can also be used to retrieve the size of the glyph.
-        GTLib::Rect<int> rect;
+        Rect<int> rect;
         
         // UV coordinates.
         float uvLeft;               ///< The left UV coordinate of the glyph map this glyph is located at.
@@ -145,13 +145,13 @@ namespace GTLib
         ///
         /// Every glyph map is mapped to a glyph map layout. We use this layout in determining where to insert additional glyphs
         /// into the map.
-        mutable GTLib::Map<GlyphMapHandle, GlyphMapLayout> glyphMaps;
+        mutable Map<GlyphMapHandle, GlyphMapLayout> glyphMaps;
 
         /// The map containing pointers to the glyphs for each character.
         ///
         /// This needs to be mutable because this will be modified by GetGlyph(), which we want to be constant from the public
         /// perspective.
-        mutable GTLib::Map<char32_t, Glyph*> glyphs;
+        mutable Map<char32_t, Glyph*> glyphs;
 
         
     private:    // No copying.

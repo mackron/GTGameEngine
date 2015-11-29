@@ -7,7 +7,7 @@
 #include "GlyphMapLayout.hpp"
 #include <GTEngine/Core/Map.hpp>
 
-namespace GTLib
+namespace GT
 {
     /// Platform independant class for caching glyphs.
     ///
@@ -97,7 +97,7 @@ namespace GTLib
         /// @param glyph      [in] A handle to the glyph.
         /// @param glyphMap   [in] The glyph map the glyph's bitmap data is placed in.
         /// @param bitmapRect [in] The rectangle region the glyph's bitmap is occupying in the glyph map.
-        virtual void OnGlyphCached(GlyphHandle glyph, GlyphMapHandle glyphMap, GTLib::Rect<unsigned int> &bitmapRect);
+        virtual void OnGlyphCached(GlyphHandle glyph, GlyphMapHandle glyphMap, Rect<unsigned int> &bitmapRect);
         
         
     private:
@@ -124,10 +124,10 @@ namespace GTLib
         ///
         /// Every glyph map is mapped to a glyph map layout. We use this layout in determining where to insert additional glyphs
         /// into the map.
-        GTLib::Map<GlyphMapHandle, GlyphMapLayout> m_glyphMaps;
+        Map<GlyphMapHandle, GlyphMapLayout> m_glyphMaps;
         
         /// The list of glyph handles, mapped to their character codes.
-        GTLib::Map<char32_t, GlyphHandle> m_glyphs;
+        Map<char32_t, GlyphHandle> m_glyphs;
         
         
     private:    // No copying.

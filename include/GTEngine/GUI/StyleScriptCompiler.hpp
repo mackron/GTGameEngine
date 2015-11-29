@@ -43,10 +43,10 @@ namespace GTGUI
     private:
 
         /// The key/name of the attribute.
-        GTLib::String m_name;
+        GT::String m_name;
 
         /// The value of the attribute.
-        GTLib::String m_value;
+        GT::String m_value;
     };
 
 
@@ -80,8 +80,8 @@ namespace GTGUI
 
 
         /// Retrieves a reference to the internal list of attributes.
-              GTLib::Vector<StyleScriptCompilerClassAttribute> & GetAttributes()       { return this->m_attributes; }
-        const GTLib::Vector<StyleScriptCompilerClassAttribute> & GetAttributes() const { return this->m_attributes; }
+              GT::Vector<StyleScriptCompilerClassAttribute> & GetAttributes()       { return this->m_attributes; }
+        const GT::Vector<StyleScriptCompilerClassAttribute> & GetAttributes() const { return this->m_attributes; }
 
         /// Adds a new attribute.
         ///
@@ -117,8 +117,8 @@ namespace GTGUI
 
 
         /// Retrieves a reference to the internal list of sub-classes.
-              GTLib::Dictionary<StyleScriptCompilerClass> & GetSubClasses()       { return this->m_subclasses; }
-        const GTLib::Dictionary<StyleScriptCompilerClass> & GetSubClasses() const { return this->m_subclasses; }
+              GT::Dictionary<StyleScriptCompilerClass> & GetSubClasses()       { return this->m_subclasses; }
+        const GT::Dictionary<StyleScriptCompilerClass> & GetSubClasses() const { return this->m_subclasses; }
 
         /// Retrieves a pointer to the sub-class of the given type.
         ///
@@ -162,17 +162,17 @@ namespace GTGUI
     private:
 
         /// The name of the class.
-        GTLib::String m_name;
+        GT::String m_name;
 
         /// A space-delimited list of includes.
-        GTLib::String m_includes;
+        GT::String m_includes;
 
         /// The list of attributes. We use a vector instead of a map here because we want to keep the order that the
         /// attributes are defined.
-        GTLib::Vector<StyleScriptCompilerClassAttribute> m_attributes;
+        GT::Vector<StyleScriptCompilerClassAttribute> m_attributes;
 
         /// The list of sub-classes, keyed by the name of the modifier the sub-class.
-        GTLib::Dictionary<StyleScriptCompilerClass> m_subclasses;
+        GT::Dictionary<StyleScriptCompilerClass> m_subclasses;
     };
 
 
@@ -209,10 +209,10 @@ namespace GTGUI
     private:
 
         /// The key/name of the attribute.
-        GTLib::String m_name;
+        GT::String m_name;
 
         /// The value of the attribute.
-        GTLib::String m_value;
+        GT::String m_value;
     };
 
 
@@ -333,13 +333,13 @@ namespace GTGUI
     private:
 
         /// The identifier, if any. This will be an empty string if no identifier is specified.
-        GTLib::String m_identifier;
+        GT::String m_identifier;
 
         /// The list of classes.
-        GTLib::Vector<StyleScriptCompilerClass*> m_classes;
+        GT::Vector<StyleScriptCompilerClass*> m_classes;
         
         /// The list of variables.
-        GTLib::Vector<StyleScriptCompilerVariable*> m_variables;
+        GT::Vector<StyleScriptCompilerVariable*> m_variables;
 
         /// A pointer to the error handler. Can be null.
         StyleScriptCompilerErrorHandler* m_errorHandler;

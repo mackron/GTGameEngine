@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/Window.hpp>
 
-namespace GTLib
+namespace GT
 {
     void WindowEventHandler::OnMove(int, int)
     {

@@ -6,7 +6,7 @@
 #include "NextChar.hpp"
 #include "Copy.hpp"
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {

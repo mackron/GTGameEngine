@@ -11,7 +11,7 @@
     #pragma warning(disable:4482)   // nonstandard extension.
 #endif
 
-namespace GTLib
+namespace GT
 {
     typedef char32_t Key;
 
@@ -25,7 +25,7 @@ namespace GTLib
 
 
         // The name of the key as a string. First letter is capitalized.
-        GTLib::String Name;
+        String Name;
 
         // The key code.
         char32_t Code;
@@ -231,26 +231,26 @@ namespace GTLib
     struct KeyCombination
     {
         KeyCombination()
-            : systemKey1(GTLib::Keys::Null),    systemKey2(GTLib::Keys::Null),
-              printableKey1(GTLib::Keys::Null), printableKey2(GTLib::Keys::Null)
+            : systemKey1(Keys::Null),    systemKey2(Keys::Null),
+              printableKey1(Keys::Null), printableKey2(Keys::Null)
         {
         }
 
-        KeyCombination(GTLib::Key systemKey, GTLib::Key printableKey)
-            : systemKey1(systemKey),       systemKey2(GTLib::Keys::Null),
-              printableKey1(printableKey), printableKey2(GTLib::Keys::Null)
+        KeyCombination(Key systemKey, Key printableKey)
+            : systemKey1(systemKey),       systemKey2(Keys::Null),
+              printableKey1(printableKey), printableKey2(Keys::Null)
         {
         }
 
 
         /// Determines whether or not the given key is one of the system keys.
-        bool IsSystemKey(GTLib::Key key) const
+        bool IsSystemKey(Key key) const
         {
             return key == this->systemKey1 || key == this->systemKey2;
         }
 
         /// Determines whether or not the given key is one of the printable keys.
-        bool IsPrintableKey(GTLib::Key key) const
+        bool IsPrintableKey(Key key) const
         {
             return key == this->printableKey1 || key == this->printableKey2;
         }
@@ -259,15 +259,15 @@ namespace GTLib
         /// Determines whether or not any key is non-null.
         bool IsAnyKeySet() const
         {
-            return this->systemKey1 != GTLib::Keys::Null || this->systemKey2 != GTLib::Keys::Null || this->printableKey1 != GTLib::Keys::Null || this->printableKey2 != GTLib::Keys::Null;
+            return this->systemKey1 != Keys::Null || this->systemKey2 != Keys::Null || this->printableKey1 != Keys::Null || this->printableKey2 != Keys::Null;
         }
 
 
 
-        GTLib::Key systemKey1;
-        GTLib::Key systemKey2;
-        GTLib::Key printableKey1;
-        GTLib::Key printableKey2;
+        Key systemKey1;
+        Key systemKey2;
+        Key printableKey1;
+        Key printableKey2;
     };
 }
 

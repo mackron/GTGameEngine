@@ -8,7 +8,7 @@
 #include <GTEngine/Core/Serializer.hpp>
 #include <GTEngine/Core/Deserializer.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Scene;
     class SceneStateStackBranch;
@@ -19,14 +19,14 @@ namespace GTEngine
     {
         struct Command
         {
-            Command(GTLib::BasicSerializer* serializerIn, bool isOwnerIn = false)
+            Command(BasicSerializer* serializerIn, bool isOwnerIn = false)
                 : serializer(serializerIn), isOwner(isOwnerIn)
             {
             }
 
 
             /// A pointer to the serializer that contains the scene node's data.
-            GTLib::BasicSerializer* serializer;
+            BasicSerializer* serializer;
 
             /// Keeps track of whether or not the serializer is memory managed by the commands structure.
             bool isOwner;
@@ -42,19 +42,19 @@ namespace GTEngine
 
 
         /// Adds an insert command.
-        void AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, GTLib::BasicSerializer* sceneNodeSerializer);
-        void AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene &scene, GTLib::BasicSerializer* sceneNodeSerializer = nullptr) { this->AddInsert(sceneNodeID, parentSceneNodeID, &scene, sceneNodeSerializer);  }
-        void AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer)                         { this->AddInsert(sceneNodeID, parentSceneNodeID, nullptr, sceneNodeSerializer); }
+        void AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, BasicSerializer* sceneNodeSerializer);
+        void AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene &scene, BasicSerializer* sceneNodeSerializer = nullptr) { this->AddInsert(sceneNodeID, parentSceneNodeID, &scene, sceneNodeSerializer);  }
+        void AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, BasicSerializer* sceneNodeSerializer)                         { this->AddInsert(sceneNodeID, parentSceneNodeID, nullptr, sceneNodeSerializer); }
         
         /// Adds a delete command.
-        void AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, GTLib::BasicSerializer* sceneNodeSerializer);
-        void AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene &scene, GTLib::BasicSerializer* sceneNodeSerializer = nullptr) { this->AddDelete(sceneNodeID, parentSceneNodeID, &scene, sceneNodeSerializer);  }
-        void AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer)                         { this->AddDelete(sceneNodeID, parentSceneNodeID, nullptr, sceneNodeSerializer); }
+        void AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, BasicSerializer* sceneNodeSerializer);
+        void AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene &scene, BasicSerializer* sceneNodeSerializer = nullptr) { this->AddDelete(sceneNodeID, parentSceneNodeID, &scene, sceneNodeSerializer);  }
+        void AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, BasicSerializer* sceneNodeSerializer)                         { this->AddDelete(sceneNodeID, parentSceneNodeID, nullptr, sceneNodeSerializer); }
 
         /// Adds an update command.
-        void AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, GTLib::BasicSerializer* sceneNodeSerializer);
-        void AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene &scene, GTLib::BasicSerializer* sceneNodeSerializer = nullptr) { this->AddUpdate(sceneNodeID, parentSceneNodeID, &scene, sceneNodeSerializer);  }
-        void AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer)                         { this->AddUpdate(sceneNodeID, parentSceneNodeID, nullptr, sceneNodeSerializer); }
+        void AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, BasicSerializer* sceneNodeSerializer);
+        void AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene &scene, BasicSerializer* sceneNodeSerializer = nullptr) { this->AddUpdate(sceneNodeID, parentSceneNodeID, &scene, sceneNodeSerializer);  }
+        void AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, BasicSerializer* sceneNodeSerializer)                         { this->AddUpdate(sceneNodeID, parentSceneNodeID, nullptr, sceneNodeSerializer); }
 
         
         /// Adds a scene node to the hierarchy.
@@ -88,7 +88,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not modify the scene, but rather simply allows the structure itself to be saved and restored.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the commands.
         ///
@@ -96,22 +96,22 @@ namespace GTEngine
         ///
         /// @remarks
         ///     After deserializing, the internal serializers are all owned and memory managed by the structure itself.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 
         /// The insert commands.
-        GTLib::Map<uint64_t, Command> inserts;
+        Map<uint64_t, Command> inserts;
 
         /// The deletes commands.
-        GTLib::Map<uint64_t, Command> deletes;
+        Map<uint64_t, Command> deletes;
 
         /// The update commands.
-        GTLib::Map<uint64_t, Command> updates;
+        Map<uint64_t, Command> updates;
 
 
         /// The hierarchy.
-        GTLib::Map<uint64_t, uint64_t> hierarchy;
+        Map<uint64_t, uint64_t> hierarchy;
 
 
         /// The flags to use when serializing scene nodes.

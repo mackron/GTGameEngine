@@ -5,7 +5,7 @@
 
 #include "../../SceneEventHandler.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class SceneEditor;
 

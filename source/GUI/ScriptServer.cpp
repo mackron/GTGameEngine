@@ -36,7 +36,7 @@ namespace GTGUI
 
     bool ScriptServer::ExecuteFromFile(const char *filename, int returnValueCount)
     {
-        char* pFileData = easyvfs_open_and_read_text_file(GTEngine::g_EngineContext->GetVFS(), filename, nullptr);
+        char* pFileData = easyvfs_open_and_read_text_file(GT::g_EngineContext->GetVFS(), filename, nullptr);
         if (pFileData != nullptr)
         {
             bool successful = this->Execute(pFileData, returnValueCount);
@@ -47,7 +47,7 @@ namespace GTGUI
         else
         {
             char msg[256];
-            GTLib::IO::snprintf(msg, 256, "Could not find file: %s", filename);
+            GT::IO::snprintf(msg, 256, "Could not find file: %s", filename);
             
             this->server.PostError(msg);
             return false;
@@ -730,7 +730,7 @@ namespace GTGUI
     void ScriptServer::PostEvent_OnDrop(Element &receiver, Element &droppedElement)
     {
         // We're cheating here and manually doing this via a text script.
-        GTLib::String scriptString;
+        GT::String scriptString;
         scriptString.AssignFormatted("GTGUI.Server._Elems['%s']:OnDrop({droppedElement = GTGUI.Server._Elems['%s']})", receiver.id, droppedElement.id);
 
         this->Execute(scriptString.c_str(), 0);
@@ -881,7 +881,7 @@ namespace GTGUI
 
     void ScriptServer::PostEvent_OnTextChanged(Element &receiver)
     {
-        GTLib::String scriptString;
+        GT::String scriptString;
         scriptString.AssignFormatted("GTGUI.Server._Elems['%s']:OnTextChanged()", receiver.id);
 
         this->Execute(scriptString.c_str(), 0);
@@ -889,7 +889,7 @@ namespace GTGUI
 
     void ScriptServer::PostEvent_OnInnerXOffsetChanged(Element &receiver)
     {
-        GTLib::String scriptString;
+        GT::String scriptString;
         scriptString.AssignFormatted("GTGUI.Server._Elems['%s']:OnInnerXOffsetChanged()", receiver.id);
 
         this->Execute(scriptString.c_str(), 0);
@@ -897,7 +897,7 @@ namespace GTGUI
 
     void ScriptServer::PostEvent_OnInnerYOffsetChanged(Element &receiver)
     {
-        GTLib::String scriptString;
+        GT::String scriptString;
         scriptString.AssignFormatted("GTGUI.Server._Elems['%s']:OnInnerYOffsetChanged()", receiver.id);
 
         this->Execute(scriptString.c_str(), 0);
@@ -2219,7 +2219,7 @@ namespace GTGUI
         if (script.IsString(1))
         {
             // We need to create the element via the main server and then push the ID of the top element.
-            GTLib::String topID;
+            GT::String topID;
             if (server.Load(script.ToString(1), topID))
             {
                 // Note how we do not pop anything here. Lua will handle that for us when it returns from this call.
@@ -2766,7 +2766,7 @@ namespace GTGUI
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
         {
-            GTLib::Rect<int> rect;
+            GT::Rect<int> rect;
             element->GetAbsoluteRect(rect);
 
             script.Push(rect.left);

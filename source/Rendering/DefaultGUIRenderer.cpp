@@ -7,7 +7,7 @@
 #include <GTEngine/GUI/Server.hpp>
 
 
-namespace GTEngine
+namespace GT
 {
     DefaultGUIRenderer::DefaultGUIRenderer()
         : shader(ShaderLibrary::GetGUIShader()), shaderA8(ShaderLibrary::GetGUIShaderA8()),
@@ -21,18 +21,18 @@ namespace GTEngine
         
         
         // We need a default texture.
-        this->defaultTexture = GTEngine::Renderer::CreateTexture2D();
+        this->defaultTexture = GT::Renderer::CreateTexture2D();
         
         uint8_t texel[] = {0xFF, 0xFF, 0xFF};
-        this->defaultTexture->SetData(1, 1, GTLib::ImageFormat_RGB8, texel);
+        this->defaultTexture->SetData(1, 1, ImageFormat_RGB8, texel);
 
-        GTEngine::Renderer::PushTexture2DData(this->defaultTexture);
-        GTEngine::Renderer::SetTexture2DFilter(this->defaultTexture, TextureFilter_Nearest, TextureFilter_Nearest);
+        GT::Renderer::PushTexture2DData(this->defaultTexture);
+        GT::Renderer::SetTexture2DFilter(this->defaultTexture, TextureFilter_Nearest, TextureFilter_Nearest);
     }
 
     DefaultGUIRenderer::~DefaultGUIRenderer()
     {
-        GTEngine::Renderer::DeleteTexture2D(this->defaultTexture);
+        GT::Renderer::DeleteTexture2D(this->defaultTexture);
     }
 
 
@@ -52,15 +52,15 @@ namespace GTEngine
 
 
         // Some state needs to be one-time set.
-        GTEngine::Renderer::EnableScissorTest();
-        GTEngine::Renderer::DisableDepthTest();
-        GTEngine::Renderer::DisableDepthWrites();
+        GT::Renderer::EnableScissorTest();
+        GT::Renderer::DisableDepthTest();
+        GT::Renderer::DisableDepthWrites();
 
         // The viewport must be set each time.
-        GTEngine::Renderer::SetViewport(0, 0, this->viewportWidth, this->viewportHeight);
+        GT::Renderer::SetViewport(0, 0, this->viewportWidth, this->viewportHeight);
 
         // We want to render to the main framebuffer and use the main GUI shader.
-        GTEngine::Renderer::SetCurrentFramebuffer(nullptr);
+        GT::Renderer::SetCurrentFramebuffer(nullptr);
 
         // We need to set the projection uniform on the main shader. Slightly more efficient if we do this after making it current.
         this->shader->SetUniform("Projection", this->projection);
@@ -74,13 +74,13 @@ namespace GTEngine
     void DefaultGUIRenderer::End()
     {
         // Some state needs to be restored as per protocol.
-        GTEngine::Renderer::DisableScissorTest();
-        GTEngine::Renderer::EnableDepthTest();
-        GTEngine::Renderer::EnableDepthWrites();
+        GT::Renderer::DisableScissorTest();
+        GT::Renderer::EnableDepthTest();
+        GT::Renderer::EnableDepthWrites();
 
         if (this->isBlendingEnabled)
         {
-            GTEngine::Renderer::DisableBlending();
+            GT::Renderer::DisableBlending();
         }
     }
 
@@ -97,7 +97,7 @@ namespace GTEngine
     void DefaultGUIRenderer::SetScissor(int x, int y, unsigned int width, unsigned int height)
     {
         // GTGUI is top-down, but the renderer uses bottom-up. We need to convert appropriately.
-        GTEngine::Renderer::SetScissor(x, this->viewportHeight - (y + height), width, height);
+        GT::Renderer::SetScissor(x, this->viewportHeight - (y + height), width, height);
     }
 
     void DefaultGUIRenderer::SetOffset(float offsetX, float offsetY)
@@ -122,7 +122,7 @@ namespace GTEngine
         }
         
         
-        if (this->currentTexture->GetFormat() == GTLib::ImageFormat_R8)
+        if (this->currentTexture->GetFormat() == ImageFormat_R8)
         {
             this->SetCurrentShader(this->shaderA8);
             this->shaderA8->SetUniform("Texture", this->currentTexture);
@@ -141,16 +141,16 @@ namespace GTEngine
     {
         this->isBlendingEnabled = true;
 
-        GTEngine::Renderer::EnableBlending();
-        GTEngine::Renderer::SetBlendEquation(BlendEquation_Add);
-        GTEngine::Renderer::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+        GT::Renderer::EnableBlending();
+        GT::Renderer::SetBlendEquation(BlendEquation_Add);
+        GT::Renderer::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
     }
 
     void DefaultGUIRenderer::DisableBlending()
     {
         this->isBlendingEnabled = false;
 
-        GTEngine::Renderer::DisableBlending();
+        GT::Renderer::DisableBlending();
     }
 
     void DefaultGUIRenderer::Draw(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount)
@@ -158,13 +158,13 @@ namespace GTEngine
         // The shader needs to be make current in case an OnDraw event handler changes it. Setting uniforms is slightly more efficient if we bind it first.
         if (this->uniformsRequirePush)
         {
-            GTEngine::Renderer::PushPendingUniforms(*this->shader);
-            GTEngine::Renderer::PushPendingUniforms(*this->shaderA8);
+            GT::Renderer::PushPendingUniforms(*this->shader);
+            GT::Renderer::PushPendingUniforms(*this->shaderA8);
             this->uniformsRequirePush = false;
         }
 
         // Draw.
-        GTEngine::Renderer::Draw(vertices, vertexCount, indices, indexCount, VertexFormat::P2T2C4);
+        GT::Renderer::Draw(vertices, vertexCount, indices, indexCount, VertexFormat::P2T2C4);
     }
 
 
@@ -175,7 +175,7 @@ namespace GTEngine
 
     void DefaultGUIRenderer::RestoreCurrentState()
     {
-        GTEngine::Renderer::SetCurrentShader(this->currentShader);          // <-- Don't use this->SetCurrentShader() here.
+        GT::Renderer::SetCurrentShader(this->currentShader);          // <-- Don't use this->SetCurrentShader() here.
         this->SetOffset(this->currentOffsetX, this->currentOffsetY);
         this->SetTexture(reinterpret_cast<GTGUI::ImageHandle>(this->currentTexture));
 
@@ -193,7 +193,7 @@ namespace GTEngine
     {
         if (this->currentShader != shaderIn)
         {
-            GTEngine::Renderer::SetCurrentShader(shaderIn);
+            GT::Renderer::SetCurrentShader(shaderIn);
             this->currentShader = shaderIn;
         }
     }

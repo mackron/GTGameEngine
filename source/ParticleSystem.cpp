@@ -2,7 +2,7 @@
 
 #include <GTEngine/ParticleSystem.hpp>
 
-namespace GTEngine
+namespace GT
 {
     ParticleSystem::ParticleSystem(const ParticleSystemDefinition &definitionIn)
         : definition(definitionIn),

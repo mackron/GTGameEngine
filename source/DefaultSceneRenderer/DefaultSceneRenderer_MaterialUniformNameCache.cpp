@@ -2,7 +2,7 @@
 
 #include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MaterialUniformNameCache.hpp>
 
-namespace GTEngine
+namespace GT
 {
     DefaultSceneRenderer_MaterialUniformNameCache::DefaultSceneRenderer_MaterialUniformNameCache()
         : lightUniforms()

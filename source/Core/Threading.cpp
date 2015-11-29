@@ -5,7 +5,7 @@
 #if defined(_WIN32)
 #include <GTEngine/Core/windows.hpp>
 
-namespace GTLib
+namespace GT
 {
     namespace Threading
     {
@@ -32,7 +32,7 @@ namespace GTLib
 #include <sys/types.h>
 #include <pthread.h>
 
-namespace GTLib
+namespace GT
 {
     namespace Threading
     {

@@ -3,7 +3,6 @@
 #include <GTEngine/GUI/StyleClass.hpp>
 #include <GTEngine/GUI/StyleServer.hpp>
 #include <GTEngine/Core/Strings/Create.hpp>
-//#include <GTEngine/Core/Math.hpp>
 
 #include "StyleAttributeHandler.hpp"
 
@@ -11,22 +10,22 @@ namespace GTGUI
 {
     StyleClassType ToStyleClassType(const char *name, ptrdiff_t nameSizeInBytes)
     {
-        if (GTLib::Strings::Equal(name, nameSizeInBytes, "hovered"))
+        if (GT::Strings::Equal(name, nameSizeInBytes, "hovered"))
         {
             return StyleClassType_Hovered;
         }
 
-        if (GTLib::Strings::Equal(name, nameSizeInBytes, "pushed"))
+        if (GT::Strings::Equal(name, nameSizeInBytes, "pushed"))
         {
             return StyleClassType_Pushed;
         }
 
-        if (GTLib::Strings::Equal(name, nameSizeInBytes, "focused"))
+        if (GT::Strings::Equal(name, nameSizeInBytes, "focused"))
         {
             return StyleClassType_Focused;
         }
 
-        if (GTLib::Strings::Equal(name, nameSizeInBytes, "disabled"))
+        if (GT::Strings::Equal(name, nameSizeInBytes, "disabled"))
         {
             return StyleClassType_Disabled;
         }
@@ -38,7 +37,7 @@ namespace GTGUI
 namespace GTGUI
 {
     StyleClass::StyleClass(StyleServer &server, const char* name, ptrdiff_t nameSizeInBytes)
-        : server(server), name(GTLib::Strings::Create(name, nameSizeInBytes)), type(StyleClassType_Normal), includes(nullptr), hosts(),
+        : server(server), name(GT::Strings::Create(name, nameSizeInBytes)), type(StyleClassType_Normal), includes(nullptr), hosts(),
           width(), height(), minWidth(), maxWidth(), minHeight(), maxHeight(), relativeWidthMode(), relativeHeightMode(), flexChildWidth(), flexChildHeight(),
           backgroundColour(), backgroundImage(),backgroundImageColour(), backgroundAlignX(), backgroundAlignY(), backgroundRepeatX(), backgroundRepeatY(),
           borderLeftWidth(), borderLeftColour(),
@@ -69,21 +68,21 @@ namespace GTGUI
     {
         if (nameSizeInBytes == -1)
         {
-            bst.hashedName = GTLib::Hash(name);
+            bst.hashedName = GT::Hash(name);
         }
         else
         {
-            bst.hashedName = GTLib::Hash(name, nameSizeInBytes);
+            bst.hashedName = GT::Hash(name, nameSizeInBytes);
         }
     }
     
     StyleClass::~StyleClass()
     {
-        GTLib::Strings::Delete(this->name);
-        GTLib::Strings::Delete(this->includes);
+        GT::Strings::Delete(this->name);
+        GT::Strings::Delete(this->includes);
     }
 
-    GTLib::String StyleClass::GetAttribute(const char* nameIn, ptrdiff_t nameSizeInTs)
+    GT::String StyleClass::GetAttribute(const char* nameIn, ptrdiff_t nameSizeInTs)
     {
         return this->server.GetStyleAttribute(*this, nameIn, nameSizeInTs);
     }
@@ -96,12 +95,12 @@ namespace GTGUI
     void StyleClass::AppendIncludes(const char *newIncludes)
     {
         // We won't do anything if we don't have any includes.
-        if (newIncludes != nullptr && !GTLib::Strings::Equal(newIncludes, ""))
+        if (newIncludes != nullptr && !GT::Strings::Equal(newIncludes, ""))
         {
             // We need to grab the old includes so we can delete the string later.
             auto oldIncludes = this->includes;
 
-            GTLib::Strings::List<char> newIncludesList;
+            GT::Strings::List<char> newIncludesList;
 
             if (oldIncludes != nullptr)
             {
@@ -111,37 +110,37 @@ namespace GTGUI
 
             newIncludesList.Append(newIncludes);
 
-            this->includes = GTLib::Strings::Create(newIncludesList);
+            this->includes = GT::Strings::Create(newIncludesList);
 
-            GTLib::Strings::Delete(oldIncludes);
+            GT::Strings::Delete(oldIncludes);
         }
     }
 
     void StyleClass::RemoveIncludes(const char* includesToRemove)
     {
-        auto result = GTLib::Strings::FindFirst(this->includes, includesToRemove);
+        auto result = GT::Strings::FindFirst(this->includes, includesToRemove);
         if (result != nullptr)
         {
             // We need to grab the old includes so we can delete the string later.
             auto oldIncludes = this->includes;
 
-            GTLib::Strings::List<char> newIncludesList;
+            GT::Strings::List<char> newIncludesList;
             
             if (result != this->includes)
             {
                 newIncludesList.Append(this->includes, result - this->includes);
             }
 
-            size_t includesToRemoveSize = GTLib::Strings::SizeInTs(includesToRemove);
+            size_t includesToRemoveSize = GT::Strings::SizeInTs(includesToRemove);
             if (*(result + includesToRemoveSize) != '\0')
             {
                 newIncludesList.Append(result + includesToRemoveSize);
             }
             
-            this->includes = GTLib::Strings::Create(newIncludesList);
+            this->includes = GT::Strings::Create(newIncludesList);
 
 
-            GTLib::Strings::Delete(oldIncludes);
+            GT::Strings::Delete(oldIncludes);
         }
     }
 

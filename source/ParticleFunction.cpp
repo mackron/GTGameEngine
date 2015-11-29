@@ -2,7 +2,7 @@
 
 #include <GTEngine/ParticleFunction.hpp>
 
-namespace GTEngine
+namespace GT
 {
     void* ParticleFunction::operator new(size_t nbytes)
     {

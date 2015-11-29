@@ -7,7 +7,7 @@
 #include <GTEngine/Core/Parse.hpp>
 #include <time.h>
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  Class representing a date and time.
@@ -27,19 +27,19 @@ namespace GTLib
         *   \param  format [in] The format of the date.
         *   \return             The formatted string.
         */
-        GTLib::String ToFormattedString(const char *format);
+        String ToFormattedString(const char *format);
         
         /**
         *   \brief  Converts the DateTime to a string based on locale.
         *   \return The string representation of the DateTime.
         */
-        GTLib::String ToShortString();
+        String ToShortString();
 
         /**
         *   \brief  Converts the DateTime to a long time string which does not include the date component.
         *   \return The time of the day converted to a string.
         */
-        GTLib::String To24HourTimeString();
+        String To24HourTimeString();
     
     
     private:
@@ -72,12 +72,12 @@ namespace GTLib
             datestr[3] = '\0';
             datestr[6] = '\0';
 
-            t.tm_year = GTLib::Parse<int>(datestr + 7) - 1900;
-            t.tm_mday = GTLib::Parse<int>(datestr + 4);
+            t.tm_year = Parse<int>(datestr + 7) - 1900;
+            t.tm_mday = Parse<int>(datestr + 4);
 
             for (int i = 0; i < 12; i++)
             {
-                if (GTLib::Strings::Equal(datestr, months[i]))
+                if (Strings::Equal(datestr, months[i]))
                 {
                     t.tm_mon = i;
                     break;
@@ -89,9 +89,9 @@ namespace GTLib
             timestr[2] = '\0';
             timestr[5] = '\0';
 
-            t.tm_hour = GTLib::Parse<int>(timestr + ((timestr[0] != '0') ? 0 : 1));
-            t.tm_min  = GTLib::Parse<int>(timestr + ((timestr[3] != '0') ? 3 : 4));
-            t.tm_sec  = GTLib::Parse<int>(timestr + ((timestr[6] != '0') ? 6 : 7));
+            t.tm_hour = Parse<int>(timestr + ((timestr[0] != '0') ? 0 : 1));
+            t.tm_min  = Parse<int>(timestr + ((timestr[3] != '0') ? 3 : 4));
+            t.tm_sec  = Parse<int>(timestr + ((timestr[6] != '0') ? 6 : 7));
 
             time_t time = ::mktime(&t);
 

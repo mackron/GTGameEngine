@@ -9,7 +9,7 @@
 #if defined(_MSC_VER)
 #include <direct.h>
 
-namespace GTLib
+namespace GT
 {
     namespace IO
     {
@@ -43,7 +43,7 @@ inline int pclose(FILE *pipe)
 #include <sys/stat.h>
 #include <sys/types.h>
 
-namespace GTLib
+namespace GT
 {
     namespace IO
     {
@@ -64,7 +64,7 @@ namespace GTLib
 }
 #endif
 
-namespace GTLib
+namespace GT
 {
     namespace IO
     {

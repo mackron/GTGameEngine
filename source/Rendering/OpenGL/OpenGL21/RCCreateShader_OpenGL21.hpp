@@ -9,7 +9,7 @@
 #include "../../RenderCommand.hpp"
 #include "ShaderState_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers.
     class RCCreateShader : public RenderCommand
@@ -39,7 +39,7 @@ namespace GTEngine
         ///     This does not create the main program object, but the individual vertex, fragment or geometry shader object.
         ///     @par
         ///     The compilation log is output to the engines main log.
-        GLuint CreateShader(GLenum type, const GTLib::String &source);
+        GLuint CreateShader(GLenum type, const String &source);
 
         /// Links the given shaders to create the main shader program.
         ///
@@ -55,13 +55,13 @@ namespace GTEngine
 
 
         /// The vertex shader source.
-        GTLib::String vertexShaderSource;
+        String vertexShaderSource;
 
         /// The fragment shader source.
-        GTLib::String fragmentShaderSource;
+        String fragmentShaderSource;
 
         /// The geometry shader source. Can be null.
-        GTLib::String geometryShaderSource;
+        String geometryShaderSource;
 
 
     private:    // No copying.

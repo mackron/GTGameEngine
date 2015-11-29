@@ -5,7 +5,7 @@
 
 #include <GTEngine/GUI/ServerEventHandler.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Game;
 
@@ -19,7 +19,7 @@ namespace GTEngine
         void OnError(const char *msg);
         void OnWarning(const char *msg);
         void OnLog(const char *msg);
-        void OnChangeCursor(GTLib::Cursor cursor);
+        void OnChangeCursor(Cursor cursor);
 
     public:
 

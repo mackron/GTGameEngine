@@ -6,7 +6,7 @@
 #include <cstdio>
 #include <GTEngine/Core/Math.hpp>
 
-namespace GTLib
+namespace GT
 {
     /// A generic rectangle structure.
     template <typename T>
@@ -32,10 +32,10 @@ namespace GTLib
         /// Clamps the rectangle so that it does not go outside the bounds of the input rectangle.
         void Clamp(const Rect &rect)
         {
-            this->left   = GTLib::Clamp(this->left,   rect.left, rect.right);
-            this->bottom = GTLib::Clamp(this->bottom, rect.top,  rect.bottom);
-            this->right  = GTLib::Clamp(this->right,  rect.left, rect.right);
-            this->top    = GTLib::Clamp(this->top,    rect.top,  rect.bottom);
+            this->left   = GT::Clamp(this->left,   rect.left, rect.right);
+            this->bottom = GT::Clamp(this->bottom, rect.top,  rect.bottom);
+            this->right  = GT::Clamp(this->right,  rect.left, rect.right);
+            this->top    = GT::Clamp(this->top,    rect.top,  rect.bottom);
         }
         
         
@@ -62,13 +62,13 @@ namespace GTLib
         /// Retrieves the width of the rectangle.
         unsigned int GetWidth() const
         {
-            return GTLib::Max(this->left, this->right) - GTLib::Min(this->left, this->right);
+            return Max(this->left, this->right) - Min(this->left, this->right);
         }
 
         /// Retrieves the height of the rectangle.
         unsigned int GetHeight() const
         {
-            return GTLib::Max(this->bottom, this->top) - GTLib::Min(this->bottom, this->top);
+            return Max(this->bottom, this->top) - Min(this->bottom, this->top);
         }
 
 
@@ -79,10 +79,10 @@ namespace GTLib
         static Rect<T> Clamp(const Rect<T> &rect1, const Rect<T> &rect2)
         {
             return Rect<T>(
-                GTLib::Clamp(rect1.left,   rect2.left, rect2.right),
-                GTLib::Clamp(rect1.top,    rect2.top,  rect2.bottom),
-                GTLib::Clamp(rect1.right,  rect2.left, rect2.right),
-                GTLib::Clamp(rect1.bottom, rect2.top,  rect2.bottom)
+                Clamp(rect1.left,   rect2.left, rect2.right),
+                Clamp(rect1.top,    rect2.top,  rect2.bottom),
+                Clamp(rect1.right,  rect2.left, rect2.right),
+                Clamp(rect1.bottom, rect2.top,  rect2.bottom)
             );
         }
 

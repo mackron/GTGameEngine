@@ -8,10 +8,10 @@
 #include <GTEngine/Core/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 
-namespace GTEngine
+namespace GT
 {
     /// The list of loaded textures, indexed by file name.
-    static GTLib::Dictionary<Texture2D*> LoadedTextures;
+    static Dictionary<Texture2D*> LoadedTextures;
 
     /// The default level of anistropy to apply to all textures.
     static unsigned int DefaultAnisotropy = 1;
@@ -75,7 +75,7 @@ namespace GTEngine
             auto iTexture = LoadedTextures.Find(absFileName);
             if (iTexture == nullptr)
             {
-                GTLib::Image image(absFileName);
+                Image image(absFileName);
                 if (image.IsLinkedToFile())
                 {
                     image.PullAllMipmaps();     // <-- This loads the image data.
@@ -162,7 +162,7 @@ namespace GTEngine
                 auto texture = iTexture->value;
                 assert(texture != nullptr);
                 {
-                    GTLib::Image image(absFileName);
+                    Image image(absFileName);
                     if (image.IsLinkedToFile())
                     {
                         texture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());
@@ -193,7 +193,7 @@ namespace GTEngine
             uint32_t texel = 0xFF000000;
             Black1x1Texture = Renderer::CreateTexture2D();
 
-            Black1x1Texture->SetData(1, 1, GTLib::ImageFormat_RGBA8, &texel);
+            Black1x1Texture->SetData(1, 1, ImageFormat_RGBA8, &texel);
             Renderer::PushTexture2DData(*Black1x1Texture);
         }
 
@@ -223,7 +223,7 @@ namespace GTEngine
 
     bool Texture2DLibrary::IsExtensionSupported(const char* extension)
     {
-        return GTLib::ImageLoader::IsExtensionSupported(extension);
+        return ImageLoader::IsExtensionSupported(extension);
     }
 }
 

@@ -12,7 +12,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     TextEditor::TextEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
@@ -33,9 +33,9 @@ namespace GTEngine
             const char* extension = easypath_extension(absolutePath);
             assert(extension != nullptr);
             {
-                this->isScriptFile = GTLib::Strings::Equal<false>(extension, "lua")    ||
-                                     GTLib::Strings::Equal<false>(extension, "script") ||
-                                     GTLib::Strings::Equal<false>(extension, "gtscript");
+                this->isScriptFile = Strings::Equal<false>(extension, "lua")    ||
+                                     Strings::Equal<false>(extension, "script") ||
+                                     Strings::Equal<false>(extension, "gtscript");
             }
 
 
@@ -44,7 +44,7 @@ namespace GTEngine
             assert(this->mainElement != nullptr);
             {
                 // The element has been created, but we need to execute a script to have it turn into a proper multi-line text box.
-                script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+                script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
                 assert(script.IsTable(-1));
                 {
                     script.Push("TextEditor");
@@ -59,7 +59,7 @@ namespace GTEngine
 
                 // Now what we need to do is actually set the text. This will be much quicker if done on the C++ side so that the script parser doesn't need to
                 // parse potentially very large files.
-                this->textArea = gui.GetElementByID(script.GetString(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextBox.TextArea:GetID();", this->mainElement->id).c_str()));
+                this->textArea = gui.GetElementByID(script.GetString(String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextBox.TextArea:GetID();", this->mainElement->id).c_str()));
                 assert(this->textArea != nullptr);
                 {
                     this->textArea->SetText(fileContent);
@@ -77,7 +77,7 @@ namespace GTEngine
 
                 
                 // The panel.
-                this->panelElement = gui.GetElementByID(script.GetString(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').Panel:GetID();", this->mainElement->id).c_str()));
+                this->panelElement = gui.GetElementByID(script.GetString(String::CreateFormatted("GTGUI.Server.GetElementByID('%s').Panel:GetID();", this->mainElement->id).c_str()));
                 assert(this->panelElement != nullptr);
                 {
                     // If we're editting a regular text file (not a script), we don't want to show the panel.
@@ -89,7 +89,7 @@ namespace GTEngine
 
 
                 // Error list.
-                this->errorListElement = gui.GetElementByID(script.GetString(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').ErrorList:GetID();", this->panelElement->id).c_str()));
+                this->errorListElement = gui.GetElementByID(script.GetString(String::CreateFormatted("GTGUI.Server.GetElementByID('%s').ErrorList:GetID();", this->panelElement->id).c_str()));
                 assert(this->errorListElement != nullptr);
                 {
                 }
@@ -176,11 +176,11 @@ namespace GTEngine
         auto text = this->textArea->GetText();
         if (text != nullptr)
         {
-            wasSaved = easyvfs_open_and_write_text_file(GTEngine::g_EngineContext->GetVFS(), this->GetAbsolutePath(), text);
+            wasSaved = easyvfs_open_and_write_text_file(g_EngineContext->GetVFS(), this->GetAbsolutePath(), text);
         }
         else
         {
-            wasSaved = easyvfs_open_and_write_text_file(GTEngine::g_EngineContext->GetVFS(), this->GetAbsolutePath(), "");
+            wasSaved = easyvfs_open_and_write_text_file(g_EngineContext->GetVFS(), this->GetAbsolutePath(), "");
         }
 
         if (wasSaved)

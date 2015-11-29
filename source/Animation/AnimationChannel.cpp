@@ -2,7 +2,7 @@
 
 #include <GTEngine/Animation/AnimationChannel.hpp>
 
-namespace GTEngine
+namespace GT
 {
     AnimationChannel::AnimationChannel()
         : keys()

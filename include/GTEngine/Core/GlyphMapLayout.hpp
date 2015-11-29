@@ -5,7 +5,7 @@
 
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTLib
+namespace GT
 {
     /// Structure representing a row in the glyph map layout.
     struct GlyphMapLayoutRow
@@ -88,7 +88,7 @@ namespace GTLib
         unsigned int m_glyphMapHeight;
         
         /// The list of rows in the glyph map layout.
-        GTLib::Vector<GlyphMapLayoutRow> m_rows;
+        Vector<GlyphMapLayoutRow> m_rows;
     };
 }
 

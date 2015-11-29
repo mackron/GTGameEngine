@@ -40,12 +40,12 @@ namespace GT
     /// Creates and pushes a new Serializer object onto the top of the stack.
     ///
     /// @param serializer [in] A reference to the internal serializer object.
-    void PushNewSerializer(Script &script, GTLib::Serializer &serializer);
+    void PushNewSerializer(Script &script, Serializer &serializer);
 
     /// Creates and pushes a new Deserializer object onto the top of the stack.
     ///
     /// @param deserializer [in] A reference to the internal deserializer object.
-    void PushNewDeserializer(Script &script, GTLib::Deserializer &deserializer);
+    void PushNewDeserializer(Script &script, Deserializer &deserializer);
 
 
 
@@ -71,7 +71,7 @@ namespace GT
     /// @param mousePosX [in] The x mouse position.
     /// @param mousePosY [in] The y mouse position.
     /// @param button    [in] The button code.
-    void PostEvent_OnMouseButtonDown(GT::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button);
+    void PostEvent_OnMouseButtonDown(GT::Script &script, int mousePosX, int mousePosY, MouseButton button);
 
     /// Post a global MouseButtonUp event to everything relevant.
     ///
@@ -79,7 +79,7 @@ namespace GT
     /// @param mousePosX [in] The x mouse position.
     /// @param mousePosY [in] The y mouse position.
     /// @param button    [in] The button code.
-    void PostEvent_OnMouseButtonUp(GT::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button);
+    void PostEvent_OnMouseButtonUp(GT::Script &script, int mousePosX, int mousePosY, MouseButton button);
 
     /// Post a global MouseButtonDoubleClick event to everything relevant.
     ///
@@ -87,19 +87,19 @@ namespace GT
     /// @param mousePosX [in] The x mouse position.
     /// @param mousePosY [in] The y mouse position.
     /// @param button    [in] The button code.
-    void PostEvent_OnMouseButtonDoubleClick(GT::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button);
+    void PostEvent_OnMouseButtonDoubleClick(GT::Script &script, int mousePosX, int mousePosY, MouseButton button);
 
     /// Post a global KeyPressed event to everything relevant.
     ///
     /// @param script [in] A reference to the main script object.
     /// @param key    [in] The key code.
-    void PostEvent_OnKeyPressed(GT::Script &script, GTLib::Key key);
+    void PostEvent_OnKeyPressed(GT::Script &script, Key key);
 
     /// Post a global KeyReleased event to everything relevant.
     ///
     /// @param script [in] A reference to the main script object.
     /// @param key    [in] The key code.
-    void PostEvent_OnKeyReleased(GT::Script &script, GTLib::Key key);
+    void PostEvent_OnKeyReleased(GT::Script &script, Key key);
 
     /// Posts a global OnGamePause event to everything relevant.
     ///

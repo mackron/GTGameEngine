@@ -5,7 +5,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/GTEngine.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(PrefabComponent, "Prefab")
 
@@ -76,9 +76,9 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void PrefabComponent::Serialize(GTLib::Serializer &serializer) const
+    void PrefabComponent::Serialize(Serializer &serializer) const
     {
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
 
         intermediarySerializer.WriteString(this->prefabRelativePath);
         intermediarySerializer.Write(this->localHierarchyID);
@@ -94,7 +94,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void PrefabComponent::Deserialize(GTLib::Deserializer &deserializer)
+    void PrefabComponent::Deserialize(Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -102,7 +102,7 @@ namespace GTEngine
         {
             if (header.version == 1)
             {
-                GTLib::String relativePath;
+                String relativePath;
                 uint64_t       id;
 
                 deserializer.ReadString(relativePath);
@@ -113,7 +113,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::Log("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
+                Log("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
                 deserializer.Seek(header.sizeInBytes);
             }
         }

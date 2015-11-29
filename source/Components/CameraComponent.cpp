@@ -5,7 +5,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(CameraComponent, "Camera")
 
@@ -103,7 +103,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void CameraComponent::Serialize(GTLib::Serializer &serializer) const
+    void CameraComponent::Serialize(Serializer &serializer) const
     {
         serializer.Write(this->projection);
         serializer.Write(this->ortho);           // <-- unioned with 'perspective'.
@@ -111,7 +111,7 @@ namespace GTEngine
         serializer.Write(this->zFar);
     }
 
-    void CameraComponent::Deserialize(GTLib::Deserializer &deserializer)
+    void CameraComponent::Deserialize(Deserializer &deserializer)
     {
         deserializer.Read(this->projection);
         deserializer.Read(this->ortho);

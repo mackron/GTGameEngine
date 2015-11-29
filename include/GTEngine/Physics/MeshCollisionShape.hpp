@@ -6,7 +6,7 @@
 #include "Bullet.hpp"
 #include "../Model.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// A special collision shape for making it easier to do triangle mesh collision shapes from GTEngine objects.
     class MeshCollisionShape : public btGImpactMeshShape

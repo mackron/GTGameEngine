@@ -3,7 +3,7 @@
 #include "RCDeleteShader_OpenGL21.hpp"
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     RCDeleteShader::RCDeleteShader()
         : programState(nullptr)

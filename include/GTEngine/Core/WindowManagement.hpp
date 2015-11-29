@@ -5,7 +5,7 @@
 
 #include "WindowEventCallback.hpp"
 
-namespace GTLib
+namespace GT
 {
     /// Processes the next message in the event queue.
     ///
@@ -82,7 +82,7 @@ namespace GTLib
     ///     if needed. We do not use the 'lpTimerFunc' parameter.
     ///
     /// @see
-    ///     GTLib::StopWindowTimer()
+    ///     StopWindowTimer()
     void StartWindowTimer(WindowHandle window, uint32_t timerID, unsigned int timeoutInMilliseconds);
     
     /// Stops a timer that was created with StartWindowTimer().
@@ -95,7 +95,7 @@ namespace GTLib
     ///     called. In this case, the event handler will still be processed. This is very unlikely to happen, though.
     ///
     /// @see
-    ///     GTLib::StartWindowTimer()
+    ///     StartWindowTimer()
     void StopWindowTimer(WindowHandle window, uint32_t timerID);
     
     

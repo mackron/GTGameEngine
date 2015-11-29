@@ -11,7 +11,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     MaterialEditor::MaterialEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
@@ -21,9 +21,9 @@ namespace GTEngine
           isSaving(false), isReloading(false)
     {
         // We use the camera for our lights.
-        this->camera.AddComponent<GTEngine::CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 100.0f);
-        this->camera.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.4f, 0.4f, 0.4f);
-        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
+        this->camera.AddComponent<CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 100.0f);
+        this->camera.AddComponent<DirectionalLightComponent>()->SetColour(0.4f, 0.4f, 0.4f);
+        this->camera.AddComponent<AmbientLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
 
         // Viewport and Renderer.
         this->scene.SetDefaultViewportCamera(this->camera);
@@ -39,7 +39,7 @@ namespace GTEngine
 
 
         // We'll load the material here. What we want to do is pass an absolute path, which will in turn require us to specify the base part of the path that would be used to make it relative.
-        GTLib::String basePath = GT::GetBasePath(absolutePath, relativePath);
+        String basePath = GT::GetBasePath(absolutePath, relativePath);
         this->material = MaterialLibrary::Create(absolutePath, basePath.c_str());
 
         // Now we apply the material to the model.
@@ -61,7 +61,7 @@ namespace GTEngine
         assert(this->mainElement != nullptr);
         {
             // The main element is the ModelEditor element. We need to pass 'this' as the '_internalPtr' argument.
-            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+            script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("MaterialEditor");
@@ -109,7 +109,7 @@ namespace GTEngine
                             script.Call(1, 1);
                             assert(script.IsString(-1));
                             {
-                                this->scriptTextBoxElement = gui.GetElementByID(script.GetString(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextArea:GetID();", script.ToString(-1)).c_str()));
+                                this->scriptTextBoxElement = gui.GetElementByID(script.GetString(String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextArea:GetID();", script.ToString(-1)).c_str()));
                                 this->scriptTextBoxElement->SetText(this->material->GetDefinition().GetXMLString());
 
                                 // We want to attach this after setting the initial text so that is isn't marked as modified.
@@ -147,7 +147,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("ResetCamera");
@@ -231,7 +231,7 @@ namespace GTEngine
 
     void MaterialEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
-        if (GTLib::Strings::Equal(item.info.absolutePath, this->GetAbsolutePath()))
+        if (Strings::Equal(item.info.absolutePath, this->GetAbsolutePath()))
         {
             if (!this->isSaving)
             {

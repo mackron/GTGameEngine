@@ -8,7 +8,7 @@
 #include <GTEngine/Core/Dictionary.hpp>
 #include <GTEngine/GameEvent.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class  Game;
     class  Scene;
@@ -188,7 +188,7 @@ namespace GTEngine
         ///     The difference between this and OnKeyDown is that OnKeyDown will handle auto-repeat, whereas OnKeyPressed will only
         ///     consider the initial press. OnKeyDown will also be called on the initial press, in which case it will be called after
         ///     OnKeyPressed.
-        virtual void OnKeyPress(Game &game, GTLib::Key key);
+        virtual void OnKeyPress(Game &game, Key key);
 
         /// Called when a key is released.
         ///
@@ -199,7 +199,7 @@ namespace GTEngine
         ///     This is called from the update thread.
         ///     @par
         ///     There is no difference between this and OnKeyUp, except that OnKeyUp will be called after OnKeyReleased.
-        virtual void OnKeyRelease(Game &game, GTLib::Key key);
+        virtual void OnKeyRelease(Game &game, Key key);
 
         /// Called when a key is pressed or auto-repeated.
         ///
@@ -211,7 +211,7 @@ namespace GTEngine
         ///     @par
         ///     The difference between this and OnKeyPressed is that OnKeyPressed does not handle auto-repeat, whereas OnKeyDown
         ///     does. Both OnKeyDown and OnKeyPressed will be called on the initial press.
-        virtual void OnKeyDown(Game &game, GTLib::Key key);
+        virtual void OnKeyDown(Game &game, Key key);
 
         /// Called when a key is released.
         ///
@@ -222,7 +222,7 @@ namespace GTEngine
         ///     This is called from the update thread.
         ///     @par
         ///     There is no difference between this and OnKeyReleased, except that OnKeyUp will be called after OnKeyReleased.
-        virtual void OnKeyUp(Game &game, GTLib::Key key);
+        virtual void OnKeyUp(Game &game, Key key);
 
 
         /// Called when the game window receives focus.
@@ -311,7 +311,7 @@ namespace GTEngine
         ///
         /// @param game       [in] A reference to the applicable game object.
         /// @param serializer [in] The serializer to write the data to.
-        virtual bool Serialize(Game &game, GTLib::Serializer &serializer);
+        virtual bool Serialize(Game &game, Serializer &serializer);
 
 
         ///////////////////////////////////////
@@ -321,7 +321,7 @@ namespace GTEngine
         ///
         /// @param game       [in] A reference to the applicable game object.
         /// @param deserializer [in] The deserializer to write the data to.
-        virtual bool Deserialize(Game &game, GTLib::Deserializer &deserializer);
+        virtual bool Deserialize(Game &game, Deserializer &deserializer);
     };
 
 
@@ -382,7 +382,7 @@ namespace GTEngine
         // Serialization
 
         /// GameStateManager::Serialize()
-        virtual bool Serialize(Game &game, GTLib::Serializer &serializer);
+        virtual bool Serialize(Game &game, Serializer &serializer);
 
         /// Serializes the header information.
         ///
@@ -393,7 +393,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The return value will be passed to DeserializeHeaderData().
-        virtual uint32_t SerializeHeaderData(Game &game, GTLib::Serializer &serializer);
+        virtual uint32_t SerializeHeaderData(Game &game, Serializer &serializer);
 
         /// Serializes the global data.
         ///
@@ -404,7 +404,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The return value will be passed to DeserializeGlobalData().
-        virtual uint32_t SerializeGlobalData(Game &game, GTLib::Serializer &serializer);
+        virtual uint32_t SerializeGlobalData(Game &game, Serializer &serializer);
 
 
 
@@ -412,25 +412,25 @@ namespace GTEngine
         // Deserialization
 
         /// GameStateManager::Deserialize()
-        virtual bool Deserialize(Game &game, GTLib::Deserializer &deserializer);
+        virtual bool Deserialize(Game &game, Deserializer &deserializer);
 
         /// Deserializes the header information.
         ///
         /// @param game       [in] A reference to the applicable game object.
         /// @param deserializer [in] The deserializer to read the data from.
-        virtual bool DeserializeHeaderData(Game &game, GTLib::Deserializer &deserializer, uint32_t version);
+        virtual bool DeserializeHeaderData(Game &game, Deserializer &deserializer, uint32_t version);
 
         /// Deserializes the global game data.
         ///
         /// @param game       [in] A reference to the applicable game object.
         /// @param deserializer [in] The deserializer to read the data from.
-        virtual bool DeserializeGlobalData(Game &game, GTLib::Deserializer &deserializer, uint32_t version);
+        virtual bool DeserializeGlobalData(Game &game, Deserializer &deserializer, uint32_t version);
 
 
     private:
 
         /// Maps a scene's relative file path to it's serialized data.
-        GTLib::Dictionary<SceneStateStackRestoreCommands*> m_sceneData;
+        Dictionary<SceneStateStackRestoreCommands*> m_sceneData;
     };
 
 
@@ -455,27 +455,27 @@ namespace GTEngine
         // Events
 
         /// GameStateManager::OnStartup().
-        virtual bool OnStartup(GTEngine::Game &game);
+        virtual bool OnStartup(Game &game);
 
         /// GameStateManager::OnShutdown().
-        virtual void OnShutdown(GTEngine::Game &game);
+        virtual void OnShutdown(Game &game);
 
         /// GameStateManager::OnUpdate().
-        virtual void OnUpdate(GTEngine::Game &game, double deltaTimeInSeconds);
+        virtual void OnUpdate(Game &game, double deltaTimeInSeconds);
 
         /// GameStateManager::OnStartFrame().
-        virtual void OnStartFrame(GTEngine::Game &game);
+        virtual void OnStartFrame(Game &game);
 
         /// GameStateManager::OnSize().
-        virtual void OnSize(GTEngine::Game &game, unsigned int newWidth, unsigned int newHeight);
+        virtual void OnSize(Game &game, unsigned int newWidth, unsigned int newHeight);
 
         /// GameStateManager::OnEditorClosing().
-        virtual bool OnEditorClosing(GTEngine::Game &game);
+        virtual bool OnEditorClosing(Game &game);
 
 
 
         /// GameStateManager::LoadScene().
-        virtual bool LoadScene(GTEngine::Game &game, const char* sceneRelativePath);
+        virtual bool LoadScene(Game &game, const char* sceneRelativePath);
 
 
 
@@ -483,26 +483,26 @@ namespace GTEngine
         // Serialization
 
         /// GenericGameStateManager::Serialize()
-        virtual bool Serialize(GTEngine::Game &game, GTLib::Serializer &serializer);
+        virtual bool Serialize(Game &game, Serializer &serializer);
 
         /// GenericGameStateManager::SerializeHeaderData()
-        virtual uint32_t SerializeHeaderData(GTEngine::Game &game, GTLib::Serializer &serializer);
+        virtual uint32_t SerializeHeaderData(Game &game, Serializer &serializer);
 
         /// GenericGameStateManager::SerializeGlobalData()
-        virtual uint32_t SerializeGlobalData(GTEngine::Game &game, GTLib::Serializer &serializer);
+        virtual uint32_t SerializeGlobalData(Game &game, Serializer &serializer);
 
 
         ///////////////////////////////////////
         // Deserialization
 
         /// GenericGameStateManager::Deserialize()
-        virtual bool Deserialize(GTEngine::Game &game, GTLib::Deserializer &deserializer);
+        virtual bool Deserialize(Game &game, Deserializer &deserializer);
 
         /// GenericGameStateManager::DeserializeHeaderData()
-        virtual bool DeserializeHeaderData(GTEngine::Game &game, GTLib::Deserializer &deserializer, uint32_t version);
+        virtual bool DeserializeHeaderData(Game &game, Deserializer &deserializer, uint32_t version);
 
         /// GenericGameStateManager::DeserializeGlobalData()
-        virtual bool DeserializeGlobalData(GTEngine::Game &game, GTLib::Deserializer &deserializer, uint32_t version);
+        virtual bool DeserializeGlobalData(Game &game, Deserializer &deserializer, uint32_t version);
 
 
 
@@ -518,18 +518,18 @@ namespace GTEngine
     private:
 
         /// A pointer to the current scene. We use a pointer because we'll be dynamically creating and deleting scenes.
-        GTEngine::Scene* m_currentScene;
+        Scene* m_currentScene;
 
         /// The relative path of the current scene. We need this so we can update the game state manager when a scene changes.
-        GTLib::String m_currentSceneRelativePath;
+        String m_currentSceneRelativePath;
 
         /// A pointer to the next scene that's just about to be loaded. When a scene is loaded, we don't want to switch scenes
         /// immediately because there is a chance it will be in the middle of updating. Instead, we want to delay the loading
         /// until the next frame, in which case we'll do the switch.
-        GTEngine::Scene* m_nextScene;
+        Scene* m_nextScene;
 
         /// The relative path of the next scene that's just about to be loaded.
-        GTLib::String m_nextSceneRelativePath;
+        String m_nextSceneRelativePath;
 
         /// The aspect ratio to use. If this is 0, the aspect ratio will be re-calculated dynamically when the window is resized.
         float m_aspectRatio;

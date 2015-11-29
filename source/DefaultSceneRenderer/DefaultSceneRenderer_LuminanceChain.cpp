@@ -4,7 +4,7 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
 
-namespace GTEngine
+namespace GT
 {
     DefaultSceneRenderer_LuminanceChain::DefaultSceneRenderer_LuminanceChain()
         : m_framebuffer(),
@@ -142,8 +142,8 @@ namespace GTEngine
             unsigned int nextHeight = baseHeight;
             while (nextWidth > 1 && nextHeight > 1)
             {
-                nextWidth  = GTLib::Max(1U, nextWidth  / 4);
-                nextHeight = GTLib::Max(1U, nextHeight / 4);
+                nextWidth  = Max(1U, nextWidth  / 4);
+                nextHeight = Max(1U, nextHeight / 4);
 
                 // If it's the first link in the chain, we will raise to the closes power of 4.
                 if (chainCount == 0)
@@ -151,7 +151,7 @@ namespace GTEngine
                     nextWidth  = static_cast<unsigned int>(glm::pow(4.0f, glm::ceil(glm::log(static_cast<float>(nextWidth))  / glm::log(4.0f))));
                     nextHeight = static_cast<unsigned int>(glm::pow(4.0f, glm::ceil(glm::log(static_cast<float>(nextHeight)) / glm::log(4.0f))));
 
-                    nextWidth = nextHeight = GTLib::Min(nextWidth, nextHeight);
+                    nextWidth = nextHeight = Min(nextWidth, nextHeight);
                 }
 
 
@@ -171,7 +171,7 @@ namespace GTEngine
                 // Texture data has changed, so the renderer needs to know.
                 assert(texture != nullptr);
                 {
-                    texture->SetData(nextWidth, nextHeight, GTLib::ImageFormat_R16F);
+                    texture->SetData(nextWidth, nextHeight, ImageFormat_R16F);
                     Renderer::PushTexture2DData(texture);
                 }
 
@@ -219,7 +219,7 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_LuminanceChain::CreateShader(unsigned int inputTextureWidth, unsigned int inputTextureHeight, bool encodeLuminance, bool decodeLuminance)
     {
         // Vertex Shader.
-        GTLib::String vertexSource
+        String vertexSource
         (
             "#version 120\n"
 
@@ -240,7 +240,7 @@ namespace GTEngine
 
 
         // Fragment Shader.
-        GTLib::String fragmentSource
+        String fragmentSource
         (
             "#version 120\n"
 
@@ -274,8 +274,8 @@ namespace GTEngine
             );
         }
 
-        unsigned int xSize = GTLib::Min(4U, inputTextureWidth);
-        unsigned int ySize = GTLib::Min(4U, inputTextureHeight);
+        unsigned int xSize = Min(4U, inputTextureWidth);
+        unsigned int ySize = Min(4U, inputTextureHeight);
 
         for (unsigned int x = 0; x < xSize; ++x)
         {

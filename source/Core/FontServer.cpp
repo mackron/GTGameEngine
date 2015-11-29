@@ -9,7 +9,7 @@
 #include <GTEngine/Core/System.hpp>
 #include <cassert>
 
-namespace GTLib
+namespace GT
 {
     FontServer::FontServer(GlyphMapManager &glyphMapManager)
         : m_fontEngine(nullptr), m_glyphMapManager(&glyphMapManager), eventHandlers()

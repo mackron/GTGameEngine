@@ -5,7 +5,7 @@
 #include <GTEngine/Core/stdlib.hpp>
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     bool MipmapGenerator::Generate(const Mipmap &source, Mipmap &dest)
     {

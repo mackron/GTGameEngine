@@ -7,7 +7,7 @@
     #pragma warning(disable:4351)   // new behavior
 #endif
 
-namespace GTEngine
+namespace GT
 {
     VertexFormat::VertexFormat()
         : attributes(), count(0)
@@ -156,13 +156,13 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void VertexFormat::Serialize(GTLib::Serializer &serializer) const
+    void VertexFormat::Serialize(Serializer &serializer) const
     {
         serializer.Write(this->attributes, sizeof(int) * GTENGINE_VERTEX_FORMAT_SIZE);
         serializer.Write(static_cast<uint32_t>(this->count));
     }
 
-    void VertexFormat::Deserialize(GTLib::Deserializer &deserializer)
+    void VertexFormat::Deserialize(Deserializer &deserializer)
     {
         deserializer.Read(this->attributes, sizeof(int) * GTENGINE_VERTEX_FORMAT_SIZE);
         
@@ -185,7 +185,7 @@ namespace GTEngine
 }
 
 
-namespace GTEngine
+namespace GT
 {
     bool GlobalVertexFormatsInitialised = false;
 

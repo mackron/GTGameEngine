@@ -6,7 +6,7 @@
 #include "GameEvent.hpp"
 #include <cstddef>
 
-namespace GTEngine
+namespace GT
 {
     class GameEventQueue
     {

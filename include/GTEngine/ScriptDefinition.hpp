@@ -7,7 +7,7 @@
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class containing information about a script asset file.
     class ScriptDefinition
@@ -131,13 +131,13 @@ namespace GTEngine
     private:
 
         /// The absolute path of the script.
-        GTLib::String absolutePath;
+        String absolutePath;
 
         /// The relative path of the script.
-        GTLib::String relativePath;
+        String relativePath;
 
         /// The script string.
-        GTLib::String scriptString;
+        String scriptString;
 
         
         /// Keeps track of whether or not this definition has an OnUpdate event handler.
@@ -208,7 +208,7 @@ namespace GTEngine
 
 
         /// The list of public variables, in the order they are defined (hopefully).
-        GTLib::Vector<ScriptVariable*> publicVariables;
+        Vector<ScriptVariable*> publicVariables;
     };
 }
 

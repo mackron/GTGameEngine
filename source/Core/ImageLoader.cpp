@@ -19,14 +19,14 @@
 #endif
 
 // non-static part.
-namespace GTLib
+namespace GT
 {
     ImageLoader::ImageLoader(const char *fileNameIn)
         : fileName(fileNameIn), absolutePath()
     {
         // We need to find the absolute path.
         char absolutePathTemp[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), fileNameIn, absolutePathTemp, sizeof(absolutePathTemp))) {
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileNameIn, absolutePathTemp, sizeof(absolutePathTemp))) {
             this->absolutePath = absolutePathTemp;
         }
     }
@@ -47,7 +47,7 @@ namespace GTLib
 }
 
 // Static part.
-namespace GTLib
+namespace GT
 {
     ImageLoader * ImageLoader::Create(const char *filename)
     {
@@ -55,14 +55,14 @@ namespace GTLib
         ImageLoader* loader    = nullptr;
         
 #ifndef GTLIB_NO_PNG
-        if (GTLib::Strings::Equal<false>(extension, "png"))
+        if (Strings::Equal<false>(extension, "png"))
         {
             loader = new ImageLoader_PNG(filename);
         }
 #endif
         
 #ifndef GTLIB_NO_DDS
-        if (GTLib::Strings::Equal<false>(extension, "dds"))
+        if (Strings::Equal<false>(extension, "dds"))
         {
             loader = new ImageLoader_DDS(filename);
         }
@@ -78,13 +78,13 @@ namespace GTLib
             }
             else
             {
-                GTLib::GlobalLog.Write("GTLib - Failed to open image file: %s", filename);
+                GlobalLog.Write("GTLib - Failed to open image file: %s", filename);
                 delete loader;
             }
         }
 
         // If we made it here, we have no loader.
-        GTLib::GlobalLog.Write("GTLib - Failed to load image: %s. Unsupported file type.", filename);
+        GlobalLog.Write("GTLib - Failed to load image: %s. Unsupported file type.", filename);
         return nullptr;
     }
 
@@ -99,14 +99,14 @@ namespace GTLib
         bool result = false;
 
 #ifndef GTIMAGE_NO_PNG
-        if (GTLib::Strings::Equal<false>(extension, "png"))
+        if (Strings::Equal<false>(extension, "png"))
         {
             result = true;
         }
 #endif
         
 #ifndef GTIMAGE_NO_DDS
-        if (GTLib::Strings::Equal<false>(extension, "dds"))
+        if (Strings::Equal<false>(extension, "dds"))
         {
             result = true;
         }

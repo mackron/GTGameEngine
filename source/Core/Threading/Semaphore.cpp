@@ -7,30 +7,27 @@
 #include <GTEngine/Core/windows.hpp>
 #include <limits.h>
 
-namespace GTLib
+namespace GT
 {
-    namespace Threading
+    Semaphore::Semaphore(int value)
+        : data(nullptr)
     {
-        Semaphore::Semaphore(int value)
-            : data(nullptr)
-        {
-            this->data = CreateSemaphore(nullptr, value, LONG_MAX, nullptr);
-        }
+        this->data = CreateSemaphore(nullptr, value, LONG_MAX, nullptr);
+    }
 
-        Semaphore::~Semaphore()
-        {
-            CloseHandle((HANDLE)this->data);
-        }
+    Semaphore::~Semaphore()
+    {
+        CloseHandle((HANDLE)this->data);
+    }
 
-        void Semaphore::Wait(uint32_t timeoutInMilliseconds)
-        {
-            WaitForSingleObject((HANDLE)this->data, static_cast<DWORD>(timeoutInMilliseconds));
-        }
+    void Semaphore::Wait(uint32_t timeoutInMilliseconds)
+    {
+        WaitForSingleObject((HANDLE)this->data, static_cast<DWORD>(timeoutInMilliseconds));
+    }
 
-        void Semaphore::Release()
-        {
-            ReleaseSemaphore((HANDLE)this->data, 1, nullptr);
-        }
+    void Semaphore::Release()
+    {
+        ReleaseSemaphore((HANDLE)this->data, 1, nullptr);
     }
 }
 
@@ -45,46 +42,43 @@ namespace GTLib
 
 // NOTE: OSX doesn't support unnamed semaphores. Will need to handle that later.
 
-namespace GTLib
+namespace GT
 {
-    namespace Threading
+    Semaphore::Semaphore(int value)
+        : data(nullptr)
     {
-        Semaphore::Semaphore(int value)
-            : data(nullptr)
+        sem_t *internalSemaphore = new sem_t;
+        if (sem_init(internalSemaphore, 0, (unsigned int)value) != -1)
         {
-            sem_t *internalSemaphore = new sem_t;
-            if (sem_init(internalSemaphore, 0, (unsigned int)value) != -1)
-            {
-                this->data = internalSemaphore;
-            }
-            else
-            {
-                GTLib::PostError("Semaphore::Semaphore() - sem_init(%d) returned -1. errno = %d.", value, errno);
-            }
+            this->data = internalSemaphore;
         }
-
-        Semaphore::~Semaphore()
+        else
         {
-            sem_close((sem_t *)this->data);
+            PostError("Semaphore::Semaphore() - sem_init(%d) returned -1. errno = %d.", value, errno);
         }
+    }
 
-        void Semaphore::Wait(uint32_t timeoutInMilliseconds)
+    Semaphore::~Semaphore()
+    {
+        sem_close((sem_t *)this->data);
+    }
+
+    void Semaphore::Wait(uint32_t timeoutInMilliseconds)
+    {
+        struct timespec ts;
+        ts.tv_sec  = static_cast<time_t>(timeoutInMilliseconds / 1000);
+        ts.tv_nsec = static_cast<long>((timeoutInMilliseconds - (ts.tv_sec * 1000)) * 1000);
+        if (sem_timedwait((sem_t *)this->data, &ts) == -1)
         {
-            struct timespec ts;
-            ts.tv_sec  = static_cast<time_t>(timeoutInMilliseconds / 1000);
-            ts.tv_nsec = static_cast<long>((timeoutInMilliseconds - (ts.tv_sec * 1000)) * 1000);
-            if (sem_timedwait((sem_t *)this->data, &ts) == -1)
-            {
-                GTLib::PostError("Semaphore::Semaphore() - sem_wait() returned -1. errno = %d.", errno);
-            }
+            PostError("Semaphore::Semaphore() - sem_wait() returned -1. errno = %d.", errno);
         }
+    }
 
-        void Semaphore::Release()
+    void Semaphore::Release()
+    {
+        if (sem_post((sem_t *)this->data) == -1)
         {
-            if (sem_post((sem_t *)this->data) == -1)
-            {
-                GTLib::PostError("Semaphore::Semaphore() - sem_post() returned -1. errno = %d.", errno);
-            }
+            PostError("Semaphore::Semaphore() - sem_post() returned -1. errno = %d.", errno);
         }
     }
 }

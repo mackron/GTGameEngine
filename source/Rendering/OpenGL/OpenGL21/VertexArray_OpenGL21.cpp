@@ -2,7 +2,7 @@
 
 #include "VertexArray_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     VertexArray_OpenGL21::VertexArray_OpenGL21(VertexArrayUsage usage, const VertexFormat &format, GLuint* vertexObjectIn, GLuint* indexObjectIn)
         : VertexArray(usage, format),

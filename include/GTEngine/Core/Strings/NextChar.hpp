@@ -6,7 +6,7 @@
 #include "UnicodeBase.hpp"
 #include <cassert>
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {

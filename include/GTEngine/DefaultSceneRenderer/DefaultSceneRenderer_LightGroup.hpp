@@ -13,7 +13,7 @@
     #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
-namespace GTEngine
+namespace GT
 {
     /// Structure representing a value for identifying a combination of light types.
     ///
@@ -283,7 +283,7 @@ namespace GTEngine
         DefaultSceneRenderer_LightGroupID id;
 
         /// The list of light IDs.
-        GTLib::Vector<uint32_t> lightIDs;
+        Vector<uint32_t> lightIDs;
 
 
 

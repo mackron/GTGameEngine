@@ -5,7 +5,7 @@
 #include <GTEngine/Core/Parse.hpp>
 #include <GTEngine/Core/stdio.hpp>  // for snprintf
 
-namespace GTLib
+namespace GT
 {
     Colour Colour::Black(0.0f, 0.0f, 0.0f, 1.0f);
     Colour Colour::White(1.0f, 1.0f, 1.0f, 1.0f);
@@ -27,8 +27,8 @@ namespace GTLib
     
     bool Colour::TryParse(Colour &colour, const char *value, ptrdiff_t valueSize)
     {
-        value     = GTLib::Strings::TrimStart(value, valueSize);
-        valueSize = GTLib::Strings::TrimEnd(value, valueSize) - value;
+        value     = Strings::TrimStart(value, valueSize);
+        valueSize = Strings::TrimEnd(value, valueSize) - value;
 
         if (valueSize > 0)
         {
@@ -65,9 +65,9 @@ namespace GTLib
                     return false;
                 }
 
-                r = GTLib::Parse<uint32_t>(rStr, 16);
-                g = GTLib::Parse<uint32_t>(gStr, 16);
-                b = GTLib::Parse<uint32_t>(bStr, 16);
+                r = Parse<uint32_t>(rStr, 16);
+                g = Parse<uint32_t>(gStr, 16);
+                b = Parse<uint32_t>(bStr, 16);
 
                 colour.r = r / 255.0f;
                 colour.g = g / 255.0f;
@@ -84,14 +84,14 @@ namespace GTLib
     void Colour::ToString(char *dest, size_t destSize, const Colour &colour)
     {
         char r[3];
-        GTLib::IO::snprintf(r, 3, "%.2x", static_cast<uint32_t>(colour.r * 255.0f));
+        IO::snprintf(r, 3, "%.2x", static_cast<uint32_t>(colour.r * 255.0f));
 
         char g[3];
-        GTLib::IO::snprintf(g, 3, "%.2x", static_cast<uint32_t>(colour.g * 255.0f));
+        IO::snprintf(g, 3, "%.2x", static_cast<uint32_t>(colour.g * 255.0f));
 
         char b[3];
-        GTLib::IO::snprintf(b, 3, "%.2x", static_cast<uint32_t>(colour.b * 255.0f));
+        IO::snprintf(b, 3, "%.2x", static_cast<uint32_t>(colour.b * 255.0f));
 
-        GTLib::IO::snprintf(dest, destSize, "#%s%s%s", r, g, b);
+        IO::snprintf(dest, destSize, "#%s%s%s", r, g, b);
     }
 }

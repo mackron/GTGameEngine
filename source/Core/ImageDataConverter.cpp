@@ -5,7 +5,7 @@
 #include <GTEngine/Core/stdlib.hpp>
 #include <cstring>
 
-namespace GTLib
+namespace GT
 {
     ImageDataConverter::ImageDataConverter(ImageFormat from, ImageFormat to)
         : sourceFormat(from), destFormat(to)

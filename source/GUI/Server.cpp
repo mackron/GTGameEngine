@@ -44,7 +44,7 @@ namespace GTGUI
           mouseMoved(false),
           mousePosX(0), mousePosY(0),
           lastMouseClickPosX(0), lastMouseClickPosY(0),
-          currentCursor(GTLib::Cursor_Arrow),
+          currentCursor(GT::Cursor_Arrow),
           loadedImages(), registeredImages(),
           errorLevel(1),
           isCTRLKeyDown(false), isShiftKeyDown(false), onTearEventPosted(false), isMouseSelectingText(false),
@@ -135,18 +135,18 @@ namespace GTGUI
         return this->styling;
     }
 
-    bool Server::Load(const char* xml, const char* absDirectory, GTLib::String &topID)
+    bool Server::Load(const char* xml, const char* absDirectory, GT::String &topID)
     {
         return this->markupLoader.Load(xml, absDirectory, topID);
     }
 
     bool Server::Load(const char* xml, const char* absDirectory)
     {
-        GTLib::String devnull;
+        GT::String devnull;
         return this->Load(xml, absDirectory, devnull);
     }
 
-    bool Server::Load(const char* xml, GTLib::String &topID)
+    bool Server::Load(const char* xml, GT::String &topID)
     {
         return this->Load(xml, nullptr, topID);
     }
@@ -160,10 +160,8 @@ namespace GTGUI
     bool Server::IsFileLoaded(const char* filename)
     {
         // We need to check with the absolute path.
-        //GTLib::String absPath;
-        //if (GTLib::IO::FindAbsolutePath(filename, absPath))
         char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filename, absolutePath, sizeof(absolutePath)))
+        if (easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filename, absolutePath, sizeof(absolutePath)))
         {
             return this->markupLoader.IsFileLoaded(absolutePath);
         }
@@ -199,7 +197,7 @@ namespace GTGUI
     Element* Server::CreateElement(const char* xml, const char* absDirectory)
     {
         // We just load like normal, and then retrieve the element based on it's ID.
-        GTLib::String topID;
+        GT::String topID;
         if (this->Load(xml, absDirectory, topID))
         {
             return this->GetElementByID(topID.c_str());
@@ -401,10 +399,10 @@ namespace GTGUI
     #if defined(_MSC_VER)
         _itoa_s(this->autoElementCounter++, destBuffer + 3, destBufferSizeInBytes - 3, 10);
     #else
-        GTLib::IO::snprintf(destBuffer + 3, destBufferSizeInBytes - 3, "%d", this->autoElementCounter++);
+        IO::snprintf(destBuffer + 3, destBufferSizeInBytes - 3, "%d", this->autoElementCounter++);
     #endif
 
-        //GTLib::IO::snprintf(destBuffer, destBufferSizeInBytes, "__E%d", this->autoElementCounter++);
+        //IO::snprintf(destBuffer, destBufferSizeInBytes, "__E%d", this->autoElementCounter++);
     }
 
 
@@ -420,8 +418,8 @@ namespace GTGUI
             auto rootStyle = this->styling.GetRootElementStyleClass();
             if (rootStyle != nullptr)
             {
-                rootStyle->SetAttribute("width",  GTLib::ToString(width).c_str());
-                rootStyle->SetAttribute("height", GTLib::ToString(height).c_str());
+                rootStyle->SetAttribute("width",  GT::ToString(width).c_str());
+                rootStyle->SetAttribute("height", GT::ToString(height).c_str());
             }
         }
 
@@ -546,7 +544,7 @@ namespace GTGUI
     }
 
 
-    void Server::GetFontInfoFromElement(const Element &element, GTLib::FontInfo &fi) const
+    void Server::GetFontInfoFromElement(const Element &element, GT::FontInfo &fi) const
     {
         fi.family = element.style.fontFamily->value.c_str();
         //fi.family.ToLower_ASCII();        // <-- Important. If not specified, strings such as "arial" and "Arial" will be considered separate.
@@ -557,49 +555,49 @@ namespace GTGUI
         {
         case FontWeight_Thin:
             {
-                fi.styleFlags |= GTLib::FontStyle_Thin;
+                fi.styleFlags |= GT::FontStyle_Thin;
                 break;
             }
 
         case FontWeight_ExtraLight:
             {
-                fi.styleFlags |= GTLib::FontStyle_ExtraLight;
+                fi.styleFlags |= GT::FontStyle_ExtraLight;
                 break;
             }
 
         case FontWeight_Light:
             {
-                fi.styleFlags |= GTLib::FontStyle_Light;
+                fi.styleFlags |= GT::FontStyle_Light;
                 break;
             }
 
         case FontWeight_Medium:
             {
-                fi.styleFlags |= GTLib::FontStyle_Medium;
+                fi.styleFlags |= GT::FontStyle_Medium;
                 break;
             }
 
         case FontWeight_SemiBold:
             {
-                fi.styleFlags |= GTLib::FontStyle_SemiBold;
+                fi.styleFlags |= GT::FontStyle_SemiBold;
                 break;
             }
 
         case FontWeight_Bold:
             {
-                fi.styleFlags |= GTLib::FontStyle_Bold;
+                fi.styleFlags |= GT::FontStyle_Bold;
                 break;
             }
 
         case FontWeight_ExtraBold:
             {
-                fi.styleFlags |= GTLib::FontStyle_ExtraBold;
+                fi.styleFlags |= GT::FontStyle_ExtraBold;
                 break;
             }
 
         case FontWeight_Heavy:
             {
-                fi.styleFlags |= GTLib::FontStyle_Heavy;
+                fi.styleFlags |= GT::FontStyle_Heavy;
                 break;
             }
 
@@ -613,7 +611,7 @@ namespace GTGUI
         {
         case FontSlant_Italic:
             {
-                fi.styleFlags |= GTLib::FontStyle_Italic;
+                fi.styleFlags |= GT::FontStyle_Italic;
                 break;
             }
 
@@ -641,12 +639,12 @@ namespace GTGUI
     }
 
 
-    GTLib::Font* Server::AcquireFont(const GTLib::FontInfo &fi)
+    GT::Font* Server::AcquireFont(const GT::FontInfo &fi)
     {
         return this->fontCache.AcquireFont(fi);
     }
 
-    void Server::UnacquireFont(const GTLib::Font* font)
+    void Server::UnacquireFont(const GT::Font* font)
     {
         this->fontCache.UnacquireFont(font);
     }
@@ -674,7 +672,7 @@ namespace GTGUI
                     }
                     else
                     {
-                        this->PostWarning(GTLib::String::CreateFormatted("GUI: Error loading \"%s\".", absURLOrID).c_str());
+                        this->PostWarning(GT::String::CreateFormatted("GUI: Error loading \"%s\".", absURLOrID).c_str());
                     }
 
                     return newImage;
@@ -774,7 +772,7 @@ namespace GTGUI
         Event e;
         e.code             = EventCode_OnMouseButtonDown;
         e.element          = nullptr;
-        e.mousedown.button = static_cast<GTLib::MouseButton>(button);
+        e.mousedown.button = static_cast<GT::MouseButton>(button);
         e.mousedown.x      = this->mousePosX;
         e.mousedown.y      = this->mousePosY;
 
@@ -799,7 +797,7 @@ namespace GTGUI
         Event e;
         e.code           = EventCode_OnMouseButtonUp;
         e.element        = nullptr;
-        e.mouseup.button = static_cast<GTLib::MouseButton>(button);
+        e.mouseup.button = static_cast<GT::MouseButton>(button);
         e.mouseup.x      = this->mousePosX;
         e.mouseup.y      = this->mousePosY;
 
@@ -824,7 +822,7 @@ namespace GTGUI
         Event e;
         e.code             = EventCode_OnMouseButtonDoubleClick;
         e.element          = nullptr;
-        e.mousedown.button = static_cast<GTLib::MouseButton>(button);
+        e.mousedown.button = static_cast<GT::MouseButton>(button);
         e.mousedown.x      = this->mousePosX;
         e.mousedown.y      = this->mousePosY;
 
@@ -843,7 +841,7 @@ namespace GTGUI
     }
 
 
-    void Server::OnKeyPressed(EventContext eventContext, GTLib::Key key)
+    void Server::OnKeyPressed(EventContext eventContext, GT::Key key)
     {
         Event e;
         e.code        = EventCode_OnKeyPressed;
@@ -864,7 +862,7 @@ namespace GTGUI
 #endif
     }
 
-    void Server::OnKeyDown(EventContext eventContext, GTLib::Key key)
+    void Server::OnKeyDown(EventContext eventContext, GT::Key key)
     {
         Event e;
         e.code        = EventCode_OnKeyDown;
@@ -885,7 +883,7 @@ namespace GTGUI
 #endif
     }
 
-    void Server::OnKeyUp(EventContext eventContext, GTLib::Key key)
+    void Server::OnKeyUp(EventContext eventContext, GT::Key key)
     {
         Event e;
         e.code      = EventCode_OnKeyUp;
@@ -1063,7 +1061,7 @@ namespace GTGUI
         {
             auto highZIndex = this->elementsUsingZIndex.buffer[this->elementsUsingZIndex.count - 1]->key;
 
-            element.SetStyleAttribute("z-index", GTLib::ToString(highZIndex + 1).c_str());
+            element.SetStyleAttribute("z-index", GT::ToString(highZIndex + 1).c_str());
         }
     }
 
@@ -1074,7 +1072,7 @@ namespace GTGUI
         {
             auto highZIndex = this->elementsUsingZIndex.buffer[0]->key;
 
-            element.SetStyleAttribute("z-index", GTLib::ToString(highZIndex - 1).c_str());
+            element.SetStyleAttribute("z-index", GT::ToString(highZIndex - 1).c_str());
         }
     }
 
@@ -1171,14 +1169,14 @@ namespace GTGUI
                     }
                     else if (owner->style.horizontalAlign->value == Align_Right)
                     {
-                        newXOffset = GTLib::Max(0, currentXOffset - (caretPosX - owner->GetInnerRightEdge()) - 16);
+                        newXOffset = GT::Max(0, currentXOffset - (caretPosX - owner->GetInnerRightEdge()) - 16);
                     }
                 }
                 else if (caretPosX < owner->GetInnerLeftEdge())
                 {
                     if (owner->style.horizontalAlign->value == Align_Left)
                     {
-                        newXOffset = GTLib::Min(0, currentXOffset - caretPosX + 16 + owner->GetInnerLeftEdge());
+                        newXOffset = GT::Min(0, currentXOffset - caretPosX + 16 + owner->GetInnerLeftEdge());
                     }
                     else if (owner->style.horizontalAlign->value == Align_Right)
                     {
@@ -1195,7 +1193,7 @@ namespace GTGUI
 
                             if (currentXOffset < 0 && textRightEdge < owner->GetInnerRightEdge())
                             {
-                                newXOffset = GTLib::Min(0, owner->GetInnerWidth() - textWidth);
+                                newXOffset = GT::Min(0, owner->GetInnerWidth() - textWidth);
                             }
                         }
                         else if (owner->style.horizontalAlign->value == Align_Right)
@@ -1254,12 +1252,12 @@ namespace GTGUI
             {
                 if (newXOffset != currentXOffset)
                 {
-                    owner->SetStyleAttribute("inner-offset-x", GTLib::ToString(newXOffset).c_str());
+                    owner->SetStyleAttribute("inner-offset-x", GT::ToString(newXOffset).c_str());
                 }
 
                 if (newYOffset != currentYOffset)
                 {
-                    owner->SetStyleAttribute("inner-offset-y", GTLib::ToString(newYOffset).c_str());
+                    owner->SetStyleAttribute("inner-offset-y", GT::ToString(newYOffset).c_str());
                 }
 
 
@@ -1324,7 +1322,7 @@ namespace GTGUI
 
                 // Now we need to iteratively run through the chain of elements and find the last element that contains the point.
                 // This function expects the rectangle of the parent, so we need to grab that, too.
-                GTLib::Rect<int> rect;
+                GT::Rect<int> rect;
                 if (iElement->value->parent != nullptr)
                 {
                     iElement->value->parent->GetAbsoluteRect(rect);
@@ -1349,7 +1347,7 @@ namespace GTGUI
     }
 
 /*
-    const GTLib::Font & Server::GetDefaultFont() const
+    const GT::Font & Server::GetDefaultFont() const
     {
         assert(this->defaultFont != nullptr);
 
@@ -1817,7 +1815,7 @@ namespace GTGUI
         {
             // Left mouse buttons are treated differently to other mouse buttons because they need to handle things like pushing and dragging. Thus,
             // we'll do it in a separate branch.
-            if (e.mousedown.button == GTLib::MouseButton_Left)
+            if (e.mousedown.button == GT::MouseButton_Left)
             {
                 this->HandleEvent_OnLMBDown(e);
             }
@@ -1841,7 +1839,7 @@ namespace GTGUI
         this->BeginEventHandling();
         {
             // Just like OnMouseButtonDown, the left mouse button needs to be handled differently.
-            if (e.mousedown.button == GTLib::MouseButton_Left)
+            if (e.mousedown.button == GT::MouseButton_Left)
             {
                 this->HandleEvent_OnLMBUp(e);
             }
@@ -2079,11 +2077,11 @@ namespace GTGUI
     {
         this->BeginEventHandling();
         {
-            if (e.keydown.key == GTLib::Keys::Ctrl)
+            if (e.keydown.key == GT::Keys::Ctrl)
             {
                 this->isCTRLKeyDown = true;
             }
-            else if (e.keydown.key == GTLib::Keys::Shift)
+            else if (e.keydown.key == GT::Keys::Shift)
             {
                 this->isShiftKeyDown = true;
             }
@@ -2091,16 +2089,16 @@ namespace GTGUI
             // If we have a focused element, we need to let it know about our character.
             if (e.element != nullptr && e.element->style.editableText->value && e.element->IsEnabled())
             {
-                if (this->isCTRLKeyDown && (e.keydown.key == GTLib::Keys::X || e.keydown.key == GTLib::Keys::x))
+                if (this->isCTRLKeyDown && (e.keydown.key == GT::Keys::X || e.keydown.key == GT::Keys::x))
                 {
                     e.element->textManager.CopySelectionToClipboard();
                     e.element->textManager.DeleteSelectedCharacters();
                 }
-                else if (this->isCTRLKeyDown && (e.keydown.key == GTLib::Keys::C || e.keydown.key == GTLib::Keys::c))
+                else if (this->isCTRLKeyDown && (e.keydown.key == GT::Keys::C || e.keydown.key == GT::Keys::c))
                 {
                     e.element->textManager.CopySelectionToClipboard();
                 }
-                else if (this->isCTRLKeyDown && (e.keydown.key == GTLib::Keys::V || e.keydown.key == GTLib::Keys::v))
+                else if (this->isCTRLKeyDown && (e.keydown.key == GT::Keys::V || e.keydown.key == GT::Keys::v))
                 {
                     e.element->textManager.DeleteSelectedCharacters(false);
                     e.element->textManager.InsertClipboardTextAtCursor();
@@ -2119,20 +2117,20 @@ namespace GTGUI
                             bool positionCaret   = true;
                             bool extendSelection = false;
 
-                            if (this->isCTRLKeyDown && (e.keydown.key == GTLib::Keys::A || e.keydown.key == GTLib::Keys::a))
+                            if (this->isCTRLKeyDown && (e.keydown.key == GT::Keys::A || e.keydown.key == GT::Keys::a))
                             {
                                 e.element->SelectAllText();
                                 extendSelection = true;
                             }
-                            else if (this->isCTRLKeyDown && (e.keydown.key == GTLib::Keys::Z || e.keydown.key == GTLib::Keys::z))
+                            else if (this->isCTRLKeyDown && (e.keydown.key == GT::Keys::Z || e.keydown.key == GT::Keys::z))
                             {
                                 e.element->textManager.Undo();
                             }
-                            else if (this->isCTRLKeyDown && (e.keydown.key == GTLib::Keys::Y || e.keydown.key == GTLib::Keys::y))
+                            else if (this->isCTRLKeyDown && (e.keydown.key == GT::Keys::Y || e.keydown.key == GT::Keys::y))
                             {
                                 e.element->textManager.Redo();
                             }
-                            else if (e.keydown.key == GTLib::Keys::Backspace)
+                            else if (e.keydown.key == GT::Keys::Backspace)
                             {
                                 if (e.element->textManager.IsAnythingSelected())
                                 {
@@ -2143,7 +2141,7 @@ namespace GTGUI
                                     e.element->textManager.DeleteCharacterAtLeftOfCursor();
                                 }
                             }
-                            else if (e.keydown.key == GTLib::Keys::Delete)
+                            else if (e.keydown.key == GT::Keys::Delete)
                             {
                                 if (e.element->textManager.IsAnythingSelected())
                                 {
@@ -2154,7 +2152,7 @@ namespace GTGUI
                                     e.element->textManager.DeleteCharacterAtRightOfCursor();
                                 }
                             }
-                            else if (e.keydown.key == GTLib::Keys::ArrowLeft)
+                            else if (e.keydown.key == GT::Keys::ArrowLeft)
                             {
                                 if (e.element->textManager.IsAnythingSelected() && !this->isShiftKeyDown)
                                 {
@@ -2173,7 +2171,7 @@ namespace GTGUI
                                     extendSelection = true;
                                 }
                             }
-                            else if (e.keydown.key == GTLib::Keys::ArrowRight)
+                            else if (e.keydown.key == GT::Keys::ArrowRight)
                             {
                                 if (e.element->textManager.IsAnythingSelected() && !this->isShiftKeyDown)
                                 {
@@ -2192,7 +2190,7 @@ namespace GTGUI
                                     extendSelection = true;
                                 }
                             }
-                            else if (e.keydown.key == GTLib::Keys::ArrowUp)
+                            else if (e.keydown.key == GT::Keys::ArrowUp)
                             {
                                 e.element->textManager.MoveCursorUp();
 
@@ -2206,7 +2204,7 @@ namespace GTGUI
                                     extendSelection = true;
                                 }
                             }
-                            else if (e.keydown.key == GTLib::Keys::ArrowDown)
+                            else if (e.keydown.key == GT::Keys::ArrowDown)
                             {
                                 e.element->textManager.MoveCursorDown();
 
@@ -2220,7 +2218,7 @@ namespace GTGUI
                                     extendSelection = true;
                                 }
                             }
-                            else if (e.keydown.key == GTLib::Keys::Home)
+                            else if (e.keydown.key == GT::Keys::Home)
                             {
                                 e.element->textManager.MoveCursorToStartOfLine();
 
@@ -2234,7 +2232,7 @@ namespace GTGUI
                                     extendSelection = true;
                                 }
                             }
-                            else if (e.keydown.key == GTLib::Keys::End)
+                            else if (e.keydown.key == GT::Keys::End)
                             {
                                 e.element->textManager.MoveCursorToEndOfLine();
 
@@ -2248,21 +2246,16 @@ namespace GTGUI
                                     extendSelection = true;
                                 }
                             }
-                            else if ((e.keydown.key == GTLib::Keys::Enter || e.keydown.key == GTLib::Keys::Return) && !e.element->style.singleLineText->value)
+                            else if ((e.keydown.key == GT::Keys::Enter || e.keydown.key == GT::Keys::Return) && !e.element->style.singleLineText->value)
                             {
                                 e.element->textManager.DeleteSelectedCharacters(false);
                                 e.element->textManager.InsertNewLineAtCursor();
                             }
-                            else if (e.keydown.key == GTLib::Keys::Tab)
+                            else if (e.keydown.key == GT::Keys::Tab)
                             {
-                                //if (e.element->textManager.IsAnythingSelected())
-                                //{
-                                //    e.element->textManager.DeleteSelectedCharacters(false);
-                                //}
-
                                 e.element->textManager.InsertTabAtCursor(true);
                             }
-                            else if (GTLib::IsKeyPrintable(e.keydown.key) && !this->isCTRLKeyDown)
+                            else if (GT::IsKeyPrintable(e.keydown.key) && !this->isCTRLKeyDown)
                             {
                                 if (e.element->textManager.IsAnythingSelected())
                                 {
@@ -2279,9 +2272,9 @@ namespace GTGUI
 
 
                             if (positionCaret &&
-                                e.keydown.key != GTLib::Keys::Shift &&
-                                e.keydown.key != GTLib::Keys::Ctrl  &&
-                                e.keydown.key != GTLib::Keys::Alt)
+                                e.keydown.key != GT::Keys::Shift &&
+                                e.keydown.key != GT::Keys::Ctrl  &&
+                                e.keydown.key != GT::Keys::Alt)
                             {
                                 this->PositionCaret(extendSelection, true);
                             }
@@ -2311,11 +2304,11 @@ namespace GTGUI
     {
         this->BeginEventHandling();
         {
-            if (e.keyup.key == GTLib::Keys::Ctrl)
+            if (e.keyup.key == GT::Keys::Ctrl)
             {
                 this->isCTRLKeyDown = false;
             }
-            else if (e.keyup.key == GTLib::Keys::Shift)
+            else if (e.keyup.key == GT::Keys::Shift)
             {
                 this->isShiftKeyDown = false;
             }
@@ -2513,13 +2506,13 @@ namespace GTGUI
             }
 
             this->dragAndDropProxyElement       = nullptr;
-            this->dragAndDropProxyElementOffset = GTLib::Point<int>(0, 0);
+            this->dragAndDropProxyElementOffset = GT::Point<int>(0, 0);
         }
     }
 
     void Server::SetDragAndDropProxyElementOffset(int offsetX, int offsetY)
     {
-        this->dragAndDropProxyElementOffset = GTLib::Point<int>(offsetX, offsetY);
+        this->dragAndDropProxyElementOffset = GT::Point<int>(offsetX, offsetY);
     }
 
 
@@ -2594,13 +2587,13 @@ namespace GTGUI
             }
 
             // The new cursor to use. It will be set at the end.
-            GTLib::Cursor newCursor = this->currentCursor;
+            GT::Cursor newCursor = this->currentCursor;
 
 
             // This list will contain pointers to the elements that have the mouse over them. The first item in this list will be hoveredElement if it was
             // non-null. The next will be ancestors of hoveredElement.
-            GTLib::List<Element*>  newHoveredElements;
-            GTLib::List<Element*> &oldHoveredElements = this->hoveredElements;
+            GT::List<Element*>  newHoveredElements;
+            GT::List<Element*> &oldHoveredElements = this->hoveredElements;
 
             if (hoveredElement != nullptr)
             {
@@ -2615,11 +2608,11 @@ namespace GTGUI
                 {
                     if (hoveredElement->IsEnabled())
                     {
-                        newCursor = GTLib::StringToCursor(hoveredElement->style.cursor->value.c_str());
+                        newCursor = GT::StringToCursor(hoveredElement->style.cursor->value.c_str());
                     }
                     else
                     {
-                        newCursor = GTLib::Cursor_Arrow;
+                        newCursor = GT::Cursor_Arrow;
                     }
                 }
             }
@@ -2798,30 +2791,30 @@ namespace GTGUI
                     {
                         if (overBottomSizingGripper)
                         {
-                            newCursor = GTLib::Cursor_SizeArrowBottomRight;
+                            newCursor = GT::Cursor_SizeArrowBottomRight;
                         }
                         else if (overTopSizingGripper)
                         {
-                            newCursor = GTLib::Cursor_SizeArrowTopRight;
+                            newCursor = GT::Cursor_SizeArrowTopRight;
                         }
                         else
                         {
-                            newCursor = GTLib::Cursor_SizeArrowRight;
+                            newCursor = GT::Cursor_SizeArrowRight;
                         }
                     }
                     else if (overLeftSizingGripper)
                     {
                         if (overBottomSizingGripper)
                         {
-                            newCursor = GTLib::Cursor_SizeArrowBottomLeft;
+                            newCursor = GT::Cursor_SizeArrowBottomLeft;
                         }
                         else if (overTopSizingGripper)
                         {
-                            newCursor = GTLib::Cursor_SizeArrowTopLeft;
+                            newCursor = GT::Cursor_SizeArrowTopLeft;
                         }
                         else
                         {
-                            newCursor = GTLib::Cursor_SizeArrowLeft;
+                            newCursor = GT::Cursor_SizeArrowLeft;
                         }
                     }
                     else
@@ -2829,11 +2822,11 @@ namespace GTGUI
                         // If we get here it means the cursor is over the top or bottom grippers, but never left or right.
                         if (overBottomSizingGripper)
                         {
-                            newCursor = GTLib::Cursor_SizeArrowBottom;
+                            newCursor = GT::Cursor_SizeArrowBottom;
                         }
                         else if (overTopSizingGripper)
                         {
-                            newCursor = GTLib::Cursor_SizeArrowTop;
+                            newCursor = GT::Cursor_SizeArrowTop;
                         }
                     }
                 }
@@ -2863,40 +2856,40 @@ namespace GTGUI
 
                         if (this->pushedElement->style.mouseDragClampModeX->value == "clickpos")
                         {
-                            newLeftPos = GTLib::Clamp(newLeftPos, -this->draggedElementClickPosX, this->pushedElement->parent->GetInnerWidth() - this->draggedElementClickPosX);
+                            newLeftPos = GT::Clamp(newLeftPos, -this->draggedElementClickPosX, this->pushedElement->parent->GetInnerWidth() - this->draggedElementClickPosX);
                         }
                         else if (this->pushedElement->style.mouseDragClampModeX->value == "border")
                         {
-                            newLeftPos = GTLib::Clamp(newLeftPos, 0, this->pushedElement->parent->GetInnerWidth() - this->pushedElement->width);
+                            newLeftPos = GT::Clamp(newLeftPos, 0, this->pushedElement->parent->GetInnerWidth() - this->pushedElement->width);
                         }
 
                         if (this->pushedElement->style.mouseDragClampModeY->value == "clickpos")
                         {
-                            newTopPos = GTLib::Clamp(newTopPos, -this->draggedElementClickPosY, this->pushedElement->parent->GetInnerHeight() - this->draggedElementClickPosY);
+                            newTopPos = GT::Clamp(newTopPos, -this->draggedElementClickPosY, this->pushedElement->parent->GetInnerHeight() - this->draggedElementClickPosY);
                         }
                         else if (this->pushedElement->style.mouseDragClampModeY->value == "border")
                         {
-                            newTopPos = GTLib::Clamp(newTopPos, 0, this->pushedElement->parent->GetInnerHeight() - this->pushedElement->height);
+                            newTopPos = GT::Clamp(newTopPos, 0, this->pushedElement->parent->GetInnerHeight() - this->pushedElement->height);
                         }
                     }
                     else
                     {
                         if (this->pushedElement->style.mouseDragClampModeX->value == "clickpos")
                         {
-                            newLeftPos = GTLib::Clamp(newLeftPos, -this->draggedElementClickPosX, static_cast<int>(this->viewportWidth) - this->draggedElementClickPosX);
+                            newLeftPos = GT::Clamp(newLeftPos, -this->draggedElementClickPosX, static_cast<int>(this->viewportWidth) - this->draggedElementClickPosX);
                         }
                         else if (this->pushedElement->style.mouseDragClampModeX->value == "border")
                         {
-                            newLeftPos = GTLib::Clamp(newLeftPos, 0, static_cast<int>(this->viewportWidth) - this->pushedElement->width);
+                            newLeftPos = GT::Clamp(newLeftPos, 0, static_cast<int>(this->viewportWidth) - this->pushedElement->width);
                         }
 
                         if (this->pushedElement->style.mouseDragClampModeY->value == "clickpos")
                         {
-                            newTopPos = GTLib::Clamp(newTopPos, -this->draggedElementClickPosY, static_cast<int>(this->viewportHeight) - this->draggedElementClickPosY);
+                            newTopPos = GT::Clamp(newTopPos, -this->draggedElementClickPosY, static_cast<int>(this->viewportHeight) - this->draggedElementClickPosY);
                         }
                         else if (this->pushedElement->style.mouseDragClampModeY->value == "border")
                         {
-                            newTopPos = GTLib::Clamp(newTopPos, 0, static_cast<int>(this->viewportHeight) - this->pushedElement->height);
+                            newTopPos = GT::Clamp(newTopPos, 0, static_cast<int>(this->viewportHeight) - this->pushedElement->height);
                         }
                     }
 
@@ -2911,8 +2904,8 @@ namespace GTGUI
                     // a tear operation unless the mouse has been dragged far enough.
                     if (!this->onTearEventPosted)
                     {
-                        if (GTLib::Abs(this->lastMouseClickPosX - this->mousePosX) >= 4 ||
-                            GTLib::Abs(this->lastMouseClickPosY - this->mousePosY) >= 4)
+                        if (GT::Abs(this->lastMouseClickPosX - this->mousePosX) >= 4 ||
+                            GT::Abs(this->lastMouseClickPosY - this->mousePosY) >= 4)
                         {
                             this->onTearEventPosted = true;
 
@@ -2942,14 +2935,14 @@ namespace GTGUI
                     int mouseOffsetX = gripperMousePosX - this->gripperClickPosX;
                     int newWidth     = this->pushedElement->width + mouseOffsetX;
 
-                    sc->SetAttribute("width", GTLib::ToString(newWidth).c_str());
+                    sc->SetAttribute("width", GT::ToString(newWidth).c_str());
                 }
                 else if (this->resizingUsingLeftGripper)
                 {
                     int mouseOffsetX = gripperMousePosX - this->gripperClickPosX;
                     int newWidth     = this->pushedElement->width - mouseOffsetX;
 
-                    sc->SetAttribute("width", GTLib::ToString(newWidth).c_str());
+                    sc->SetAttribute("width", GT::ToString(newWidth).c_str());
                 }
 
                 if (this->resizingUsingBottomGripper)
@@ -2959,14 +2952,14 @@ namespace GTGUI
                     int mouseOffsetY = gripperMousePosY - this->gripperClickPosY;
                     int newHeight    = this->pushedElement->height + mouseOffsetY;
 
-                    sc->SetAttribute("height", GTLib::ToString(newHeight).c_str());
+                    sc->SetAttribute("height", GT::ToString(newHeight).c_str());
                 }
                 else if (this->resizingUsingTopGripper)
                 {
                     int mouseOffsetY = gripperMousePosY - this->gripperClickPosY;
                     int newHeight    = this->pushedElement->height - mouseOffsetY;
 
-                    sc->SetAttribute("height", GTLib::ToString(newHeight).c_str());
+                    sc->SetAttribute("height", GT::ToString(newHeight).c_str());
                 }
             }
 
@@ -3020,7 +3013,7 @@ namespace GTGUI
             // If we don't have a list, we need to create it and add it to our map.
             if (elementList == nullptr)
             {
-                elementList = new GTLib::List<Element*>;
+                elementList = new GT::List<Element*>;
                 this->elementsUsingZIndex.Add(zIndex, elementList);
             }
 
@@ -3052,7 +3045,7 @@ namespace GTGUI
         }
     }
 
-    GTLib::List<Element*>* Server::GetElementListByZIndex(int zIndex)
+    GT::List<Element*>* Server::GetElementListByZIndex(int zIndex)
     {
         auto item = this->elementsUsingZIndex.Find(zIndex);
         if (item != nullptr)
@@ -3063,7 +3056,7 @@ namespace GTGUI
         return nullptr;
     }
 
-    GTLib::List<Element*>* Server::FindListContainingElement(Element &element)
+    GT::List<Element*>* Server::FindListContainingElement(Element &element)
     {
         for (size_t i = 0; i < this->elementsUsingZIndex.count; ++i)
         {
@@ -3078,14 +3071,14 @@ namespace GTGUI
         return nullptr;
     }
 
-    void Server::GetElementUnderPoint(int x, int y, bool fromMouseInput, Element &base, const GTLib::Rect<int> &parentRect, const GTLib::Rect<int> &parentScissorRect, Element* &result)
+    void Server::GetElementUnderPoint(int x, int y, bool fromMouseInput, Element &base, const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, Element* &result)
     {
         if (base.IsVisible())
         {
             // We need some rectangles
-            GTLib::Rect<int> rect;
-            GTLib::Rect<int> scissorRect;
-            GTLib::Rect<int> childrenScissorRect;
+            GT::Rect<int> rect;
+            GT::Rect<int> scissorRect;
+            GT::Rect<int> childrenScissorRect;
             base.GetRects(parentRect, parentScissorRect, rect, scissorRect, childrenScissorRect);
 
             bool isOverBaseElement = false;
@@ -3140,7 +3133,7 @@ namespace GTGUI
         }
     }
 
-    void Server::SetCursor(GTLib::Cursor cursor)
+    void Server::SetCursor(GT::Cursor cursor)
     {
         if (cursor != this->currentCursor)
         {

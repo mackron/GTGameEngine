@@ -55,7 +55,7 @@ namespace GT
         return m_associatedFiles.count;
     }
 
-    GTLib::String Message::GetAssociatedFileByIndex(size_t index) const
+    String Message::GetAssociatedFileByIndex(size_t index) const
     {
         return m_associatedFiles[index];
     }

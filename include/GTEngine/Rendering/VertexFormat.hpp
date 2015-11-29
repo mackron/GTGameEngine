@@ -11,7 +11,7 @@
 #define GTENGINE_MAX_VERTEX_ATTRIBS       16
 #define GTENGINE_VERTEX_FORMAT_SIZE       (GTENGINE_MAX_VERTEX_ATTRIBS * 2 + 1)
 
-namespace GTEngine
+namespace GT
 {
     /**
     *   \brief  Class representing the format of vertex attributes.
@@ -111,12 +111,12 @@ namespace GTEngine
         /// Serializes the vertex array.
         ///
         /// @param serializer [in] A reference to the serializer to write to.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the vertex array.
         ///
         /// @param deserializer [in] A reference to the deserializer to read from.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
         
 
     private:

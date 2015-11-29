@@ -285,8 +285,8 @@ namespace GT
 
                     // MD2 separates the position/texcoord/normal. We want them to be interlaced. To do this, we need to convert the position/texcoord index pair
                     // from MD2 into just a singular index. We do this by simply counting the number of unique combinations of index pairs.
-                    GTLib::Vector<md2_index_pair> uniqueIndexPairs(header->num_tris);
-                    GTLib::Vector<uint32_t> actualIndices(header->num_tris);
+                    Vector<md2_index_pair> uniqueIndexPairs(header->num_tris);
+                    Vector<uint32_t> actualIndices(header->num_tris);
 
                     for (int32_t iIndex = 0; iIndex < header->num_tris; ++iIndex)
                     {

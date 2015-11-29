@@ -15,7 +15,7 @@
     #pragma warning(disable:4457)   // declaration of '...' hides function parameter
 #endif
 
-namespace GTEngine
+namespace GT
 {
     /// The default culling manager for scenes.
     ///
@@ -187,22 +187,22 @@ namespace GTEngine
         CollisionWorld m_world;
 
         /// A container for mapping metadata for models to scene nodes.
-        GTLib::Map<const SceneNode*, CullingObject*> models;
+        Map<const SceneNode*, CullingObject*> models;
 
         /// A container for mapping metadata for point lights to scene nodes.
-        GTLib::Map<const SceneNode*, CullingObject*> pointLights;
+        Map<const SceneNode*, CullingObject*> pointLights;
 
         /// A container for mapping metadata for spot lights to scene nodes.
-        GTLib::Map<const SceneNode*, CullingObject*> spotLights;
+        Map<const SceneNode*, CullingObject*> spotLights;
 
         /// The ambient light objects.
-        GTLib::Vector<const SceneNode*> ambientLights;
+        Vector<const SceneNode*> ambientLights;
 
         /// The directional light objects.
-        GTLib::Vector<const SceneNode*> directionalLights;
+        Vector<const SceneNode*> directionalLights;
 
         /// The particle system objects.
-        GTLib::Map<const SceneNode*, CullingObject*> particleSystems;
+        Map<const SceneNode*, CullingObject*> particleSystems;
 
 
 

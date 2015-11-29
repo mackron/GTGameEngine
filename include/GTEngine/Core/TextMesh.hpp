@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/GlyphMapManager.hpp>       // <-- For GlyphMapHandle.
 
-namespace GTLib
+namespace GT
 {
     /// Structure representing a vertex in a mesh.
     struct TextMeshVertex
@@ -72,10 +72,10 @@ namespace GTLib
     private:
 
         /// The list of vertices in the mesh.
-        GTLib::Vector<TextMeshVertex> m_vertices;
+        Vector<TextMeshVertex> m_vertices;
 
         /// The list of indices in the mesh.
-        GTLib::Vector<unsigned int> m_indices;
+        Vector<unsigned int> m_indices;
         
         /// A handle to the glyph map to apply to the mesh at render time. This can be null.
         GlyphMapHandle m_glyphMapHandle;

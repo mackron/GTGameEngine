@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_OpenGL_Debugging_OpenGL_hpp_
 #define __GTEngine_Rendering_OpenGL_Debugging_OpenGL_hpp_
 
-namespace GTEngine
+namespace GT
 {
     /// The function that will be called when an OpenGL debugging message is posted.
     ///

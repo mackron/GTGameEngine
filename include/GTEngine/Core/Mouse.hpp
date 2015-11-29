@@ -5,7 +5,7 @@
 
 #include "Windowing/MouseButtons.hpp"
 
-namespace GTLib
+namespace GT
 {
     namespace Mouse
     {

@@ -3,7 +3,7 @@
 #ifndef __GTEngine_ScriptVariableTypes_hpp_
 #define __GTEngine_ScriptVariableTypes_hpp_
 
-namespace GTEngine
+namespace GT
 {
     enum ScriptVariableType
     {

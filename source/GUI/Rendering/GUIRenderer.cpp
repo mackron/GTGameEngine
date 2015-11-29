@@ -67,8 +67,8 @@ namespace GTGUI
     void Renderer::RenderElement(Server &server, Element &element)
     {
         // Helpers to make things a bit easier to use.
-        const GTLib::Rect<int> &clippingRect      = element.layout.clippingRect;
-        const GTLib::Rect<int> &clippingRectInner = element.layout.clippingRectInner;
+        const GT::Rect<int> &clippingRect      = element.layout.clippingRect;
+        const GT::Rect<int> &clippingRectInner = element.layout.clippingRectInner;
 
         // We're not going to draw anything if the rectangle is an invalid size.
         if (clippingRect.right > clippingRect.left && clippingRect.bottom > clippingRect.top)
@@ -185,7 +185,7 @@ namespace GTGUI
                     
                 if (backgroundImageMesh != nullptr)
                 {
-                    //bool textureNeedsBlending = GTLib::DoesImageFormatHaveAlphaComponent(backgroundImageMesh->GetTexture()->GetFormat());
+                    //bool textureNeedsBlending = DoesImageFormatHaveAlphaComponent(backgroundImageMesh->GetTexture()->GetFormat());
                     bool textureNeedsBlending = server.GetImageManager()->GetImageFormat(backgroundImageMesh->GetTexture()) == GTGUI::ImageFormat_RGBA8;
 
                     this->_SetTexture(backgroundImageMesh->GetTexture());
@@ -232,7 +232,7 @@ namespace GTGUI
                 if (textMeshes.count > 0)
                 {
                     // Scissor.
-                    GTLib::Rect<int> textRect;
+                    GT::Rect<int> textRect;
                     element.textManager.GetTextRect(textRect);
 
                     if (textRect.left + element.layout.absoluteX < clippingRectInner.left || textRect.right  + element.layout.absoluteX > clippingRectInner.right ||

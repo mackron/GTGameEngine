@@ -11,7 +11,7 @@
 #include "../../RenderCommand.hpp"
 #include "ShaderState_OpenGL21.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers/
     class RCSetShaderState : public RenderCommand
@@ -63,25 +63,25 @@ namespace GTEngine
 
 
         /// The parameters that should be set by name. These default to null. We use pointers here so make it easier to determine whether or not a group can be ignored.
-        GTLib::Dictionary<ShaderState_OpenGL21::FloatParameter>*    floatUniformsToSetByName;
-        GTLib::Dictionary<ShaderState_OpenGL21::Float2Parameter>*   float2UniformsToSetByName;
-        GTLib::Dictionary<ShaderState_OpenGL21::Float3Parameter>*   float3UniformsToSetByName;
-        GTLib::Dictionary<ShaderState_OpenGL21::Float4Parameter>*   float4UniformsToSetByName;
-        GTLib::Dictionary<ShaderState_OpenGL21::Float2x2Parameter>* float2x2UniformsToSetByName;
-        GTLib::Dictionary<ShaderState_OpenGL21::Float3x3Parameter>* float3x3UniformsToSetByName;
-        GTLib::Dictionary<ShaderState_OpenGL21::Float4x4Parameter>* float4x4UniformsToSetByName;
-        GTLib::Dictionary<ShaderState_OpenGL21::TextureParameter>*  textureUniformsToSetByName;
+        Dictionary<ShaderState_OpenGL21::FloatParameter>*    floatUniformsToSetByName;
+        Dictionary<ShaderState_OpenGL21::Float2Parameter>*   float2UniformsToSetByName;
+        Dictionary<ShaderState_OpenGL21::Float3Parameter>*   float3UniformsToSetByName;
+        Dictionary<ShaderState_OpenGL21::Float4Parameter>*   float4UniformsToSetByName;
+        Dictionary<ShaderState_OpenGL21::Float2x2Parameter>* float2x2UniformsToSetByName;
+        Dictionary<ShaderState_OpenGL21::Float3x3Parameter>* float3x3UniformsToSetByName;
+        Dictionary<ShaderState_OpenGL21::Float4x4Parameter>* float4x4UniformsToSetByName;
+        Dictionary<ShaderState_OpenGL21::TextureParameter>*  textureUniformsToSetByName;
 
 
         /// The uniforms that should be set by their location. These default to null. We use pointers here so make it easier to determine whether or not a group can be ignored.
-        GTLib::Vector<ShaderState_OpenGL21::FloatParameter>*    floatUniformsToSetByLocation;
-        GTLib::Vector<ShaderState_OpenGL21::Float2Parameter>*   float2UniformsToSetByLocation;
-        GTLib::Vector<ShaderState_OpenGL21::Float3Parameter>*   float3UniformsToSetByLocation;
-        GTLib::Vector<ShaderState_OpenGL21::Float4Parameter>*   float4UniformsToSetByLocation;
-        GTLib::Vector<ShaderState_OpenGL21::Float2x2Parameter>* float2x2UniformsToSetByLocation;
-        GTLib::Vector<ShaderState_OpenGL21::Float3x3Parameter>* float3x3UniformsToSetByLocation;
-        GTLib::Vector<ShaderState_OpenGL21::Float4x4Parameter>* float4x4UniformsToSetByLocation;
-        GTLib::Vector<ShaderState_OpenGL21::TextureParameter>*  textureUniformsToSetByLocation;
+        Vector<ShaderState_OpenGL21::FloatParameter>*    floatUniformsToSetByLocation;
+        Vector<ShaderState_OpenGL21::Float2Parameter>*   float2UniformsToSetByLocation;
+        Vector<ShaderState_OpenGL21::Float3Parameter>*   float3UniformsToSetByLocation;
+        Vector<ShaderState_OpenGL21::Float4Parameter>*   float4UniformsToSetByLocation;
+        Vector<ShaderState_OpenGL21::Float2x2Parameter>* float2x2UniformsToSetByLocation;
+        Vector<ShaderState_OpenGL21::Float3x3Parameter>* float3x3UniformsToSetByLocation;
+        Vector<ShaderState_OpenGL21::Float4x4Parameter>* float4x4UniformsToSetByLocation;
+        Vector<ShaderState_OpenGL21::TextureParameter>*  textureUniformsToSetByLocation;
 
 
 

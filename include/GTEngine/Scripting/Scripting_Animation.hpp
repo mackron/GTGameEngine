@@ -20,7 +20,7 @@ namespace GT
     /// @param position [in] The position of the table to read.
     ///
     /// @return The AnimationSequence at the given position, or an empty sequence if an error occurs.
-    GTEngine::AnimationSequence ToAnimationSequence(GT::Script &script, int position);
+    AnimationSequence ToAnimationSequence(GT::Script &script, int position);
 }
 
 #endif

@@ -6,7 +6,7 @@
 #include "Iterator.hpp"
 #include "Size.hpp"
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {
@@ -73,7 +73,7 @@ namespace GTLib
 
 
 // *** CopySize ***
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {

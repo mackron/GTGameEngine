@@ -5,7 +5,7 @@
 
 #include "Rendering/Texture2D.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Library class for Texture2Ds.
     ///

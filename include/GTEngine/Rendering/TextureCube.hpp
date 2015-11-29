@@ -5,7 +5,7 @@
 
 #include "Texture2D.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a cube map.
     class TextureCube
@@ -87,7 +87,7 @@ namespace GTEngine
         unsigned int anisotropy;
 
         /// The list of shaders that this texture is attached to.
-        GTLib::List<Shader*> shaders;
+        List<Shader*> shaders;
         
         
         

@@ -5,7 +5,7 @@
 
 #include "CPUVertexShader.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// A CPU vertex shader for performing a simple matrix transformation.
     ///

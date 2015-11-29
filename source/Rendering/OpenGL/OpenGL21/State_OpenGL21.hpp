@@ -29,7 +29,7 @@
 
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// The current state of the OpenGL21 renderer.
     ///
@@ -65,29 +65,29 @@ namespace GTEngine
 
 
         /// The list of currently instantiated textures. This includes all texture types.
-        GTLib::Vector<TextureState_OpenGL21*> instantiatedTextureObjects;
+        Vector<TextureState_OpenGL21*> instantiatedTextureObjects;
 
         /// The list of currently instantiated shader programs.
-        GTLib::Vector<ShaderState_OpenGL21*> instantiatedProgramObjects;
+        Vector<ShaderState_OpenGL21*> instantiatedProgramObjects;
 
         /// The list of currently instantiated buffer objects.
-        GTLib::Vector<GLuint*> instantiatedBufferObjects;
+        Vector<GLuint*> instantiatedBufferObjects;
 
         /// The list of currently instantiated framebuffer objects.
-        GTLib::Vector<FramebufferState_OpenGL21*> instantiatedFramebufferObjects;
+        Vector<FramebufferState_OpenGL21*> instantiatedFramebufferObjects;
         
 
         /// The list texture objects that need to be deleted.
-        GTLib::Vector<TextureState_OpenGL21*> deletedTextureObjects[2];
+        Vector<TextureState_OpenGL21*> deletedTextureObjects[2];
 
         /// The list of shader programs that need to be deleted.
-        GTLib::Vector<ShaderState_OpenGL21*> deletedProgramObjects[2];
+        Vector<ShaderState_OpenGL21*> deletedProgramObjects[2];
 
         /// The list of buffer objects that need to be deleted.
-        GTLib::Vector<GLuint*> deletedBufferObjects[2];
+        Vector<GLuint*> deletedBufferObjects[2];
 
         /// The list of framebuffer objects that need to be deleted.
-        GTLib::Vector<FramebufferState_OpenGL21*> deletedFramebufferObjects[2];
+        Vector<FramebufferState_OpenGL21*> deletedFramebufferObjects[2];
 
 
         /// The current swap interval.

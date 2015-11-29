@@ -3,7 +3,7 @@
 #include "State_OpenGL21.hpp"
 #include <new>
 
-namespace GTEngine
+namespace GT
 {
     State_OpenGL21::State_OpenGL21()
         : currentProgramState(nullptr), currentFramebufferState(nullptr),

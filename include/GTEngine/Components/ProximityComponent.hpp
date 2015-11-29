@@ -7,7 +7,7 @@
 #include "../AlignedType.hpp"
 #include <GTEngine/Core/SortedVector.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a component for checking for proximity between objects.
     ///
@@ -34,14 +34,14 @@ namespace GTEngine
 
 
         /// Retrieves the list of IDs of scene nodes that are currently sitting inside the volume of this component.
-        const GTLib::SortedVector<uint64_t> & GetSceneNodesInsideVolume() const { return this->sceneNodesInsideVolume; }
+        const SortedVector<uint64_t> & GetSceneNodesInsideVolume() const { return this->sceneNodesInsideVolume; }
 
         
         /// Performs a complete check of scene nodes that are contained inside the volume.
         ///
         /// @param sceneNodesEntered [out] A reference to the vector that will receive the ID's of the scene nodes that have just entered the volume.
         /// @param sceneNodesLeft    [out] A reference to the vector that will receive the ID's of the scene nodes that have just left the volume.
-        void UpdateContainment(GTLib::Vector<uint64_t> &sceneNodesEntered, GTLib::Vector<uint64_t> &sceneNodesLeft);
+        void UpdateContainment(Vector<uint64_t> &sceneNodesEntered, Vector<uint64_t> &sceneNodesLeft);
 
 
 
@@ -49,10 +49,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 
@@ -117,11 +117,11 @@ namespace GTEngine
 
         /// A very temporary pointer that keeps track of the world the rigid body is contained in. This is used for when the rigid body
         /// needs to be removed from and then re-added to the world.
-        GTEngine::DynamicsWorld* m_world;
+        DynamicsWorld* m_world;
 
 
         /// The IDs of the scene nodes that are currently inside the volume of the component.
-        GTLib::SortedVector<uint64_t> sceneNodesInsideVolume;
+        SortedVector<uint64_t> sceneNodesInsideVolume;
 
 
         friend class Iterator;

@@ -8,7 +8,7 @@
 #include "Equal.hpp"
 #include <cstring>
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {
@@ -324,7 +324,7 @@ namespace GTLib
             /// Checks if the current token is equal to the given string.
             bool Equals(const char* other, ptrdiff_t otherSizeInTs = -1)
             {
-                return GTLib::Strings::Equal(this->start, this->GetSizeInBytes(), other, otherSizeInTs);
+                return Strings::Equal(this->start, this->GetSizeInBytes(), other, otherSizeInTs);
             }
             
             

@@ -5,7 +5,7 @@
 
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     static const uint32_t FontStyle_Thin       = (1 << 0);
     static const uint32_t FontStyle_ExtraLight = (1 << 1);

@@ -10,7 +10,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     ImageEditor::ImageEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
@@ -26,7 +26,7 @@ namespace GTEngine
             assert(m_viewportElement != nullptr);
             {
                 // The element has been created, but we need to execute a script to have it turn into a proper image editor.
-                script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", m_viewportElement->id).c_str());
+                script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", m_viewportElement->id).c_str());
                 assert(script.IsTable(-1));
                 {
                     script.Push("ImageEditor");
@@ -105,7 +105,7 @@ namespace GTEngine
             auto image = this->ownerEditor.GetImage();
             if (image != nullptr)
             {
-                auto shader = GTEngine::ShaderLibrary::GetTextured2DQuadShader();
+                auto shader = ShaderLibrary::GetTextured2DQuadShader();
                 assert(shader != nullptr);
                 {
                     Renderer::SetCurrentShader(shader);
@@ -118,7 +118,7 @@ namespace GTEngine
                     unsigned int imageWidth  = image->GetWidth();
                     unsigned int imageHeight = image->GetHeight();
 
-                    GTLib::Rect<int> viewportRect;
+                    Rect<int> viewportRect;
                     element.GetAbsoluteRect(viewportRect);
 
                     float viewportWidth  = static_cast<float>(viewportRect.right  - viewportRect.left);

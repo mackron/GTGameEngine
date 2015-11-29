@@ -7,7 +7,7 @@
 #include <cstddef>
 #include <cstring>
 
-namespace GTLib
+namespace GT
 {
     namespace Strings
     {

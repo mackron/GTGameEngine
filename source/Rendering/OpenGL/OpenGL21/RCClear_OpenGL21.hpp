@@ -6,7 +6,7 @@
 #include "../../RenderCommand.hpp"
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers/
     class RCClear : public RenderCommand

@@ -12,7 +12,7 @@
 #include "Physics/CollisionShapeTypes.hpp"
 #include "Math.hpp"
 
-namespace GTEngine
+namespace GT
 {
     inline btVector3 ToBulletVector3(const glm::vec3 &v)
     {

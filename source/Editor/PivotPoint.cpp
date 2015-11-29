@@ -2,7 +2,7 @@
 
 #include <GTEngine/Editor/PivotPoint.hpp>
 
-namespace GTEngine
+namespace GT
 {
     PivotPoint::PivotPoint()
         : m_position(),

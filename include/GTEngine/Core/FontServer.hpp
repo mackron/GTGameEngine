@@ -9,7 +9,7 @@
 #include "Font.hpp"
 #include <GTEngine/Core/List.hpp>
 
-namespace GTLib
+namespace GT
 {
     /// The main interface to GTType. An application must create a font server to use GTType.
     class FontServer
@@ -93,7 +93,7 @@ namespace GTLib
         GlyphMapManager* m_glyphMapManager;
 
         /// The list of event handlers.
-        GTLib::List<FontEventHandler*> eventHandlers;
+        List<FontEventHandler*> eventHandlers;
         
         
     private:    // No copying.

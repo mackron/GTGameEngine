@@ -9,7 +9,7 @@
     #pragma warning(disable:4351)
 #endif
 
-namespace GTEngine
+namespace GT
 {
     struct WriteOCL
     {
@@ -34,7 +34,7 @@ namespace GTEngine
 }
 
 
-namespace GTEngine
+namespace GT
 {
     SceneCullingDbvtPolicy::SceneCullingDbvtPolicy(const glm::mat4 &mvpIn, size_t bufferWidthIn, size_t bufferHeightIn)
         : mvp(),

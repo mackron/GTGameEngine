@@ -363,9 +363,9 @@ namespace GT
                 script.Push("ParticleEmissionShapes");
                 script.PushNewTable();
                 {
-                    script.SetTableValue(-1, "Cone",   GTEngine::ParticleEmitter::EmissionShapeType_Cone);
-                    script.SetTableValue(-1, "Sphere", GTEngine::ParticleEmitter::EmissionShapeType_Sphere);
-                    script.SetTableValue(-1, "Box",    GTEngine::ParticleEmitter::EmissionShapeType_Box);
+                    script.SetTableValue(-1, "Cone",   ParticleEmitter::EmissionShapeType_Cone);
+                    script.SetTableValue(-1, "Sphere", ParticleEmitter::EmissionShapeType_Sphere);
+                    script.SetTableValue(-1, "Box",    ParticleEmitter::EmissionShapeType_Box);
                 }
                 script.SetTableValue(-3);
 
@@ -373,8 +373,8 @@ namespace GT
                 script.Push("ParticleShapeTypes");
                 script.PushNewTable();
                 {
-                    script.SetTableValue(-1, "Billboard", GTEngine::ParticleEmitter::ParticleShapeType_Billboard);
-                    script.SetTableValue(-1, "Model",     GTEngine::ParticleEmitter::ParticleShapeType_Model);
+                    script.SetTableValue(-1, "Billboard", ParticleEmitter::ParticleShapeType_Billboard);
+                    script.SetTableValue(-1, "Model",     ParticleEmitter::ParticleShapeType_Model);
                 }
                 script.SetTableValue(-3);
 
@@ -382,11 +382,11 @@ namespace GT
                 script.Push("ParticleFunctionTypes");
                 script.PushNewTable();
                 {
-                    script.SetTableValue(-1, "SizeOverTime",            GTEngine::ParticleFunctionType_SizeOverTime);
-                    script.SetTableValue(-1, "LinearVelocityOverTime",  GTEngine::ParticleFunctionType_LinearVelocityOverTime);
-                    script.SetTableValue(-1, "AngularVelocityOverTime", GTEngine::ParticleFunctionType_AngularVelocityOverTime);
-                    script.SetTableValue(-1, "ColourOverTime",          GTEngine::ParticleFunctionType_ColourOverTime);
-                    script.SetTableValue(-1, "AlphaOverTime",           GTEngine::ParticleFunctionType_AlphaOverTime);
+                    script.SetTableValue(-1, "SizeOverTime",            ParticleFunctionType_SizeOverTime);
+                    script.SetTableValue(-1, "LinearVelocityOverTime",  ParticleFunctionType_LinearVelocityOverTime);
+                    script.SetTableValue(-1, "AngularVelocityOverTime", ParticleFunctionType_AngularVelocityOverTime);
+                    script.SetTableValue(-1, "ColourOverTime",          ParticleFunctionType_ColourOverTime);
+                    script.SetTableValue(-1, "AlphaOverTime",           ParticleFunctionType_AlphaOverTime);
                 }
                 script.SetTableValue(-3);
             }
@@ -403,7 +403,7 @@ namespace GT
     {
         int GetName(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 script.Push(emitter->GetName());
@@ -418,7 +418,7 @@ namespace GT
 
         int SetName(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 emitter->SetName(script.ToString(2));
@@ -430,7 +430,7 @@ namespace GT
 
         int EnableBurstMode(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 emitter->EnableBurstMode();
@@ -441,7 +441,7 @@ namespace GT
 
         int DisableBurstMode(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 emitter->DisableBurstMode();
@@ -452,7 +452,7 @@ namespace GT
 
         int IsBurstModeEnabled(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 script.Push(emitter->IsBurstModeEnabled());
@@ -468,7 +468,7 @@ namespace GT
 
         int SetDurationInSeconds(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 emitter->SetDurationInSeconds(script.ToDouble(2));
@@ -479,7 +479,7 @@ namespace GT
 
         int GetDurationInSeconds(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 script.Push(emitter->GetDurationInSeconds());
@@ -495,7 +495,7 @@ namespace GT
 
         int SetDelayInSeconds(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 emitter->SetDelayInSeconds(script.ToDouble(2));
@@ -506,7 +506,7 @@ namespace GT
 
         int GetDelayInSeconds(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 script.Push(emitter->GetDelayInSeconds());
@@ -522,7 +522,7 @@ namespace GT
 
         int SetEmissionRatePerSecond(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 emitter->SetEmissionRatePerSecond(script.ToDouble(2));
@@ -533,7 +533,7 @@ namespace GT
 
         int GetEmissionRatePerSecond(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 script.Push(emitter->GetEmissionRatePerSecond());
@@ -549,7 +549,7 @@ namespace GT
 
         int SetStartSpeed(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 double startSpeedMin = script.ToDouble(2);
@@ -563,7 +563,7 @@ namespace GT
 
         int GetStartSpeed(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 double startSpeedMin;
@@ -585,7 +585,7 @@ namespace GT
 
         int SetStartRotation(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 glm::vec3 startRotationMin = ToVector3(script, 2);
@@ -599,7 +599,7 @@ namespace GT
 
         int GetStartRotation(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 glm::vec3 startRotationMin;
@@ -621,7 +621,7 @@ namespace GT
 
         int SetStartScale(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 glm::vec3 startScaleMin = ToVector3(script, 2);
@@ -635,7 +635,7 @@ namespace GT
 
         int GetStartScale(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 glm::vec3 startScaleMin;
@@ -657,7 +657,7 @@ namespace GT
 
         int SetLifetime(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 double lifetimeMin = script.ToDouble(2);
@@ -671,7 +671,7 @@ namespace GT
 
         int GetLifetime(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 double lifetimeMin;
@@ -693,7 +693,7 @@ namespace GT
 
         int SetGravityFactor(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 emitter->SetGravityFactor(script.ToDouble(2));
@@ -704,7 +704,7 @@ namespace GT
 
         int GetGravityFactor(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 script.Push(emitter->GetGravityFactor());
@@ -720,14 +720,14 @@ namespace GT
 
         int GetEmissionShapeType(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 script.Push(emitter->GetEmissionShapeType());
             }
             else
             {
-                script.Push(GTEngine::ParticleEmitter::EmissionShapeType_Cone);
+                script.Push(ParticleEmitter::EmissionShapeType_Cone);
             }
 
             return 1;
@@ -735,10 +735,10 @@ namespace GT
 
         int SetEmissionShapeType(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
-                emitter->SetEmissionShapeType(static_cast<GTEngine::ParticleEmitter::EmissionShapeType>(script.ToInteger(2)));
+                emitter->SetEmissionShapeType(static_cast<ParticleEmitter::EmissionShapeType>(script.ToInteger(2)));
             }
 
             return 0;
@@ -747,7 +747,7 @@ namespace GT
 
         int SetConeEmissionShape(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 float radius = script.ToFloat(2);
@@ -761,7 +761,7 @@ namespace GT
 
         int SetSphereEmissionShape(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 float radius = script.ToFloat(2);
@@ -774,7 +774,7 @@ namespace GT
 
         int SetBoxEmissionShape(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 float x = script.ToFloat(2);
@@ -789,12 +789,12 @@ namespace GT
 
         int GetEmissionShapeProperties(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 switch (emitter->GetEmissionShapeType())
                 {
-                case GTEngine::ParticleEmitter::EmissionShapeType_Cone:
+                case ParticleEmitter::EmissionShapeType_Cone:
                     {
                         float radius;
                         float angle;
@@ -806,7 +806,7 @@ namespace GT
                         return 2;
                     }
 
-                case GTEngine::ParticleEmitter::EmissionShapeType_Sphere:
+                case ParticleEmitter::EmissionShapeType_Sphere:
                     {
                         float radius;
                         emitter->GetSphereEmissionShape(radius);
@@ -816,7 +816,7 @@ namespace GT
                         return 1;
                     }
 
-                case GTEngine::ParticleEmitter::EmissionShapeType_Box:
+                case ParticleEmitter::EmissionShapeType_Box:
                     {
                         float x;
                         float y;
@@ -845,7 +845,7 @@ namespace GT
 
         int SetBillboardMaterial(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 script.Push(emitter->SetMaterial(script.ToString(2)));
@@ -860,7 +860,7 @@ namespace GT
 
         int GetBillboardMaterialRelativePath(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 auto material = emitter->GetMaterial();
@@ -884,7 +884,7 @@ namespace GT
 
         int SetTextureTiling(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 unsigned int xTileCount = static_cast<unsigned int>(script.ToInteger(2));
@@ -897,7 +897,7 @@ namespace GT
 
         int GetTextureTiling(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 unsigned int xTileCount;
@@ -919,7 +919,7 @@ namespace GT
 
         int GetFunctionCount(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 script.Push(static_cast<int>(emitter->GetFunctionCount()));
@@ -934,7 +934,7 @@ namespace GT
 
         int GetFunctionByIndex(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 auto &function = emitter->GetFunction(script.ToInteger(2) - 1);      // <-- Minus 1 because Lua is 1 based.
@@ -947,12 +947,12 @@ namespace GT
 
                     switch (function.GetType())
                     {
-                    case GTEngine::ParticleFunctionType_SizeOverTime:
-                    case GTEngine::ParticleFunctionType_AlphaOverTime:
+                    case ParticleFunctionType_SizeOverTime:
+                    case ParticleFunctionType_AlphaOverTime:
                         {
                             float rangeMin;
                             float rangeMax;
-                            static_cast<GTEngine::ParticleFunction_Scalar &>(function).GetRange(rangeMin, rangeMax);
+                            static_cast<ParticleFunction_Scalar &>(function).GetRange(rangeMin, rangeMax);
 
                             script.SetTableValue(-1, "rangeMin", rangeMin);
                             script.SetTableValue(-1, "rangeMax", rangeMax);
@@ -960,13 +960,13 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::ParticleFunctionType_LinearVelocityOverTime:
-                    case GTEngine::ParticleFunctionType_AngularVelocityOverTime:
-                    case GTEngine::ParticleFunctionType_ColourOverTime:
+                    case ParticleFunctionType_LinearVelocityOverTime:
+                    case ParticleFunctionType_AngularVelocityOverTime:
+                    case ParticleFunctionType_ColourOverTime:
                         {
                             glm::vec3 rangeMin;
                             glm::vec3 rangeMax;
-                            static_cast<GTEngine::ParticleFunction_Vector3 &>(function).GetRange(rangeMin, rangeMax);
+                            static_cast<ParticleFunction_Vector3 &>(function).GetRange(rangeMin, rangeMax);
 
                             script.Push("rangeMin");
                             PushNewVector3(script, rangeMin);
@@ -984,7 +984,7 @@ namespace GT
                         {
                             assert(false);
                                 
-                            GTEngine::Log("You've forgotten to add the particle function to the scripting environment!");
+                            Log("You've forgotten to add the particle function to the scripting environment!");
                             break;
                         }
                     }
@@ -1000,7 +1000,7 @@ namespace GT
 
         int RemoveFunctionByIndex(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 emitter->RemoveFunctionByIndex(script.ToInteger(2) - 1);        // <-- Minus 1 because Lua is 1 based.
@@ -1011,10 +1011,10 @@ namespace GT
 
         int AddFunction(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
-                emitter->AddFunction(static_cast<GTEngine::ParticleFunctionType>(script.ToInteger(2)));
+                emitter->AddFunction(static_cast<ParticleFunctionType>(script.ToInteger(2)));
             }
 
             return 0;
@@ -1023,7 +1023,7 @@ namespace GT
 
         int SetFunctionRangeByIndex(GT::Script &script)
         {
-            auto emitter = static_cast<GTEngine::ParticleEmitter*>(script.ToPointer(1));
+            auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
             if (emitter != nullptr)
             {
                 if (!script.IsNil(3))
@@ -1032,24 +1032,24 @@ namespace GT
                     {
                         switch (function.GetType())
                         {
-                        case GTEngine::ParticleFunctionType_SizeOverTime:
-                        case GTEngine::ParticleFunctionType_AlphaOverTime:
+                        case ParticleFunctionType_SizeOverTime:
+                        case ParticleFunctionType_AlphaOverTime:
                             {
                                 float rangeMin = script.ToFloat(3);
                                 float rangeMax = script.IsNil(4) ? rangeMin : script.ToFloat(4);
 
-                                static_cast<GTEngine::ParticleFunction_Scalar &>(function).SetRange(rangeMin, rangeMax);
+                                static_cast<ParticleFunction_Scalar &>(function).SetRange(rangeMin, rangeMax);
                                 break;
                             }
 
-                        case GTEngine::ParticleFunctionType_LinearVelocityOverTime:
-                        case GTEngine::ParticleFunctionType_AngularVelocityOverTime:
-                        case GTEngine::ParticleFunctionType_ColourOverTime:
+                        case ParticleFunctionType_LinearVelocityOverTime:
+                        case ParticleFunctionType_AngularVelocityOverTime:
+                        case ParticleFunctionType_ColourOverTime:
                             {
                                 glm::vec3 rangeMin = ToVector3(script, 3);
                                 glm::vec3 rangeMax = script.IsNil(4) ? rangeMin : ToVector3(script, 4);
 
-                                static_cast<GTEngine::ParticleFunction_Vector3 &>(function).SetRange(rangeMin, rangeMax);
+                                static_cast<ParticleFunction_Vector3 &>(function).SetRange(rangeMin, rangeMax);
                                 break;
                             }
 
@@ -1057,7 +1057,7 @@ namespace GT
                             {
                                 assert(false);
                                     
-                                GTEngine::Log("You've forgotten to handle the particle function in the SetFunctionRangeByIndex() scripting function!");
+                                Log("You've forgotten to handle the particle function in the SetFunctionRangeByIndex() scripting function!");
                                 break;
                             }
                         }
@@ -1077,7 +1077,7 @@ namespace GT
     {
         int GetEmitterCount(GT::Script &script)
         {
-            auto definition = static_cast<GTEngine::ParticleSystemDefinition*>(script.ToPointer(1));
+            auto definition = static_cast<ParticleSystemDefinition*>(script.ToPointer(1));
             if (definition != nullptr)
             {
                 script.Push(static_cast<int>(definition->GetEmitterCount()));
@@ -1092,7 +1092,7 @@ namespace GT
 
         int GetEmitterPtrByIndex(GT::Script &script)
         {
-            auto definition = static_cast<GTEngine::ParticleSystemDefinition*>(script.ToPointer(1));
+            auto definition = static_cast<ParticleSystemDefinition*>(script.ToPointer(1));
             if (definition != nullptr)
             {
                 script.Push(definition->GetEmitter(script.ToInteger(2) - 1));       // Minus 1 because Lua is one based.
@@ -1107,7 +1107,7 @@ namespace GT
 
         int AppendNewEmitter(GT::Script &script)
         {
-            auto definition = static_cast<GTEngine::ParticleSystemDefinition*>(script.ToPointer(1));
+            auto definition = static_cast<ParticleSystemDefinition*>(script.ToPointer(1));
             if (definition != nullptr)
             {
                 script.Push(definition->AppendNewEmitter());
@@ -1122,7 +1122,7 @@ namespace GT
 
         int DeleteEmitterByIndex(GT::Script &script)
         {
-            auto definition = static_cast<GTEngine::ParticleSystemDefinition*>(script.ToPointer(1));
+            auto definition = static_cast<ParticleSystemDefinition*>(script.ToPointer(1));
             if (definition != nullptr)
             {
                 definition->DeleteEmitterByIndex(script.ToInteger(2) - 1);       // Minus 1 because Lua is one based.

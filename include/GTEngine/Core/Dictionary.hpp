@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <new>
 
-namespace GTLib
+namespace GT
 {
     /// An item in a dictionary.
     template <typename T, typename U>
@@ -114,7 +114,7 @@ namespace GTLib
 
             for (size_t i = 0; i < this->count; ++i)
             {
-                this->buffer[i] = DictionaryItemUTF<T, U>::Allocate(GTLib::Strings::Create(other.buffer[i]->key, other.buffer[i]->keySizeInBytes), other.buffer[i]->keySizeInBytes, other.buffer[i]->value);
+                this->buffer[i] = DictionaryItemUTF<T, U>::Allocate(Strings::Create(other.buffer[i]->key, other.buffer[i]->keySizeInBytes), other.buffer[i]->keySizeInBytes, other.buffer[i]->value);
             }
         }
 
@@ -330,7 +330,7 @@ namespace GTLib
 
                 for (size_t i = 0; i < other.count; ++i)
                 {
-                    this->buffer[i] = DictionaryItemUTF<T, U>::Allocate(GTLib::Strings::Create(other.buffer[i]->key, other.buffer[i]->keySizeInBytes), other.buffer[i]->keySizeInBytes, other.buffer[i]->value);
+                    this->buffer[i] = DictionaryItemUTF<T, U>::Allocate(Strings::Create(other.buffer[i]->key, other.buffer[i]->keySizeInBytes), other.buffer[i]->keySizeInBytes, other.buffer[i]->value);
                 }
             }
 

@@ -33,7 +33,7 @@ namespace GT
         
 
             /// Retrieves a reference to the list containing the data directories.
-            const GTLib::Vector<GTLib::String> & GetDataDirectories() const;
+            const Vector<String> & GetDataDirectories() const;
 
             /// Copies the data directory strings from the internal list into the given list.
             ///
@@ -41,7 +41,7 @@ namespace GT
             ///
             /// @remarks
             ///     The values will be pushed to the back. Existing items will not be cleared.
-            void GetDataDirectories(GTLib::Vector<GTLib::String> &directories) const;
+            void GetDataDirectories(Vector<String> &directories) const;
 
 
 
@@ -51,7 +51,7 @@ namespace GT
             GT::Script m_script;
 
             /// The list of data directories.
-            GTLib::Vector<GTLib::String> m_dataDirectories;
+            Vector<String> m_dataDirectories;
 
 
         private:    // No copying.

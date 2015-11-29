@@ -5,7 +5,7 @@
 
 #include "../SceneNode.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing the positioning gizmo in an editor.
     class TransformGizmo

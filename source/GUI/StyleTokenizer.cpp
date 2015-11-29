@@ -50,7 +50,7 @@ namespace GTGUI
     {
         if (*this)
         {
-            return GTLib::Strings::Equal(this->start, this->end - this->start, value, -1);
+            return GT::Strings::Equal(this->start, this->end - this->start, value, -1);
         }
 
         return false;
@@ -83,24 +83,24 @@ namespace GTGUI
     }
 
 
-    GTLib::String StyleTokenizer::GetString() const
+    GT::String StyleTokenizer::GetString() const
     {
-        return GTLib::String(this->start, this->end - this->start);
+        return GT::String(this->start, this->end - this->start);
     }
 
-    GTLib::String StyleTokenizer::GetCurrentLineString() const
+    GT::String StyleTokenizer::GetCurrentLineString() const
     {
         // We just find the first occurance of the \n or \0 character.
         if (this->lineStart != nullptr)
         {
-            auto lineEnd = GTLib::Strings::FindFirst(this->lineStart, '\n');
+            auto lineEnd = GT::Strings::FindFirst(this->lineStart, '\n');
             if (lineEnd != nullptr)
             {
-                return GTLib::String(this->lineStart, lineEnd - this->lineStart).Trim();
+                return GT::String(this->lineStart, lineEnd - this->lineStart).Trim();
             }
             else
             {
-                return GTLib::String(this->lineStart).Trim();
+                return GT::String(this->lineStart).Trim();
             }
         }
 
@@ -144,7 +144,7 @@ namespace GTGUI
                     }
 
                     // If we get here, it means we are looking at a normal word that is not a symbol or the start of a comment block.
-                    if (!GTLib::Strings::IsWhitespace(static_cast<char32_t>(this->start[0])))
+                    if (!GT::Strings::IsWhitespace(static_cast<char32_t>(this->start[0])))
                     {
                         // Might be a comment block.
                         if (this->start[0] == '/')     
@@ -188,7 +188,7 @@ namespace GTGUI
                     {
                         break;
                     }
-                    else if (GTLib::Strings::IsWhitespace(static_cast<char32_t>(this->end[0])))    // Whitespace
+                    else if (GT::Strings::IsWhitespace(static_cast<char32_t>(this->end[0])))    // Whitespace
                     {
                         break;
                     }

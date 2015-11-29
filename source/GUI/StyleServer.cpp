@@ -69,7 +69,7 @@ namespace GTGUI
     {
         for (size_t i = 0; i < this->variables.count; ++i)
         {
-            GTLib::Strings::Delete(this->variables.buffer[i]->value);
+            GT::Strings::Delete(this->variables.buffer[i]->value);
         }
 
         this->DeleteAllStyleClasses();
@@ -168,7 +168,7 @@ namespace GTGUI
                 auto compiler = this->compilerStack[iCompiler];
                 assert(compiler != nullptr);
                 {
-                    if (GTLib::Strings::Equal(compiler->GetIdentifier(), identifier))
+                    if (GT::Strings::Equal(compiler->GetIdentifier(), identifier))
                     {
                         this->UnloadCompilerByIndex(iCompiler);
 
@@ -189,11 +189,11 @@ namespace GTGUI
 
     bool StyleServer::LoadFromFile(const char* filePath)
     {
-        char* pFileData = easyvfs_open_and_read_text_file(GTEngine::g_EngineContext->GetVFS(), filePath, nullptr);
+        char* pFileData = easyvfs_open_and_read_text_file(GT::g_EngineContext->GetVFS(), filePath, nullptr);
         if (pFileData != nullptr)
         {
             char absolutePath[EASYVFS_MAX_PATH];
-            if (!easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
+            if (!easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
             {
                 // Failed to retrieve the absolute path. Just use the original path.
                 strcpy_s(absolutePath, sizeof(absolutePath), filePath);
@@ -214,7 +214,7 @@ namespace GTGUI
         else
         {
             char msg[256];
-            GTLib::IO::snprintf(msg, 256, "Failed to open file: %s", filePath);
+            GT::IO::snprintf(msg, 256, "Failed to open file: %s", filePath);
 
             this->server.PostError(msg);
             return false;
@@ -227,7 +227,7 @@ namespace GTGUI
         char absolutePath[EASYVFS_MAX_PATH];
         if (!easypath_isabsolute(filePath))
         {
-            if (!easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath))) {
+            if (!easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath))) {
                 strcpy_s(absolutePath, sizeof(absolutePath), filePath);
             }
         }
@@ -243,14 +243,14 @@ namespace GTGUI
     void StyleServer::AddVariable(const char* name, const char* valueIn, ptrdiff_t nameSize, ptrdiff_t valueSize)
     {
         // We need our own copy of the value.
-        auto value = GTLib::Strings::Create(valueIn, valueSize);
+        auto value = GT::Strings::Create(valueIn, valueSize);
 
         // If the old value exists, it must be deleted.
         auto item = this->variables.Find(name, nameSize);
         if (item != nullptr)
         {
             // Item already exists - just replace it. We need to also delete the old value.
-            GTLib::Strings::Delete(item->value);
+            GT::Strings::Delete(item->value);
             item->value = value;
         }
         else
@@ -265,7 +265,7 @@ namespace GTGUI
         auto item = this->variables.Find(name, nameSizeInTs);
         if (item != nullptr)
         {
-            GTLib::Strings::Delete(item->value);
+            GT::Strings::Delete(item->value);
             item->value = nullptr;
 
             this->variables.RemoveByIndex(item->index);
@@ -407,12 +407,12 @@ namespace GTGUI
             assert(handler != nullptr);
 
             // We found it. If the value is set to 'inherit', we can actually
-            if (value == nullptr || GTLib::Strings::Equal(value, valueSizeInTs, ""))
+            if (value == nullptr || GT::Strings::Equal(value, valueSizeInTs, ""))
             {
                 handler->Unset(styleClass);
                 result = true;
             }
-            else if (GTLib::Strings::Equal(value, valueSizeInTs, "inherit"))
+            else if (GT::Strings::Equal(value, valueSizeInTs, "inherit"))
             {
                 handler->SetInherit(styleClass, true, true);
                 result = true;
@@ -439,7 +439,7 @@ namespace GTGUI
         return this->SetStyleAttribute(styleClass, name, nameSizeInTs, nullptr, -1);
     }
 
-    GTLib::String StyleServer::GetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs)
+    GT::String StyleServer::GetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs)
     {
         auto handler = this->attributeHandlers.Find(name, nameSizeInTs);
         if (handler != nullptr)

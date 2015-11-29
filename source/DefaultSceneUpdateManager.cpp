@@ -4,7 +4,7 @@
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Scripting.hpp>
 
-namespace GTEngine
+namespace GT
 {
     DefaultSceneUpdateManager::DefaultSceneUpdateManager()
         : sceneNodes()

@@ -3,7 +3,7 @@
 #include <GTEngine/Rendering/Framebuffer.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 
-namespace GTEngine
+namespace GT
 {
     Framebuffer::Framebuffer()
         : colourAttachments(), depthStencilAttachment(nullptr),

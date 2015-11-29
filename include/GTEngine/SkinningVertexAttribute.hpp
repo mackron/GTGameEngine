@@ -6,7 +6,7 @@
 #include <GTEngine/Bone.hpp>
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Structure representing a bone/weight pair that should be applied to a vertex.
     struct BoneWeightPair
@@ -50,7 +50,7 @@ namespace GTEngine
             this->bones.OptimizeBuffer();                               // <-- we do this to ensure we keep the buffer tightly bound to the data. Avoids wastage since there will be a lot of instantiations here (one for each vertex).
         }
 
-        GTLib::Vector<BoneWeightPair> bones;
+        Vector<BoneWeightPair> bones;
     };
 }
 

@@ -8,7 +8,7 @@
 #include "Physics/DynamicsWorld.hpp"
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// The default update manager for scenes.
     ///
@@ -53,7 +53,7 @@ namespace GTEngine
     protected:
 
         /// The list of every scene node that should be updated.
-        GTLib::Vector<SceneNode*> sceneNodes;
+        Vector<SceneNode*> sceneNodes;
     };
 }
 

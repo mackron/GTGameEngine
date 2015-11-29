@@ -18,19 +18,19 @@ namespace GT
             script.Push("Components");
             script.PushNewTable();
             {
-                script.SetTableValue(-1, "Camera",            GTEngine::CameraComponent::Name);
-                script.SetTableValue(-1, "Model",             GTEngine::ModelComponent::Name);
-                script.SetTableValue(-1, "Camera",            GTEngine::CameraComponent::Name);
-                script.SetTableValue(-1, "PointLight",        GTEngine::PointLightComponent::Name);
-                script.SetTableValue(-1, "SpotLight",         GTEngine::SpotLightComponent::Name);
-                script.SetTableValue(-1, "DirectionalLight",  GTEngine::DirectionalLightComponent::Name);
-                script.SetTableValue(-1, "AmbientLight",      GTEngine::AmbientLightComponent::Name);
-                script.SetTableValue(-1, "Dynamics",          GTEngine::DynamicsComponent::Name);
-                script.SetTableValue(-1, "Proximity",         GTEngine::ProximityComponent::Name);
-                script.SetTableValue(-1, "Script",            GTEngine::ScriptComponent::Name);
-                script.SetTableValue(-1, "ParticleSystem",    GTEngine::ParticleSystemComponent::Name);
-                script.SetTableValue(-1, "Prefab",            GTEngine::PrefabComponent::Name);
-                script.SetTableValue(-1, "EditorMetadata",    GTEngine::EditorMetadataComponent::Name);
+                script.SetTableValue(-1, "Camera",            CameraComponent::Name);
+                script.SetTableValue(-1, "Model",             ModelComponent::Name);
+                script.SetTableValue(-1, "Camera",            CameraComponent::Name);
+                script.SetTableValue(-1, "PointLight",        PointLightComponent::Name);
+                script.SetTableValue(-1, "SpotLight",         SpotLightComponent::Name);
+                script.SetTableValue(-1, "DirectionalLight",  DirectionalLightComponent::Name);
+                script.SetTableValue(-1, "AmbientLight",      AmbientLightComponent::Name);
+                script.SetTableValue(-1, "Dynamics",          DynamicsComponent::Name);
+                script.SetTableValue(-1, "Proximity",         ProximityComponent::Name);
+                script.SetTableValue(-1, "Script",            ScriptComponent::Name);
+                script.SetTableValue(-1, "ParticleSystem",    ParticleSystemComponent::Name);
+                script.SetTableValue(-1, "Prefab",            PrefabComponent::Name);
+                script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
             }
             script.SetTableValue(-3);
         }
@@ -1296,7 +1296,7 @@ namespace GT
     {
         int Set3DProjection(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CameraComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto fov    = script.ToFloat(2);
@@ -1311,7 +1311,7 @@ namespace GT
 
         int GetFOV(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CameraComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->perspective.fov);
@@ -1326,7 +1326,7 @@ namespace GT
 
         int GetAspectRatio(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CameraComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->perspective.aspect);
@@ -1341,7 +1341,7 @@ namespace GT
 
         int GetNearClippingPlane(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CameraComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->zNear);
@@ -1356,7 +1356,7 @@ namespace GT
 
         int GetFarClippingPlane(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CameraComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->zFar);
@@ -1377,7 +1377,7 @@ namespace GT
     {
         int SetModel(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             auto filePath  = script.ToString(2);
 
             if (component != nullptr && filePath != nullptr)
@@ -1390,7 +1390,7 @@ namespace GT
 
         int GetModelPath(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1409,7 +1409,7 @@ namespace GT
 
         int EnableShadowCasting(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->EnableShadowCasting();
@@ -1420,7 +1420,7 @@ namespace GT
 
         int DisableShadowCasting(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->DisableShadowCasting();
@@ -1431,7 +1431,7 @@ namespace GT
 
         int IsShadowCastingEnabled(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsShadowCastingEnabled());
@@ -1447,7 +1447,7 @@ namespace GT
 
         int SetMaterial(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto index        = script.ToInteger(2) - 1;        // Minus 1 because Lua is 1 based.
@@ -1465,7 +1465,7 @@ namespace GT
 
         int GetMaterialPath(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1490,7 +1490,7 @@ namespace GT
 
         int GetMaterialCount(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1513,7 +1513,7 @@ namespace GT
 
         int SetMaterialParameter(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1538,7 +1538,7 @@ namespace GT
                                 else if (script.IsString(4))
                                 {
                                     // It's a string. Assume a path to a texture.
-                                    material->SetParameter(name, GTEngine::Texture2DLibrary::Acquire(script.ToString(4)));
+                                    material->SetParameter(name, Texture2DLibrary::Acquire(script.ToString(4)));
                                 }
                                 else
                                 {
@@ -1568,13 +1568,13 @@ namespace GT
 
         int PlayAnimationSegmentByName(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
                 if (model != nullptr)
                 {
-                    GTEngine::AnimationSequence sequence;
+                    AnimationSequence sequence;
                     sequence.AddFrame(script.ToString(2), 0.0, script.ToBoolean(3));
 
                     model->PlayAnimation(sequence);
@@ -1586,7 +1586,7 @@ namespace GT
 
         int PlayAnimationSequence(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1601,7 +1601,7 @@ namespace GT
 
         int PauseAnimation(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1616,7 +1616,7 @@ namespace GT
 
         int StopAnimation(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1632,7 +1632,7 @@ namespace GT
 
         int GetBoneIndexByName(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1664,7 +1664,7 @@ namespace GT
 
         int GetBoneTransformByName(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1712,7 +1712,7 @@ namespace GT
 
         int GetBoneTransformByIndex(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1761,7 +1761,7 @@ namespace GT
 
         int SetBoneTransformByName(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1791,7 +1791,7 @@ namespace GT
 
         int SetBoneTransformByIndex(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ModelComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto model = component->GetModel();
@@ -1827,7 +1827,7 @@ namespace GT
     {
         int SetColour(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::PointLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 colour;
@@ -1851,7 +1851,7 @@ namespace GT
 
         int GetColour(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::PointLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 PushNewVector3(script, component->GetColour());
@@ -1867,7 +1867,7 @@ namespace GT
 
         int GetRadius(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::PointLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetRadius());
@@ -1882,7 +1882,7 @@ namespace GT
 
         int SetRadius(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::PointLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetRadius(script.ToFloat(2));
@@ -1894,7 +1894,7 @@ namespace GT
 
         int GetFalloff(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::PointLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetFalloff());
@@ -1909,7 +1909,7 @@ namespace GT
 
         int SetFalloff(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::PointLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetFalloff(script.ToFloat(2));
@@ -1922,7 +1922,7 @@ namespace GT
 
         int EnableShadowCasting(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::PointLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->EnableShadowCasting();
@@ -1933,7 +1933,7 @@ namespace GT
 
         int DisableShadowCasting(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::PointLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->DisableShadowCasting();
@@ -1944,7 +1944,7 @@ namespace GT
 
         int IsShadowCastingEnabled(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::PointLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsShadowCastingEnabled());
@@ -1965,7 +1965,7 @@ namespace GT
     {
         int SetColour(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 colour;
@@ -1989,7 +1989,7 @@ namespace GT
 
         int GetColour(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 PushNewVector3(script, component->GetColour());
@@ -2005,7 +2005,7 @@ namespace GT
 
         int GetLength(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetLength());
@@ -2020,7 +2020,7 @@ namespace GT
 
         int SetLength(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetLength(script.ToFloat(2));
@@ -2032,7 +2032,7 @@ namespace GT
 
         int GetFalloff(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetFalloff());
@@ -2047,7 +2047,7 @@ namespace GT
 
         int SetFalloff(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetFalloff(script.ToFloat(2));
@@ -2059,7 +2059,7 @@ namespace GT
 
         int EnableShadowCasting(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->EnableShadowCasting();
@@ -2070,7 +2070,7 @@ namespace GT
 
         int DisableShadowCasting(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->DisableShadowCasting();
@@ -2081,7 +2081,7 @@ namespace GT
 
         int IsShadowCastingEnabled(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsShadowCastingEnabled());
@@ -2097,7 +2097,7 @@ namespace GT
 
         int SetAngles(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 float inner = script.ToFloat(2);
@@ -2110,7 +2110,7 @@ namespace GT
 
         int GetAngles(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::SpotLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetInnerAngle());
@@ -2133,7 +2133,7 @@ namespace GT
     {
         int SetColour(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DirectionalLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 colour;
@@ -2157,7 +2157,7 @@ namespace GT
 
         int GetColour(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DirectionalLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 PushNewVector3(script, component->GetColour());
@@ -2172,7 +2172,7 @@ namespace GT
 
         int EnableShadowCasting(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DirectionalLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->EnableShadowCasting();
@@ -2183,7 +2183,7 @@ namespace GT
 
         int DisableShadowCasting(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DirectionalLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->DisableShadowCasting();
@@ -2194,7 +2194,7 @@ namespace GT
 
         int IsShadowCastingEnabled(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DirectionalLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsShadowCastingEnabled());
@@ -2215,7 +2215,7 @@ namespace GT
     {
         int SetColour(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::AmbientLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<AmbientLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 colour;
@@ -2239,7 +2239,7 @@ namespace GT
 
         int GetColour(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::AmbientLightComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<AmbientLightComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 PushNewVector3(script, component->GetColour());
@@ -2260,7 +2260,7 @@ namespace GT
     {
         int SetCollisionFilter(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetCollisionFilter(static_cast<short>(script.ToInteger(2)), static_cast<short>(script.ToInteger(3)));
@@ -2271,7 +2271,7 @@ namespace GT
 
         int GetCollisionGroup(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(static_cast<int>(component->GetCollisionGroup()));
@@ -2286,7 +2286,7 @@ namespace GT
 
         int GetCollisionMask(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(static_cast<int>(component->GetCollisionMask()));
@@ -2303,7 +2303,7 @@ namespace GT
 
         int AddCollisionGroup(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->AddCollisionGroup(script.ToString(2));
@@ -2314,7 +2314,7 @@ namespace GT
 
         int RemoveCollisionGroup(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->RemoveCollisionGroup(script.ToString(2));
@@ -2325,7 +2325,7 @@ namespace GT
 
         int RemoveCollisionGroupByIndex(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->RemoveCollisionGroupByIndex(static_cast<size_t>(script.ToInteger(2) - 1));
@@ -2336,7 +2336,7 @@ namespace GT
 
         int GetCollisionGroupCount(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(static_cast<int>(component->GetCollisionGroupCount()));
@@ -2351,7 +2351,7 @@ namespace GT
 
         int GetCollisionGroupName(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetCollisionGroup(static_cast<size_t>(script.ToInteger(2) - 1)));
@@ -2367,7 +2367,7 @@ namespace GT
 
         int AddCollisionGroupMask(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->AddCollisionGroupMask(script.ToString(2));
@@ -2378,7 +2378,7 @@ namespace GT
 
         int RemoveCollisionGroupMask(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->RemoveCollisionGroupMask(script.ToString(2));
@@ -2389,7 +2389,7 @@ namespace GT
 
         int RemoveCollisionGroupMaskByIndex(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->RemoveCollisionGroupMaskByIndex(static_cast<size_t>(script.ToInteger(2) - 1));
@@ -2400,7 +2400,7 @@ namespace GT
 
         int GetCollisionGroupMaskCount(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(static_cast<int>(component->GetCollisionGroupMaskCount()));
@@ -2415,7 +2415,7 @@ namespace GT
 
         int GetCollisionGroupMaskName(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetCollisionGroupMask(static_cast<size_t>(script.ToInteger(2) - 1)));
@@ -2431,7 +2431,7 @@ namespace GT
 
         int AddBoxShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 extents;
@@ -2478,7 +2478,7 @@ namespace GT
 
         int AddSphereShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 float     radius = script.ToFloat(2);
@@ -2503,7 +2503,7 @@ namespace GT
 
         int AddEllipsoidShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 extents;
@@ -2550,7 +2550,7 @@ namespace GT
 
         int AddCylinderXShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 float radius = script.ToFloat(2);
@@ -2576,7 +2576,7 @@ namespace GT
 
         int AddCylinderYShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 float radius = script.ToFloat(2);
@@ -2602,7 +2602,7 @@ namespace GT
 
         int AddCylinderZShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 float radius = script.ToFloat(2);
@@ -2628,7 +2628,7 @@ namespace GT
 
         int AddCapsuleXShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 float radius = script.ToFloat(2);
@@ -2654,7 +2654,7 @@ namespace GT
 
         int AddCapsuleYShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 float radius = script.ToFloat(2);
@@ -2680,7 +2680,7 @@ namespace GT
 
         int AddCapsuleZShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 float radius = script.ToFloat(2);
@@ -2706,7 +2706,7 @@ namespace GT
 
         int AddModelConvexHullsCollisionShape(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 float margin = script.ToFloat(2);
@@ -2732,7 +2732,7 @@ namespace GT
 
         int RemoveAllShapes(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->RemoveAllCollisionShapes();
@@ -2743,7 +2743,7 @@ namespace GT
 
         int RemoveShapeAtIndex(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->RemoveCollisionShapeAtIndex(static_cast<size_t>(script.ToInteger(2) - 1));    // Minus 1 because Lua is 1 based.
@@ -2754,7 +2754,7 @@ namespace GT
 
         int GetShapeCount(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(static_cast<int>(component->GetCollisionShapeCount()));
@@ -2765,7 +2765,7 @@ namespace GT
 
         int GetShapeAtIndex(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);   // Lua is 1 based, so we subtract 1.
@@ -2773,7 +2773,7 @@ namespace GT
 
                 script.PushNewTable();
                 {
-                    GTEngine::CollisionShapeType type = GTEngine::GetCollisionShapeType(shape);
+                    CollisionShapeType type = GetCollisionShapeType(shape);
 
                     // Start with the type.
                     script.SetTableValue(-1, "type", type);
@@ -2788,7 +2788,7 @@ namespace GT
                     // We now need to do shape-specific properties.
                     switch (type)
                     {
-                    case GTEngine::CollisionShapeType_Box:
+                    case CollisionShapeType_Box:
                         {
                             auto &box = static_cast<const btBoxShape &>(shape);
 
@@ -2801,7 +2801,7 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::CollisionShapeType_Sphere:
+                    case CollisionShapeType_Sphere:
                         {
                             auto &sphere = static_cast<const btSphereShape &>(shape);
 
@@ -2810,7 +2810,7 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::CollisionShapeType_Ellipsoid:
+                    case CollisionShapeType_Ellipsoid:
                         {
                             auto &ellipsoid = static_cast<const btEllipsoidShape &>(shape);
 
@@ -2824,25 +2824,25 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::CollisionShapeType_CylinderX:
-                    case GTEngine::CollisionShapeType_CylinderY:
-                    case GTEngine::CollisionShapeType_CylinderZ:
+                    case CollisionShapeType_CylinderX:
+                    case CollisionShapeType_CylinderY:
+                    case CollisionShapeType_CylinderZ:
                         {
                             auto &cylinder = static_cast<const btCylinderShape &>(shape);
 
                             btVector3 halfExtents = cylinder.getHalfExtentsWithMargin() / cylinder.getLocalScaling();
 
-                            if (type == GTEngine::CollisionShapeType_CylinderX)
+                            if (type == CollisionShapeType_CylinderX)
                             {
                                 script.SetTableValue(-1, "length", halfExtents.getX() * 2.0f);
                                 script.SetTableValue(-1, "radius", halfExtents.getY());
                             }
-                            else if (type == GTEngine::CollisionShapeType_CylinderY)
+                            else if (type == CollisionShapeType_CylinderY)
                             {
                                 script.SetTableValue(-1, "length", halfExtents.getY() * 2.0f);
                                 script.SetTableValue(-1, "radius", halfExtents.getZ());
                             }
-                            else if (type == GTEngine::CollisionShapeType_CylinderZ)
+                            else if (type == CollisionShapeType_CylinderZ)
                             {
                                 script.SetTableValue(-1, "length", halfExtents.getZ() * 2.0f);
                                 script.SetTableValue(-1, "radius", halfExtents.getX());
@@ -2851,9 +2851,9 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::CollisionShapeType_CapsuleX:
-                    case GTEngine::CollisionShapeType_CapsuleY:
-                    case GTEngine::CollisionShapeType_CapsuleZ:
+                    case CollisionShapeType_CapsuleX:
+                    case CollisionShapeType_CapsuleY:
+                    case CollisionShapeType_CapsuleZ:
                         {
                             auto &capsule = static_cast<const btCapsuleShape &>(shape);
 
@@ -2866,12 +2866,12 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::CollisionShapeType_ConvexHull:
+                    case CollisionShapeType_ConvexHull:
                         {
                             break;
                         }
 
-                    case GTEngine::CollisionShapeType_ModelConvexHulls:
+                    case CollisionShapeType_ModelConvexHulls:
                         {
                             auto &compound = static_cast<const btCompoundShape &>(shape);
 
@@ -2880,7 +2880,7 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::CollisionShapeType_None:
+                    case CollisionShapeType_None:
                     default: break;
                     }
                 }
@@ -2894,7 +2894,7 @@ namespace GT
 
         int SetShapeOffset(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t shapeIndex = static_cast<size_t>(script.ToInteger(2)) - 1;        // Minus 1 because Lua is 1 based.
@@ -2920,7 +2920,7 @@ namespace GT
 
         int SetBoxShapeHalfExtents(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
@@ -2949,7 +2949,7 @@ namespace GT
 
         int SetSphereShapeRadius(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
@@ -2967,7 +2967,7 @@ namespace GT
 
         int SetEllipsoidShapeRadius(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
@@ -2996,7 +2996,7 @@ namespace GT
 
         int SetCylinderShapeSize(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
@@ -3015,7 +3015,7 @@ namespace GT
 
         int SetCapsuleShapeSize(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
@@ -3034,7 +3034,7 @@ namespace GT
 
         int SetModelConvexHullsMargins(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::CollisionShapeComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
@@ -3058,7 +3058,7 @@ namespace GT
     {
         int SetMass(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetMass(script.ToFloat(2));
@@ -3069,7 +3069,7 @@ namespace GT
 
         int GetMass(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetMass());
@@ -3084,7 +3084,7 @@ namespace GT
 
         int IsStatic(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsStatic());
@@ -3099,7 +3099,7 @@ namespace GT
 
         int IsKinematic(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 if (script.IsNil(2))
@@ -3119,7 +3119,7 @@ namespace GT
 
         int SetFriction(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetFriction(script.ToFloat(2));
@@ -3130,7 +3130,7 @@ namespace GT
 
         int GetFriction(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetFriction());
@@ -3145,7 +3145,7 @@ namespace GT
 
         int SetRestitution(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetRestitution(script.ToFloat(2));
@@ -3156,7 +3156,7 @@ namespace GT
 
         int GetRestitution(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetRestitution());
@@ -3171,7 +3171,7 @@ namespace GT
 
         int SetDamping(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetDamping(script.ToFloat(2), script.ToFloat(3));
@@ -3182,7 +3182,7 @@ namespace GT
 
         int GetLinearDamping(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetLinearDamping());
@@ -3197,7 +3197,7 @@ namespace GT
 
         int GetAngularDamping(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetAngularDamping());
@@ -3214,7 +3214,7 @@ namespace GT
 
         int SetLinearVelocity(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 value;
@@ -3238,7 +3238,7 @@ namespace GT
 
         int GetLinearVelocity(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 PushNewVector3(script, component->GetLinearVelocity());
@@ -3253,7 +3253,7 @@ namespace GT
 
         int SetAngularVelocity(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 value;
@@ -3277,7 +3277,7 @@ namespace GT
 
         int GetAngularVelocity(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 PushNewVector3(script, component->GetAngularVelocity());
@@ -3293,7 +3293,7 @@ namespace GT
 
         int SetLinearFactor(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 value;
@@ -3317,7 +3317,7 @@ namespace GT
 
         int SetAngularFactor(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 value;
@@ -3342,7 +3342,7 @@ namespace GT
 
         int SetGravity(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 value;
@@ -3366,7 +3366,7 @@ namespace GT
 
         int GetGravity(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 PushNewVector3(script, component->GetGravity());
@@ -3381,7 +3381,7 @@ namespace GT
 
         int ApplyGravity(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->ApplyGravity();
@@ -3393,7 +3393,7 @@ namespace GT
 
         int ApplyCentralForce(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 value;
@@ -3417,7 +3417,7 @@ namespace GT
 
         int ApplyTorque(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 value;
@@ -3441,7 +3441,7 @@ namespace GT
 
         int ApplyImpulse(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 impulse = ToVector3(script, 2);
@@ -3455,7 +3455,7 @@ namespace GT
 
         int ApplyCentralImpulse(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 value;
@@ -3479,7 +3479,7 @@ namespace GT
 
         int ApplyTorqueImpulse(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 glm::vec3 value;
@@ -3504,7 +3504,7 @@ namespace GT
 
         int DisableDeactivation(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->DisableDeactivation();
@@ -3515,7 +3515,7 @@ namespace GT
 
         int EnableDeactivation(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->EnableDeactivation();
@@ -3526,7 +3526,7 @@ namespace GT
 
         int IsDeactivationEnabled(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsDeactivationEnabled());
@@ -3541,7 +3541,7 @@ namespace GT
 
         int Activate(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->Activate();
@@ -3553,7 +3553,7 @@ namespace GT
 
         int EnableNavigationMeshGeneration(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->EnableNavigationMeshGeneration();
@@ -3564,7 +3564,7 @@ namespace GT
 
         int DisableNavigationMeshGeneration(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->DisableNavigationMeshGeneration();
@@ -3575,7 +3575,7 @@ namespace GT
 
         int IsNavigationMeshGenerationEnabled(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::DynamicsComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsNavigationMeshGenerationEnabled());
@@ -3953,7 +3953,7 @@ namespace GT
 
         int IsAnythingInside(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ProximityComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ProximityComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetSceneNodesInsideVolume().count > 0);
@@ -3974,7 +3974,7 @@ namespace GT
     {
         int AddScript(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->AddScript(script.ToString(2)) != nullptr);
@@ -3989,7 +3989,7 @@ namespace GT
 
         int RemoveScriptByRelativePath(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->RemoveScript(script.ToString(2));
@@ -4000,7 +4000,7 @@ namespace GT
 
         int RemoveScriptByIndex(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->RemoveScriptByIndex(static_cast<size_t>(script.ToInteger(2) - 1));                   // <-- Subract 1 because Lua is 1 based.
@@ -4011,7 +4011,7 @@ namespace GT
 
         int ReloadScript(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->ReloadScript(static_cast<size_t>(script.ToInteger(2) - 1));                          // <-- Subtract 1 because Lua is 1 based.
@@ -4025,7 +4025,7 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t fileCount = component->GetScriptCount();
@@ -4042,7 +4042,7 @@ namespace GT
 
         int IsUsingScript(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetScriptDefinitionByRelativePath(script.ToString(2)) != nullptr);
@@ -4056,7 +4056,7 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto definition = component->GetScriptDefinitionByIndex(static_cast<size_t>(script.ToInteger(2) - 1));  // <-- minus 1 because Lua is 1-based.
@@ -4086,7 +4086,7 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto definition = component->GetScriptDefinitionByRelativePath(script.ToString(2));
@@ -4118,7 +4118,7 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 size_t variableCount = component->GetPublicVariableCount();
@@ -4129,15 +4129,15 @@ namespace GT
                     {
                         switch (variable->GetType())
                         {
-                        case GTEngine::ScriptVariableType_Number:
+                        case ScriptVariableType_Number:
                             {
-                                script.SetTableValue(-1, variable->GetName(), static_cast<GTEngine::ScriptVariable_Number*>(variable)->GetValue());
+                                script.SetTableValue(-1, variable->GetName(), static_cast<ScriptVariable_Number*>(variable)->GetValue());
                                 break;
                             }
 
-                        case GTEngine::ScriptVariableType_Vec2:
+                        case ScriptVariableType_Vec2:
                             {
-                                auto variableVec2 = static_cast<GTEngine::ScriptVariable_Vec2*>(variable);
+                                auto variableVec2 = static_cast<ScriptVariable_Vec2*>(variable);
 
                                 script.Push(variable->GetName());
                                 PushNewVector2(script, static_cast<float>(variableVec2->GetX()), static_cast<float>(variableVec2->GetY()));
@@ -4147,9 +4147,9 @@ namespace GT
                                 break;
                             }
 
-                        case GTEngine::ScriptVariableType_Vec3:
+                        case ScriptVariableType_Vec3:
                             {
-                                auto variableVec3 = static_cast<GTEngine::ScriptVariable_Vec3*>(variable);
+                                auto variableVec3 = static_cast<ScriptVariable_Vec3*>(variable);
 
                                 script.Push(variable->GetName());
                                 PushNewVector3(script, static_cast<float>(variableVec3->GetX()), static_cast<float>(variableVec3->GetY()), static_cast<float>(variableVec3->GetZ()));
@@ -4159,9 +4159,9 @@ namespace GT
                                 break;
                             }
 
-                        case GTEngine::ScriptVariableType_Vec4:
+                        case ScriptVariableType_Vec4:
                             {
-                                auto variableVec4 = static_cast<GTEngine::ScriptVariable_Vec4*>(variable);
+                                auto variableVec4 = static_cast<ScriptVariable_Vec4*>(variable);
 
                                 script.Push(variable->GetName());
                                 PushNewVector4(script, static_cast<float>(variableVec4->GetX()), static_cast<float>(variableVec4->GetY()), static_cast<float>(variableVec4->GetZ()), static_cast<float>(variableVec4->GetW()));
@@ -4171,25 +4171,25 @@ namespace GT
                                 break;
                             }
 
-                        case GTEngine::ScriptVariableType_Boolean:
+                        case ScriptVariableType_Boolean:
                             {
-                                script.SetTableValue(-1, variable->GetName(), static_cast<GTEngine::ScriptVariable_Boolean*>(variable)->GetValue());
+                                script.SetTableValue(-1, variable->GetName(), static_cast<ScriptVariable_Boolean*>(variable)->GetValue());
                                 break;
                             }
 
-                        case GTEngine::ScriptVariableType_String:
+                        case ScriptVariableType_String:
                             {
-                                script.SetTableValue(-1, variable->GetName(), static_cast<GTEngine::ScriptVariable_String*>(variable)->GetValue());
+                                script.SetTableValue(-1, variable->GetName(), static_cast<ScriptVariable_String*>(variable)->GetValue());
                                 break;
                             }
 
-                        case GTEngine::ScriptVariableType_Prefab:
+                        case ScriptVariableType_Prefab:
                             {
-                                script.SetTableValue(-1, variable->GetName(), static_cast<GTEngine::ScriptVariable_Prefab*>(variable)->GetValue());
+                                script.SetTableValue(-1, variable->GetName(), static_cast<ScriptVariable_Prefab*>(variable)->GetValue());
                                 break;
                             }
 
-                        case GTEngine::ScriptVariableType_Unknown:
+                        case ScriptVariableType_Unknown:
                         default: break;
                         }
                     }
@@ -4201,7 +4201,7 @@ namespace GT
 
         int GetPublicVariableValue(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto variable = component->GetPublicVariableByName(script.ToString(2));
@@ -4209,15 +4209,15 @@ namespace GT
                 {
                     switch (variable->GetType())
                     {
-                    case GTEngine::ScriptVariableType_Number:
+                    case ScriptVariableType_Number:
                         {
-                            script.Push(static_cast<GTEngine::ScriptVariable_Number*>(variable)->GetValue());
+                            script.Push(static_cast<ScriptVariable_Number*>(variable)->GetValue());
                             break;
                         }
 
-                    case GTEngine::ScriptVariableType_Vec2:
+                    case ScriptVariableType_Vec2:
                         {
-                            auto variableVec2 = static_cast<GTEngine::ScriptVariable_Vec2*>(variable);
+                            auto variableVec2 = static_cast<ScriptVariable_Vec2*>(variable);
                                         
                             script.PushNewTable();
                             script.SetTableValue(-1, "x", variableVec2->GetX());
@@ -4226,9 +4226,9 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::ScriptVariableType_Vec3:
+                    case ScriptVariableType_Vec3:
                         {
-                            auto variableVec3 = static_cast<GTEngine::ScriptVariable_Vec3*>(variable);
+                            auto variableVec3 = static_cast<ScriptVariable_Vec3*>(variable);
                                         
                             script.PushNewTable();
                             script.SetTableValue(-1, "x", variableVec3->GetX());
@@ -4238,9 +4238,9 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::ScriptVariableType_Vec4:
+                    case ScriptVariableType_Vec4:
                         {
-                            auto variableVec4 = static_cast<GTEngine::ScriptVariable_Vec4*>(variable);
+                            auto variableVec4 = static_cast<ScriptVariable_Vec4*>(variable);
                                         
                             script.PushNewTable();
                             script.SetTableValue(-1, "x", variableVec4->GetX());
@@ -4251,26 +4251,26 @@ namespace GT
                             break;
                         }
 
-                    case GTEngine::ScriptVariableType_Boolean:
+                    case ScriptVariableType_Boolean:
                         {
-                            script.Push(static_cast<GTEngine::ScriptVariable_Boolean*>(variable)->GetValue());
+                            script.Push(static_cast<ScriptVariable_Boolean*>(variable)->GetValue());
                             break;
                         }
 
-                    case GTEngine::ScriptVariableType_String:
+                    case ScriptVariableType_String:
                         {
-                            script.Push(static_cast<GTEngine::ScriptVariable_String*>(variable)->GetValue());
+                            script.Push(static_cast<ScriptVariable_String*>(variable)->GetValue());
                             break;
                         }
 
-                    case GTEngine::ScriptVariableType_Prefab:
+                    case ScriptVariableType_Prefab:
                         {
-                            script.Push(static_cast<GTEngine::ScriptVariable_Prefab*>(variable)->GetValue());
+                            script.Push(static_cast<ScriptVariable_Prefab*>(variable)->GetValue());
                             break;
                         }
 
 
-                    case GTEngine::ScriptVariableType_Unknown:
+                    case ScriptVariableType_Unknown:
                     default:
                         {
                             script.PushNil();
@@ -4294,7 +4294,7 @@ namespace GT
 
         int SetPublicVariableValue(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ScriptComponent*>(script.ToPointer(1));
+            auto component = static_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 if (script.IsNumber(3))
@@ -4304,7 +4304,7 @@ namespace GT
                 else if (script.IsTable(3))
                 {
                     // Value could be a vector type. We'll need to look at the contents of the table to determine the type.
-                    GTLib::Map<int, double> values;
+                    Map<int, double> values;
 
                     int i = 0;
                     script.PushNil();
@@ -4324,19 +4324,19 @@ namespace GT
                             else if (script.IsString(-2))
                             {
                                 auto key = script.ToString(-2);
-                                if (GTLib::Strings::Equal<false>(key, "x"))
+                                if (Strings::Equal<false>(key, "x"))
                                 {
                                     mapIndex = 0;
                                 }
-                                else if (GTLib::Strings::Equal<false>(key, "y"))
+                                else if (Strings::Equal<false>(key, "y"))
                                 {
                                     mapIndex = 1;
                                 }
-                                else if (GTLib::Strings::Equal<false>(key, "z"))
+                                else if (Strings::Equal<false>(key, "z"))
                                 {
                                     mapIndex = 2;
                                 }
-                                else if (GTLib::Strings::Equal<false>(key, "w"))
+                                else if (Strings::Equal<false>(key, "w"))
                                 {
                                     mapIndex = 3;
                                 }
@@ -4389,7 +4389,7 @@ namespace GT
     {
         int SetFromFile(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ParticleSystemComponent*>(script.ToPointer(1));
+            auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->SetParticleSystem(script.ToString(2));
@@ -4400,7 +4400,7 @@ namespace GT
 
         int GetRelativeFilePath(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ParticleSystemComponent*>(script.ToPointer(1));
+            auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 auto particleSystem = component->GetParticleSystem();
@@ -4424,7 +4424,7 @@ namespace GT
 
         int Play(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ParticleSystemComponent*>(script.ToPointer(1));
+            auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->Play();
@@ -4435,7 +4435,7 @@ namespace GT
 
         int Pause(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ParticleSystemComponent*>(script.ToPointer(1));
+            auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->Pause();
@@ -4446,7 +4446,7 @@ namespace GT
 
         int IsPlaying(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ParticleSystemComponent*>(script.ToPointer(1));
+            auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsPlaying());
@@ -4462,7 +4462,7 @@ namespace GT
 
         int PlayOnStartup(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ParticleSystemComponent*>(script.ToPointer(1));
+            auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->PlayOnStartup(script.ToBoolean(2));
@@ -4473,7 +4473,7 @@ namespace GT
 
         int IsPlayingOnStartup(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ParticleSystemComponent*>(script.ToPointer(1));
+            auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsPlayingOnStartup());
@@ -4489,7 +4489,7 @@ namespace GT
 
         int Reset(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ParticleSystemComponent*>(script.ToPointer(1));
+            auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->Reset();
@@ -4501,7 +4501,7 @@ namespace GT
 
         int GetEmitterLifetime(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::ParticleSystemComponent*>(script.ToPointer(1));
+            auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 double lifetimeMin;
@@ -4529,7 +4529,7 @@ namespace GT
     {
         int GetPrefabRelativePath(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::PrefabComponent*>(script.ToPointer(1));
+            auto component = static_cast<PrefabComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetPrefabRelativePath());
@@ -4544,7 +4544,7 @@ namespace GT
 
         int GetLocalHierarchyID(GT::Script &script)
         {
-            auto component = static_cast<GTEngine::PrefabComponent*>(script.ToPointer(1));
+            auto component = static_cast<PrefabComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(static_cast<int>(component->GetLocalHierarchyID()));
@@ -4566,7 +4566,7 @@ namespace GT
     {
         int Select(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->Select();
@@ -4577,7 +4577,7 @@ namespace GT
 
         int Deselect(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->Deselect();
@@ -4588,7 +4588,7 @@ namespace GT
 
         int IsSelected(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsSelected());
@@ -4600,7 +4600,7 @@ namespace GT
 
         int ShowSprite(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 if (script.IsString(2))
@@ -4639,7 +4639,7 @@ namespace GT
 
         int HideSprite(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->HideSprite();
@@ -4650,7 +4650,7 @@ namespace GT
 
         int IsShowingSprite(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsUsingSprite());
@@ -4665,7 +4665,7 @@ namespace GT
 
         int GetSpriteTexturePath(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->GetSpriteTexturePath());
@@ -4681,7 +4681,7 @@ namespace GT
 
         int ShowDirectionArrow(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->ShowDirectionArrow();
@@ -4692,7 +4692,7 @@ namespace GT
 
         int HideDirectionArrow(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 component->HideDirectionArrow();
@@ -4703,7 +4703,7 @@ namespace GT
 
         int IsShowingDirectionArrow(GT::Script &script)
         {
-            auto component = reinterpret_cast<GTEngine::EditorMetadataComponent*>(script.ToPointer(1));
+            auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
                 script.Push(component->IsShowingDirectionArrow());

@@ -2,7 +2,7 @@
 
 #include <GTEngine/Animation/AnimationSequence.hpp>
 
-namespace GTEngine
+namespace GT
 {
     AnimationSequence::AnimationSequence()
         : name(), frames()

@@ -5,7 +5,7 @@
 
 #include "../SubEditor.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a text editor.
     class TextEditor : public SubEditor
@@ -125,7 +125,7 @@ namespace GTEngine
             }
 
             /// ScriptErrorHandler::OnRuntimeError()
-            void OnRuntimeError(GT::Script &script, const char* sourceName, int lineNumber, const char* message, const GTLib::Vector<GT::ScriptCallstackItem> &callstack)
+            void OnRuntimeError(GT::Script &script, const char* sourceName, int lineNumber, const char* message, const Vector<GT::ScriptCallstackItem> &callstack)
             {
                 (void)sourceName;
                 (void)callstack;

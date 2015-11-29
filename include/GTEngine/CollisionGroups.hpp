@@ -3,7 +3,7 @@
 #ifndef __GTEngine_CollisionGroups_hpp_
 #define __GTEngine_CollisionGroups_hpp_
 
-namespace GTEngine
+namespace GT
 {
     /// The various engine level collision groups for collision detection. These should not be used for any gameplay related collision detection.
     namespace CollisionGroups

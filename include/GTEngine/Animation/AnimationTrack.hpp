@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Serialization.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a set of animation key frames that will be used to play a model's animation.
     ///
@@ -67,12 +67,12 @@ namespace GTEngine
         /// Serializes the animation track.
         ///
         /// @param serializer [in] A reference ot the serializer to write to.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the animation track.
         ///
         /// @param deserializer [in] A reference to the deserializer for reading the data from.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 
@@ -96,7 +96,7 @@ namespace GTEngine
         };
 
         /// The list of local key frames, sorted by time.
-        GTLib::Vector<LocalKeyFrame> localKeyFrames;
+        Vector<LocalKeyFrame> localKeyFrames;
 
 
 

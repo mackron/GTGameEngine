@@ -3,7 +3,7 @@
 #include "RCClear_OpenGL21.hpp"
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     RCClear::RCClear()
         : bufferMask(0)

@@ -10,7 +10,7 @@ namespace GT
     /// The ray test callback structure for performing a ray test from the scripting environment.
     ///
     /// This structure is not intended to be used externally.
-    struct ScriptRayTestCallback : public GTEngine::RayTestCallback
+    struct ScriptRayTestCallback : public RayTestCallback
     {
     public:
             
@@ -62,7 +62,7 @@ namespace GT
             
             
         /// RayTestCallback::NeedsCollision()
-        bool NeedsCollision(short collisionGroupIn, short collisionMaskIn, GTEngine::SceneNode &otherSceneNode)
+        bool NeedsCollision(short collisionGroupIn, short collisionMaskIn, SceneNode &otherSceneNode)
         {
             bool result = RayTestCallback::NeedsCollision(collisionGroupIn, collisionMaskIn, otherSceneNode);
             if (result)
@@ -98,7 +98,7 @@ namespace GT
         }
             
         /// RayTestCallback::ProcessResult()
-        void ProcessResult(GTEngine::SceneNode &sceneNode, const glm::vec3 &worldPosition, const glm::vec3 &worldNormal)
+        void ProcessResult(SceneNode &sceneNode, const glm::vec3 &worldPosition, const glm::vec3 &worldNormal)
         {
             assert(m_script.IsTable(-1));
             {
@@ -536,7 +536,7 @@ namespace GT
     }
 
 
-    bool RegisterScene(GT::Script &script, GTEngine::Scene &scene)
+    bool RegisterScene(GT::Script &script, Scene &scene)
     {
         // We map Lua Scene objects to the C++ pointer counterparts. We store this in GTEngine.RegisteredScenes.
 
@@ -585,7 +585,7 @@ namespace GT
         return true;
     }
 
-    void UnregisterScene(GT::Script &script, GTEngine::Scene &scene)
+    void UnregisterScene(GT::Script &script, Scene &scene)
     {
         // For now we'll just set the value in GTEngine.RegisteredScenes to nil, but this might need improving later on.
 
@@ -610,8 +610,8 @@ namespace GT
     {
         int AddSceneNode(GT::Script &script)
         {
-            auto scene     = reinterpret_cast<GTEngine::Scene*    >(script.ToPointer(1));
-            auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto scene     = reinterpret_cast<Scene*    >(script.ToPointer(1));
+            auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (scene != nullptr && sceneNode != nullptr)
             {
@@ -623,8 +623,8 @@ namespace GT
 
         int RemoveSceneNode(GT::Script &script)
         {
-            auto scene     = reinterpret_cast<GTEngine::Scene*    >(script.ToPointer(1));
-            auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+            auto scene     = reinterpret_cast<Scene*    >(script.ToPointer(1));
+            auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
 
             if (scene != nullptr && sceneNode != nullptr)
             {
@@ -636,12 +636,12 @@ namespace GT
 
         int CreateNewSceneNode(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 if (script.IsString(2))
                 {
-                    auto prefab = GTEngine::PrefabLibrary::Acquire(script.ToString(2));
+                    auto prefab = PrefabLibrary::Acquire(script.ToString(2));
                     if (prefab != nullptr)
                     {
                         auto sceneNode = scene->CreateNewSceneNode(*prefab);
@@ -677,7 +677,7 @@ namespace GT
         {
             script.PushNewTable();
 
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 size_t sceneNodeCount = scene->GetSceneNodeCount();
@@ -697,7 +697,7 @@ namespace GT
 
         int GetSceneNodePtrByID(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 script.Push(scene->GetSceneNodeByID(static_cast<uint64_t>(script.ToInteger(2))));
@@ -712,7 +712,7 @@ namespace GT
 
         int GetSceneNodePtrByName(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 script.Push(scene->GetSceneNodeByName(script.ToString(2)));
@@ -727,7 +727,7 @@ namespace GT
 
         int GetSceneNodeIDByName(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 script.Push(static_cast<int>(scene->GetSceneNodeIDByName(script.ToString(2))));
@@ -743,7 +743,7 @@ namespace GT
 
         int IsPaused(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 script.Push(scene->IsPaused());
@@ -759,10 +759,10 @@ namespace GT
 
         int SetViewportCamera(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
-                auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                 if (sceneNode != nullptr)
                 {
                     int viewportIndex = script.ToInteger(3);
@@ -778,7 +778,7 @@ namespace GT
 
         int ApplyViewportCameraAspectRatio(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 int viewportIndex = script.ToInteger(2);
@@ -789,7 +789,7 @@ namespace GT
                         auto sceneNode = viewport.GetCameraNode();
                         if (sceneNode != nullptr)
                         {
-                            auto cameraComponent = sceneNode->GetComponent<GTEngine::CameraComponent>();
+                            auto cameraComponent = sceneNode->GetComponent<CameraComponent>();
                             if (cameraComponent != nullptr)
                             {
                                 cameraComponent->Set3DProjection(cameraComponent->perspective.fov, static_cast<float>(viewport.GetWidth()) / static_cast<float>(viewport.GetHeight()), cameraComponent->zNear, cameraComponent->zFar);
@@ -805,7 +805,7 @@ namespace GT
 
         int IsScriptEventsBlocked(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 script.Push(scene->IsScriptEventsBlocked());
@@ -821,7 +821,7 @@ namespace GT
 
         int SetWalkableHeight(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 scene->SetWalkableHeight(script.ToFloat(2));
@@ -832,7 +832,7 @@ namespace GT
 
         int SetWalkableRadius(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 scene->SetWalkableRadius(script.ToFloat(2));
@@ -843,7 +843,7 @@ namespace GT
 
         int SetWalkableSlopeAngle(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 scene->SetWalkableSlopeAngle(script.ToFloat(2));
@@ -854,7 +854,7 @@ namespace GT
 
         int SetWalkableClimbHeight(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 scene->SetWalkableClimbHeight(script.ToFloat(2));
@@ -865,7 +865,7 @@ namespace GT
 
         int GetWalkableHeight(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 script.Push(scene->GetWalkableHeight());
@@ -880,7 +880,7 @@ namespace GT
 
         int GetWalkableRadius(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 script.Push(scene->GetWalkableRadius());
@@ -895,7 +895,7 @@ namespace GT
 
         int GetWalkableSlopeAngle(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 script.Push(scene->GetWalkableSlopeAngle());
@@ -910,7 +910,7 @@ namespace GT
 
         int GetWalkableClimbHeight(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 script.Push(scene->GetWalkableClimbHeight());
@@ -925,7 +925,7 @@ namespace GT
 
         int BuildNavigationMesh(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 scene->BuildNavigationMesh(static_cast<size_t>(script.ToInteger(2)));
@@ -938,7 +938,7 @@ namespace GT
 
         int CalculateViewportPickingRay(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 glm::vec3 rayStart;
@@ -956,7 +956,7 @@ namespace GT
 
         int RayTest(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 glm::vec3 rayNear = ToVector3(script, 2);
@@ -981,7 +981,7 @@ namespace GT
                 }
                 else
                 {
-                    GTEngine::ClosestRayExceptMeTestCallback callback;
+                    ClosestRayExceptMeTestCallback callback;
 
                     auto result = scene->RayTest(rayNear, rayFar, callback);
                     if (result != nullptr)
@@ -1006,7 +1006,7 @@ namespace GT
 
         int SetGravity(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 scene->SetGravity(ToVector3(script, 2));
@@ -1017,7 +1017,7 @@ namespace GT
 
         int GetGravity(GT::Script &script)
         {
-            auto scene = reinterpret_cast<GTEngine::Scene*>(script.ToPointer(1));
+            auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
             if (scene != nullptr)
             {
                 PushNewVector3(script, scene->GetGravity());

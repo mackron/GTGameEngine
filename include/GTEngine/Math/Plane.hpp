@@ -16,7 +16,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
-namespace GTEngine
+namespace GT
 {
     namespace Math
     {

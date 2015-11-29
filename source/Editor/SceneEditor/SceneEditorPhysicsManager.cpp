@@ -2,7 +2,7 @@
 
 #include <GTEngine/Editor/SceneEditor/SceneEditorPhysicsManager.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneEditorPhysicsManager::SceneEditorPhysicsManager()
         : DefaultScenePhysicsManager(), isEnabled(false)

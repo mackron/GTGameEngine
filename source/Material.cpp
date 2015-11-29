@@ -24,15 +24,15 @@
 
 using namespace rapidxml;
 
-namespace GTEngine
+namespace GT
 {
     static int AnonShaderIDCount = 0;
 
     /// Generates an ID for anonymous shaders.
-    void GenerateAnonymousShaderID(GTLib::String &dest)
+    void GenerateAnonymousShaderID(String &dest)
     {
         char buffer[64];
-        GTLib::IO::snprintf(buffer, 64, "__AnonShaderID%d", AnonShaderIDCount);
+        IO::snprintf(buffer, 64, "__AnonShaderID%d", AnonShaderIDCount);
 
         dest = buffer;
 
@@ -61,12 +61,12 @@ namespace GTEngine
         // We need to reset the definition.
         this->Reset();
 
-        GTLib::String diffuseShaderID    = "Material_DefaultDiffuse";
-        GTLib::String emissiveShaderID   = "Material_DefaultEmissive";
-        GTLib::String shininessShaderID  = "Material_DefaultShininess";
-        GTLib::String normalShaderID     = "";
-        GTLib::String refractionShaderID = "";
-        GTLib::String specularShaderID   = "Material_DefaultSpecular";
+        String diffuseShaderID    = "Material_DefaultDiffuse";
+        String emissiveShaderID   = "Material_DefaultEmissive";
+        String shininessShaderID  = "Material_DefaultShininess";
+        String normalShaderID     = "";
+        String refractionShaderID = "";
+        String specularShaderID   = "Material_DefaultSpecular";
         this->hasNormalChannel   = false;
         this->isRefractive       = false;
 
@@ -78,7 +78,7 @@ namespace GTEngine
             return true;
         }
 
-        GTLib::String newXMLString(xml);
+        String newXMLString(xml);
 
 
         xml_document<> document;
@@ -105,13 +105,13 @@ namespace GTEngine
             while (childNode != nullptr)
             {
                 // <channel>
-                if (GTLib::Strings::Equal(childNode->name(), "channel"))
+                if (Strings::Equal(childNode->name(), "channel"))
                 {
                     auto iNameAttribute = childNode->first_attribute("name");
                     if (iNameAttribute != nullptr)
                     {
                         // Retrieve the shader information.
-                        GTLib::String shaderID;
+                        String shaderID;
 
                         auto iShaderIDAttribute = childNode->first_attribute("shaderid");
                         if (iShaderIDAttribute != nullptr)
@@ -142,7 +142,7 @@ namespace GTEngine
 
 
                 // <blending>. Optional. If ommitted, blending is disabled (it's an opaque material).
-                if (GTLib::Strings::Equal(childNode->name(), "blending"))
+                if (Strings::Equal(childNode->name(), "blending"))
                 {
                     this->isBlended = true;
 
@@ -181,12 +181,12 @@ namespace GTEngine
 
 
                 // <defaultproperties>. Optional.
-                if (GTLib::Strings::Equal(childNode->name(), "defaultproperties"))
+                if (Strings::Equal(childNode->name(), "defaultproperties"))
                 {
                     auto propertyNode = childNode->first_node();
                     while (propertyNode != nullptr)
                     {
-                        if (GTLib::Strings::Equal("float", propertyNode->name()))
+                        if (Strings::Equal("float", propertyNode->name()))
                         {
                             auto nameAttr = propertyNode->first_attribute("name");
                             if (nameAttr != nullptr)
@@ -199,7 +199,7 @@ namespace GTEngine
                                 this->defaultParams.Set(nameAttr->value(), value[0]);
                             }
                         }
-                        else if (GTLib::Strings::Equal("float2", propertyNode->name()))
+                        else if (Strings::Equal("float2", propertyNode->name()))
                         {
                             auto nameAttr = propertyNode->first_attribute("name");
                             if (nameAttr != nullptr)
@@ -212,7 +212,7 @@ namespace GTEngine
                                 this->defaultParams.Set(nameAttr->value(), value[0], value[1]);
                             }
                         }
-                        else if (GTLib::Strings::Equal("float3", propertyNode->name()))
+                        else if (Strings::Equal("float3", propertyNode->name()))
                         {
                             auto nameAttr = propertyNode->first_attribute("name");
                             if (nameAttr != nullptr)
@@ -225,7 +225,7 @@ namespace GTEngine
                                 this->defaultParams.Set(nameAttr->value(), value[0], value[1], value[2]);
                             }
                         }
-                        else if (GTLib::Strings::Equal("float4", propertyNode->name()))
+                        else if (Strings::Equal("float4", propertyNode->name()))
                         {
                             auto nameAttr = propertyNode->first_attribute("name");
                             if (nameAttr != nullptr)
@@ -238,7 +238,7 @@ namespace GTEngine
                                 this->defaultParams.Set(nameAttr->value(), value[0], value[1], value[2], value[3]);
                             }
                         }
-                        else if (GTLib::Strings::Equal("texture2D", propertyNode->name()))
+                        else if (Strings::Equal("texture2D", propertyNode->name()))
                         {
                             auto nameAttr = propertyNode->first_attribute("name");
                             if (nameAttr != nullptr)
@@ -271,11 +271,11 @@ namespace GTEngine
 
     bool MaterialDefinition::LoadFromXML(const char* xml)
     {
-        char* xmlCopy = GTLib::Strings::Create(xml);
+        char* xmlCopy = Strings::Create(xml);
 
         bool result = this->LoadFromXML(xmlCopy);
 
-        GTLib::Strings::Delete(xmlCopy);
+        Strings::Delete(xmlCopy);
 
         return result;
     }
@@ -336,7 +336,7 @@ namespace GTEngine
 
 
 
-    GTLib::String MaterialDefinition::GetChannelShaderID(const char* channelName) const
+    String MaterialDefinition::GetChannelShaderID(const char* channelName) const
     {
         auto iChannel = this->channelShaderIDs.Find(channelName);
         if (iChannel != nullptr)
@@ -387,12 +387,12 @@ namespace GTEngine
 
         char tempStr[16];
 
-        GTLib::Strings::Tokenizer tokens(str);
+        Strings::Tokenizer tokens(str);
         while (tokens && count > 0)
         {
-            GTLib::Strings::Copy(tempStr, tokens.start, tokens.GetSizeInTs());
+            Strings::Copy(tempStr, tokens.start, tokens.GetSizeInTs());
 
-            *dest++ = GTLib::Parse<float>(tempStr);
+            *dest++ = Parse<float>(tempStr);
 
             ++tokens;
             --count;
@@ -400,7 +400,7 @@ namespace GTEngine
     }
 }
 
-namespace GTEngine
+namespace GT
 {
     Material::Material(const MaterialDefinition &definition)
         : definition(definition), parameters(), blendColour(definition.GetBlendColour())
@@ -739,10 +739,10 @@ namespace GTEngine
     }
 #endif
 
-    void Material::Serialize(GTLib::Serializer &serializer) const
+    void Material::Serialize(Serializer &serializer) const
     {
         // Our one and only chunk for now is the parameters chunk.
-        GTLib::BasicSerializer parametersSerializer;
+        BasicSerializer parametersSerializer;
         this->parameters.Serialize(parametersSerializer);
 
 
@@ -755,7 +755,7 @@ namespace GTEngine
         serializer.Write(parametersSerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void Material::Deserialize(GTLib::Deserializer &deserializer)
+    void Material::Deserialize(Deserializer &deserializer)
     {
         // The only chunk for now is the parameters chunk.
         Serialization::ChunkHeader header;

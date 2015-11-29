@@ -6,7 +6,7 @@
 #include "ScriptDefinition.hpp"
 #include <GTEngine/Script.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Static class for managing the loading and unloading of scripts.
     ///

@@ -10,7 +10,7 @@
 #define WAVE_FORMAT_MULAW      0x7
 
 
-namespace GTEngine
+namespace GT
 {
     static const size_t ChunkSampleCount = 8192;       // <-- This controls the size of each streaming chunk. Larger values mean more memory usage, but less chance of stuttering.
 

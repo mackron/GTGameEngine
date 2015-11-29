@@ -8,7 +8,7 @@
 #include <utility>
 
 
-namespace GTEngine
+namespace GT
 {
     //////////////////////////////////////
     // Globals.
@@ -16,7 +16,7 @@ namespace GTEngine
     typedef std::pair<Prefab*, size_t> PrefabReference;
 
     /// The list of loaded classes, indexed by the absolute path.
-    static GTLib::Dictionary<PrefabReference> LoadedPrefabs;
+    static Dictionary<PrefabReference> LoadedPrefabs;
 
 
 
@@ -72,7 +72,7 @@ namespace GTEngine
                 easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), absolutePath, EASYVFS_READ, 0);
                 if (pFile != nullptr)
                 {
-                    GTLib::FileDeserializer deserializer(pFile);
+                    FileDeserializer deserializer(pFile);
                     
                     auto newPrefab = new Prefab(absolutePath, relativePath);
                     newPrefab->Deserialize(deserializer);

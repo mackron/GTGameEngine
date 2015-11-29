@@ -8,7 +8,7 @@
 #include <GTEngine/Components/ModelComponent.hpp>
 #include "Math.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class Scene;
     class SceneNode;

@@ -5,7 +5,7 @@
 #include "../TypeConversion.hpp"
 #include <assert.h>
 
-namespace GTEngine
+namespace GT
 {
     RCSetShaderState::RCSetShaderState()
         : operationBitfield(0),
@@ -58,11 +58,11 @@ namespace GTEngine
             {
                 if (programStateIn->pendingFloatUniformsByName.count > 0)
                 {
-                    this->floatUniformsToSetByName = new GTLib::Dictionary<ShaderState_OpenGL21::FloatParameter>(programStateIn->pendingFloatUniformsByName);
+                    this->floatUniformsToSetByName = new Dictionary<ShaderState_OpenGL21::FloatParameter>(programStateIn->pendingFloatUniformsByName);
                 }
                 if (programStateIn->pendingFloatUniformsByLocation.count > 0)
                 {
-                    this->floatUniformsToSetByLocation = new GTLib::Vector<ShaderState_OpenGL21::FloatParameter>(programStateIn->pendingFloatUniformsByLocation);
+                    this->floatUniformsToSetByLocation = new Vector<ShaderState_OpenGL21::FloatParameter>(programStateIn->pendingFloatUniformsByLocation);
                 }
 
 
@@ -79,11 +79,11 @@ namespace GTEngine
             {
                 if (programStateIn->pendingFloat2UniformsByName.count > 0)
                 {
-                    this->float2UniformsToSetByName = new GTLib::Dictionary<ShaderState_OpenGL21::Float2Parameter>(programStateIn->pendingFloat2UniformsByName);
+                    this->float2UniformsToSetByName = new Dictionary<ShaderState_OpenGL21::Float2Parameter>(programStateIn->pendingFloat2UniformsByName);
                 }
                 if (programStateIn->pendingFloat2UniformsByLocation.count > 0)
                 {
-                    this->float2UniformsToSetByLocation = new GTLib::Vector<ShaderState_OpenGL21::Float2Parameter>(programStateIn->pendingFloat2UniformsByLocation);
+                    this->float2UniformsToSetByLocation = new Vector<ShaderState_OpenGL21::Float2Parameter>(programStateIn->pendingFloat2UniformsByLocation);
                 }
 
 
@@ -100,11 +100,11 @@ namespace GTEngine
             {
                 if (programStateIn->pendingFloat3UniformsByName.count > 0)
                 {
-                    this->float3UniformsToSetByName = new GTLib::Dictionary<ShaderState_OpenGL21::Float3Parameter>(programStateIn->pendingFloat3UniformsByName);
+                    this->float3UniformsToSetByName = new Dictionary<ShaderState_OpenGL21::Float3Parameter>(programStateIn->pendingFloat3UniformsByName);
                 }
                 if (programStateIn->pendingFloat3UniformsByLocation.count > 0)
                 {
-                    this->float3UniformsToSetByLocation = new GTLib::Vector<ShaderState_OpenGL21::Float3Parameter>(programStateIn->pendingFloat3UniformsByLocation);
+                    this->float3UniformsToSetByLocation = new Vector<ShaderState_OpenGL21::Float3Parameter>(programStateIn->pendingFloat3UniformsByLocation);
                 }
 
 
@@ -121,11 +121,11 @@ namespace GTEngine
             {
                 if (programStateIn->pendingFloat4UniformsByName.count > 0)
                 {
-                    this->float4UniformsToSetByName = new GTLib::Dictionary<ShaderState_OpenGL21::Float4Parameter>(programStateIn->pendingFloat4UniformsByName);
+                    this->float4UniformsToSetByName = new Dictionary<ShaderState_OpenGL21::Float4Parameter>(programStateIn->pendingFloat4UniformsByName);
                 }
                 if (programStateIn->pendingFloat4UniformsByLocation.count > 0)
                 {
-                    this->float4UniformsToSetByLocation = new GTLib::Vector<ShaderState_OpenGL21::Float4Parameter>(programStateIn->pendingFloat4UniformsByLocation);
+                    this->float4UniformsToSetByLocation = new Vector<ShaderState_OpenGL21::Float4Parameter>(programStateIn->pendingFloat4UniformsByLocation);
                 }
 
 
@@ -143,11 +143,11 @@ namespace GTEngine
             {
                 if (programStateIn->pendingFloat2x2UniformsByName.count > 0)
                 {
-                    this->float2x2UniformsToSetByName = new GTLib::Dictionary<ShaderState_OpenGL21::Float2x2Parameter>(programStateIn->pendingFloat2x2UniformsByName);
+                    this->float2x2UniformsToSetByName = new Dictionary<ShaderState_OpenGL21::Float2x2Parameter>(programStateIn->pendingFloat2x2UniformsByName);
                 }
                 if (programStateIn->pendingFloat2x2UniformsByLocation.count > 0)
                 {
-                    this->float2x2UniformsToSetByLocation = new GTLib::Vector<ShaderState_OpenGL21::Float2x2Parameter>(programStateIn->pendingFloat2x2UniformsByLocation);
+                    this->float2x2UniformsToSetByLocation = new Vector<ShaderState_OpenGL21::Float2x2Parameter>(programStateIn->pendingFloat2x2UniformsByLocation);
                 }
 
 
@@ -164,11 +164,11 @@ namespace GTEngine
             {
                 if (programStateIn->pendingFloat3x3UniformsByName.count > 0)
                 {
-                    this->float3x3UniformsToSetByName = new GTLib::Dictionary<ShaderState_OpenGL21::Float3x3Parameter>(programStateIn->pendingFloat3x3UniformsByName);
+                    this->float3x3UniformsToSetByName = new Dictionary<ShaderState_OpenGL21::Float3x3Parameter>(programStateIn->pendingFloat3x3UniformsByName);
                 }
                 if (programStateIn->pendingFloat3x3UniformsByLocation.count > 0)
                 {
-                    this->float3x3UniformsToSetByLocation = new GTLib::Vector<ShaderState_OpenGL21::Float3x3Parameter>(programStateIn->pendingFloat3x3UniformsByLocation);
+                    this->float3x3UniformsToSetByLocation = new Vector<ShaderState_OpenGL21::Float3x3Parameter>(programStateIn->pendingFloat3x3UniformsByLocation);
                 }
 
 
@@ -185,11 +185,11 @@ namespace GTEngine
             {
                 if (programStateIn->pendingFloat4x4UniformsByName.count > 0)
                 {
-                    this->float4x4UniformsToSetByName = new GTLib::Dictionary<ShaderState_OpenGL21::Float4x4Parameter>(programStateIn->pendingFloat4x4UniformsByName);
+                    this->float4x4UniformsToSetByName = new Dictionary<ShaderState_OpenGL21::Float4x4Parameter>(programStateIn->pendingFloat4x4UniformsByName);
                 }
                 if (programStateIn->pendingFloat4x4UniformsByLocation.count > 0)
                 {
-                    this->float4x4UniformsToSetByLocation = new GTLib::Vector<ShaderState_OpenGL21::Float4x4Parameter>(programStateIn->pendingFloat4x4UniformsByLocation);
+                    this->float4x4UniformsToSetByLocation = new Vector<ShaderState_OpenGL21::Float4x4Parameter>(programStateIn->pendingFloat4x4UniformsByLocation);
                 }
 
 
@@ -207,11 +207,11 @@ namespace GTEngine
             {
                 if (programStateIn->pendingTextureUniformsByName.count > 0)
                 {
-                    this->textureUniformsToSetByName = new GTLib::Dictionary<ShaderState_OpenGL21::TextureParameter>(programStateIn->pendingTextureUniformsByName);
+                    this->textureUniformsToSetByName = new Dictionary<ShaderState_OpenGL21::TextureParameter>(programStateIn->pendingTextureUniformsByName);
                 }
                 if (programStateIn->pendingTextureUniformsByLocation.count > 0)
                 {
-                    this->textureUniformsToSetByLocation = new GTLib::Vector<ShaderState_OpenGL21::TextureParameter>(programStateIn->pendingTextureUniformsByLocation);
+                    this->textureUniformsToSetByLocation = new Vector<ShaderState_OpenGL21::TextureParameter>(programStateIn->pendingTextureUniformsByLocation);
                 }
 
 

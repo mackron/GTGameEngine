@@ -24,7 +24,7 @@ namespace GT
     ///
     /// @remarks
     ///     This is only performed if the owner scene is registered.
-    void InstantiateSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode);
+    void InstantiateSceneNode(GT::Script &script, SceneNode &sceneNode);
 
     /// Uninstantiates the given scene node.
     ///
@@ -33,7 +33,7 @@ namespace GT
     ///
     /// @remarks
     ///     This is only performed if the owner scene is registered.
-    void UninstantiateSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode);
+    void UninstantiateSceneNode(GT::Script &script, SceneNode &sceneNode);
 
     /// Updates the public variables of the given scene node.
     ///
@@ -42,7 +42,7 @@ namespace GT
     ///
     /// @remarks
     ///     This is only performed if the owner scene is registered and the given scene node has a script component.
-    void UpdatePublicVariables(GT::Script &script, GTEngine::SceneNode &sceneNode);
+    void UpdatePublicVariables(GT::Script &script, SceneNode &sceneNode);
 
 
     /// Registers the given component with the Lua representation of the given scene node.
@@ -55,14 +55,14 @@ namespace GT
     ///     This is only performed if the owner scene is registered and the given scene node actually has the component.
     ///     @par
     ///     This does not change the state of any variables.
-    void RegisterComponent(GT::Script &script, GTEngine::SceneNode &sceneNode, const char* componentID);
+    void RegisterComponent(GT::Script &script, SceneNode &sceneNode, const char* componentID);
 
     /// Unregisters the given component from the Lua representation of the given scene node.
     ///
     /// @param script      [in] A reference to the script objec.t
     /// @param sceneNode   [in] A reference to the scene node whose Lua representation is being updated.
     /// @param componentID [in] The ID of the component that is being unregistered.
-    void UnregisterComponent(GT::Script &script, GTEngine::SceneNode &sceneNode, const char* componentID);
+    void UnregisterComponent(GT::Script &script, SceneNode &sceneNode, const char* componentID);
 
 
     /// Pushes a scene node object to the top of the stack.
@@ -74,7 +74,7 @@ namespace GT
     ///     The scene node must be instantiated on a registered scene for this to work.
     ///     @par
     ///     The scene node will need to be popped when no longer needed.
-    void PushSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode);
+    void PushSceneNode(GT::Script &script, SceneNode &sceneNode);
 
 
     /// Serializes the scene node based off the OnSerialize events.
@@ -85,7 +85,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void DoOnSerialize(GT::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Serializer &serializer);
+    void DoOnSerialize(GT::Script &script, SceneNode &sceneNode, Serializer &serializer);
 
     /// Deserializes the scene node based off the OnDeserialize events and the data supplied by the given deserializer.
     ///
@@ -97,7 +97,7 @@ namespace GT
     ///     The scene node must be instantiated on a registered scene for this to work.
     ///     @par
     ///     This should be called based on the data written by DoOnSerialize().
-    void DoOnDeserialize(GT::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Deserializer &deserializer);
+    void DoOnDeserialize(GT::Script &script, SceneNode &sceneNode, Deserializer &deserializer);
 
 
     /// Calls the OnUpdate event on the given scene node.
@@ -108,7 +108,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnUpdate(GT::Script &script, GTEngine::SceneNode &sceneNode, double deltaTimeInSeconds);
+    void PostSceneNodeEvent_OnUpdate(GT::Script &script, SceneNode &sceneNode, double deltaTimeInSeconds);
 
     /// Calls the OnStartup event on the given scene node.
     ///
@@ -117,7 +117,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnStartup(GT::Script &script, GTEngine::SceneNode &sceneNode);
+    void PostSceneNodeEvent_OnStartup(GT::Script &script, SceneNode &sceneNode);
 
     /// Calls the OnShutdown event on the given scene node.
     ///
@@ -126,7 +126,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnShutdown(GT::Script &script, GTEngine::SceneNode &sceneNode);
+    void PostSceneNodeEvent_OnShutdown(GT::Script &script, SceneNode &sceneNode);
 
     /// Calls the OnShow event on the given scene node.
     ///
@@ -135,7 +135,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnShow(GT::Script &script, GTEngine::SceneNode &sceneNode);
+    void PostSceneNodeEvent_OnShow(GT::Script &script, SceneNode &sceneNode);
 
     /// Calls the OnHide event on the given scene node.
     ///
@@ -144,7 +144,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnHide(GT::Script &script, GTEngine::SceneNode &sceneNode);
+    void PostSceneNodeEvent_OnHide(GT::Script &script, SceneNode &sceneNode);
 
     /// Calls the OnSceneNodeEnter event on the given scene node.
     ///
@@ -153,7 +153,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnSceneNodeEnter(GT::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode);
+    void PostSceneNodeEvent_OnSceneNodeEnter(GT::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
 
     /// Calls the OnEnterSceneNode event on the given scene node.
     ///
@@ -162,7 +162,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnEnterSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode);
+    void PostSceneNodeEvent_OnEnterSceneNode(GT::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
 
     /// Calls the OnSceneNodeLeave event on the given scene node.
     ///
@@ -171,7 +171,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnSceneNodeLeave(GT::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode);
+    void PostSceneNodeEvent_OnSceneNodeLeave(GT::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
 
     /// Calls the OnLeaveSceneNode event on the given scene node.
     ///
@@ -180,7 +180,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnLeaveSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode);
+    void PostSceneNodeEvent_OnLeaveSceneNode(GT::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
 
     /// Calls the OnSerializeGlobalData event on the given scene node.
     ///
@@ -190,7 +190,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnSerializeGlobalData(GT::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Serializer &serializer);
+    void PostSceneNodeEvent_OnSerializeGlobalData(GT::Script &script, SceneNode &sceneNode, Serializer &serializer);
 
     /// Calls the OnDeserializeGlobalData event on the given scene node.
     ///
@@ -200,7 +200,7 @@ namespace GT
     ///
     /// @remarks
     ///     The scene node must be instantiated on a registered scene for this to work.
-    void PostSceneNodeEvent_OnDeserializeGlobalData(GT::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Deserializer &deserializer);
+    void PostSceneNodeEvent_OnDeserializeGlobalData(GT::Script &script, SceneNode &sceneNode, Deserializer &deserializer);
 
 
     namespace SceneNodeFFI
@@ -740,7 +740,7 @@ namespace GT
         ///
         /// @param script    [in] The script where the result will be pushed to.
         /// @param component [in] A pointer to the C++ component.
-        void PushComponent(GT::Script &script, GTEngine::Component* component);
+        void PushComponent(GT::Script &script, Component* component);
     }
 }
 

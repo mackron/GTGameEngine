@@ -19,7 +19,7 @@
     #pragma GCC diagnostic pop
 #endif
 
-namespace GTEngine
+namespace GT
 {
     typedef btAABB AABB;
 }

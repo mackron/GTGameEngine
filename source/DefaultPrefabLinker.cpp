@@ -3,7 +3,7 @@
 #include <GTEngine/DefaultPrefabLinker.hpp>
 #include <GTEngine/Scene.hpp>
 
-namespace GTEngine
+namespace GT
 {
     DefaultPrefabLinker::DefaultPrefabLinker(Scene &sceneIn)
         : scene(sceneIn), deserializingSceneNodeData(), lastCreatedSceneNode(nullptr)

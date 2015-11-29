@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Logging_hpp_
 #define __GTEngine_Logging_hpp_
 
-namespace GTEngine
+namespace GT
 {
     /// Logs a message.
     void LogString(const char* value);

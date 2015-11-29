@@ -4,7 +4,7 @@
 
 namespace GTGUI
 {
-    FontCache::FontCache(GTLib::FontServer &fontServer)
+    FontCache::FontCache(GT::FontServer &fontServer)
         : m_fontServer(fontServer), m_loadedFonts(16)
     {
     }
@@ -19,7 +19,7 @@ namespace GTGUI
     }
     
     
-    GTLib::Font* FontCache::AcquireFont(const GTLib::FontInfo &fontInfo)
+    GT::Font* FontCache::AcquireFont(const GT::FontInfo &fontInfo)
     {
         // First we need to check if the font is already loaded.
         auto font = this->AcquireLoadedFont(fontInfo);
@@ -36,7 +36,7 @@ namespace GTGUI
         return font;
     }
     
-    void FontCache::UnacquireFont(const GTLib::Font* font)
+    void FontCache::UnacquireFont(const GT::Font* font)
     {
         // We simply decrement the reference counter. If the new counter is at 0, we want to delete it completely.
         size_t loadedFontIndex;
@@ -60,7 +60,7 @@ namespace GTGUI
     /////////////////////////////////////////////
     // Private
     
-    GTLib::Font* FontCache::AcquireLoadedFont(const GTLib::FontInfo &fontInfo)
+    GT::Font* FontCache::AcquireLoadedFont(const GT::FontInfo &fontInfo)
     {
         for (size_t iLoadedFont = 0; iLoadedFont < m_loadedFonts.count; ++iLoadedFont)
         {
@@ -76,7 +76,7 @@ namespace GTGUI
         return nullptr;
     }
     
-    FontCache::LoadedFont* FontCache::FindLoadedFont(const GTLib::Font* font, size_t &indexOut)
+    FontCache::LoadedFont* FontCache::FindLoadedFont(const GT::Font* font, size_t &indexOut)
     {
         for (size_t iLoadedFont = 0; iLoadedFont < m_loadedFonts.count; ++iLoadedFont)
         {

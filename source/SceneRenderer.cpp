@@ -2,7 +2,7 @@
 
 #include <GTEngine/SceneRenderer.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneRenderer::SceneRenderer()
         : isColourClearingEnabled(true), clearColour(0.0f, 0.0f, 0.0f)
@@ -54,7 +54,7 @@ namespace GTEngine
     }
 
 
-    GTLib::String SceneRenderer::GetStringProperty(const char*) const
+    String SceneRenderer::GetStringProperty(const char*) const
     {
         return "";
     }

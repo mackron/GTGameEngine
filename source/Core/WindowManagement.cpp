@@ -15,7 +15,7 @@
 
 #include <cstring>
 
-namespace GTLib
+namespace GT
 {
     #define DOUBLE_CLICK_TIME   400         // <-- Temporary until we get a proper system in place. Will probably use dconf to determine this.
     
@@ -105,13 +105,13 @@ namespace GTLib
     
     
     /// Keeps track of active timers. This is keyed by the timer ID.
-    GTLib::Map<TimerThreadKey, TimerThread*> g_ActiveTimerThreads;
+    Map<TimerThreadKey, TimerThread*> g_ActiveTimerThreads;
     
     /// Keeps track of inactive timers. This is keyed by the timer ID.
-    GTLib::Map<TimerThreadKey, TimerThread*> g_InactiveTimerThreads;
+    Map<TimerThreadKey, TimerThread*> g_InactiveTimerThreads;
     
     /// A mutex controlling sychronization with g_ActiveTimerThreadData and g_InactiveTimerThreadData.
-    GTLib::Threading::Mutex g_TimerThreadsMutex;
+    Threading::Mutex g_TimerThreadsMutex;
     
     
     struct AUXSocketDataHeader
@@ -226,7 +226,7 @@ namespace GTLib
                 g_atom_CLIPBOARD        = XInternAtom(g_X11Display, "CLIPBOARD",        True);
                 g_atom_TARGETS          = XInternAtom(g_X11Display, "TARGETS",          True);
                 g_atom_TEXT             = XInternAtom(g_X11Display, "TEXT",             True);
-                g_atom_GT_WINDOW    = XInternAtom(g_X11Display, "GT_WINDOW",    False);     // <-- For assigning a GTLib::WindowHandle to an X11 window.
+                g_atom_GT_WINDOW    = XInternAtom(g_X11Display, "GT_WINDOW",    False);     // <-- For assigning a WindowHandle to an X11 window.
             }
         }
         
@@ -277,7 +277,7 @@ namespace GTLib
         
         
         // We need the highest socket number for use with select().
-        g_X11MaxRecvSocket = GTLib::Max(g_X11DisplaySocket, g_X11AUXSocketRecv);
+        g_X11MaxRecvSocket = Max(g_X11DisplaySocket, g_X11AUXSocketRecv);
         
         
         return g_X11Display != nullptr;
@@ -688,7 +688,7 @@ namespace GTLib
         return false;
     }
     
-    // Helper function for retrieving the GTLib::WindowHandle from the X11 window.
+    // Helper function for retrieving the WindowHandle from the X11 window.
     WindowHandle GetWindowHandleFromX11Window(Display* display, ::Window window)
     {
         WindowHandle result = nullptr;
@@ -859,7 +859,7 @@ namespace GTLib
 #include <windowsx.h>
 #include <cstdio>
 
-namespace GTLib
+namespace GT
 {
     const char* WindowClassName = "GT_DefaultWindow";
 
@@ -1166,17 +1166,17 @@ namespace GTLib
                         // these messages from this event.
 
                         // First we need to convert the key.
-                        GTLib::Key key = GetKeyFromWin32VirtualKey(wParam);
+                        Key key = GetKeyFromWin32VirtualKey(wParam);
 
-                        if (key == GTLib::Keys::Ctrl)
+                        if (key == Keys::Ctrl)
                         {
                             window->flags |= CTRLKeyDown;
                         }
 
-                        if (key != GTLib::Keys::Null)
+                        if (key != Keys::Null)
                         {
                             // Don't post printable characters if the Ctrl key is up.
-                            if (!GTLib::IsKeyPrintable(key) || (window->flags & CTRLKeyDown) != 0)
+                            if (!IsKeyPrintable(key) || (window->flags & CTRLKeyDown) != 0)
                             {
                                 // Only if the key was previously up do we want to post this message...
                                 if ((lParam & (1 << 30)) == 0)
@@ -1199,9 +1199,9 @@ namespace GTLib
 
                 case WM_KEYUP:
                     {
-                        GTLib::Key key = GetKeyFromWin32VirtualKey(wParam);
+                        Key key = GetKeyFromWin32VirtualKey(wParam);
 
-                        if (key == GTLib::Keys::Ctrl)
+                        if (key == Keys::Ctrl)
                         {
                             window->flags &= ~CTRLKeyDown;
                         }
@@ -1216,18 +1216,18 @@ namespace GTLib
                     {
                         // Some keys will fall-through to this message even if they've been handled by WM_KEYDOWN. We do not want to post
                         // duplicate messages. We will filter them out here.
-                        if (wParam != GTLib::Keys::Backspace &&
-                            wParam != GTLib::Keys::Return    &&
-                            wParam != GTLib::Keys::Delete    &&
-                            wParam != GTLib::Keys::Escape    &&
-                            wParam != GTLib::Keys::Tab)
+                        if (wParam != Keys::Backspace &&
+                            wParam != Keys::Return    &&
+                            wParam != Keys::Delete    &&
+                            wParam != Keys::Escape    &&
+                            wParam != Keys::Tab)
                         {
                             bool isCTRLDown = (window->flags & CTRLKeyDown) != 0;
                             if (!(isCTRLDown && wParam < 0x20))       // <-- This filters those annoying translations as a result of the CTRL key being pressed while on an ascii character.
                             {
                                 if ((lParam & (1 << 31)) != 0)
                                 {
-                                    g_NextCallback->OnKeyUp(window, static_cast<GTLib::Key>(wParam));
+                                    g_NextCallback->OnKeyUp(window, static_cast<Key>(wParam));
                                 }
                                 else
                                 {
@@ -1241,14 +1241,14 @@ namespace GTLib
                                             wParam_OnKeyPress -= 0x20;
                                         }
 
-                                        g_NextCallback->OnKeyPressed(window, static_cast<GTLib::Key>(wParam_OnKeyPress));
+                                        g_NextCallback->OnKeyPressed(window, static_cast<Key>(wParam_OnKeyPress));
                                     }
 
 
                                     int repeatCount = (lParam & 0xFFFF);
                                     for (int i = 0; i < repeatCount; ++i)
                                     {
-                                        g_NextCallback->OnKeyDown(window, static_cast<GTLib::Key>(wParam));
+                                        g_NextCallback->OnKeyDown(window, static_cast<Key>(wParam));
                                     }
                                 }
                             }

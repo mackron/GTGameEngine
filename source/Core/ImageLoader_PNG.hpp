@@ -7,7 +7,7 @@
 #include <GTEngine/Core/ImageLoader.hpp>
 #include <GTEngine/external/stb_image.h>
 
-namespace GTLib
+namespace GT
 {
     class ImageLoader_PNG : public ImageLoader
     {
@@ -19,16 +19,16 @@ namespace GTLib
         /// Destructor.
         ~ImageLoader_PNG();
 
-        /// GTLib::ImageLoader::Open().
+        /// ImageLoader::Open().
         bool Open();
 
-        /// GTLib::ImageLoader::GetImageInfo().
+        /// ImageLoader::GetImageInfo().
         void GetImageInfo(ImageFileInfo &info);
 
-        /// GTLib::ImageLoader::LoadMipmap().
+        /// ImageLoader::LoadMipmap().
         bool LoadMipmap(unsigned int mipmapIndex, Mipmap &dest);
 
-        /// GTLib::ImageLoader::HasFileChanged().
+        /// ImageLoader::HasFileChanged().
         bool HasFileChanged() const;
 
 

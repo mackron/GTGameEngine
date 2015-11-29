@@ -301,10 +301,10 @@ namespace GTGUI
     
 
         /// Retrieves the rectangle area of the element in absolute coordinates. Useful for rendering time...
-        void GetAbsoluteRect(GTLib::Rect<int> &rect) const;
+        void GetAbsoluteRect(GT::Rect<int> &rect) const;
 
         /// Retrieves the inner rectangle area of the element in absolute coordinates.
-        void GetAbsoluteInnerRect(GTLib::Rect<int> &rect) const;
+        void GetAbsoluteInnerRect(GT::Rect<int> &rect) const;
 
 
         /// Retrieves the X offset of the element.
@@ -346,12 +346,12 @@ namespace GTGUI
         /**
         *   \brief  Retrieves a pointer to the element's font.
         */
-        GTLib::Font* GetFont() const { return this->textManager.GetDefaultFont(); }
+        GT::Font* GetFont() const { return this->textManager.GetDefaultFont(); }
 
         /**
         *   \brief  Sets the element's font. This should only be called by FontManager.
         */
-        void SetFont(GTLib::Font* font);
+        void SetFont(GT::Font* font);
         
         
         /// Updates the font of the element based on the current style of the element.
@@ -363,7 +363,7 @@ namespace GTGUI
         /**
         *   \brief  Retrieves the rectangle area containing the text, relative to the element.
         */
-        void GetTextRect(GTLib::Rect<int> &rect) const;
+        void GetTextRect(GT::Rect<int> &rect) const;
 
         /// Selects all of the text and moves the text cursor to the end.
         ///
@@ -386,18 +386,18 @@ namespace GTGUI
         *   \param  absolute     [in] A reference to the list that will receive pointers to the 'absolute' positioned elements.
         *   \param  ignoreHidden [in] Whether or not hidden elements should be omitted from the results.
         */
-        void FilterChildrenByPositioning(GTLib::List<Element *> &automatic, GTLib::List<Element *> &relative, GTLib::List<Element *> &absolute, bool ignoreHidden = false);
+        void FilterChildrenByPositioning(GT::List<Element *> &automatic, GT::List<Element *> &relative, GT::List<Element *> &absolute, bool ignoreHidden = false);
         
         /**
         *   \brief  Retrieves the chain of ancestors of this element.
         */
-        void GetAncestors(GTLib::List<Element *> &ancestors);
+        void GetAncestors(GT::List<Element *> &ancestors);
 
 
         /**
         *   \brief  Retrieves rectangles that can be used for rendering and input handling. These depend on the rectangles of the parent.
         */
-        void GetRects(const GTLib::Rect<int> &parentRect, const GTLib::Rect<int> &parentScissorRect, GTLib::Rect<int> &rect, GTLib::Rect<int> &scissorRect, GTLib::Rect<int> &childrenScissorRect) const;
+        void GetRects(const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, GT::Rect<int> &rect, GT::Rect<int> &scissorRect, GT::Rect<int> &childrenScissorRect) const;
 
 
         /**
@@ -681,7 +681,7 @@ namespace GTGUI
 
 
         /// OnKeyPressed.
-        void OnKeyPressed(GTLib::Key key)
+        void OnKeyPressed(GT::Key key)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
@@ -690,7 +690,7 @@ namespace GTGUI
         }
 
         /// OnKeyDown.
-        bool OnKeyDown(GTLib::Key key)
+        bool OnKeyDown(GT::Key key)
         {
             bool retValue = true;
 
@@ -706,7 +706,7 @@ namespace GTGUI
         }
 
         /// OnKeyUp.
-        void OnKeyUp(GTLib::Key key)
+        void OnKeyUp(GT::Key key)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
@@ -832,13 +832,13 @@ namespace GTGUI
         ///
         /// @param styleClass      [in] The style class whose includes are being attached.
         /// @param alreadyAttached [in] A list of style class that have already been included. This is used in order to avoid cyclic attaching.
-        void AttachStyleClass(StyleClass &styleClass, GTLib::Vector<StyleClass*> &alreadyAttached, bool refresh = true);
+        void AttachStyleClass(StyleClass &styleClass, GT::Vector<StyleClass*> &alreadyAttached, bool refresh = true);
 
         /// Detaches the given style class including it's includes. This is called recursively on it's includes.
         ///
         /// @param styleClass      [in] The style class whose includes are being detached.
         /// @param alreadyDetached [in] A list of style classes that have already been detached. This is used in order to avoid cyclic detaching.
-        void DetachStyleClass(StyleClass &styleClass, GTLib::Vector<StyleClass*> &alreadyDetached, bool refresh = true);
+        void DetachStyleClass(StyleClass &styleClass, GT::Vector<StyleClass*> &alreadyDetached, bool refresh = true);
 
 
     public:
@@ -870,10 +870,10 @@ namespace GTGUI
         /// A pointer to the primary style class of this element. This is lazily initialised in GetPrimaryStyleClass(), and thus mutable.
         mutable StyleClass* m_primaryStyleClass;
 
-        // TODO: Consider using a pointer for this so that elements without event handlers (most elements) do not have to have a GTLib::List object instantiated. This 
-        //       will save a single pointer (GTLib::List objects are only two pointers in size).
+        // TODO: Consider using a pointer for this so that elements without event handlers (most elements) do not have to have a List object instantiated. This 
+        //       will save a single pointer (List objects are only two pointers in size).
         /// The list of C++ event handlers attached to this element.
-        GTLib::List<ElementEventHandler*> eventHandlers;
+        GT::List<ElementEventHandler*> eventHandlers;
 
         // The attributes below are updated from the layout engine.
         int x;              ///< The x position relative to the parent.
@@ -901,10 +901,10 @@ namespace GTGUI
             unsigned short   paddingRight;        ///< The size of the right padding, including the border.
             unsigned short   paddingTop;          ///< The size of the top padding, including the border.
             unsigned short   paddingBottom;       ///< The size of the bottom padding, including the border.
-            GTLib::Rect<int> clippingRect;        ///< The clipping rectangle for borders and background.
-            GTLib::Rect<int> clippingRectInner;   ///< The clipping rectangle for children and text.
+            GT::Rect<int> clippingRect;        ///< The clipping rectangle for borders and background.
+            GT::Rect<int> clippingRectInner;   ///< The clipping rectangle for children and text.
             uint32_t         flags;               ///< Layout flags for use by the layout manager.
-            GTLib::ListItem<Element*>* layoutManagerListItem;  ///< The list item used by the layout manager.
+            GT::ListItem<Element*>* layoutManagerListItem;  ///< The list item used by the layout manager.
 
             _layout()
                 : //x(0), y(0), width(0), height(0),
@@ -923,14 +923,14 @@ namespace GTGUI
         /// Keeps track of the number of children that need to be clipped by the element.
         int clippedChildCount;
 
-        // TODO: Need to consider turning this into a pointer and only having an instantiation when the element actually uses text. The GTLib::TextManager class
+        // TODO: Need to consider turning this into a pointer and only having an instantiation when the element actually uses text. The TextManager class
         //       isn't exactly tiny...
 
         /// The text manager that we'll use for managing the layout of the text.
-        mutable GTLib::TextManager textManager;
+        mutable GT::TextManager textManager;
 
         /// The event handler to attach to the text .
-        class TextEventHandler : public GTLib::TextManagerEventHandler
+        class TextEventHandler : public GT::TextManagerEventHandler
         {
         public:
 

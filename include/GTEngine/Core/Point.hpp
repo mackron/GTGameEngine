@@ -3,7 +3,7 @@
 #ifndef __GTLib_Point_hpp_
 #define __GTLib_Point_hpp_
 
-namespace GTLib
+namespace GT
 {
     template <typename T>
     class Point

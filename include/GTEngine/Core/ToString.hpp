@@ -6,7 +6,7 @@
 #include <cstdint>
 #include "String.hpp"
 
-namespace GTLib
+namespace GT
 {
     String ToString(int64_t value);
     inline String ToString(int32_t value) { return ToString(static_cast<int64_t>(value)); }

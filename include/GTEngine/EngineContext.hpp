@@ -81,7 +81,7 @@ namespace GT
             ///     The returned thread should be unacquired when it is no longer in use.
             ///     @par
             ///     This function is thread-safe.
-            GTLib::Thread* AcquireThread();
+            Thread* AcquireThread();
 
             /// Unacquires a thread that will previously acquired with AcquireThread().
             ///
@@ -91,8 +91,8 @@ namespace GT
             ///     This function will not wait until the thread is finished executing it's current function.
             ///     @par
             ///     This function is thread-safe.
-            void UnacquireThread(GTLib::Thread* thread);
-            void UnacquireThread(GTLib::Thread &thread) { this->UnacquireThread(&thread); }
+            void UnacquireThread(Thread* thread);
+            void UnacquireThread(Thread &thread) { this->UnacquireThread(&thread); }
 
             /// Unacquires a thread without locking.
             ///
@@ -100,7 +100,7 @@ namespace GT
             ///
             /// @remarks
             ///     This function is the same as UnacquireThread(), except that it is not thread safe.
-            void UnacquireThreadNoLock(GTLib::Thread* thread);
+            void UnacquireThreadNoLock(Thread* thread);
 
             /// Unacquires every acquired thread.
             ///
@@ -173,13 +173,13 @@ namespace GT
             /// The list of every active thread that is owned by the engine. When a thread is created, it'll be added to this list. When a thread is
             /// deleted, it will not actually be destructed - instead it will be added to the dormant thread list for re-use. This is done this way
             /// so that rapid thread creation and deletion is efficient.
-            GTLib::Vector<GTLib::Thread*> m_activeThreads;
+            Vector<Thread*> m_activeThreads;
 
             /// The list of every dormant thread that can be reused.
-            GTLib::Vector<GTLib::Thread*> m_dormantThreads;
+            Vector<Thread*> m_dormantThreads;
 
             /// The mutex for controlling access to the thread acquiring/unacquiring procedures.
-            GTLib::Mutex m_threadManagementLock;
+            Mutex m_threadManagementLock;
 
 
             /// The application config.

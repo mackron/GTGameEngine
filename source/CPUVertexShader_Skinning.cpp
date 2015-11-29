@@ -2,7 +2,7 @@
 
 #include <GTEngine/CPUVertexShader_Skinning.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /*
     glm::simdVec4 mul(const glm::simdMat4 &m, const glm::simdVec4 &v)

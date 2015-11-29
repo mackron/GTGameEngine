@@ -7,7 +7,7 @@
 #include "Math.hpp"
 #include "Model.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing the shadow volume of a model.
     ///

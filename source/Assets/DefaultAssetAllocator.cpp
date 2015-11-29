@@ -38,41 +38,41 @@ namespace GT
         {
             if (ext[0] != '\0')
             {
-                if (GTLib::Strings::Equal<false>(ext, "png"))
+                if (Strings::Equal<false>(ext, "png"))
                 {
                     return AssetType_Image_PNG;
                 }
-                if (GTLib::Strings::Equal<false>(ext, "tga"))
+                if (Strings::Equal<false>(ext, "tga"))
                 {
                     return AssetType_Image_TGA;
                 }
-                if (GTLib::Strings::Equal<false>(ext, "jpg") || GTLib::Strings::Equal<false>(ext, "jpeg"))
+                if (Strings::Equal<false>(ext, "jpg") || Strings::Equal<false>(ext, "jpeg"))
                 {
                     return AssetType_Image_JPG;
                 }
-                if (GTLib::Strings::Equal<false>(ext, "psd"))
+                if (Strings::Equal<false>(ext, "psd"))
                 {
                     return AssetType_Image_PSD;
                 }
 
-                if (GTLib::Strings::Equal<false>(ext, "obj"))
+                if (Strings::Equal<false>(ext, "obj"))
                 {
                     return AssetType_Model_OBJ;
                 }
-                if (GTLib::Strings::Equal<false>(ext, "md2"))
+                if (Strings::Equal<false>(ext, "md2"))
                 {
                     return AssetType_Model_MD2;
                 }
-                if (GTLib::Strings::Equal<false>(ext, "ogex"))
+                if (Strings::Equal<false>(ext, "ogex"))
                 {
                     return AssetType_Model_OGEX;
                 }
 
-                if (GTLib::Strings::Equal<false>(ext, "wav"))
+                if (Strings::Equal<false>(ext, "wav"))
                 {
                     return AssetType_Sound_WAV;
                 }
-                if (GTLib::Strings::Equal<false>(ext, "ogg"))
+                if (Strings::Equal<false>(ext, "ogg"))
                 {
                     return AssetType_Sound_Vorbis;
                 }

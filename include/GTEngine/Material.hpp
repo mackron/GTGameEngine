@@ -9,7 +9,7 @@
 #include "Rendering/BlendEquations.hpp"
 #include "Rendering/BlendFunctions.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a materials structure. XML material definitions are converted into a descriptor. The material library
     /// uses descriptors for efficient material storage and creation. It allows the material definition to be stored in a way
@@ -53,7 +53,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     When a channel is not specified, this will return an empty string, in which case the renderer can choose what to do by default.
-        GTLib::String GetChannelShaderID(const char* channelName) const;
+        String GetChannelShaderID(const char* channelName) const;
 
         /// Determines whether or not the ID of the given channel is defind.
         ///
@@ -94,18 +94,18 @@ namespace GTEngine
     public:
 
         /// The absolute paht of the material.
-        GTLib::String absolutePath;
+        String absolutePath;
 
         /// The relative path of the material.
-        GTLib::String relativePath;
+        String relativePath;
 
 
         /// The XML string of the material.
-        GTLib::String xmlString;
+        String xmlString;
 
 
         /// The list of channels, keyed by the channel name.
-        GTLib::Dictionary<GTLib::String> channelShaderIDs;
+        Dictionary<String> channelShaderIDs;
 
 
         /// The default parameters.
@@ -145,7 +145,7 @@ namespace GTEngine
     };
 }
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a material.
     ///
@@ -177,7 +177,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     When a channel is not specified, this will return an empty string, in which case the renderer can choose what to do by default.
-        GTLib::String GetChannelShaderID(const char* channelName) const { return this->definition.GetChannelShaderID(channelName); }
+        String GetChannelShaderID(const char* channelName) const { return this->definition.GetChannelShaderID(channelName); }
 
         /// Determines whether or not the ID of the given channel is defind.
         ///
@@ -235,7 +235,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not save an actual .material file. Instead it will just save the parameters and their values.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the state of the material.
         ///
@@ -243,7 +243,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does NOT load an actual .material file. It just restores parameter states.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 

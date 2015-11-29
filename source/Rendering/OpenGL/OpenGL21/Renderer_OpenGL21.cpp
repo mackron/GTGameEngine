@@ -63,7 +63,7 @@
 
 
 
-namespace GTEngine
+namespace GT
 {
     /////////////////////////////////////////////////////////////
     // Direct Calls
@@ -95,10 +95,10 @@ namespace GTEngine
 
 
     /// The mutex for synching applicable resource creation operations.
-    static GTLib::Mutex ResourceCreationLock;
+    static Mutex ResourceCreationLock;
 
     /// The mutex for synching applicable resource deletion operations.
-    static GTLib::Mutex ResourceDeletionLock;
+    static Mutex ResourceDeletionLock;
 
 
     /// The caches for individual commands. There are two of each - one for the back and one for the front.
@@ -260,7 +260,7 @@ namespace GTEngine
 
                 // We're going to initialise the X11 sub-system from here.
             #ifdef GTGL_GLX
-                GTLib::X11::Initialize(gtglGetDisplay());
+                X11::Initialize(gtglGetDisplay());
             #endif
 
                 IsInitialised = true;
@@ -313,25 +313,25 @@ namespace GTEngine
     }
 
 
-    GTLib::Window* Renderer::CreateWindow()
+    Window* Renderer::CreateWindow()
     {
         assert(IsInitialised);
         {
             // When creating a window, we use GTLib to create the main window. Then we do platform specific stuff to get it working with the GTGL context.
         #ifdef _WIN32
-            GTLib::Window *window = new GTLib::Window();
-            const GTLib::InternalWindowObjects &iwo = window->GetInternalObjects();
+            Window *window = new Window();
+            const InternalWindowObjects &iwo = window->GetInternalObjects();
 
             ::SetPixelFormat(iwo.hDC, gtglGetPixelFormat(), gtglGetPFD());
 
             // We now need to make the window current.
             gtglSetCurrentDC(iwo.hDC);
         #else
-            GTLib::InternalWindowObjects iwo;
+            InternalWindowObjects iwo;
             iwo.vi       = gtglGetVisualInfo();
             iwo.colormap = gtglGetColormap();
 
-            GTLib::Window *window = new GTLib::Window(iwo);
+            Window *window = new Window(iwo);
 
             // The window needs to be made current...
             gtglSetCurrentWindow(window->GetInternalObjects().window);
@@ -341,7 +341,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer::SetCurrentWindow(GTLib::Window *window)
+    void Renderer::SetCurrentWindow(Window *window)
     {
     #ifdef _WIN32
         if (window != nullptr)
@@ -1413,7 +1413,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer::SetTexture2DData(const Texture2D &texture, int mipmapIndex, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip)
+    void Renderer::SetTexture2DData(const Texture2D &texture, int mipmapIndex, unsigned int width, unsigned int height, ImageFormat format, const void* data, bool flip)
     {
         auto &textureGL21 = static_cast<const Texture2D_OpenGL21 &>(texture);
         {
@@ -1429,7 +1429,7 @@ namespace GTEngine
                 assert(State.currentRCSetTextureState != nullptr);
                 assert(mipmapIndex >= 0);
                 {
-                    State.currentRCSetTextureState->SetTexture2DData(textureState, textureTarget, mipmapIndex, format, width, height, data, GTLib::ImageUtils::CalculateDataSize(width, height, format), flip);
+                    State.currentRCSetTextureState->SetTexture2DData(textureState, textureTarget, mipmapIndex, format, width, height, data, ImageUtils::CalculateDataSize(width, height, format), flip);
                 }
             }
         }
@@ -1437,7 +1437,7 @@ namespace GTEngine
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
-    void Renderer::SetTexture2DSubData(const Texture2D &texture, int mipmapIndex, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip)
+    void Renderer::SetTexture2DSubData(const Texture2D &texture, int mipmapIndex, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, ImageFormat format, const void* data, bool flip)
     {
         auto &textureGL21 = static_cast<const Texture2D_OpenGL21 &>(texture);
         {
@@ -1453,7 +1453,7 @@ namespace GTEngine
                 assert(State.currentRCSetTextureState != nullptr);
                 assert(mipmapIndex >= 0);
                 {
-                    State.currentRCSetTextureState->SetTexture2DSubData(textureState, textureTarget, mipmapIndex, format, xOffset, yOffset, width, height, data, GTLib::ImageUtils::CalculateDataSize(width, height, format), flip);
+                    State.currentRCSetTextureState->SetTexture2DSubData(textureState, textureTarget, mipmapIndex, format, xOffset, yOffset, width, height, data, ImageUtils::CalculateDataSize(width, height, format), flip);
                 }
             }
         }

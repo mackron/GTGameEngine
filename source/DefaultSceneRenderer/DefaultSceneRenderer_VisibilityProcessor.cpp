@@ -3,7 +3,7 @@
 #include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_VisibilityProcessor.hpp>
 #include <GTEngine/Scene.hpp>
 
-namespace GTEngine
+namespace GT
 {
     static const glm::vec3 HighlightColour      = glm::vec3(1.0f, 0.66f, 0.33f);
     static const glm::vec3 ChildHighlightColour = glm::vec3(1.0f, 0.8f, 0.6f);
@@ -172,7 +172,7 @@ namespace GTEngine
         {
             auto &materialDefinition = mesh.material->GetDefinition();
             {
-                GTLib::Vector<DefaultSceneRendererMesh>* objectList = nullptr;
+                Vector<DefaultSceneRendererMesh>* objectList = nullptr;
 
                 if (mesh.material->IsBlended() || mesh.material->IsRefractive())
                 {
@@ -196,7 +196,7 @@ namespace GTEngine
                         }
                         else
                         {
-                            objectList = new GTLib::Vector<DefaultSceneRendererMesh>(100);
+                            objectList = new Vector<DefaultSceneRendererMesh>(100);
                             this->opaqueObjects.Add(&materialDefinition, objectList);
                         }
                     }
@@ -209,7 +209,7 @@ namespace GTEngine
                         }
                         else
                         {
-                            objectList = new GTLib::Vector<DefaultSceneRendererMesh>(100);
+                            objectList = new Vector<DefaultSceneRendererMesh>(100);
                             this->opaqueObjectsLast.Add(&materialDefinition, objectList);
                         }
                     }

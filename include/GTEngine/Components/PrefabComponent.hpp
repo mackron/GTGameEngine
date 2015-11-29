@@ -5,7 +5,7 @@
 
 #include "../Component.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// A special component used for helping synchronize with prefabs.
     class PrefabComponent : public Component
@@ -52,10 +52,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 
@@ -63,10 +63,10 @@ namespace GTEngine
 
         /// The absolute path of the prefab the scene node is linked to. This is not serialized and is set based on the
         /// relative path set by SetPrefabRelativePath().
-        GTLib::String prefabAbsolutePath;
+        String prefabAbsolutePath;
 
         /// The relative path of the prefab the scene node is linked to.
-        GTLib::String prefabRelativePath;
+        String prefabRelativePath;
 
         /// The local hierarchy ID of the scene node. This maps to an ID from the prefab.
         uint64_t localHierarchyID;

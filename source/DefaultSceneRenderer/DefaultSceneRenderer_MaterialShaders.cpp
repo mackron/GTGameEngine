@@ -3,7 +3,7 @@
 #include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MaterialShaders.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 
-namespace GTEngine
+namespace GT
 {
     DefaultSceneRenderer_MaterialShaders::DefaultSceneRenderer_MaterialShaders()
         : shaders()

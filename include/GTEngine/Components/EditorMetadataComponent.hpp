@@ -11,7 +11,7 @@
 #include "../SceneNodeEventHandler.hpp"
 #include "../AlignedType.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class EditorMetadataComponent : public Component, public SIMDAlignedType
     {
@@ -261,10 +261,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer, unsigned int flags = 0U) const;
+        void Serialize(Serializer &serializer, unsigned int flags = 0U) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 
@@ -320,7 +320,7 @@ namespace GTEngine
         btBoxShape* spritePickingCollisionShape;
 
         /// The path of the texture to use for the sprite.
-        GTLib::String spriteTexturePath;
+        String spriteTexturePath;
 
         /// A pointer to the texture being used with the sprite.
         Texture2D* spriteTexture;
@@ -354,7 +354,7 @@ namespace GTEngine
 
 
         /// The name of the prefab the scene node is part of. If this is empty, it means it is not linked to a prefab.
-        GTLib::String prefabRelativePath;
+        String prefabRelativePath;
 
         /// The index of the node in the prefab. If this is 0, it is the root.
         uint64_t prefabID;
@@ -362,7 +362,7 @@ namespace GTEngine
 
 
         /// The event handler to attach to the scene node. Needed to intercept transformations so the transform of external meshes can be updated.
-        class SceneNodeEventHandler : public GTEngine::SceneNodeEventHandler
+        class SceneNodeEventHandler : public GT::SceneNodeEventHandler
         {
         public:
 

@@ -101,9 +101,9 @@ namespace GTGUI
             this->hasSuffix = true;
 
             // We're going to work with our own null-terminated string.
-            GTLib::String valueStr(valueIn, valueSizeInBytes);
+            GT::String valueStr(valueIn, valueSizeInBytes);
 
-            if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "auto"))
+            if (GT::Strings::Equal(valueIn, valueSizeInBytes, "auto"))
             {
                 this->format = StyleNumberFormat_Automatic;
             }
@@ -171,7 +171,7 @@ namespace GTGUI
             return true;
         }
 
-        GTLib::String GetValueAsString() const
+        GT::String GetValueAsString() const
         {
             char valueStr[16];
 
@@ -189,19 +189,19 @@ namespace GTGUI
                         {
                         case StyleNumberFormat_Pixels:
                             {
-                                GTLib::IO::snprintf(valueStr, 16, "%dpx", static_cast<int>(this->value));
+                                GT::IO::snprintf(valueStr, 16, "%dpx", static_cast<int>(this->value));
                                 break;
                             }
 
                         case StyleNumberFormat_Points:
                             {
-                                GTLib::IO::snprintf(valueStr, 16, "%dpt", static_cast<int>(this->value));
+                                GT::IO::snprintf(valueStr, 16, "%dpt", static_cast<int>(this->value));
                                 break;
                             }
 
                         case StyleNumberFormat_Percent:
                             {
-                                GTLib::IO::snprintf(valueStr, 16, "%d%%", static_cast<int>(this->value));
+                                GT::IO::snprintf(valueStr, 16, "%d%%", static_cast<int>(this->value));
                                 break;
                             }
 
@@ -211,7 +211,7 @@ namespace GTGUI
                     }
                     else
                     {
-                        GTLib::IO::snprintf(valueStr, 16, "%d", static_cast<int>(this->value));
+                        GT::IO::snprintf(valueStr, 16, "%d", static_cast<int>(this->value));
                     }
                 }
                 else
@@ -222,19 +222,19 @@ namespace GTGUI
                         {
                         case StyleNumberFormat_Pixels:
                             {
-                                GTLib::IO::snprintf(valueStr, 16, "%fpx", this->value);
+                                GT::IO::snprintf(valueStr, 16, "%fpx", this->value);
                                 break;
                             }
 
                         case StyleNumberFormat_Points:
                             {
-                                GTLib::IO::snprintf(valueStr, 16, "%fpt", this->value);
+                                GT::IO::snprintf(valueStr, 16, "%fpt", this->value);
                                 break;
                             }
 
                         case StyleNumberFormat_Percent:
                             {
-                                GTLib::IO::snprintf(valueStr, 16, "%f%%", this->value);
+                                GT::IO::snprintf(valueStr, 16, "%f%%", this->value);
                                 break;
                             }
 
@@ -244,7 +244,7 @@ namespace GTGUI
                     }
                     else
                     {
-                        GTLib::IO::snprintf(valueStr, 16, "%f", this->value);
+                        GT::IO::snprintf(valueStr, 16, "%f", this->value);
                     }
                 }
             }
@@ -280,8 +280,8 @@ namespace GTGUI
     };
 
 
-    // String
-    struct StyleAttribute_String : public StyleAttribute<GTLib::String>
+    // GT::String
+    struct StyleAttribute_String : public StyleAttribute<GT::String>
     {
         StyleAttribute_String()
             : StyleAttribute()
@@ -302,7 +302,7 @@ namespace GTGUI
         }
 
         // This is here for consistency.
-        const GTLib::String & GetValueAsString() const
+        const GT::String & GetValueAsString() const
         {
             return this->value;
         }
@@ -319,14 +319,14 @@ namespace GTGUI
 
         bool SetFromString(const char *valueIn, ptrdiff_t valueSizeInBytes = -1)
         {
-            if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "true"))
+            if (GT::Strings::Equal(valueIn, valueSizeInBytes, "true"))
             {
                 this->value = true;
                 this->isset = true;
 
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "false"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "false"))
             {
                 this->value = false;
                 this->isset = true;
@@ -348,23 +348,23 @@ namespace GTGUI
 
 
     // Color
-    struct StyleAttribute_Colour : public StyleAttribute<GTLib::Colour>
+    struct StyleAttribute_Colour : public StyleAttribute<GT::Colour>
     {
         StyleAttribute_Colour()
-            : StyleAttribute(GTLib::Colour::TransparentBlack), isnone(true)
+            : StyleAttribute(GT::Colour::TransparentBlack), isnone(true)
         {
         }
 
         bool SetFromString(const char* valueIn, ptrdiff_t valueSizeInBytes = -1)
         {
-            if (GTLib::Colour::TryParse(this->value, valueIn, valueSizeInBytes))
+            if (GT::Colour::TryParse(this->value, valueIn, valueSizeInBytes))
             {
                 this->isset  = true;
                 this->isnone = false;
 
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "none", -1))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "none", -1))
             {
                 this->isset  = true;
                 this->isnone = true;
@@ -375,15 +375,15 @@ namespace GTGUI
             return false;
         }
 
-        GTLib::String GetValueAsString() const
+        GT::String GetValueAsString() const
         {
             char valueStr[8];
-            GTLib::Colour::ToString(valueStr, 8, this->value);
+            GT::Colour::ToString(valueStr, 8, this->value);
 
             return valueStr;
         }
 
-        StyleAttribute_Colour & operator= (const GTLib::Colour &valueIn)
+        StyleAttribute_Colour & operator= (const GT::Colour &valueIn)
         {
             this->value = valueIn;
             this->isset = true;
@@ -408,19 +408,19 @@ namespace GTGUI
 
         bool SetFromString(const char* valueIn, ptrdiff_t valueSizeInBytes = -1)
         {
-            if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "relative"))
+            if (GT::Strings::Equal(valueIn, valueSizeInBytes, "relative"))
             {
                 this->value = GTGUI::Positioning_Relative;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "absolute"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "absolute"))
             {
                 this->value = GTGUI::Positioning_Absolute;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "auto"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "auto"))
             {
                 this->value = GTGUI::Positioning_Auto;
                 this->isset = true;
@@ -461,13 +461,13 @@ namespace GTGUI
 
         bool SetFromString(const char* valueIn, ptrdiff_t valueSizeInBytes = -1)
         {
-            if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "horizontal"))
+            if (GT::Strings::Equal(valueIn, valueSizeInBytes, "horizontal"))
             {
                 this->value = Plane_Horizontal;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "vertical"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "vertical"))
             {
                 this->value = Plane_Vertical;
                 this->isset = true;
@@ -504,31 +504,31 @@ namespace GTGUI
 
         bool SetFromString(const char* valueIn, ptrdiff_t valueSizeInBytes = -1)
         {
-            if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "left"))
+            if (GT::Strings::Equal(valueIn, valueSizeInBytes, "left"))
             {
                 this->value = Align_Left;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "right"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "right"))
             {
                 this->value = Align_Right;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "center"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "center"))
             {
                 this->value = Align_Center;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "top"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "top"))
             {
                 this->value = Align_Top;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "bottom"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "bottom"))
             {
                 this->value = Align_Bottom;
                 this->isset = true;
@@ -590,19 +590,19 @@ namespace GTGUI
 
         bool SetFromString(const char* valueIn, ptrdiff_t valueSizeInBytes = -1)
         {
-            if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "inner"))
+            if (GT::Strings::Equal(valueIn, valueSizeInBytes, "inner"))
             {
                 this->value = PositionOrigin_Inner;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "inner-border"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "inner-border"))
             {
                 this->value = PositionOrigin_InnerBorder;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "outer"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "outer"))
             {
                 this->value = PositionOrigin_Outer;
                 this->isset = true;
@@ -644,13 +644,13 @@ namespace GTGUI
         bool SetFromString(const char* valueIn, ptrdiff_t valueSizeInBytes = -1)
         {
             // We want to order this by most common in an attempt to avoid as many false string comparisons as we can.
-            if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "default"))
+            if (GT::Strings::Equal(valueIn, valueSizeInBytes, "default"))
             {
                 this->value = FontWeight_Default;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "bold"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "bold"))
             {
                 this->value = FontWeight_Bold;
                 this->isset = true;
@@ -659,43 +659,43 @@ namespace GTGUI
             else
             {
                 // These are the not-as-common styles. We'll just organize these by weight.
-                if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "thin"))
+                if (GT::Strings::Equal(valueIn, valueSizeInBytes, "thin"))
                 {
                     this->value = FontWeight_Thin;
                     this->isset = true;
                     return true;
                 }
-                else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "extra-light"))
+                else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "extra-light"))
                 {
                     this->value = FontWeight_ExtraLight;
                     this->isset = true;
                     return true;
                 }
-                else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "light"))
+                else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "light"))
                 {
                     this->value = FontWeight_Light;
                     this->isset = true;
                     return true;
                 }
-                else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "medium"))
+                else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "medium"))
                 {
                     this->value = FontWeight_Medium;
                     this->isset = true;
                     return true;
                 }
-                else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "semi-bold"))
+                else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "semi-bold"))
                 {
                     this->value = FontWeight_SemiBold;
                     this->isset = true;
                     return true;
                 }
-                else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "extra-bold"))
+                else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "extra-bold"))
                 {
                     this->value = FontWeight_ExtraBold;
                     this->isset = true;
                     return true;
                 }
-                else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "heavy"))
+                else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "heavy"))
                 {
                     this->value = FontWeight_Heavy;
                     this->isset = true;
@@ -778,13 +778,13 @@ namespace GTGUI
 
         bool SetFromString(const char* valueIn, ptrdiff_t valueSizeInBytes = -1)
         {
-            if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "default"))
+            if (GT::Strings::Equal(valueIn, valueSizeInBytes, "default"))
             {
                 this->value = FontSlant_Default;
                 this->isset = true;
                 return true;
             }
-            else if (GTLib::Strings::Equal(valueIn, valueSizeInBytes, "italic"))
+            else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "italic"))
             {
                 this->value = FontSlant_Italic;
                 this->isset = true;

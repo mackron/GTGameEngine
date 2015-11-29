@@ -7,11 +7,11 @@
 
 #include "../Keys.hpp"
 
-namespace GTLib
+namespace GT
 {
     namespace X11
     {
-        /// Converts an X11 KeySym key to a GTLib::Key.
+        /// Converts an X11 KeySym key to a Key.
         Key FromX11VirtualKey(KeySym key);
 
         /// Determines if the given X11 key is printable.

@@ -42,10 +42,10 @@ namespace GTGUI
         if (element.HasText())
         {
             // First we use GTType to render the info into it's own format.
-            GTLib::TextManagerRenderingOptions options;
+            GT::TextManagerRenderingOptions options;
             options.alpha = element.GetAbsoluteOpacity();
 
-            GTLib::TextManagerRenderingInfo renderingInfo;
+            GT::TextManagerRenderingInfo renderingInfo;
             element.textManager.Render(options, renderingInfo);
 
 
@@ -59,7 +59,7 @@ namespace GTGUI
                 auto vertexCount = meshIn->GetVertexCount();
                 auto indices     = meshIn->GetIndices();
                 auto indexCount  = meshIn->GetIndexCount();
-                auto glyphMap    = meshIn->GetGlyphMapHandle();     // <-- In GTGUI, a GTLib::GlyphMapHandle is just a GTLib::Image*. This can be null.
+                auto glyphMap    = meshIn->GetGlyphMapHandle();     // <-- In GTGUI, a GlyphMapHandle is just a Image*. This can be null.
 
                 auto mesh = new Mesh(vertices, vertexCount, indices, indexCount, glyphMap);
                 this->textMeshes.PushBack(mesh);
@@ -67,7 +67,7 @@ namespace GTGUI
         }
     }
 
-    void ElementRenderingData::UpdateTextMeshesColour(const GTLib::Colour &colour)
+    void ElementRenderingData::UpdateTextMeshesColour(const GT::Colour &colour)
     {
         for (size_t i = 0; i < this->textMeshes.count; ++i)
         {
@@ -86,8 +86,8 @@ namespace GTGUI
             //
             // There are two rectangles for each shadow. The inner rectangle is a solid colour. The outer rectangle is a transparent colour. The colours will
             // be interpolated to give a pseudo blur effect.
-            GTLib::Vector<MeshVertex>   vertices;
-            GTLib::Vector<unsigned int> indices;
+            GT::Vector<MeshVertex>   vertices;
+            GT::Vector<unsigned int> indices;
 
             float radius = element.style.shadowBlurRadius->value;
 
@@ -289,8 +289,8 @@ namespace GTGUI
 
 
 
-        GTLib::Vector<MeshVertex>   vertices;
-        GTLib::Vector<unsigned int> indices;
+        GT::Vector<MeshVertex>   vertices;
+        GT::Vector<unsigned int> indices;
 
         if (element.style.borderLeftWidth->value > 0.0f)
         {

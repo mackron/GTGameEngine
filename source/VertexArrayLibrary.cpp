@@ -5,7 +5,7 @@
 #include <GTEngine/Core/Math.hpp>
 
 
-namespace GTEngine
+namespace GT
 {
     static VertexArray* FullscreenQuad     = nullptr;
     static VertexArray* FullscreenTriangle = nullptr;
@@ -67,7 +67,7 @@ namespace GTEngine
 }
 
 
-namespace GTEngine
+namespace GT
 {
     ////////////////////////////////////////////////////////////////
     // Startup/Shutdown.
@@ -376,7 +376,7 @@ namespace GTEngine
                                 memcpy(
                                     destVertexData   + iAttributeOffset,
                                     sourceVertexData + sourceOffset,
-                                    sizeof(float) * GTLib::Min(static_cast<size_t>(format[iAttribute + 1]), sourceComponentCount));
+                                    sizeof(float) * Min(static_cast<size_t>(format[iAttribute + 1]), sourceComponentCount));
                             }
 
                             iAttributeOffset += format[iAttribute + 1];

@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/Window.hpp>
 
-namespace GTLib
+namespace GT
 {
     const InternalWindowObjects & Window::GetInternalObjects() const
     { 

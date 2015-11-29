@@ -26,7 +26,7 @@ namespace GT
 
         void DefaultMessageHandler::HandleMessage(const Message &message)
         {
-            GTLib::String content;
+            String content;
             
             switch (message.GetType())
             {

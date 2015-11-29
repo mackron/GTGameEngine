@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/WindowEventCallback.hpp>
 
-namespace GTLib
+namespace GT
 {
     WindowEventCallback::WindowEventCallback()
     {

@@ -4,7 +4,7 @@
 #include "RenderCommand.hpp"
 #include <cstring>      // For memcpy().
 
-namespace GTEngine
+namespace GT
 {
     RCQueue::RCQueue()
         : commands()

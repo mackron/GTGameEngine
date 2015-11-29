@@ -15,7 +15,7 @@
     #pragma warning(disable:4324)
 #endif
 
-namespace GTEngine
+namespace GT
 {
     /// A dynamics world for doing physics.
     class DynamicsWorld : public BaseCollisionWorld

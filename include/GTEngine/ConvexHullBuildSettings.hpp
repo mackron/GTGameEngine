@@ -3,7 +3,7 @@
 #ifndef __GTEngine_ConvexHullBuildSettings_hpp_
 #define __GTEngine_ConvexHullBuildSettings_hpp_
 
-namespace GTEngine
+namespace GT
 {
     /// Structure containing settings to use when building convex hulls.
     struct ConvexHullBuildSettings

@@ -5,7 +5,7 @@
 
 #include "Material.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Library class for materials.
     ///

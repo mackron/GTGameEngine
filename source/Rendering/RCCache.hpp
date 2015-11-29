@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Vector.hpp>
 #include <new>
 
-namespace GTEngine
+namespace GT
 {
     /// Container class designed specifically for caching rendering commands. Note that this is not a generic cache of
     /// RenderCommand pointers, but instead a cache of <T> render commands.
@@ -105,7 +105,7 @@ namespace GTEngine
         /// Pushes a new block to the end of the block array.
         void PushNewBlock()
         {
-            auto newBlock = new GTLib::Vector<T>(BlockSize);   // <-- <BlockSize> here specifies the size of the internal buffer.
+            auto newBlock = new Vector<T>(BlockSize);   // <-- <BlockSize> here specifies the size of the internal buffer.
 
             // It would be tempting to use newBlock->Resize(BlockSize) to allocate default Ts, however that will require copy
             // constructors on the render commands. To resolve, we're going to manipulate the buffer directly. The vectors will
@@ -122,7 +122,7 @@ namespace GTEngine
     private:
 
         /// The array of blocks. We need random access here, so a vector is appropriate.
-        GTLib::Vector<GTLib::Vector<T>*> blocks;
+        Vector<Vector<T>*> blocks;
 
         /// The number of Ts that are acquired.
         size_t acquiredCount;

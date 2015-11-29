@@ -5,7 +5,7 @@
 
 #include <cstring>      // For memcpy()
 #include "String.hpp"
-#include "Math.hpp"     // For GTLib::Min().
+#include "Math.hpp"     // For Min().
 #include "Vector.hpp"
 
 #if defined(_MSC_VER)
@@ -13,7 +13,7 @@
     #pragma warning(disable:4482)   // 'this' used in initialise list.
 #endif
 
-namespace GTLib
+namespace GT
 {
     // TODO: The new chunk stack system needs testing!
 
@@ -33,7 +33,7 @@ namespace GTLib
         }
 
 
-        /// @copydoc GTLib::Deserializer::ReadImpl
+        /// @copydoc Deserializer::ReadImpl
         size_t Read(void* outputBuffer, size_t bytesToRead)
         {
             if (this->HasRoomInChunk(bytesToRead))
@@ -44,7 +44,7 @@ namespace GTLib
             return 0;
         }
 
-        /// @copydoc GTLib::Deserializer::PeekImpl
+        /// @copydoc Deserializer::PeekImpl
         size_t Peek(void* outputBuffer, size_t bytesToRead)
         {
             if (this->HasRoomInChunk(bytesToRead))
@@ -55,7 +55,7 @@ namespace GTLib
             return 0;
         }
 
-        /// @copydoc GTLib::Deserializer::SeekImpl
+        /// @copydoc Deserializer::SeekImpl
         int64_t Seek(int64_t bytesToSkip)
         {
             if (this->HasRoomInChunk(bytesToSkip))
@@ -66,7 +66,7 @@ namespace GTLib
             return 0;
         }
 
-        /// @copydoc GTLib::Deserializer::TellImpl
+        /// @copydoc Deserializer::TellImpl
         size_t Tell() const
         {
             return this->TellImpl();
@@ -90,7 +90,7 @@ namespace GTLib
         ///
         /// @remarks
         ///     This performs the exact opposite of Serializer::WriteString().
-        size_t ReadString(GTLib::String &object)
+        size_t ReadString(String &object)
         {
             size_t bytesRead = 0;
 
@@ -232,10 +232,10 @@ namespace GTLib
 
 
         /// The stack of chunk sizes for protecting the reading of data.
-        GTLib::Vector<_ChunkStackItem> m_chunkStack;
+        Vector<_ChunkStackItem> m_chunkStack;
     };
 
-    template <> inline size_t Deserializer::Read<GTLib::String>(GTLib::String &)
+    template <> inline size_t Deserializer::Read<String>(String &)
     {
         // Must use ReadString().
         assert(false);
@@ -295,7 +295,7 @@ namespace GTLib
         size_t PeekImpl(void* outputBuffer, size_t bytesToRead)
         {
             // We can't read over the buffer.
-            bytesToRead = GTLib::Min(bytesToRead, this->GetAvailableBufferSpaceInBytes());
+            bytesToRead = Min(bytesToRead, this->GetAvailableBufferSpaceInBytes());
 
             memcpy(outputBuffer, reinterpret_cast<const uint8_t*>(this->buffer) + this->readPointer, bytesToRead);
 
@@ -354,7 +354,7 @@ namespace GTLib
         BasicDeserializer & operator=(const BasicDeserializer &);
     };
 
-    template <> inline size_t BasicDeserializer::Read<GTLib::String>(GTLib::String &)
+    template <> inline size_t BasicDeserializer::Read<String>(String &)
     {
         // Must use ReadString().
         assert(false);
@@ -465,7 +465,7 @@ namespace GTLib
         FileDeserializer & operator=(const FileDeserializer &);
     };
 
-    template <> inline size_t FileDeserializer::Read<GTLib::String>(GTLib::String &)
+    template <> inline size_t FileDeserializer::Read<String>(String &)
     {
         // Must use ReadString().
         assert(false);

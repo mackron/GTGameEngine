@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Renderering_TextureWrapModes_hpp_
 #define __GTEngine_Renderering_TextureWrapModes_hpp_
 
-namespace GTEngine
+namespace GT
 {
     enum TextureWrapMode
     {

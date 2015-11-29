@@ -16,13 +16,13 @@ namespace GT
     ///
     /// @remarks
     ///     This will create the global Game object.
-    bool LoadGameLibrary(GT::Script &script, GTEngine::Game &game);
+    bool LoadGameLibrary(GT::Script &script, Game &game);
 
 
     namespace GameFFI
     {
         /// Retrieves a reference to the global game object.
-        GTEngine::Game & GetGame(GT::Script &script);
+        Game & GetGame(GT::Script &script);
 
 
         /// Retrieves the absolute path of the directory containing the game executable.

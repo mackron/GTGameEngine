@@ -5,7 +5,7 @@
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 
-namespace GTEngine
+namespace GT
 {
     ShaderParameterCache::ShaderParameterCache()
         : floatParameters(),
@@ -402,10 +402,10 @@ namespace GTEngine
     }
 
 
-    void ShaderParameterCache::Serialize(GTLib::Serializer &serializer) const
+    void ShaderParameterCache::Serialize(Serializer &serializer) const
     {
         // Just the one chunk with this one.
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
 
         
         // Float
@@ -524,7 +524,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ShaderParameterCache::Deserialize(GTLib::Deserializer &deserializer)
+    void ShaderParameterCache::Deserialize(Deserializer &deserializer)
     {
         this->Clear();
 
@@ -545,7 +545,7 @@ namespace GTEngine
 
                     for (size_t i = 0; i < count; ++i)
                     {
-                        GTLib::String name;
+                        String name;
                         float          value;
 
                         deserializer.ReadString(name);
@@ -559,7 +559,7 @@ namespace GTEngine
 
                     for (size_t i = 0; i < count; ++i)
                     {
-                        GTLib::String name;
+                        String name;
                         glm::vec2      value;
 
                         deserializer.ReadString(name);
@@ -573,7 +573,7 @@ namespace GTEngine
 
                     for (size_t i = 0; i < count; ++i)
                     {
-                        GTLib::String name;
+                        String name;
                         glm::vec3      value;
 
                         deserializer.ReadString(name);
@@ -587,7 +587,7 @@ namespace GTEngine
 
                     for (size_t i = 0; i < count; ++i)
                     {
-                        GTLib::String name;
+                        String name;
                         glm::vec4      value;
 
                         deserializer.ReadString(name);
@@ -602,7 +602,7 @@ namespace GTEngine
 
                     for (size_t i = 0; i < count; ++i)
                     {
-                        GTLib::String name;
+                        String name;
                         glm::mat2      value;
 
                         deserializer.ReadString(name);
@@ -616,7 +616,7 @@ namespace GTEngine
 
                     for (size_t i = 0; i < count; ++i)
                     {
-                        GTLib::String name;
+                        String name;
                         glm::mat3      value;
 
                         deserializer.ReadString(name);
@@ -630,7 +630,7 @@ namespace GTEngine
 
                     for (size_t i = 0; i < count; ++i)
                     {
-                        GTLib::String name;
+                        String name;
                         glm::mat4      value;
 
                         deserializer.ReadString(name);
@@ -645,8 +645,8 @@ namespace GTEngine
 
                     for (size_t i = 0; i < count; ++i)
                     {
-                        GTLib::String name;
-                        GTLib::String value;
+                        String name;
+                        String value;
 
                         deserializer.ReadString(name);
                         deserializer.ReadString(value);

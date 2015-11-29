@@ -8,7 +8,7 @@
 #include "ImageLoader.hpp"
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  The main image class for GTLib.
@@ -246,7 +246,7 @@ namespace GTLib
         /// The array of mipmaps making up this image. This will always contain a full mipmap array, even when only some are used. For example,
         /// a PNG file will start out with only a single valid mipmap (the base mipmap), but the array will still be filled with a full array of
         /// mipmaps. The empty/invalid mipmaps will not allocate any data until they are actually needed.
-        GTLib::Vector<Mipmap> m_mipmaps;
+        Vector<Mipmap> m_mipmaps;
 
         /// The loader for the linked file. This will be null if no file is linked to the image.
         ImageLoader* m_loader;

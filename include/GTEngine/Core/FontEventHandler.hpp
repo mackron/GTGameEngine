@@ -3,7 +3,7 @@
 #ifndef __GTLib_FontEventHandler_hpp_
 #define __GTLib_FontEventHandler_hpp_
 
-namespace GTLib
+namespace GT
 {
     class FontServer;
     class Font;

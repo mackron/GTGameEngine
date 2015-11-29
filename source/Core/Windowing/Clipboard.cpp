@@ -8,17 +8,17 @@
 #include <GTEngine/Core/Windowing/Win32/Win32.hpp>
 #include <GTEngine/Core/Strings/LineIterator.hpp>
 
-namespace GTLib
+namespace GT
 {
     void Clipboard::SetText(const char* text, ptrdiff_t sizeInTs)
     {
-        if (OpenClipboard(GTLib::Win32::GetFirstHWND()))
+        if (OpenClipboard(Win32::GetFirstHWND()))
         {
             // Windows loves \n\r, so we need to make sure that is how the lines are formatted. If we don't do this, it will stuff
             // up pasting in things like Notepad.
-            GTLib::String formattedText;
+            String formattedText;
 
-            GTLib::Strings::LineIterator line(text, sizeInTs);
+            Strings::LineIterator line(text, sizeInTs);
             while (line)
             {
                 if (line.start != text)
@@ -60,13 +60,13 @@ namespace GTLib
         }
     }
 
-    GTLib::String Clipboard::GetText()
+    String Clipboard::GetText()
     {
-        GTLib::String result;
+        String result;
 
         if (IsClipboardFormatAvailable(CF_TEXT))
         {
-            if (OpenClipboard(GTLib::Win32::GetFirstHWND()))
+            if (OpenClipboard(Win32::GetFirstHWND()))
             {
                 HGLOBAL textHandle = GetClipboardData(CF_TEXT);
                 if (textHandle != 0)
@@ -74,7 +74,7 @@ namespace GTLib
                     // Win32 loves \n\r line endings, but prefer \n. We need to convert.
                     auto text = reinterpret_cast<const char*>(GlobalLock(textHandle));
 
-                    GTLib::Strings::LineIterator iLine(text);
+                    Strings::LineIterator iLine(text);
                     while (iLine)
                     {
                         if (iLine.start != text)
@@ -104,7 +104,7 @@ namespace GTLib
 #include <GTEngine/Core/Windowing/X11/X11.hpp>
 #include <unistd.h>
 
-namespace GTLib
+namespace GT
 {
     bool WaitForEvent(int type, XEvent &e)
     {
@@ -142,7 +142,7 @@ namespace GTLib
         XFlush(GetX11Display());
     }
 
-    GTLib::String Clipboard::GetText()
+    String Clipboard::GetText()
     {
         if (XGetSelectionOwner(GetX11Display(), X11::GetAtomCLIPBOARD()) == X11::GetFirstWindow())
         {
@@ -174,7 +174,7 @@ namespace GTLib
                                 auto name = const_cast<const char*>(XGetAtomName(GetX11Display(), static_cast<Atom>(atoms[iAtom])));
                                 if (name)
                                 {
-                                    if (GTLib::Strings::Equal<false>(name, "MULTIPLE"))
+                                    if (Strings::Equal<false>(name, "MULTIPLE"))
                                     {
                                     #if 0
                                         X11::GetWindowProperty(e.xany.window, e.xselection.property, property);
@@ -197,14 +197,14 @@ namespace GTLib
                                     }
                                     else
                                     {
-                                        if (GTLib::Strings::Equal<false>(name, "STRING")        ||
-                                            GTLib::Strings::Equal<false>(name, "UTF8_STRING")   ||
-                                            GTLib::Strings::Equal<false>(name, "UTF16_STRING")  ||
-                                            GTLib::Strings::Equal<false>(name, "UTF32_STRING")  ||
-                                            GTLib::Strings::Equal<false>(name, "TEXT")          ||
-                                            GTLib::Strings::Equal<false>(name, "COMPOUND_TEXT") ||
-                                            GTLib::Strings::Equal<false>(name, "application/x-gtk-text-buffer-rich-text") ||
-                                            GTLib::Strings::FindFirst(name, "text/") != nullptr)
+                                        if (Strings::Equal<false>(name, "STRING")        ||
+                                            Strings::Equal<false>(name, "UTF8_STRING")   ||
+                                            Strings::Equal<false>(name, "UTF16_STRING")  ||
+                                            Strings::Equal<false>(name, "UTF32_STRING")  ||
+                                            Strings::Equal<false>(name, "TEXT")          ||
+                                            Strings::Equal<false>(name, "COMPOUND_TEXT") ||
+                                            Strings::Equal<false>(name, "application/x-gtk-text-buffer-rich-text") ||
+                                            Strings::FindFirst(name, "text/") != nullptr)
                                         {
                                             selectedTarget = atoms[iAtom];
                                             XConvertSelection(e.xselection.display, e.xselection.property, selectedTarget, e.xselection.property, e.xany.window, CurrentTime);
@@ -214,9 +214,9 @@ namespace GTLib
                                                 X11::GetWindowProperty(e.xany.window, e.xselection.property, property);
 
                                                 // We need to determine the format and then convert over to UTF-8.
-                                                GTLib::String valueUTF8;
+                                                String valueUTF8;
 
-                                                if (GTLib::Strings::Equal<false>(name, "UTF16_STRING") ||
+                                                if (Strings::Equal<false>(name, "UTF16_STRING") ||
                                                     (property.data.count >= 2 && property.data.buffer[0] == 0xFF && property.data.buffer[1] == 0xFE))
                                                 {
                                                     // It's UTF16.
@@ -239,7 +239,7 @@ namespace GTLib
 
                                                     valueUTF8.Assign(reinterpret_cast<char16_t*>(property.data.buffer + 2), property.data.count/2 - 2);
                                                 }
-                                                else if (GTLib::Strings::Equal<false>(name, "UTF32_STRING"))
+                                                else if (Strings::Equal<false>(name, "UTF32_STRING"))
                                                 {
                                                     // It's UTF-32.
 

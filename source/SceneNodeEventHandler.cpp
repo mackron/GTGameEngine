@@ -2,7 +2,7 @@
 
 #include <GTEngine/SceneNodeEventHandler.hpp>
 
-namespace GTEngine
+namespace GT
 {
     void SceneNodeEventHandler::OnAttach(SceneNode &, SceneNode &)
     {

@@ -3,7 +3,7 @@
 #include "RCCreateTexture_OpenGL21.hpp"
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     RCCreateTexture::RCCreateTexture()
         : textureState(nullptr)

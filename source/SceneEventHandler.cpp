@@ -2,7 +2,7 @@
 
 #include <GTEngine/SceneEventHandler.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneEventHandler::SceneEventHandler()
     {

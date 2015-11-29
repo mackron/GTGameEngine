@@ -8,7 +8,7 @@
 namespace GT
 {
     /// The mutex controlling syncs for error handlers.
-    GTLib::Mutex errorMutex;
+    Mutex errorMutex;
 
     /// The root error handler.
     ErrorHandler *rootHandler = nullptr;
@@ -91,10 +91,10 @@ namespace GT
         if (rootHandler)
         {
             // We need to transform the message.
-            size_t msgLength = (size_t)GTLib::IO::vsnprintf(nullptr, 0, msg, argList1);
+            size_t msgLength = (size_t)IO::vsnprintf(nullptr, 0, msg, argList1);
             char *newMsg     = (char *)malloc(msgLength + 1);
 
-            GTLib::IO::vsnprintf(newMsg, msgLength + 1, msg, argList2);
+            IO::vsnprintf(newMsg, msgLength + 1, msg, argList2);
 
             ErrorHandler *i = rootHandler;
             while (i)

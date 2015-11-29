@@ -5,7 +5,7 @@
 
 #include "SceneNode.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Base class for game objects.
     ///
@@ -129,7 +129,7 @@ namespace GTEngine
     private:
 
         /// The event handler for the main scene node. This simply passes the events back to the main game object.
-        class GameObjectEventHandler : public GTEngine::SceneNodeEventHandler
+        class GameObjectEventHandler : public SceneNodeEventHandler
         {
         public:
 

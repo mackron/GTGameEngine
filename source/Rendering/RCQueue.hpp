@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/Threading/Mutex.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class RenderCommand;
 
@@ -61,7 +61,7 @@ namespace GTEngine
     private:
 
         /// The list containing all of the rendering commands.
-        GTLib::Vector<RenderCommand*> commands;
+        Vector<RenderCommand*> commands;
 
 
     private:    // No copying.
@@ -98,7 +98,7 @@ namespace GTEngine
     private:
 
         /// The synchronization lock.
-        mutable GTLib::Mutex lock;
+        mutable Mutex lock;
 
 
     private:    // No copying.

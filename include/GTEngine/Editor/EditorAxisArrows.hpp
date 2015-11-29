@@ -6,7 +6,7 @@
 #include "../SceneRenderer.hpp"
 #include "../SceneNode.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing the arrows that show up in the top right corner (by default) to show the direction of the axes.
     class EditorAxisArrows

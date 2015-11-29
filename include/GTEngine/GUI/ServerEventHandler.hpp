@@ -14,7 +14,7 @@ namespace GTGUI
     *   An application will typically inherit from this class and then attach an object of that class
     *   to a server via the Server::SetEventHandler() method.
     *
-    *   By default, the event handler will use GTLib::PostError() for both OnError() and OnWarning().
+    *   By default, the event handler will use PostError() for both OnError() and OnWarning().
     */
     class ServerEventHandler
     {
@@ -41,17 +41,17 @@ namespace GTGUI
         /**
         *   \brief  Called when the applications needs to change the cursor.
         */
-        virtual void OnChangeCursor(GTLib::Cursor cursor);
+        virtual void OnChangeCursor(GT::Cursor cursor);
 
         /**
         *   \brief  Called when the application needs to load a font.
         */
-        virtual void OnLoadFont(GTLib::Font &font);
+        virtual void OnLoadFont(GT::Font &font);
 
         /**
         *   \brief  Called when the application needs to unload a font.
         */
-        virtual void OnUnloadFont(GTLib::Font &font);
+        virtual void OnUnloadFont(GT::Font &font);
 
     
     

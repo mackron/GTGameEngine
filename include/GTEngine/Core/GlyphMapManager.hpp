@@ -6,7 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     typedef size_t GlyphMapHandle;
     
@@ -84,12 +84,12 @@ namespace GTLib
         ///
         /// @remarks
         ///     The image data should be unmapped with UnmapGlyphMapData().
-        virtual void* MapGlyphMapData(GTLib::GlyphMapHandle glyphMapHandle) = 0;
+        virtual void* MapGlyphMapData(GlyphMapHandle glyphMapHandle) = 0;
 
         /// Unmaps the glyph map image data.
         ///
         /// @param glyphMap [in] The handle to the glyph map whose data is being mapped.
-        virtual void UnmapGlyphMapData(GTLib::GlyphMapHandle glyphMapHandle) = 0;
+        virtual void UnmapGlyphMapData(GlyphMapHandle glyphMapHandle) = 0;
 
         /// Retrieves the dimensions of the glyph map.
         ///

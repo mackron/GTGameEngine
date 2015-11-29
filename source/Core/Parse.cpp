@@ -6,7 +6,7 @@
 
 #include <cstring>
 
-namespace GTLib
+namespace GT
 {
     template <> int Parse<int>(const char *value, int base)
     {

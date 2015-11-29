@@ -5,7 +5,7 @@
 
 #include "SceneNode.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Base class for managing culling in a scene.
     ///

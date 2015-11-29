@@ -3,7 +3,7 @@
 #include <GTEngine/GameWindowEventHandler.hpp>
 #include <GTEngine/Game.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GameWindowEventHandler::GameWindowEventHandler(Game &game)
         : game(game)
@@ -49,7 +49,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnMouseButtonDown(GTLib::MouseButton button, int x, int y)
+    void GameWindowEventHandler::OnMouseButtonDown(MouseButton button, int x, int y)
     {
         GameEvent e;
         e.code = EventCodes::OnMouseButtonDown;
@@ -60,7 +60,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnMouseButtonUp(GTLib::MouseButton button, int x, int y)
+    void GameWindowEventHandler::OnMouseButtonUp(MouseButton button, int x, int y)
     {
         GameEvent e;
         e.code = EventCodes::OnMouseButtonUp;
@@ -71,7 +71,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnMouseButtonDoubleClick(GTLib::MouseButton button, int x, int y)
+    void GameWindowEventHandler::OnMouseButtonDoubleClick(MouseButton button, int x, int y)
     {
         GameEvent e;
         e.code = EventCodes::OnMouseButtonDoubleClick;
@@ -82,7 +82,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnKeyPressed(GTLib::Key key)
+    void GameWindowEventHandler::OnKeyPressed(Key key)
     {
         GameEvent e;
         e.code           = EventCodes::OnKeyPressed;
@@ -91,7 +91,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnKeyReleased(GTLib::Key key)
+    void GameWindowEventHandler::OnKeyReleased(Key key)
     {
         GameEvent e;
         e.code           = EventCodes::OnKeyReleased;
@@ -100,7 +100,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnKeyDown(GTLib::Key key, unsigned int repeatCount)
+    void GameWindowEventHandler::OnKeyDown(Key key, unsigned int repeatCount)
     {
         GameEvent e;
         e.code        = EventCodes::OnKeyDown;
@@ -112,7 +112,7 @@ namespace GTEngine
         }
     }
 
-    void GameWindowEventHandler::OnKeyUp(GTLib::Key key)
+    void GameWindowEventHandler::OnKeyUp(Key key)
     {
         GameEvent e;
         e.code = EventCodes::OnKeyUp;

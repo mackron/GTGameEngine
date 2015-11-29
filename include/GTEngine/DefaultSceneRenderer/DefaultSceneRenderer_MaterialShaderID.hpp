@@ -5,7 +5,7 @@
 
 #include "DefaultSceneRenderer_LightGroup.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Structure representing an ID of a material's shader.
     ///

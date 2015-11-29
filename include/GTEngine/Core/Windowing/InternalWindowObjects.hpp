@@ -12,7 +12,7 @@
 #include <X11/Xutil.h>
 #endif
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  Structure containing the internal objects used by the Window class.

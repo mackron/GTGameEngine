@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/stdio.hpp>
 
-namespace GTLib
+namespace GT
 {
     namespace IO
     {
@@ -10,7 +10,7 @@ namespace GTLib
         {
             va_list argList;
             va_start(argList, format);
-                int result = GTLib::IO::vsnprintf(buffer, sizeOfBuffer, format, argList);
+                int result = IO::vsnprintf(buffer, sizeOfBuffer, format, argList);
             va_end(argList);
 
             return result;

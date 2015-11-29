@@ -18,7 +18,7 @@
 #include <GTEngine/Core/Map.hpp>
 #include <utility>
 
-namespace GTEngine
+namespace GT
 {
     /// Structure containing information about a framebuffer that is attached to each viewport in the default scene renderer.
     ///
@@ -157,13 +157,13 @@ namespace GTEngine
             this->height = newHeight;
 
 
-            this->depthStencilBuffer->SetData(newWidth, newHeight, GTLib::ImageFormat_Depth24_Stencil8);
+            this->depthStencilBuffer->SetData(newWidth, newHeight, ImageFormat_Depth24_Stencil8);
             //this->framebuffer->ResizeWriteOnlyDepthStencilBuffer(newWidth, newHeight);
-            this->colourBuffer0->SetData(    newWidth, newHeight, GTLib::ImageFormat_RGB16F);
-            this->colourBuffer1->SetData(    newWidth, newHeight, GTLib::ImageFormat_RGB16F);
-            this->lightingBuffer0->SetData(  newWidth, newHeight, GTLib::ImageFormat_RGB16F);
-            this->lightingBuffer1->SetData(  newWidth, newHeight, GTLib::ImageFormat_RGB16F);
-            this->finalColourBuffer->SetData(newWidth, newHeight, GTLib::ImageFormat_RGB8);
+            this->colourBuffer0->SetData(    newWidth, newHeight, ImageFormat_RGB16F);
+            this->colourBuffer1->SetData(    newWidth, newHeight, ImageFormat_RGB16F);
+            this->lightingBuffer0->SetData(  newWidth, newHeight, ImageFormat_RGB16F);
+            this->lightingBuffer1->SetData(  newWidth, newHeight, ImageFormat_RGB16F);
+            this->finalColourBuffer->SetData(newWidth, newHeight, ImageFormat_RGB8);
 
             Renderer::PushTexture2DData(*this->depthStencilBuffer);
             Renderer::PushTexture2DData(*this->colourBuffer0);
@@ -173,10 +173,10 @@ namespace GTEngine
             Renderer::PushTexture2DData(*this->finalColourBuffer);
 
 
-            unsigned int bloomWidth  = GTLib::Max(1U, newWidth  / 4);
-            unsigned int bloomHeight = GTLib::Max(1U, newHeight / 4);
-            this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTLib::ImageFormat_RGB8);
-            this->bloomBlurBuffer->SetData(bloomWidth, bloomHeight, GTLib::ImageFormat_RGB8);
+            unsigned int bloomWidth  = Max(1U, newWidth  / 4);
+            unsigned int bloomHeight = Max(1U, newHeight / 4);
+            this->bloomBuffer->SetData(bloomWidth, bloomHeight, ImageFormat_RGB8);
+            this->bloomBlurBuffer->SetData(bloomWidth, bloomHeight, ImageFormat_RGB8);
 
             Renderer::PushTexture2DData(*this->bloomBuffer);
             Renderer::PushTexture2DData(*this->bloomBlurBuffer);
@@ -260,10 +260,10 @@ namespace GTEngine
             this->width  = newWidth;
             this->height = newHeight;
 
-            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTLib::ImageFormat_Depth24_Stencil8);
+            //this->depthStencilBuffer->SetData(newWidth, newHeight, ImageFormat_Depth24_Stencil8);
             this->framebuffer->ResizeWriteOnlyDepthStencilBuffer(newWidth, newHeight);
-            this->colourBuffer->SetData(      newWidth, newHeight, GTLib::ImageFormat_RG32F);
-            this->blurBuffer->SetData(        newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->colourBuffer->SetData(      newWidth, newHeight, ImageFormat_RG32F);
+            this->blurBuffer->SetData(        newWidth, newHeight, ImageFormat_RG32F);
 
             //Renderer::PushTexture2DData(*this->depthStencilBuffer);
             Renderer::PushTexture2DData(*this->colourBuffer);
@@ -361,16 +361,16 @@ namespace GTEngine
             this->width  = newWidth;
             this->height = newHeight;
 
-            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTLib::ImageFormat_Depth24_Stencil8);
+            //this->depthStencilBuffer->SetData(newWidth, newHeight, ImageFormat_Depth24_Stencil8);
             this->framebuffer->ResizeWriteOnlyDepthStencilBuffer(newWidth, newHeight);
-            this->colourBuffer->PositiveX->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
-            this->colourBuffer->NegativeX->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
-            this->colourBuffer->PositiveY->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
-            this->colourBuffer->NegativeY->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
-            this->colourBuffer->PositiveZ->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
-            this->colourBuffer->NegativeZ->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
-            this->blurBuffer0->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
-            this->blurBuffer1->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->colourBuffer->PositiveX->SetData(newWidth, newHeight, ImageFormat_RG32F);
+            this->colourBuffer->NegativeX->SetData(newWidth, newHeight, ImageFormat_RG32F);
+            this->colourBuffer->PositiveY->SetData(newWidth, newHeight, ImageFormat_RG32F);
+            this->colourBuffer->NegativeY->SetData(newWidth, newHeight, ImageFormat_RG32F);
+            this->colourBuffer->PositiveZ->SetData(newWidth, newHeight, ImageFormat_RG32F);
+            this->colourBuffer->NegativeZ->SetData(newWidth, newHeight, ImageFormat_RG32F);
+            this->blurBuffer0->SetData(newWidth, newHeight, ImageFormat_RG32F);
+            this->blurBuffer1->SetData(newWidth, newHeight, ImageFormat_RG32F);
 
             //Renderer::PushTexture2DData(  *this->depthStencilBuffer, 0);
             Renderer::PushTextureCubeData(*this->colourBuffer);
@@ -449,7 +449,7 @@ namespace GTEngine
         void SetProperty(const char* name, const glm::vec4 &value);
 
         /// SceneRenderer::Get*Property()
-        GTLib::String GetStringProperty(const char* name) const;
+        String GetStringProperty(const char* name) const;
         int            GetIntegerProperty(const char* name) const;
         float          GetFloatProperty(const char* name) const;
         bool           GetBooleanProperty(const char* name) const;
@@ -558,7 +558,7 @@ namespace GTEngine
         /// @param faceViewMatrix [in] The view matrix of the face being drawn.
         /// @param faceIndex      [in] The index of the face being drawn.
         /// @param meshes         [in] The list of meshes to draw.
-        void RenderPointShapowMapFace(const DefaultSceneRendererPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTLib::Vector<DefaultSceneRendererMesh> &meshes);
+        void RenderPointShapowMapFace(const DefaultSceneRendererPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const Vector<DefaultSceneRendererMesh> &meshes);
 
         /// Sets the uniforms of the given material shader using the given data.
         ///
@@ -622,17 +622,17 @@ namespace GTEngine
     private:
 
         /// The framebuffers for each attached viewport. Keyed by the viewport.
-        GTLib::Map<SceneViewport*, DefaultSceneRendererFramebuffer*> viewportFramebuffers;
+        Map<SceneViewport*, DefaultSceneRendererFramebuffer*> viewportFramebuffers;
 
         /// Keeps track of the shaders associated with each referenced material definition. Keyed by the material definition.
-        GTLib::Map<const MaterialDefinition*, DefaultSceneRenderer_MaterialShaders*> m_materialShaders;
+        Map<const MaterialDefinition*, DefaultSceneRenderer_MaterialShaders*> m_materialShaders;
 
 
         /// The shader to use with the depth pre-pass.
         Shader* depthPassShader;
 
         /// The list of external meshes.
-        GTLib::Vector<const SceneRendererMesh*> externalMeshes;
+        Vector<const SceneRendererMesh*> externalMeshes;
 
 
         /// The framebuffer for drawing shadow maps.

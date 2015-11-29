@@ -221,7 +221,7 @@ namespace GTGUI
         /// @param nameSizeInTs  [in] The size of <name> in chars.
         ///
         /// @return The stringified value of the given attribute. Will return an empty string if anything goes wrong.
-        GTLib::String GetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs);
+        GT::String GetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs);
         
 
         /// Clears the error stack.
@@ -346,7 +346,7 @@ namespace GTGUI
         Server &server;
     
         /// The list of variables, index by their name.
-        GTLib::Dictionary<char*> variables;
+        GT::Dictionary<char*> variables;
 
 
         /// The list of style classes, index by their name.
@@ -362,15 +362,15 @@ namespace GTGUI
         /// The map of style attribute handlers. Basically, we map an object to each style attribute ('width', 'background-color', etc). We then access
         /// those objects based on the attribute name. When we have the object, we call virtual methods which will perform the assignment or retrieval.
         /// This map is filled in the LoadStyleAttributeHandlers() method, which will be called in the constructor.
-        GTLib::Dictionary<StyleAttributeHandler*> attributeHandlers;
+        GT::Dictionary<StyleAttributeHandler*> attributeHandlers;
 
         /// The stack of script errors.
-        GTLib::Vector<StyleScriptError> errorStack;
+        GT::Vector<StyleScriptError> errorStack;
 
         /// The stack of compilers representing the order in which style scripts were loaded. We use this for unloading. When a style is loaded, a
         /// pointer to the compiler object will be placed at the end of this list. When a compiler is removed from the list, the server will look at
         /// this stack in determining how to modify the style classes and variables appopriately.
-        GTLib::Vector<StyleScriptCompiler*> compilerStack;
+        GT::Vector<StyleScriptCompiler*> compilerStack;
         
 
         

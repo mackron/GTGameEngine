@@ -10,7 +10,7 @@
 #include <cstdio>
 
 
-namespace GTLib
+namespace GT
 {
     // These externs are defined in WindowManagement.cpp
     extern Atom g_atom_WM_DELETE_WINDOW;
@@ -141,7 +141,7 @@ namespace GTLib
         windowName.value    = (unsigned char*)(title);
         windowName.encoding = XA_STRING;
         windowName.format   = 8;
-        windowName.nitems   = static_cast<unsigned int>(GTLib::Strings::SizeInBytes(title));
+        windowName.nitems   = static_cast<unsigned int>(Strings::SizeInBytes(title));
 
         XSetWMName(window->display, window->window, &windowName);
     }
@@ -180,7 +180,7 @@ namespace GTLib
 #define THIS_WINDOW  (this->iwo.window)
 #define THIS_DISPLAY (GetX11Display())
 
-namespace GTLib
+namespace GT
 {
     // Structure used for changing the decoration of the window for fullscreen mode.
     struct MotifHints
@@ -267,7 +267,7 @@ namespace GTLib
         windowName.value    = (unsigned char*)(title);
         windowName.encoding = XA_STRING;
         windowName.format   = 8;
-        windowName.nitems   = static_cast<unsigned int>(GTLib::Strings::SizeInBytes(title));
+        windowName.nitems   = static_cast<unsigned int>(Strings::SizeInBytes(title));
 
         XSetWMName(THIS_DISPLAY, THIS_WINDOW, &windowName);
     }

@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/GlyphMapLayout.hpp>
 
-namespace GTLib
+namespace GT
 {
     GlyphMapLayout::GlyphMapLayout(unsigned int glyphMapWidth, unsigned int glyphMapHeight)
         : m_glyphMapWidth(glyphMapWidth), m_glyphMapHeight(glyphMapHeight), m_rows()

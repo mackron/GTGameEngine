@@ -8,7 +8,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     DynamicCharacterController::DynamicCharacterController(float heightIn, float radiusIn)
         : sceneNode(), sceneNodeEventHandler(*this),
@@ -100,7 +100,7 @@ namespace GTEngine
 
             // We need to keep track of whether or not the player is on the ground. We're going to use a ray to do this. We will shoot the ray from
             // the center of the player towards the ground, while ignoring the controller body itself.
-            GTEngine::ClosestRayExceptMeTestCallback callback;
+            ClosestRayExceptMeTestCallback callback;
             callback.excludedNode = &this->sceneNode;
 
             // The scene node will be at the player's feet.

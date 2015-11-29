@@ -6,7 +6,7 @@
 #include "ScriptVariableTypes.hpp"
 #include <GTEngine/Core/String.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a public variable in a scene node script.
     ///
@@ -55,7 +55,7 @@ namespace GTEngine
         ScriptVariableType type;
 
         /// The name of the variable.
-        GTLib::String name;
+        String name;
     };
 
 
@@ -324,7 +324,7 @@ namespace GTEngine
     private:
 
         /// The value.
-        GTLib::String value;
+        String value;
     };
 
 
@@ -355,7 +355,7 @@ namespace GTEngine
     private:
 
         /// The value.
-        GTLib::String value;
+        String value;
     };
 }
 

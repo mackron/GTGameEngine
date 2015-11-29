@@ -47,7 +47,7 @@
 
 #include <LinearMath/btMatrix3x3.h>     // <-- Will include btVector3 and btQuaternion.
 
-namespace GTEngine
+namespace GT
 {
     namespace Math
     {

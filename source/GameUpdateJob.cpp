@@ -3,7 +3,7 @@
 #include <GTEngine/GameUpdateJob.hpp>
 #include <GTEngine/Game.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GameUpdateJob::GameUpdateJob(Game &game)
         : game(game)

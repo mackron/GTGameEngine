@@ -8,7 +8,7 @@
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers/
     class RCSetVertexArrayState : public RenderCommand

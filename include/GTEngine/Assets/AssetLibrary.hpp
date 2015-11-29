@@ -106,10 +106,10 @@ namespace GT
         easyvfs_context* m_pVFS;
 
         /// The list of allocators.
-        GTLib::Vector<AssetAllocator*> m_allocators;
+        Vector<AssetAllocator*> m_allocators;
 
         /// The list of loaded assets, by absolute file path.
-        GTLib::Dictionary<Asset*> m_loadedAssets;
+        Dictionary<Asset*> m_loadedAssets;
 
 
         

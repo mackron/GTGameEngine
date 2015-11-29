@@ -2,7 +2,7 @@
 
 #include <GTEngine/Editor/SceneEditor/SceneEditorSceneUpdateManager.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneEditorSceneUpdateManager::SceneEditorSceneUpdateManager(const SceneNode &cameraNodeIn)
         : DefaultSceneUpdateManager(), cameraNode(cameraNodeIn), isEnabled(false), isParticlesEnabled(true), isSceneUpdatesPaused(false)

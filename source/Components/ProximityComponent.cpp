@@ -3,7 +3,7 @@
 #include <GTEngine/Components/ProximityComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ProximityComponent, "Proximity")
 
@@ -33,9 +33,9 @@ namespace GTEngine
     }
 
 
-    void ProximityComponent::UpdateContainment(GTLib::Vector<uint64_t> &sceneNodesEntered, GTLib::Vector<uint64_t> &sceneNodesLeft)
+    void ProximityComponent::UpdateContainment(Vector<uint64_t> &sceneNodesEntered, Vector<uint64_t> &sceneNodesLeft)
     {
-        GTLib::SortedVector<uint64_t> sceneNodesLeaving(this->sceneNodesInsideVolume);
+        SortedVector<uint64_t> sceneNodesLeaving(this->sceneNodesInsideVolume);
 
         ProximityComponent::Iterator i(*this);
         while (i)
@@ -74,13 +74,13 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void ProximityComponent::Serialize(GTLib::Serializer &serializer) const
+    void ProximityComponent::Serialize(Serializer &serializer) const
     {
         // All we actually want to write is the collision shapes.
         CollisionShapeComponent::Serialize(serializer);
     }
 
-    void ProximityComponent::Deserialize(GTLib::Deserializer &deserializer)
+    void ProximityComponent::Deserialize(Deserializer &deserializer)
     {
         auto world = this->ghostObject.GetWorld();
         if (world != nullptr)
@@ -134,7 +134,7 @@ namespace GTEngine
 
 
 // Iterator
-namespace GTEngine
+namespace GT
 {
     ProximityComponent::Iterator::Iterator(ProximityComponent &component)
         : component(&component), otherNode(nullptr), manifoldArray(), i(0)
@@ -143,7 +143,7 @@ namespace GTEngine
     }
 
     ProximityComponent::Iterator::Iterator(SceneNode &sceneNode)
-        : component(sceneNode.GetComponent<GTEngine::ProximityComponent>()), otherNode(nullptr), manifoldArray(), i(0)
+        : component(sceneNode.GetComponent<ProximityComponent>()), otherNode(nullptr), manifoldArray(), i(0)
     {
         ++(*this);
     }
@@ -168,7 +168,7 @@ namespace GTEngine
 
                 auto &pairArray = overlappingPairCache->getOverlappingPairArray();
 
-                GTEngine::SceneNode* nextNode = nullptr;
+                SceneNode* nextNode = nullptr;
                 while (nextNode == nullptr && this->i < pairArray.size())
                 {
                     this->manifoldArray.clear();
@@ -183,11 +183,11 @@ namespace GTEngine
 
                         if (bodyA == &this->component->ghostObject)
                         {
-                            nextNode = static_cast<GTEngine::SceneNode*>(bodyB->getUserPointer());
+                            nextNode = static_cast<SceneNode*>(bodyB->getUserPointer());
                         }
                         else if (bodyB == &this->component->ghostObject)
                         {
-                            nextNode = static_cast<GTEngine::SceneNode*>(bodyA->getUserPointer());
+                            nextNode = static_cast<SceneNode*>(bodyA->getUserPointer());
                         }
 
 

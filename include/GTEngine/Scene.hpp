@@ -23,7 +23,7 @@
 
 
 /// Contact test callbacks.
-namespace GTEngine
+namespace GT
 {
     /// The base callback structure for doing contact tests.
     struct ContactTestCallback
@@ -198,7 +198,7 @@ namespace GTEngine
 }
 
 
-namespace GTEngine
+namespace GT
 {
     // TODO: Document the state stack.
 
@@ -299,7 +299,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If a scene node of the same ID already exists, this will return nullptr.
-        SceneNode* CreateNewSceneNode(GTLib::Deserializer &deserializer, unsigned int flags = 0, bool createNewIDIfExists = false);
+        SceneNode* CreateNewSceneNode(Deserializer &deserializer, unsigned int flags = 0, bool createNewIDIfExists = false);
 
         /// Creates a new scene node hierarchy from the given scene node class (prefab).
         ///
@@ -763,7 +763,7 @@ namespace GTEngine
         /// @param start  [in]  The start position.
         /// @param end    [in]  The end position.
         /// @param output [out] A reference to the vector that will receive the navigation points.
-        void FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTLib::Vector<glm::vec3> &output);
+        void FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, Vector<glm::vec3> &output);
 
         /// A hacky temp method for retrieving a reference to the internal list of scene nodes. (Used with NavigationMesh. Will be replaced later.)
               SceneNodeMap & GetSceneNodes()       { return this->sceneNodes; }
@@ -784,7 +784,7 @@ namespace GTEngine
         /// Serializes the scene using the given serializer.
         ///
         /// @param serializer [in] The serializer to write the data to.
-        bool Serialize(GTLib::Serializer &serializer) const;
+        bool Serialize(Serializer &serializer) const;
 
         /// Deserializes the scene using the given deserializer.
         ///
@@ -794,8 +794,8 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If deserialization fails, the scene will be left completely unmodified.
-        bool Deserialize(GTLib::Deserializer &deserializer, SceneDeserializeCallback &callback);
-        bool Deserialize(GTLib::Deserializer &deserializer)
+        bool Deserialize(Deserializer &deserializer, SceneDeserializeCallback &callback);
+        bool Deserialize(Deserializer &deserializer)
         {
             SceneDeserializeCallback devnull;
             return this->Deserialize(deserializer, devnull);
@@ -805,7 +805,7 @@ namespace GTEngine
         /// Serializes the scene's state stack.
         ///
         /// @param serializer [in] A reference ot the serializer to write the data to.
-        bool SerializeStateStack(GTLib::Serializer &serializer) const;
+        bool SerializeStateStack(Serializer &serializer) const;
 
         /// Deserializes the scene's state stack.
         ///
@@ -815,7 +815,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will not change the current state of the scene.
-        bool DeserializeStateStack(GTLib::Deserializer &deserializer);
+        bool DeserializeStateStack(Deserializer &deserializer);
 
 
 
@@ -914,15 +914,15 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This only works if the scene is registered to a script.
-        void PostSceneNodeScriptEvent_OnSerializeGlobalData(GTLib::Serializer &serializer);
-        void PostSceneNodeScriptEvent_OnSerializeGlobalData(SceneNode &sceneNode, GTLib::Serializer &serializer);
+        void PostSceneNodeScriptEvent_OnSerializeGlobalData(Serializer &serializer);
+        void PostSceneNodeScriptEvent_OnSerializeGlobalData(SceneNode &sceneNode, Serializer &serializer);
         
         /// Posts the OnDeserializeGlobalData event to all scene nodes with script components that define that event.
         ///
         /// @remarks
         ///     This only works if the scene is registered to a script.
-        void PostSceneNodeScriptEvent_OnDeserializeGlobalData(GTLib::Deserializer &deserializer);
-        void PostSceneNodeScriptEvent_OnDeserializeGlobalData(SceneNode &sceneNode, GTLib::Deserializer &deserializer);
+        void PostSceneNodeScriptEvent_OnDeserializeGlobalData(Deserializer &deserializer);
+        void PostSceneNodeScriptEvent_OnDeserializeGlobalData(SceneNode &sceneNode, Deserializer &deserializer);
 
 
     private:
@@ -1041,7 +1041,7 @@ namespace GTEngine
 
         /// The list of viewports currently attached to this scene. There will always be at least one viewport. The default viewport will be positioned
         /// at index 0.
-        GTLib::Vector<SceneViewport*> viewports;
+        Vector<SceneViewport*> viewports;
 
         /// The default viewport.
         SceneViewport defaultViewport;
@@ -1058,13 +1058,13 @@ namespace GTEngine
 
 
         /// The list of scene nodes created by the scene.
-        GTLib::SortedVector<uint64_t> sceneNodesCreatedByScene;
+        SortedVector<uint64_t> sceneNodesCreatedByScene;
 
         /// The list of scene nodes with proximity components. We keep track of this so we can do OnSceneNodeEnter, etc checks. We map the IDs to a pointer to the proximity component.
-        GTLib::Map<uint64_t, ProximityComponent*> sceneNodesWithProximityComponents;
+        Map<uint64_t, ProximityComponent*> sceneNodesWithProximityComponents;
 
         /// The list of scene nodes with particle system components. We keep track of this so we can post AABB updates to the culling manager more efficiently.
-        GTLib::Map<uint64_t, ParticleSystemComponent*> sceneNodesWithParticleSystemComponents;
+        Map<uint64_t, ParticleSystemComponent*> sceneNodesWithParticleSystemComponents;
 
 
         /// The navigation mesh for doing navigation paths.
@@ -1072,7 +1072,7 @@ namespace GTEngine
 
 
         /// The list of event handlers current attached to the scene.
-        GTLib::Vector<SceneEventHandler*> eventHandlers;
+        Vector<SceneEventHandler*> eventHandlers;
 
 
         /// The state stack.
@@ -1091,7 +1091,7 @@ namespace GTEngine
 
 
         /// The name of the scene.
-        GTLib::String name;
+        String name;
 
 
         /// Whether or not colour clearing should be enabled.

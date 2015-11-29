@@ -6,7 +6,7 @@
 #include <GTEngine/GUI/ImageManager.hpp>
 #include "Rendering/Texture2D.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class GUIImageManager : public GTGUI::ImageManager
     {

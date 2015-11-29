@@ -5,7 +5,7 @@
 #include <GTEngine/Core/stdlib.hpp>
 #include <cstring>
 
-namespace GTLib
+namespace GT
 {
     Mipmap::Mipmap()
         : format(ImageFormat_Auto), width(0), height(0), data(nullptr)

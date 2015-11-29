@@ -18,7 +18,7 @@ namespace GT
         AssetMetadataChunk(const char* name, uint32_t sizeInBytes, const void* pData);
 
         /// Constructs the chunk from a deserializer.
-        AssetMetadataChunk(GTLib::Deserializer &deserializer);
+        AssetMetadataChunk(Deserializer &deserializer);
 
         /// Destructor.
         ~AssetMetadataChunk();
@@ -54,7 +54,7 @@ namespace GT
         /// Serializes the chunk.
         ///
         /// @param serializer [in] A reference to the serializer to write the data to.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
 
 
@@ -82,7 +82,7 @@ namespace GT
         /// Constructs the metadata from a deserializer.
         ///
         /// @param deserializer [in] A reference to the deserializer.
-        AssetMetadata(GTLib::Deserializer &deserializer);
+        AssetMetadata(Deserializer &deserializer);
 
         /// Destructor.
         ~AssetMetadata();
@@ -126,7 +126,7 @@ namespace GT
         /// @remarks
         ///     The format of the serializer is very simple. The first 4 bytes defines the number of chunks, which is
         ///     followed by the chunk data itself.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the metadata.
         ///
@@ -134,13 +134,13 @@ namespace GT
         ///
         /// @remarks
         ///     This will clear the metadata before deserializing.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
     private:
 
         /// The list of metadata chunks.
-        GTLib::Vector<AssetMetadataChunk*> m_chunks;
+        Vector<AssetMetadataChunk*> m_chunks;
     };
 }
 

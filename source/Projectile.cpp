@@ -2,7 +2,7 @@
 
 #include <GTEngine/Projectile.hpp>
 
-namespace GTEngine
+namespace GT
 {
     Projectile::Projectile()
         : position(), velocity()
@@ -81,7 +81,7 @@ namespace GTEngine
 
 #include <GTEngine/Scene.hpp>
 
-namespace GTEngine
+namespace GT
 {
     DefaultProjectile::DefaultProjectile(Scene &sceneIn, short collisionGroupIn, short collisionMaskIn)
         : scene(sceneIn), collisionGroup(collisionGroupIn), collisionMask(collisionMaskIn),
@@ -122,7 +122,7 @@ namespace GTEngine
 
     struct DefaultProjectileRayTestCallback : public ClosestRayTestCallback
     {
-        GTEngine::SceneNode* ignoredObject;
+        SceneNode* ignoredObject;
 
         DefaultProjectileRayTestCallback(short collisionGroup, short collisionMask, SceneNode* ignoredObjectIn)
             : ClosestRayTestCallback(collisionGroup, collisionMask), ignoredObject(ignoredObjectIn)

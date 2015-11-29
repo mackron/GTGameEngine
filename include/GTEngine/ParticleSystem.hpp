@@ -6,7 +6,7 @@
 #include "ParticleSystemDefinition.hpp"
 #include "ParticleEmitter.hpp"
 
-namespace GTEngine
+namespace GT
 {
     class ParticleSystem
     {
@@ -97,7 +97,7 @@ namespace GTEngine
 
 
         /// The list of emitters making up this particle system.
-        GTLib::Vector<ParticleEmitter*> emitters;
+        Vector<ParticleEmitter*> emitters;
 
 
         /// The position of the particle system.

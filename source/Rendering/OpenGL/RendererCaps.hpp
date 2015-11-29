@@ -5,7 +5,7 @@
 
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     struct RendererCaps_OpenGL
     {

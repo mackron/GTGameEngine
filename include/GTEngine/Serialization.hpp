@@ -7,7 +7,7 @@
 #include <GTEngine/Core/Deserializer.hpp>
 #include <cstdint>
 
-namespace GTEngine
+namespace GT
 {
     namespace Serialization
     {

@@ -12,7 +12,7 @@
 #include <cassert>
 #include <new>
 
-namespace GTLib
+namespace GT
 {
     /// An item in a dictionary.
     template <typename T, typename U>

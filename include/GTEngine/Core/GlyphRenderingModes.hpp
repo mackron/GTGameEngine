@@ -3,7 +3,7 @@
 #ifndef __GTLib_RenderingModes_hpp_
 #define __GTLib_RenderingModes_hpp_
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  Enumerator for each rendering mode.

@@ -6,7 +6,7 @@
 #include "../Component.hpp"
 #include "../Physics.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Component class for a generic 6 DOF phsics constraint.
     class GenericConstraintComponent : public Component

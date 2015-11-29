@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/DateTime.hpp>
 
-namespace GTLib
+namespace GT
 {
     DateTime::DateTime()
         : time(0)
@@ -14,7 +14,7 @@ namespace GTLib
     {
     }
     
-    GTLib::String DateTime::ToFormattedString(const char *format)
+    String DateTime::ToFormattedString(const char *format)
     {
         char stringBuffer[64];
 
@@ -30,12 +30,12 @@ namespace GTLib
         return stringBuffer;
     }
     
-    GTLib::String DateTime::ToShortString()
+    String DateTime::ToShortString()
     {
         return this->ToFormattedString("%x %H:%M:%S");
     }
 
-    GTLib::String DateTime::To24HourTimeString()
+    String DateTime::To24HourTimeString()
     {
         return this->ToFormattedString("%H:%M:%S");
     }

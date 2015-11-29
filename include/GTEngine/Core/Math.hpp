@@ -18,7 +18,7 @@
 #define GT_PI_D               3.141592653589793238462643383279
 #define GT_2PI_D              6.283185307179586476925286766559
 
-namespace GTLib
+namespace GT
 {
     template <typename T>
     T Min(T x, T y)

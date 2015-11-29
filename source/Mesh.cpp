@@ -6,7 +6,7 @@
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/Logging.hpp>
 
-namespace GTEngine
+namespace GT
 {
     Mesh::Mesh(DrawMode drawModeIn)
         : geometry(nullptr), material(nullptr),
@@ -144,12 +144,12 @@ namespace GTEngine
 
 
 
-    void Mesh::Serialize(GTLib::Serializer &serializer, bool serializeGeometry) const
+    void Mesh::Serialize(Serializer &serializer, bool serializeGeometry) const
     {
         // We'll write the material chunk first.
         if (this->material != nullptr && !this->material->GetDefinition().relativePath.IsEmpty())
         {
-            GTLib::BasicSerializer materialSerializer;
+            BasicSerializer materialSerializer;
             
             materialSerializer.WriteString(this->material->GetDefinition().relativePath);
             this->material->Serialize(materialSerializer);
@@ -168,7 +168,7 @@ namespace GTEngine
         // Now the geometry.
         if (this->geometry != nullptr && serializeGeometry)
         {
-            GTLib::BasicSerializer geometrySerializer;
+            BasicSerializer geometrySerializer;
 
             this->geometry->Serialize(geometrySerializer);
 
@@ -192,7 +192,7 @@ namespace GTEngine
         serializer.Write(header);
     }
 
-    void Mesh::Deserialize(GTLib::Deserializer &deserializer)
+    void Mesh::Deserialize(Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
 
@@ -208,7 +208,7 @@ namespace GTEngine
                     {
                     case 1:
                         {
-                            GTLib::String materialPath;
+                            String materialPath;
                             deserializer.ReadString(materialPath);
 
                             this->SetMaterial(materialPath.c_str());
@@ -219,7 +219,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing Mesh. Material chunk is an unsupported version (%d).", header.version);
+                            Log("Error deserializing Mesh. Material chunk is an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -250,7 +250,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing Mesh. Geometry chunk is an unsupported version (%d).", header.version);
+                            Log("Error deserializing Mesh. Geometry chunk is an unsupported version (%d).", header.version);
                             break;
                         }
                     }

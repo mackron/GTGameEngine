@@ -6,7 +6,7 @@
 #include "SceneStateStackBranch.hpp"
 #include <GTEngine/Core/Map.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Scene;
 
@@ -146,10 +146,10 @@ namespace GTEngine
         // Serialization/Deserialization
 
         /// Serializes the state stack.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the state stack.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 
@@ -175,7 +175,7 @@ namespace GTEngine
         Scene &scene;
 
         /// The list of branches. We use a map here because we want consistent branch IDs due to serialization.
-        GTLib::Map<uint32_t, SceneStateStackBranch*> branches;
+        Map<uint32_t, SceneStateStackBranch*> branches;
 
         /// A pointer to the master branch.
         SceneStateStackBranch masterBranch;

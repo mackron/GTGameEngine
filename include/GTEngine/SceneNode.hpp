@@ -26,7 +26,7 @@
 #include <GTEngine/Core/Map.hpp>
 #include <GTEngine/Core/String.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Scene;            // <-- Needed by SceneNode.
     
@@ -524,7 +524,7 @@ namespace GTEngine
         /// @param name [in] The name of the component to instantiate and add.
         ///
         /// @remarks
-        ///     This will use GTEngine::CreateComponentByName() to do the instantiation, which will in turn call Game::CreateCustomComponent() if it fails.
+        ///     This will use CreateComponentByName() to do the instantiation, which will in turn call Game::CreateCustomComponent() if it fails.
         Component* AddComponentByName(const char* name);
 
 
@@ -560,7 +560,7 @@ namespace GTEngine
 
 
         /// Retrieves a list containing the names of the components that are currently attached to the scene node.
-        void GetAttachedComponentNames(GTLib::Vector<GTLib::String> &output) const;
+        void GetAttachedComponentNames(Vector<String> &output) const;
 
 
 
@@ -701,7 +701,7 @@ namespace GTEngine
         ///     This ignores children. Serialization of children should be done at a higher level.
         ///     @par
         ///     This will serialize every attached component also.
-        void Serialize(GTLib::Serializer &serializer, unsigned int flags = 0) const;
+        void Serialize(Serializer &serializer, unsigned int flags = 0) const;
 
         /// Deserializes the scene node, ignoring children.
         ///
@@ -714,7 +714,7 @@ namespace GTEngine
         ///     @par
         ///     Sometimes a scene will be deserialized before it's added to a scene. Therefore, the a reference to the scene that the
         ///     scene node will eventually be made a part of will be passed to Deserialize().
-        void Deserialize(GTLib::Deserializer &deserializer, unsigned int flags = 0);
+        void Deserialize(Deserializer &deserializer, unsigned int flags = 0);
 
         /// A special deserialization method for deserializing just the ID of the scene node, but leaving the read pointer as it.
         ///
@@ -726,7 +726,7 @@ namespace GTEngine
         ///     This not change the state of either the deserializer nor the scene node. Indeed, this is actually a static function.
         ///     @par
         ///     If this function returns false, 'idOut' will be left unmodified.
-        static bool Deserialize_PeekID(GTLib::Deserializer &deserializer, uint64_t &idOut);
+        static bool Deserialize_PeekID(Deserializer &deserializer, uint64_t &idOut);
 
 
         /// Disables serialization of the scene node when serialized from a scene.
@@ -811,7 +811,7 @@ namespace GTEngine
 
         /// The name of this node. Should usually be unique, but doesn't need to be. This can be modified, so we'll use a String object
         /// to make things easier.
-        GTLib::String m_name;
+        String m_name;
 
         /// The parent of the scene node. If this is null, it is a root object.
         SceneNode* m_parent;
@@ -842,15 +842,15 @@ namespace GTEngine
 
         /// The list of pointers of the event handlers that are attached to this node. This should usually always have at
         /// least a single entry, but doesn't have to.
-        GTLib::List<SceneNodeEventHandler*> eventHandlers;
+        List<SceneNodeEventHandler*> eventHandlers;
 
         /// A map of components. More than one type of component is not allowed. We index this map by the component name.
-        GTLib::Dictionary<Component*> components;
+        Dictionary<Component*> components;
 
         /// A map of data pointers. A SceneNode should not be inheritted. Instead, additional data can be attached to the scene
         /// node with a size_t as it's key. We use a size_t so we can use a pointer as a key if needed. This could be useful for
         /// component-specific data (use a key equal to the pointer to the component).
-        GTLib::Map<size_t, void*> dataPointers;
+        Map<size_t, void*> dataPointers;
 
 
         /// The scene this node is attached to, if any. Usually, a scene node is part of a scene. We need to keep track of the

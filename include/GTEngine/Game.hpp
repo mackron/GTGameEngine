@@ -20,7 +20,7 @@
 #include <GTEngine/Core/FontServer.hpp>
 #include <GTEngine/GUI/Server.hpp>
 
-namespace GTEngine
+namespace GT
 {
     static const size_t MouseBufferSize   = 2;
     static const float  MouseSmoothFactor = 0.5f;
@@ -64,13 +64,13 @@ namespace GTEngine
         /// @remarks
         ///     This will call OnLoadConfigs() and OnStartup().
         ///     @par
-        ///     Client application should not call this method directly. It will instead be called internally by GTEngine::Startup().
+        ///     Client application should not call this method directly. It will instead be called internally by Startup().
         bool Startup();
 
         /// Shuts down the game.
         ///
         /// @remark
-        ///     Client applications should not call this method directly. It will instead be called internally by GTEngine::Shutdown().
+        ///     Client applications should not call this method directly. It will instead be called internally by Shutdown().
         void Shutdown();
 
 
@@ -135,7 +135,7 @@ namespace GTEngine
         GTGUI::Element* GetGameWindowGUIElement() { return this->gameWindowGUIElement; }
 
         /// Retrieves a pointer to the main game window.
-        GTLib::Window* GetWindow() { return this->window; }
+        Window* GetWindow() { return this->window; }
 
 
         /// Enables fullscreen mode.
@@ -220,14 +220,14 @@ namespace GTEngine
         /// @param key [in] The key code to check.
         ///
         /// @return True if the key is currently held down.
-        bool IsKeyDown(GTLib::Key key) const;
+        bool IsKeyDown(Key key) const;
 
         /// Determines if a mouse button is currently pressed.
         ///
         /// @param button [in] The mouse button code to check.
         ///
         /// @return True if the mouse button is currently held down.
-        bool IsMouseButtonDown(GTLib::MouseButton button) const;
+        bool IsMouseButtonDown(MouseButton button) const;
 
 
         /// Pauses the game.
@@ -352,17 +352,17 @@ namespace GTEngine
         // Key Bindings.
 
         /// Retrieves the key for toggling the profiler.
-        GTLib::Key GetProfilerToggleKey() const;
+        Key GetProfilerToggleKey() const;
 
         /// Sets the key for toggling the profiler.
-        void SetProfilerToggleKey(GTLib::Key key);
+        void SetProfilerToggleKey(Key key);
 
 
         /// Retrieves the key combination for toggling the editor.
-        const GTLib::KeyCombination & GetEditorToggleKeyCombination() const;
+        const KeyCombination & GetEditorToggleKeyCombination() const;
 
         /// Sets the key combination for toggling the editor.
-        void SetEditorToggleKeyCombination(const GTLib::KeyCombination &newCombination);
+        void SetEditorToggleKeyCombination(const KeyCombination &newCombination);
 
 
 
@@ -387,7 +387,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This should not be called directly. This is simply a pass-through to the Serialize() method of the game's state manager.
-        bool SerializeGameState(GTLib::Serializer &serializer);
+        bool SerializeGameState(Serializer &serializer);
 
         /// Called when the game state needs to be deserialized.
         ///
@@ -397,7 +397,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This should not be called directly. This is simply a pass-through to the Deserialize() method of the game's state manager.
-        bool DeserializeGameState(GTLib::Deserializer &deserializer);
+        bool DeserializeGameState(Deserializer &deserializer);
 
         /// A helper method for saving a game state to a file (doing a save game).
         ///
@@ -474,7 +474,7 @@ namespace GTEngine
         ///     This is called after the window has been created and shown.
         ///     @par
         ///     The return value is true if the startup is successful; false otherwise.
-        virtual bool OnStartup(const GTLib::CommandLine &commandLine);
+        virtual bool OnStartup(const CommandLine &commandLine);
 
         /// Called when the game is shutting down.
         virtual void OnShutdown();
@@ -518,13 +518,13 @@ namespace GTEngine
         virtual void OnSize(unsigned int width, unsigned int height);
         virtual void OnMouseMove(int x, int y);
         virtual void OnMouseWheel(int delta, int x, int y);
-        virtual void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
-        virtual void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
-        virtual void OnMouseButtonDoubleClick(GTLib::MouseButton button, int x, int y);
-        virtual void OnKeyPressed(GTLib::Key key);
-        virtual void OnKeyReleased(GTLib::Key key);
-        virtual void OnKeyDown(GTLib::Key key);
-        virtual void OnKeyUp(GTLib::Key key);
+        virtual void OnMouseButtonDown(MouseButton button, int x, int y);
+        virtual void OnMouseButtonUp(MouseButton button, int x, int y);
+        virtual void OnMouseButtonDoubleClick(MouseButton button, int x, int y);
+        virtual void OnKeyPressed(Key key);
+        virtual void OnKeyReleased(Key key);
+        virtual void OnKeyDown(Key key);
+        virtual void OnKeyUp(Key key);
         virtual void OnReceiveFocus();
         virtual void OnLoseFocus();
 
@@ -625,7 +625,7 @@ namespace GTEngine
 
 
         /// Determines whether or not all of the keys in the given key combination are down.
-        bool IsKeyCombinationDown(const GTLib::KeyCombination &combination) const;
+        bool IsKeyCombinationDown(const KeyCombination &combination) const;
 
 
     // The methods below are used to handle events.
@@ -692,13 +692,13 @@ namespace GTEngine
         GameEventQueue eventQueue;
 
         /// The mutex for protecting access to the event queue.
-        GTLib::Mutex eventQueueLock;
+        Mutex eventQueueLock;
         
         /// A pointer to the event filter to filter events with. This can be null, in which case events will be dispatched without filtering. Defaults to null.
         GameEventFilter* eventFilter;
 
         /// The game's window.
-        GTLib::Window* window;
+        Window* window;
 
         /// The event handler for the main window.
         GameWindowEventHandler windowEventHandler;
@@ -709,7 +709,7 @@ namespace GTEngine
 
 
         /// A pointer to the update thread. This will point to a member in the 'threads' array.
-        GTLib::Thread* updateThread;
+        Thread* updateThread;
 
         /// The job that will do the game updates.
         GameUpdateJob updateJob;
@@ -723,7 +723,7 @@ namespace GTEngine
 
 
         /// The timer for timing updates. This is needed for retrieving the delta time.
-        GTLib::Timer updateTimer;
+        Timer updateTimer;
         
 
         /// The GUI image manager.
@@ -757,11 +757,11 @@ namespace GTEngine
 
 
         /// A map of key states. This is modified as keys are pushed and released.
-        GTLib::Map<char32_t, bool> keyDownMap;
+        Map<char32_t, bool> keyDownMap;
 
         /// A map containing mouse button states. This is modified as mouse buttons are pushed and released. These are index by
-        /// the GTLib::MouseButton enum.
-        GTLib::Map<GTLib::MouseButton, bool> mouseButtonDownMap;
+        /// the MouseButton enum.
+        Map<MouseButton, bool> mouseButtonDownMap;
 
 
         /// Class representing the editor.
@@ -807,9 +807,9 @@ namespace GTEngine
             // Updates the debugging information. This should be called once per frame.
             void Update(Profiler &profilerIn)
             {
-                if (GTLib::Timing::GetTimeInSeconds() - this->lastUpdateTime >= this->updateIntervalInSeconds)
+                if (Timing::GetTimeInSeconds() - this->lastUpdateTime >= this->updateIntervalInSeconds)
                 {
-                    this->lastUpdateTime = GTLib::Timing::GetTimeInSeconds();
+                    this->lastUpdateTime = Timing::GetTimeInSeconds();
 
                     double delta = profilerIn.GetAverageFrameTime();
                     double fps   = 0.0;
@@ -820,7 +820,7 @@ namespace GTEngine
                     }
 
                     char valueStr[64];
-                    GTLib::IO::snprintf(valueStr, 64, "%.1f / %.4f", fps, delta * 1000.0);
+                    IO::snprintf(valueStr, 64, "%.1f / %.4f", fps, delta * 1000.0);
 
                     if (this->FPSValue != nullptr)
                     {
@@ -833,10 +833,10 @@ namespace GTEngine
                     double updateTime = profilerIn.GetAverageUpdateTime();
                     double renderTime = profilerIn.GetAverageRenderingTime();
 
-                    GTLib::IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", updateTime * 1000, updateTime / delta * 100.0);
+                    IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", updateTime * 1000, updateTime / delta * 100.0);
                     this->UpdateTime->SetText(valueStr);
 
-                    GTLib::IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", renderTime * 1000, renderTime / delta * 100.0);
+                    IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", renderTime * 1000, renderTime / delta * 100.0);
                     this->RenderTime->SetText(valueStr);
                 }
             }
@@ -968,11 +968,11 @@ namespace GTEngine
 
 
         /// The key binding for toggling the profiler.
-        GTLib::Key profilerToggleKey;
+        Key profilerToggleKey;
 
 
         /// The key combination for toggling the editor.
-        GTLib::KeyCombination editorToggleKeyCombination;
+        KeyCombination editorToggleKeyCombination;
 
 
 

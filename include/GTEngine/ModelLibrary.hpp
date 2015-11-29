@@ -5,7 +5,7 @@
 
 #include "Model.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Library class for models.
     ///
@@ -117,7 +117,7 @@ namespace GTEngine
         /// @param absolutePath [out] A reference to the string that will receive the absolute path.
         ///
         /// @return True if the file exists and 'absolutePath' contains a valid path.
-        static bool FindAbsolutePath(const char* relativePath, GTLib::String &absolutePath);
+        static bool FindAbsolutePath(const char* relativePath, String &absolutePath);
 
         /// Retrieves the model definition of the given file name.
         ///

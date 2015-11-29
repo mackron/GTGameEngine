@@ -7,7 +7,7 @@
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
-namespace GTEngine
+namespace GT
 {
     ModelDefinition::ModelDefinition()
         : absolutePath(), relativePath(),
@@ -298,7 +298,7 @@ namespace GTEngine
             auto bone = m_bones[iBone];
             assert(bone != nullptr);
             {
-                if (GTLib::Strings::Equal(bone->GetName(), boneName))
+                if (Strings::Equal(bone->GetName(), boneName))
                 {
                     return bone;
                 }
@@ -315,7 +315,7 @@ namespace GTEngine
             auto bone = m_bones[iBone];
             assert(bone != nullptr);
             {
-                if (GTLib::Strings::Equal(bone->GetName(), boneName))
+                if (Strings::Equal(bone->GetName(), boneName))
                 {
                     return bone;
                 }
@@ -358,7 +358,7 @@ namespace GTEngine
             auto bone = m_bones[iBone];
             assert(bone != nullptr);
             {
-                if (GTLib::Strings::Equal(bone->GetName(), boneName))
+                if (Strings::Equal(bone->GetName(), boneName))
                 {
                     indexOut = iBone;
                     return true;
@@ -389,9 +389,9 @@ namespace GTEngine
     ////////////////////////////////////////////////////////
     // Serialization/Deserialization
 
-    void ModelDefinition::Serialize(GTLib::Serializer &serializer) const
+    void ModelDefinition::Serialize(Serializer &serializer) const
     {
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
 
 
         /////////////////////////////////////
@@ -670,10 +670,10 @@ namespace GTEngine
         intermediarySerializer.Clear();
         intermediarySerializer.Write(static_cast<uint32_t>(m_convexHulls.count));
 
-        GTLib::Vector<uint32_t> vertexCounts(m_convexHulls.count);
-        GTLib::Vector<uint32_t> indexCounts( m_convexHulls.count);
-        GTLib::Vector<float>    vertices;
-        GTLib::Vector<uint32_t> indices;
+        Vector<uint32_t> vertexCounts(m_convexHulls.count);
+        Vector<uint32_t> indexCounts( m_convexHulls.count);
+        Vector<float>    vertices;
+        Vector<uint32_t> indices;
 
         for (size_t iConvexHull = 0; iConvexHull < m_convexHulls.count; ++iConvexHull)
         {
@@ -729,7 +729,7 @@ namespace GTEngine
         serializer.Write(header);
     }
 
-    bool ModelDefinition::Deserialize(GTLib::Deserializer &deserializer)
+    bool ModelDefinition::Deserialize(Deserializer &deserializer)
     {
         // Clear everything.
         this->ClearMeshes();
@@ -758,7 +758,7 @@ namespace GTEngine
                         for (uint32_t iBone = 0; iBone < boneCount; ++iBone)
                         {
                             // Name.
-                            GTLib::String name;
+                            String name;
                             deserializer.ReadString(name);
 
                             // Local transform.
@@ -833,7 +833,7 @@ namespace GTEngine
 
 
                             // Material
-                            GTLib::String materialName;
+                            String materialName;
                             deserializer.ReadString(materialName);
 
                             newMesh.material = MaterialLibrary::Create(materialName.c_str());
@@ -1005,7 +1005,7 @@ namespace GTEngine
                         
                         for (uint32_t iSegment = 0; iSegment < animationSegmentCount; ++iSegment)
                         {
-                            GTLib::String name;
+                            String name;
                             uint32_t startKeyFrame;
                             uint32_t endKeyFrame;
 
@@ -1137,7 +1137,7 @@ namespace GTEngine
     ////////////////////////////////////////////////////////
     // Private
 
-    bool ModelDefinition::LoadFromNativeFile(const GTLib::String &absolutePathIn)
+    bool ModelDefinition::LoadFromNativeFile(const String &absolutePathIn)
     {
         // When loading from a native file, all we need to do is deserialize.
         bool successful = false;
@@ -1145,7 +1145,7 @@ namespace GTEngine
         easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), absolutePathIn.c_str(), EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
-            GTLib::FileDeserializer deserializer(pFile);
+            FileDeserializer deserializer(pFile);
             successful = this->Deserialize(deserializer);
 
             easyvfs_close(pFile);
@@ -1154,7 +1154,7 @@ namespace GTEngine
         return successful;
     }
 
-    bool ModelDefinition::LoadFromForeignFile(const GTLib::String &absolutePathIn)
+    bool ModelDefinition::LoadFromForeignFile(const String &absolutePathIn)
     {
         // Currently, all foreign formats are loaded via Assimp.
         return this->LoadFromAssimpFile(absolutePathIn);

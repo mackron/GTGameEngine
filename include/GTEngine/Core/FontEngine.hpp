@@ -11,7 +11,7 @@
 #include <GTEngine/Core/Rect.hpp>
 #include <functional>
 
-namespace GTLib
+namespace GT
 {
     /// A handle to a font for use by the font engine. The meaning of the value of a font handle is dependant on the implementation
     /// of the FontEngine class.
@@ -36,7 +36,7 @@ namespace GTLib
     {
     public:
 
-        typedef std::function<bool (const FontEngine &, char32_t, GlyphHandle, const GTLib::Rect<int> &, GlyphMetrics &, int &, int &)> MeasureString_OnHandleCharacter;
+        typedef std::function<bool (const FontEngine &, char32_t, GlyphHandle, const Rect<int> &, GlyphMetrics &, int &, int &)> MeasureString_OnHandleCharacter;
         
         /// A callback for use when measuring a string.
         class MeasureStringCallback
@@ -85,7 +85,7 @@ namespace GTLib
             ///     the value in 'metrics'.
             ///     @par
             ///     The pen positions can be changed at will.
-            virtual bool HandleCharacter(const FontEngine &fontEngine, char32_t character, GlyphHandle glyph, const GTLib::Rect<int> &rect, GlyphMetrics &metrics, int &penPositionX, int &penPositionY) = 0;
+            virtual bool HandleCharacter(const FontEngine &fontEngine, char32_t character, GlyphHandle glyph, const Rect<int> &rect, GlyphMetrics &metrics, int &penPositionX, int &penPositionY) = 0;
         };
         
         
@@ -139,7 +139,7 @@ namespace GTLib
         /// @param uvCoordsOut [out] The Rect structure that will receive the UV coordinates.
         ///
         /// @return A handle to the glyph map that is housing the glyph's bitmap data.
-        virtual GlyphMapHandle GetGlyphMap(GlyphHandle glyph, GTLib::Rect<float> &uvCoordsOut) const = 0;
+        virtual GlyphMapHandle GetGlyphMap(GlyphHandle glyph, Rect<float> &uvCoordsOut) const = 0;
 
         /// Retrieves the metrics of the given glyph.
         ///

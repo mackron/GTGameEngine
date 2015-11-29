@@ -6,7 +6,7 @@
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/Errors.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ParticleSystemComponent, "ParticleSystem")
 
@@ -157,9 +157,9 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void ParticleSystemComponent::Serialize(GTLib::Serializer &serializer) const
+    void ParticleSystemComponent::Serialize(Serializer &serializer) const
     {
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
 
         if (this->particleSystem != nullptr)
         {
@@ -184,14 +184,14 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ParticleSystemComponent::Deserialize(GTLib::Deserializer &deserializer)
+    void ParticleSystemComponent::Deserialize(Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
 
         if (header.id == Serialization::ChunkID_ParticleSystemComponent_Main)
         {
-            GTLib::String relativeFilePath;
+            String relativeFilePath;
             deserializer.ReadString(relativeFilePath);
 
             this->SetParticleSystem(relativeFilePath.c_str());

@@ -3,7 +3,7 @@
 #include <GTEngine/Editor/SubEditorTabEventHandler.hpp>
 #include <GTEngine/Editor/SubEditor.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SubEditorTabEventHandler::SubEditorTabEventHandler(SubEditor &ownerIn)
         : owner(ownerIn)
@@ -17,7 +17,7 @@ namespace GTEngine
 
     void SubEditorTabEventHandler::OnMouseButtonDown(GTGUI::Element &, int button, int, int)
     {
-        if (button == GTLib::MouseButton_Middle)
+        if (button == MouseButton_Middle)
         {
             this->owner.Close();
         }

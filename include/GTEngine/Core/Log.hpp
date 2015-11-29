@@ -6,7 +6,7 @@
 #include "Vector.hpp"
 #include <easy_fs/easy_vfs.h>
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  The base class for log event handlers.
@@ -27,7 +27,7 @@ namespace GTLib
 }
 
 
-namespace GTLib
+namespace GT
 {
     /**
     *   \brief  A class representing a log file.
@@ -35,7 +35,7 @@ namespace GTLib
     *   A log can be written as a HTML file, or as a plain text file. If the extension of the file name is .html, it will
     *   be output as HTML. Otherwise, it will just be a plain text file.
     */
-    class Log
+    class LogFile
     {
     public:
 
@@ -45,7 +45,7 @@ namespace GTLib
         *   \remarks
         *       When using this constructor, the log must first be opened with open().
         */
-        Log();
+        LogFile();
 
         /**
         *   \brief                Constructor.
@@ -57,7 +57,7 @@ namespace GTLib
         *       \par
         *       This constructor will attempt to open the log. Use IsOpen() to determine if the log was opened successfully.
         */
-        Log(easyvfs_context* pVFS, const char *fileName, const char *title);
+        LogFile(easyvfs_context* pVFS, const char *fileName, const char *title);
 
         /**
         *   \brief  Opens a log for writing.
@@ -86,13 +86,13 @@ namespace GTLib
         *   \remarks
         *       Each call to this function will write the value on a separate line.
         */
-        Log & WriteString(const char* value);
-        Log & Write(const char *value, ...);
+        LogFile & WriteString(const char* value);
+        LogFile & Write(const char *value, ...);
 
         /**
         *   \brief  Operator for writing a value to the log. Same as write().
         */
-        Log & operator << (const char *value) { return this->Write(value); }
+        LogFile & operator << (const char *value) { return this->Write(value); }
 
 
         /**
@@ -142,18 +142,18 @@ namespace GTLib
         int64_t currentHTMLPosition;
 
         /// The list of event handlers attached to this log.
-        GTLib::Vector<LogEventHandler *> eventHandlers;
+        Vector<LogEventHandler *> eventHandlers;
 
 
     private:    // No copying.
-        Log(const Log &);
-        Log & operator=(const Log &);
+        LogFile(const LogFile &);
+        LogFile & operator=(const LogFile &);
 
     };
 
     // The global Log object for use by applications. Lick libraries will write to this log. An application can attach
     // event handlers to the log for intercepting log messages.
-    extern Log GlobalLog;
+    extern LogFile GlobalLog;
 }
 
 #endif

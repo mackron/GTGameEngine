@@ -7,7 +7,7 @@
 #include "Windowing/MouseButtons.hpp"
 #include "Window.hpp"
 
-namespace GTLib
+namespace GT
 {
 #if 0
     // The built-in event IDs.

@@ -39,7 +39,7 @@ namespace GT
         private:
 
             /// The log to write the messages to.
-            GTLib::Log m_log;
+            LogFile m_log;
         };
     }
 }

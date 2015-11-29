@@ -3,7 +3,7 @@
 #include <GTEngine/Rendering/VertexArray.hpp>
 #include <GTEngine/Logging.hpp>
 
-namespace GTEngine
+namespace GT
 {
     VertexArray::VertexArray(VertexArrayUsage usage, const VertexFormat &format)
         : usage(usage), format(format),
@@ -143,10 +143,10 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void VertexArray::Serialize(GTLib::Serializer &serializer) const
+    void VertexArray::Serialize(Serializer &serializer) const
     {
         // The info chunk is always first.
-        GTLib::BasicSerializer infoSerializer;
+        BasicSerializer infoSerializer;
         infoSerializer.Write(static_cast<uint32_t>(this->usage));
         this->format.Serialize(infoSerializer);
 
@@ -190,7 +190,7 @@ namespace GTEngine
         }
     }
 
-    void VertexArray::Deserialize(GTLib::Deserializer &deserializer)
+    void VertexArray::Deserialize(Deserializer &deserializer)
     {
         assert(this->verticesMapped == false);
         assert(this->indicesMapped  == false);
@@ -217,7 +217,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::Log("Error deserializing VertexArray. Info chunk is an unsupported version (%d).", header.version);
+                    Log("Error deserializing VertexArray. Info chunk is an unsupported version (%d).", header.version);
                     break;
                 }
             }
@@ -244,7 +244,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::Log("Error deserializing VertexArray. Vertices chunk is an unsupported version (%d).", header.version);
+                    Log("Error deserializing VertexArray. Vertices chunk is an unsupported version (%d).", header.version);
                     break;
                 }
             }
@@ -271,7 +271,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::Log("Error deserializing VertexArray. Indices chunk is an unsupported version (%d).", header.version);
+                    Log("Error deserializing VertexArray. Indices chunk is an unsupported version (%d).", header.version);
                     break;
                 }
             }
@@ -287,7 +287,7 @@ namespace GTEngine
 #include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
 #include <GTEngine/MeshBuilder.hpp>
 
-namespace GTEngine
+namespace GT
 {
     bool VertexArray::GenerateTangentsAndBitangents()
     {

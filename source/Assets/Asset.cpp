@@ -48,7 +48,7 @@ namespace GT
         easyvfs_file* pMetadataFile = easyvfs_open(pVFS, absolutePath, EASYVFS_READ, 0);
         if (pMetadataFile != nullptr)
         {
-            GTLib::FileDeserializer deserializer(pMetadataFile);
+            FileDeserializer deserializer(pMetadataFile);
             m_metadata.Deserialize(deserializer);
 
             easyvfs_close(pMetadataFile);

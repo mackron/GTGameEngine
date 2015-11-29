@@ -6,7 +6,7 @@
 #include "../SceneCullingManager.hpp"
 #include "DefaultSceneRenderer_Mesh.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Callback class that will be used when querying the visible objects in a lights view frustum.
     class DefaultSceneRenderer_ShadowVisibilityProcessor : public SceneCullingManager::VisibilityCallback
@@ -32,7 +32,7 @@ namespace GTEngine
         // Member Variables.
 
         /// The list of visible meshes.
-        GTLib::Vector<DefaultSceneRendererMesh> meshes;
+        Vector<DefaultSceneRendererMesh> meshes;
 
 
     private:

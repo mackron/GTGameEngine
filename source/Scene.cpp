@@ -16,14 +16,14 @@
 #endif
 
 // Culling Callbacks.
-namespace GTEngine
+namespace GT
 {
     /// Callback structure for doing occlusion culling against a viewport.
     struct SceneCullingCallback : SceneCullingManager::VisibilityCallback
     {
         /// Constructor
-        SceneCullingCallback(GTLib::Vector<const ModelComponent*> &modelComponentsOut, GTLib::Vector<const PointLightComponent*> &pointLightComponentsOut, GTLib::Vector<const SpotLightComponent*> &spotLightComponentsOut,
-                             GTLib::Vector<const AmbientLightComponent*> &ambientLightComponentsOut, GTLib::Vector<const DirectionalLightComponent*> &directionalLightComponentsOut)
+        SceneCullingCallback(Vector<const ModelComponent*> &modelComponentsOut, Vector<const PointLightComponent*> &pointLightComponentsOut, Vector<const SpotLightComponent*> &spotLightComponentsOut,
+                             Vector<const AmbientLightComponent*> &ambientLightComponentsOut, Vector<const DirectionalLightComponent*> &directionalLightComponentsOut)
             : modelComponents(modelComponentsOut), pointLightComponents(pointLightComponentsOut), spotLightComponents(spotLightComponentsOut),
               ambientLightComponents(ambientLightComponentsOut), directionalLightComponents(directionalLightComponentsOut)
         {
@@ -38,7 +38,7 @@ namespace GTEngine
         /// VisibleCallback::ProcessModel().
         virtual void ProcessModel(const SceneNode &sceneNode)
         {
-            auto component = sceneNode.GetComponent<GTEngine::ModelComponent>();
+            auto component = sceneNode.GetComponent<ModelComponent>();
             if (component != nullptr)
             {
                 this->modelComponents.PushBack(component);
@@ -48,7 +48,7 @@ namespace GTEngine
         /// VisibleCallback::ProcessPointLight().
         virtual void ProcessPointLight(const SceneNode &sceneNode)
         {
-            auto component = sceneNode.GetComponent<GTEngine::PointLightComponent>();
+            auto component = sceneNode.GetComponent<PointLightComponent>();
             if (component != nullptr)
             {
                 this->pointLightComponents.PushBack(component);
@@ -58,7 +58,7 @@ namespace GTEngine
         /// VisibleCallback::ProcessSpotLight().
         virtual void ProcessSpotLight(const SceneNode &sceneNode)
         {
-            auto component = sceneNode.GetComponent<GTEngine::SpotLightComponent>();
+            auto component = sceneNode.GetComponent<SpotLightComponent>();
             if (component != nullptr)
             {
                 this->spotLightComponents.PushBack(component);
@@ -69,7 +69,7 @@ namespace GTEngine
         /// VisibleCallback::ProcessAmbientLight().
         virtual void ProcessAmbientLight(const SceneNode &sceneNode)
         {
-            auto component = sceneNode.GetComponent<GTEngine::AmbientLightComponent>();
+            auto component = sceneNode.GetComponent<AmbientLightComponent>();
             if (component != nullptr)
             {
                 this->ambientLightComponents.PushBack(component);
@@ -79,7 +79,7 @@ namespace GTEngine
         /// VisibleCallback::ProcessDirectionalLight().
         virtual void ProcessDirectionalLight(const SceneNode &sceneNode)
         {
-            auto component = sceneNode.GetComponent<GTEngine::DirectionalLightComponent>();
+            auto component = sceneNode.GetComponent<DirectionalLightComponent>();
             if (component != nullptr)
             {
                 this->directionalLightComponents.PushBack(component);
@@ -88,11 +88,11 @@ namespace GTEngine
 
 
     private:
-        GTLib::Vector<const ModelComponent*>            &modelComponents;
-        GTLib::Vector<const PointLightComponent*>       &pointLightComponents;
-        GTLib::Vector<const SpotLightComponent*>        &spotLightComponents;
-        GTLib::Vector<const AmbientLightComponent*>     &ambientLightComponents;
-        GTLib::Vector<const DirectionalLightComponent*> &directionalLightComponents;
+        Vector<const ModelComponent*>            &modelComponents;
+        Vector<const PointLightComponent*>       &pointLightComponents;
+        Vector<const SpotLightComponent*>        &spotLightComponents;
+        Vector<const AmbientLightComponent*>     &ambientLightComponents;
+        Vector<const DirectionalLightComponent*> &directionalLightComponents;
 
 
     private:    // No copying.
@@ -102,7 +102,7 @@ namespace GTEngine
 }
 
 // Contact Callbacks
-namespace GTEngine
+namespace GT
 {
     struct SceneContactTestCallback : public btCollisionWorld::ContactResultCallback
     {
@@ -229,7 +229,7 @@ namespace GTEngine
 }
 
 
-namespace GTEngine
+namespace GT
 {
     static const bool DoNotPostEvents = false;              // <-- For Scene::OnSceneNodeComponentAdded() and Scene::OnSceneNodeComponentRemoved().
 
@@ -322,7 +322,7 @@ namespace GTEngine
         {
             bool result = false;
 
-            GTLib::FileDeserializer deserializer(pFile);
+            FileDeserializer deserializer(pFile);
             result = this->Deserialize(deserializer);
 
             easyvfs_close(pFile);
@@ -351,7 +351,7 @@ namespace GTEngine
                 // If a scene node of the same ID already exists, we have a bug somewhere.
                 if (this->sceneNodes.Exists(uniqueID))
                 {
-                    GT::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", GTLib::ToString(uniqueID).c_str());
+                    GT::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", ToString(uniqueID).c_str());
                     return;
                 }
             }
@@ -392,7 +392,7 @@ namespace GTEngine
             assert(this->sceneNodes.Exists(node.GetID()));
             {
                 // Children need to be removed first.
-                GTLib::Vector<SceneNode*> children;
+                Vector<SceneNode*> children;
 
                 for (auto iChild = node.GetFirstChild(); iChild != nullptr; iChild = iChild->GetNextSibling())
                 {
@@ -428,7 +428,7 @@ namespace GTEngine
         }
         else
         {
-            GTEngine::Log("Warning: Attempting to remove a scene node from a scene it is not a part of. Ignoring.");
+            Log("Warning: Attempting to remove a scene node from a scene it is not a part of. Ignoring.");
         }
     }
 
@@ -476,7 +476,7 @@ namespace GTEngine
         return sceneNode;
     }
 
-    SceneNode* Scene::CreateNewSceneNode(GTLib::Deserializer &deserializer, unsigned int flags, bool createNewIDIfExists)
+    SceneNode* Scene::CreateNewSceneNode(Deserializer &deserializer, unsigned int flags, bool createNewIDIfExists)
     {
         bool alreadyExists = false;
 
@@ -488,7 +488,7 @@ namespace GTEngine
             {
                 if (!createNewIDIfExists)
                 {
-                    Log("Scene::CreateNewSceneNode(GTLib::Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
+                    Log("Scene::CreateNewSceneNode(Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
                     return nullptr;
                 }
 
@@ -555,7 +555,7 @@ namespace GTEngine
             }
             else
             {
-                Log("Scene::CreateNewSceneNode(GTLib::Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
+                Log("Scene::CreateNewSceneNode(Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
 
                 delete sceneNode;
                 return nullptr;
@@ -581,16 +581,16 @@ namespace GTEngine
         {
             struct SceneNodeSerializerPair
             {
-                SceneNodeSerializerPair(SceneNode* sceneNode, GTLib::BasicSerializer* serializer)
+                SceneNodeSerializerPair(SceneNode* sceneNode, BasicSerializer* serializer)
                     : m_sceneNode(sceneNode), m_serializer(serializer)
                 {
                 }
 
                 SceneNode* m_sceneNode;
-                GTLib::BasicSerializer* m_serializer;
+                BasicSerializer* m_serializer;
             };
 
-            GTLib::Map<uint64_t, SceneNodeSerializerPair> newSceneNodes;
+            Map<uint64_t, SceneNodeSerializerPair> newSceneNodes;
             SceneNode* rootSceneNode = nullptr;
 
 
@@ -660,7 +660,7 @@ namespace GTEngine
                 auto sceneNodeSerializer = newSceneNodes.buffer[iSceneNode]->value.m_serializer;
                 assert(sceneNode != nullptr);
                 {
-                    GTLib::BasicDeserializer deserializer(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
+                    BasicDeserializer deserializer(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
                     sceneNode->Deserialize(deserializer, SceneNode::NoID);          // <-- Passing NoID here means that the ID will not be changed during deserialization. This is super important.
 
                     // After deserializing, if the scene is registered to a script and the new scene node has a script component, we need to instantiate the
@@ -696,7 +696,7 @@ namespace GTEngine
                 assert(id         != 0);
                 assert(serializer != nullptr);
                 {
-                    GTLib::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+                    BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
 
                     auto newSceneNode = new SceneNode;
                     newSceneNode->Deserialize(deserializer);
@@ -886,8 +886,8 @@ namespace GTEngine
             {
                 auto sceneNode = &proximityComponent->GetNode();
 
-                GTLib::Vector<uint64_t> sceneNodesEntered;
-                GTLib::Vector<uint64_t> sceneNodesLeft;
+                Vector<uint64_t> sceneNodesEntered;
+                Vector<uint64_t> sceneNodesLeft;
                 proximityComponent->UpdateContainment(sceneNodesEntered, sceneNodesLeft);
 
                 for (size_t iEntered = 0; iEntered < sceneNodesEntered.count; ++iEntered)
@@ -985,7 +985,7 @@ namespace GTEngine
             auto node = this->sceneNodes.GetSceneNodeAtIndex(i);
             assert(node != nullptr);
             {
-                if (GTLib::Strings::Equal(node->GetName(), nameIn))
+                if (Strings::Equal(node->GetName(), nameIn))
                 {
                     return node;
                 }
@@ -1478,7 +1478,7 @@ namespace GTEngine
 
 
         // We do the contact test against the nodes proximity component.
-        auto proximity = node.GetComponent<GTEngine::ProximityComponent>();
+        auto proximity = node.GetComponent<ProximityComponent>();
         if (proximity != nullptr)
         {
             callback.collisionGroup = proximity->GetCollisionGroup();
@@ -1489,7 +1489,7 @@ namespace GTEngine
         }
 
 
-        auto dynamics = node.GetComponent<GTEngine::DynamicsComponent>();
+        auto dynamics = node.GetComponent<DynamicsComponent>();
         if (dynamics != nullptr)
         {
             callback.collisionGroup = dynamics->GetCollisionGroup();
@@ -1581,7 +1581,7 @@ namespace GTEngine
         this->navigationMesh.Build(*this);
     }
 
-    void Scene::FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTLib::Vector<glm::vec3> &output)
+    void Scene::FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, Vector<glm::vec3> &output)
     {
         this->navigationMesh.FindPath(start, end, output);
     }
@@ -1608,7 +1608,7 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    bool Scene::Serialize(GTLib::Serializer &serializer) const
+    bool Scene::Serialize(Serializer &serializer) const
     {
         // General structure:
         //
@@ -1637,7 +1637,7 @@ namespace GTEngine
 
         // Properties.
         {
-            GTLib::BasicSerializer secondarySerializer;
+            BasicSerializer secondarySerializer;
             secondarySerializer.WriteString(this->name);
 
             secondarySerializer.Write(this->isBackgroundClearEnabled);
@@ -1656,7 +1656,7 @@ namespace GTEngine
 
         // Navigation.
         {
-            GTLib::BasicSerializer secondarySerializer;
+            BasicSerializer secondarySerializer;
 
             // The navigation mesh count. This is always 1 for now.
             uint32_t navigationMeshCount = 1;
@@ -1696,8 +1696,8 @@ namespace GTEngine
 
         // We need to build a flat list of scene nodes that should be serialized. We want to store the IDs in a seperate list so
         // we can serialize them in a single chunk.
-        GTLib::Vector<const SceneNode*> serializedNodes(sceneNodeCount);
-        GTLib::Vector<uint64_t> sceneNodeIDs(sceneNodeCount);
+        Vector<const SceneNode*> serializedNodes(sceneNodeCount);
+        Vector<uint64_t> sceneNodeIDs(sceneNodeCount);
 
         for (size_t iSceneNode = 0; iSceneNode < sceneNodeCount; ++iSceneNode)
         {
@@ -1717,9 +1717,9 @@ namespace GTEngine
         // We now know which scene nodes are being serialized. Now we need to start the actual deserialization. We can do everything
         // in a single iteration by simply using discrete serializers for each section.
 
-        GTLib::BasicSerializer hierarchySerializer;
+        BasicSerializer hierarchySerializer;
 
-        GTLib::BasicSerializer sceneNodeSerializer;
+        BasicSerializer sceneNodeSerializer;
         sceneNodeSerializer.Write(static_cast<uint32_t>(sceneNodeIDs.GetCount()));                  // <-- Scene node count
         sceneNodeSerializer.Write(sceneNodeIDs.buffer, sceneNodeIDs.count * sizeof(uint64_t));      // <-- Flat list of scene node IDs, indexable by the local indices in the hierarchy list.
 
@@ -1773,7 +1773,7 @@ namespace GTEngine
         return true;
     }
 
-    bool Scene::Deserialize(GTLib::Deserializer &deserializer, SceneDeserializeCallback &callback)
+    bool Scene::Deserialize(Deserializer &deserializer, SceneDeserializeCallback &callback)
     {
         // General flow:
         //
@@ -1809,7 +1809,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -1817,7 +1817,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Info, header.id);
+                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Info, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -1879,7 +1879,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -1887,7 +1887,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Properties, header.id);
+                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Properties, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -1909,7 +1909,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -1917,7 +1917,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Navigation, header.id);
+                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Navigation, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -1925,7 +1925,7 @@ namespace GTEngine
             }
 
             // Hierarchy
-            GTLib::Vector<Serialization::SceneNodeIndexPair> childParentPairs;
+            Vector<Serialization::SceneNodeIndexPair> childParentPairs;
             if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
             {
                 if (header.id == Serialization::ChunkID_Scene_NodesHierarchy)
@@ -1940,7 +1940,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -1948,7 +1948,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_NodesHierarchy, header.id);
+                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_NodesHierarchy, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -1956,8 +1956,8 @@ namespace GTEngine
             }
 
             // Scene Nodes
-            GTLib::Vector<SceneNode*> deserializedNodes;
-            GTLib::Vector<SceneNode*> rootSceneNodesLinkedToPrefabs;
+            Vector<SceneNode*> deserializedNodes;
+            Vector<SceneNode*> rootSceneNodesLinkedToPrefabs;
             if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
             {
                 if (header.id == Serialization::ChunkID_Scene_Nodes)
@@ -1969,7 +1969,7 @@ namespace GTEngine
                         deserializer.Read(sceneNodeCount);
 
                         // The scene node IDs
-                        GTLib::Vector<uint64_t> sceneNodeIDs;
+                        Vector<uint64_t> sceneNodeIDs;
                         sceneNodeIDs.Reserve(sceneNodeCount);
                         sceneNodeIDs.count = sceneNodeCount;
                         deserializer.Read(sceneNodeIDs.buffer, sizeof(uint64_t) * sceneNodeCount);
@@ -2040,7 +2040,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -2048,7 +2048,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Nodes, header.id);
+                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Nodes, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -2107,9 +2107,9 @@ namespace GTEngine
 
 
 #if 0
-        GTLib::Vector<SceneNode*>                        deserializedNodes;
-        GTLib::Vector<SceneNode*>                        rootSceneNodesLinkedToPrefabs;
-        GTLib::Vector<Serialization::SceneNodeIndexPair> childParentPairs;
+        Vector<SceneNode*>                        deserializedNodes;
+        Vector<SceneNode*>                        rootSceneNodesLinkedToPrefabs;
+        Vector<Serialization::SceneNodeIndexPair> childParentPairs;
 
         bool readInfo                = false;
         bool readSceneNodes          = false;
@@ -2141,7 +2141,7 @@ namespace GTEngine
 
                 default:
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -2181,7 +2181,7 @@ namespace GTEngine
 
                 default:
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the scene node chunk (%d) is not supported.\n", header.version);
+                        Log("Error deserializing scene. The version of the scene node chunk (%d) is not supported.\n", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -2207,7 +2207,7 @@ namespace GTEngine
 
                 default:
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the scene node hierarchy chunk (%d) is not supported.", header.version);
+                        Log("Error deserializing scene. The version of the scene node hierarchy chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         // We may have nodes instantiated, so they'll need to be killed.
@@ -2274,7 +2274,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::Log("Error deserializing scene properties. Unsupported version (%d). Properties have been skipped.", header.version);
+                    Log("Error deserializing scene properties. Unsupported version (%d). Properties have been skipped.", header.version);
                     deserializer.Seek(header.sizeInBytes);
                 }
             }
@@ -2294,7 +2294,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::Log("Error deserializing scene navigation. Unsupported version (%d). Navigation has been skipped.", header.version);
+                    Log("Error deserializing scene navigation. Unsupported version (%d). Navigation has been skipped.", header.version);
                     deserializer.Seek(header.sizeInBytes);
                 }
             }
@@ -2327,19 +2327,19 @@ namespace GTEngine
 
         if (readInfo == false)
         {
-            GTEngine::Log("Error deserializing scene. The info chunk (%d) was not found.", Serialization::ChunkID_Scene_Info);
+            Log("Error deserializing scene. The info chunk (%d) was not found.", Serialization::ChunkID_Scene_Info);
             return false;
         }
 
         if (readSceneNodes == false)
         {
-            GTEngine::Log("Error deserializing scene. The scene node chunk (%d) was not found.", Serialization::ChunkID_Scene_Nodes);
+            Log("Error deserializing scene. The scene node chunk (%d) was not found.", Serialization::ChunkID_Scene_Nodes);
             return false;
         }
 
         if (readSceneNodesHierarchy == false)
         {
-            GTEngine::Log("Error deserializing scene. The scene node hierarchy chunk (%d) was not found.", Serialization::ChunkID_Scene_NodesHierarchy);
+            Log("Error deserializing scene. The scene node hierarchy chunk (%d) was not found.", Serialization::ChunkID_Scene_NodesHierarchy);
 
             // We may have nodes instantiated, so they'll need to be killed.
             for (size_t iNode = 0; iNode < deserializedNodes.count; ++iNode)
@@ -2410,14 +2410,14 @@ namespace GTEngine
     }
 
 
-    bool Scene::SerializeStateStack(GTLib::Serializer &serializer) const
+    bool Scene::SerializeStateStack(Serializer &serializer) const
     {
         this->stateStack.Serialize(serializer);
 
         return true;
     }
 
-    bool Scene::DeserializeStateStack(GTLib::Deserializer &deserializer)
+    bool Scene::DeserializeStateStack(Deserializer &deserializer)
     {
         this->stateStack.Deserialize(deserializer);
 
@@ -2449,7 +2449,7 @@ namespace GTEngine
 
 
         // What we're now going to do is call this->OnSceneNodeComponentAdded() for every component. This allows us to avoid a lot of annoying code duplication.
-        GTLib::Vector<GTLib::String> componentNames;
+        Vector<String> componentNames;
         node.GetAttachedComponentNames(componentNames);
 
         for (size_t i = 0; i < componentNames.count; ++i)
@@ -2498,7 +2498,7 @@ namespace GTEngine
 
 
         // What we're now going to do is call this->OnSceneNodeComponentRemoved() for every component. This allows us to avoid a lot of annoying code duplication.
-        GTLib::Vector<GTLib::String> componentNames;
+        Vector<String> componentNames;
         node.GetAttachedComponentNames(componentNames);
 
         for (size_t i = 0; i < componentNames.count; ++i)
@@ -2801,7 +2801,7 @@ namespace GTEngine
         }
 
 
-        if (GTLib::Strings::Equal(component.GetName(), ModelComponent::Name))
+        if (Strings::Equal(component.GetName(), ModelComponent::Name))
         {
             if (node.IsVisible())
             {
@@ -2811,35 +2811,35 @@ namespace GTEngine
                 }
             }
         }
-        else if (GTLib::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), PointLightComponent::Name))
         {
             if (node.IsVisible())
             {
                 this->cullingManager.AddPointLight(node);
             }
         }
-        else if (GTLib::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
             if (node.IsVisible())
             {
                 this->cullingManager.AddSpotLight(node);
             }
         }
-        else if (GTLib::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
         {
             if (node.IsVisible())
             {
                 this->cullingManager.AddDirectionalLight(node);
             }
         }
-        else if (GTLib::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), AmbientLightComponent::Name))
         {
             if (node.IsVisible())
             {
                 this->cullingManager.AddAmbientLight(node);
             }
         }
-        else if (GTLib::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
+        else if (Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
         {
             auto &particleSystemComponent = static_cast<ParticleSystemComponent &>(component);
 
@@ -2864,7 +2864,7 @@ namespace GTEngine
             // We want the scene know about this scene node so we can easily update AABBs.
             this->sceneNodesWithParticleSystemComponents.Add(node.GetID(), &particleSystemComponent);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        else if (Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
             if (node.IsVisible())
             {
@@ -2873,7 +2873,7 @@ namespace GTEngine
         }
         else
         {
-            if (GTLib::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+            if (Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
                 auto &dynamicsComponent = static_cast<DynamicsComponent &>(component);
 
@@ -2892,7 +2892,7 @@ namespace GTEngine
                     }
                 }
             }
-            else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
+            else if (Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
                 auto &proximityComponent = static_cast<ProximityComponent &>(component);
 
@@ -2918,7 +2918,7 @@ namespace GTEngine
             else
             {
                 // Constraints.
-                if (GTLib::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
+                if (Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
                 {
                     auto constraint = static_cast<GenericConstraintComponent &>(component).GetConstraint();
                     if (constraint != nullptr)
@@ -2930,7 +2930,7 @@ namespace GTEngine
                         Log("Warning: Attempting to add a generic constraint component without attachments. Ignoring.");
                     }
                 }
-                else if (GTLib::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
+                else if (Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
                 {
                     auto constraint = static_cast<ConeTwistConstraintComponent &>(component).GetConstraint();
                     if (constraint != nullptr)
@@ -2942,7 +2942,7 @@ namespace GTEngine
                         Log("Warning: Attempting to add a cone twist constraint component without attachments. Ignoring.");
                     }
                 }
-                else if (GTLib::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
+                else if (Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
                 {
                     auto constraint = static_cast<PointToPointConstraintComponent &>(component).GetConstraint();
                     if (constraint != nullptr)
@@ -2956,7 +2956,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    if (GTLib::Strings::Equal(component.GetName(), ScriptComponent::Name))
+                    if (Strings::Equal(component.GetName(), ScriptComponent::Name))
                     {
                         this->updateManager.RemoveSceneNode(node);
 
@@ -2997,44 +2997,44 @@ namespace GTEngine
         }
 
 
-        if (GTLib::Strings::Equal(component.GetName(), ModelComponent::Name))
+        if (Strings::Equal(component.GetName(), ModelComponent::Name))
         {
             this->cullingManager.RemoveModel(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), PointLightComponent::Name))
         {
             this->cullingManager.RemovePointLight(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
             this->cullingManager.RemoveSpotLight(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
         {
             this->cullingManager.RemoveDirectionalLight(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), AmbientLightComponent::Name))
         {
             this->cullingManager.RemoveAmbientLight(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
+        else if (Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
         {
             this->cullingManager.RemoveParticleSystem(node);
 
             // The scene needs to know about this.
             this->sceneNodesWithParticleSystemComponents.RemoveByKey(node.GetID());
         }
-        else if (GTLib::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        else if (Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
             this->cullingManager.RemoveOccluder(node);
         }
         else
         {
-            if (GTLib::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+            if (Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
                 this->physicsManager.RemoveRigidBody(static_cast<DynamicsComponent &>(component).GetRigidBody());
             }
-            else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
+            else if (Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
                 this->physicsManager.RemoveGhostObject(static_cast<ProximityComponent &>(component).GetGhostObject());
 
@@ -3043,21 +3043,21 @@ namespace GTEngine
             }
             else
             {
-                if (GTLib::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
+                if (Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
                 {
                     this->physicsManager.RemoveConstraint(*static_cast<GenericConstraintComponent &>(component).GetConstraint());
                 }
-                else if (GTLib::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
+                else if (Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
                 {
                     this->physicsManager.RemoveConstraint(*static_cast<ConeTwistConstraintComponent &>(component).GetConstraint());
                 }
-                else if (GTLib::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
+                else if (Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
                 {
                     this->physicsManager.RemoveConstraint(*static_cast<PointToPointConstraintComponent &>(component).GetConstraint());
                 }
                 else
                 {
-                    if (GTLib::Strings::Equal(component.GetName(), ScriptComponent::Name))
+                    if (Strings::Equal(component.GetName(), ScriptComponent::Name))
                     {
                         // We do this exactly the same as when the script component is changed.
                         this->updateManager.RemoveSceneNode(node);
@@ -3093,7 +3093,7 @@ namespace GTEngine
         }
 
 
-        if (GTLib::Strings::Equal(component.GetName(), ModelComponent::Name))
+        if (Strings::Equal(component.GetName(), ModelComponent::Name))
         {
             this->cullingManager.RemoveModel(node);
 
@@ -3102,39 +3102,39 @@ namespace GTEngine
                 this->cullingManager.AddModel(node);
             }
         }
-        else if (GTLib::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), PointLightComponent::Name))
         {
             this->cullingManager.RemovePointLight(node);
             this->cullingManager.AddPointLight(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
             this->cullingManager.RemoveSpotLight(node);
             this->cullingManager.AddSpotLight(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
         {
             this->cullingManager.RemoveDirectionalLight(node);
             this->cullingManager.AddDirectionalLight(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        else if (Strings::Equal(component.GetName(), AmbientLightComponent::Name))
         {
             this->cullingManager.RemoveAmbientLight(node);
             this->cullingManager.AddAmbientLight(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
+        else if (Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
         {
             this->cullingManager.RemoveParticleSystem(node);
             this->cullingManager.AddParticleSystem(node);
         }
-        else if (GTLib::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        else if (Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
             this->cullingManager.RemoveOccluder(node);
             this->cullingManager.AddOccluder(node);
         }
         else
         {
-            if (GTLib::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+            if (Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
                 auto &dynamicsComponent = static_cast<DynamicsComponent &>(component);
 
@@ -3151,7 +3151,7 @@ namespace GTEngine
                     }
                 }
             }
-            else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
+            else if (Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
                 auto &proximityComponent = static_cast<ProximityComponent &>(component);
 
@@ -3164,7 +3164,7 @@ namespace GTEngine
             }
             else
             {
-                if (GTLib::Strings::Equal(component.GetName(), ScriptComponent::Name))
+                if (Strings::Equal(component.GetName(), ScriptComponent::Name))
                 {
                     // In this case of a script, there's a chance that it won't want to be updated anymore or vice versa. We can get around this easily
                     // enough by just removing and re-adding it.
@@ -3259,7 +3259,7 @@ namespace GTEngine
     }
 
 
-    void Scene::PostSceneNodeScriptEvent_OnSerializeGlobalData(GTLib::Serializer &serializer)
+    void Scene::PostSceneNodeScriptEvent_OnSerializeGlobalData(Serializer &serializer)
     {
         if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
         {
@@ -3275,7 +3275,7 @@ namespace GTEngine
         }
     }
 
-    void Scene::PostSceneNodeScriptEvent_OnSerializeGlobalData(SceneNode &sceneNode, GTLib::Serializer &serializer)
+    void Scene::PostSceneNodeScriptEvent_OnSerializeGlobalData(SceneNode &sceneNode, Serializer &serializer)
     {
         auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
         if (scriptComponent != nullptr)
@@ -3288,7 +3288,7 @@ namespace GTEngine
     }
 
 
-    void Scene::PostSceneNodeScriptEvent_OnDeserializeGlobalData(GTLib::Deserializer &deserializer)
+    void Scene::PostSceneNodeScriptEvent_OnDeserializeGlobalData(Deserializer &deserializer)
     {
         if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
         {
@@ -3304,7 +3304,7 @@ namespace GTEngine
         }
     }
 
-    void Scene::PostSceneNodeScriptEvent_OnDeserializeGlobalData(SceneNode &sceneNode, GTLib::Deserializer &deserializer)
+    void Scene::PostSceneNodeScriptEvent_OnDeserializeGlobalData(SceneNode &sceneNode, Deserializer &deserializer)
     {
         auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
         if (scriptComponent != nullptr)

@@ -38,9 +38,9 @@ namespace GTGUI
 
 
         /// Builds and returns a formatted string for output.
-        GTLib::String GetFormatted(int level = 1)
+        GT::String GetFormatted(int level = 1)
         {
-            GTLib::String format;
+            GT::String format;
             format += "Styling Error: %s";
 
             if (level >= 1)
@@ -55,7 +55,7 @@ namespace GTGUI
             }
             
 
-            GTLib::String result;
+            GT::String result;
 
             if (level >= 2 && this->info.GetLength() > 0)
             {
@@ -64,15 +64,15 @@ namespace GTGUI
                 //
                 // We iterate over each word and check if there is enough room to fit that word into the line. If so, we just insert. Otherwise, we
                 // place it onto the next line.
-                GTLib::String formattedInfo;
+                GT::String formattedInfo;
 
-                GTLib::Strings::LineIterator line(this->info.c_str());
+                GT::Strings::LineIterator line(this->info.c_str());
                 while (line)
                 {
                     const char* prevTokenEnd = line.start;
-                    GTLib::String currentLine = "    ";
+                    GT::String currentLine = "    ";
 
-                    GTLib::Strings::Tokenizer token(prevTokenEnd, line.end - prevTokenEnd);
+                    GT::Strings::Tokenizer token(prevTokenEnd, line.end - prevTokenEnd);
                     while (token)
                     {
                         if (currentLine.GetLengthInTs() + static_cast<size_t>(token.end - prevTokenEnd) <= 76U)
@@ -117,16 +117,16 @@ namespace GTGUI
 
 
         /// The error message.
-        GTLib::String message;
+        GT::String message;
 
         /// The string of the line containing the error.
-        GTLib::String lineString;
+        GT::String lineString;
 
         /// The number of the line containing the error.
         unsigned int lineNumber;
 
         /// Additional info contained with this message - usually information about the correct syntax.
-        GTLib::String info;
+        GT::String info;
     };
 }
 

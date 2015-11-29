@@ -5,7 +5,7 @@
 
 #include "PrefabLibrary.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Base class for linking scene nodes to prefab, and vice versa.
     ///

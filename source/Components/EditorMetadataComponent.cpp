@@ -9,7 +9,7 @@
 #include <GTEngine/MeshBuilder.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(EditorMetadataComponent, "EditorMetadata")
 
@@ -647,9 +647,9 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void EditorMetadataComponent::Serialize(GTLib::Serializer &serializer, unsigned int flags) const
+    void EditorMetadataComponent::Serialize(Serializer &serializer, unsigned int flags) const
     {
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
 
         intermediarySerializer.Write(this->alwaysShowOnTop);
         intermediarySerializer.Write(this->useModelForPickingShape);
@@ -690,7 +690,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void EditorMetadataComponent::Deserialize(GTLib::Deserializer &deserializer)
+    void EditorMetadataComponent::Deserialize(Deserializer &deserializer)
     {
         uint32_t whatChanged = 0;
         this->LockOnChanged();
@@ -786,7 +786,7 @@ namespace GTEngine
 
 
 
-                    GTLib::String prefabRelativePath_New;
+                    String prefabRelativePath_New;
                     deserializer.ReadString(prefabRelativePath_New);
                     if (prefabRelativePath_New != this->prefabRelativePath)
                     {
@@ -816,7 +816,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::Log("Error deserializing EditorMetadataComponent. Main chunk has an unsupported version (%d).", header.version);
+                    Log("Error deserializing EditorMetadataComponent. Main chunk has an unsupported version (%d).", header.version);
                     break;
                 }
             }

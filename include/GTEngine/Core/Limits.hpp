@@ -5,7 +5,7 @@
 
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     template <typename T>
     T MinValue() { return 0; }

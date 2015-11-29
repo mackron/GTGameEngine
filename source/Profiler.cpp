@@ -3,7 +3,7 @@
 #include <GTEngine/Profiler.hpp>
 #include <GTEngine/Core/Math.hpp>
 
-namespace GTEngine
+namespace GT
 {
     Profiler::Profiler()
         : maxAccumulatedFrameTime(1.0),

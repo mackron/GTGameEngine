@@ -10,7 +10,7 @@
 #include <easy_fs/easy_fsw.h>
 #include <easy_fs/easy_vfs.h>
 
-namespace GTEngine
+namespace GT
 {
     /// Class for watching the data directories for changes, and then post events for any changes.
     ///
@@ -86,7 +86,7 @@ namespace GTEngine
             }
 
             /// Retrieves the absolute directory of the top level root item.
-            const GTLib::String & GetRootDirectory()
+            const String & GetRootDirectory()
             {
                 if (this->parent != nullptr && this->parent->parent == nullptr)
                 {
@@ -106,7 +106,7 @@ namespace GTEngine
             Item* parent;
 
             /// The list of children. We use a dictionary here in order to keep everything in alphabetical order and to also allow fast searching.
-            GTLib::Dictionary<Item*> children;
+            Dictionary<Item*> children;
             
             
         private:    // No copying.
@@ -249,11 +249,11 @@ namespace GTEngine
         Item m_root;
 
         /// The thread that will perform the asynchronous file checks.
-        GTLib::Thread thread;
+        Thread thread;
 
 
         /// The list of event handlers currently attached.
-        GTLib::List<EventHandler*> eventHandlers;
+        List<EventHandler*> eventHandlers;
 
 
         /// Structure representing an event.
@@ -264,7 +264,7 @@ namespace GTEngine
         };
 
         /// The list of events waiting to be dispatched.
-        GTLib::List<Event> events;
+        List<Event> events;
 
 
         /// This keeps track of whether or not the data files watcher is still active.

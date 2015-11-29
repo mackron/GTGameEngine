@@ -4,12 +4,12 @@
 #include <GTEngine/Core/Strings/Copy.hpp>
 #include <GTEngine/Core/stdio.hpp>
 
-namespace GTLib
+namespace GT
 {
     String ToString(int64_t value)
     {
         char dest[64];
-        GTLib::IO::snprintf(dest, 64, "%lld", value);
+        IO::snprintf(dest, 64, "%lld", value);
         
         return dest;
     }
@@ -17,7 +17,7 @@ namespace GTLib
     String ToString(uint64_t value)
     {
         char dest[64];
-        GTLib::IO::snprintf(dest, 64, "%llu", value);
+        IO::snprintf(dest, 64, "%llu", value);
         
         return dest;
     }
@@ -29,24 +29,24 @@ namespace GTLib
 
         if (format == nullptr)
         {
-            GTLib::IO::snprintf(dest, 64, "%f", value);
+            IO::snprintf(dest, 64, "%f", value);
         }
         else
         {
-            ptrdiff_t formatLength = GTLib::Strings::SizeInTs(format);
+            ptrdiff_t formatLength = Strings::SizeInTs(format);
             if (formatLength <= 16)
             {
                 char printFormat[20];
                 printFormat[0] = '%';
-                GTLib::Strings::Copy(printFormat + 1, 20, format, formatLength);
+                Strings::Copy(printFormat + 1, 20, format, formatLength);
                 printFormat[formatLength + 1] = 'f';
                 printFormat[formatLength + 2] = '\0';
 
-                GTLib::IO::snprintf(dest, 64, printFormat, value);
+                IO::snprintf(dest, 64, printFormat, value);
             }
             else
             {
-                GTLib::IO::snprintf(dest, 64, "%f", value);
+                IO::snprintf(dest, 64, "%f", value);
             }
         }
         
@@ -55,6 +55,6 @@ namespace GTLib
 
     String ToString(float value, const char *format)
     {
-        return GTLib::ToString(static_cast<double>(value), format);
+        return ToString(static_cast<double>(value), format);
     }
 }

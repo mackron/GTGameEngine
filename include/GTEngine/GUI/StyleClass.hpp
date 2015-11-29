@@ -59,7 +59,7 @@ namespace GTGUI
         /**
         *   \brief  Retrieves the stringified value of an attribute.
         */
-        GTLib::String GetAttribute(const char* name, ptrdiff_t nameSizeInTs = -1);
+        GT::String GetAttribute(const char* name, ptrdiff_t nameSizeInTs = -1);
         
         /**
         *   \brief                     Generically sets the value of an attribute.
@@ -124,7 +124,7 @@ namespace GTGUI
         
         // We need to store a list of style stacks that have this class in them. This is because
         // we need to notify the stacks when a change is made to the style class.
-        GTLib::List<StyleStack*> hosts;
+        GT::List<StyleStack*> hosts;
         
         // Size.
         StyleAttribute_Number  width;

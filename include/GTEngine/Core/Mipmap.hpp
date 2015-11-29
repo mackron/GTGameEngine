@@ -5,7 +5,7 @@
 
 #include "ImageFormats.hpp"
 
-namespace GTLib
+namespace GT
 {
     class Mipmap
     {

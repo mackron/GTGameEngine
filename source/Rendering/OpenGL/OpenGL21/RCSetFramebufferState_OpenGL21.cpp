@@ -5,7 +5,7 @@
 #include "../TypeConversion.hpp"
 #include <assert.h>
 
-namespace GTEngine
+namespace GT
 {
     #define SET_ATTACHMENTS_BIT                         (1 << 1)
     #define SET_WRITE_ONLY_DEPTH_STENCIL_BUFFER_BIT     (1 << 2)

@@ -4,7 +4,7 @@
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
-namespace GTEngine
+namespace GT
 {
     /// This function will be called by the watcher's thread.
     void DataFilesWatcher_CheckForChanges_Async(void* self)
@@ -180,7 +180,7 @@ namespace GTEngine
             // compare that to the old one. We will do something special for the root item where we won't actually check
             // the file system, but instead trick it into thinking it has done so.
 
-            GTLib::List<GTLib::String> currentChildren;
+            List<String> currentChildren;
 
             if (&m_root != &root)
             {
@@ -208,7 +208,7 @@ namespace GTEngine
 
             // We now have our list of children. We need to cross reference the new list of children against the list
             // currently in memory and post the appropriate events. We'll start with the children that have been removed.
-            GTLib::List<Item*> removedChildren;
+            List<Item*> removedChildren;
             for (size_t i = 0; i < root.children.count; ++i)
             {
                 auto  iItem = root.children.buffer[i]->value;
@@ -226,7 +226,7 @@ namespace GTEngine
             }
 
             // Now we find the new files.
-            GTLib::List<Item*> addedChildren;
+            List<Item*> addedChildren;
             for (auto iChild = currentChildren.root; iChild != nullptr; iChild = iChild->next)
             {
                 easyvfs_file_info info;

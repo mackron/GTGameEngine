@@ -234,13 +234,13 @@ namespace GT
         char* pFileData = easyvfs_open_and_read_text_file(pVFS, absolutePath, &fileSize);
         if (pFileData != 0 && fileSize > 0)
         {
-            GTLib::Vector<glm::vec4>    positions;
-            GTLib::Vector<glm::vec4>    texcoords;
-            GTLib::Vector<glm::vec4>    normals;
-            GTLib::Vector<OBJFace> faces;
+            Vector<glm::vec4>    positions;
+            Vector<glm::vec4>    texcoords;
+            Vector<glm::vec4>    normals;
+            Vector<OBJFace> faces;
 
-            GTLib::Vector<OBJFaceVertex> uniqueIndices;
-            GTLib::Vector<uint32_t>      actualIndices;
+            Vector<OBJFaceVertex> uniqueIndices;
+            Vector<uint32_t>      actualIndices;
 
             const char* str    = pFileData;
             const char* strEnd = str + fileSize;

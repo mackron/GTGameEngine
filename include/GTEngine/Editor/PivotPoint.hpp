@@ -2,7 +2,7 @@
 
 #include "../Math.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// A pivot point is used for doing translation, rotation and scaling of objects.
     ///

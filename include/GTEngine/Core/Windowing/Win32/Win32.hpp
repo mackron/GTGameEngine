@@ -8,14 +8,14 @@
 #include "../../Cursors.hpp"
 #include "../../windows.hpp"
 
-namespace GTLib
+namespace GT
 {
     namespace Win32
     {
         /// A helper for creating a default Win32 window.
         HWND CreateHWND();
 
-        /// Deletes a window created with GTLib::Win32::CreateWindow().
+        /// Deletes a window created with Win32::CreateWindow().
         void DeleteHWND(HWND hWnd);
 
         /// Sets the cursor of the given window.

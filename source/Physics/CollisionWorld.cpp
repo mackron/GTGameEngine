@@ -2,7 +2,7 @@
 
 #include <GTEngine/Physics.hpp>
 
-namespace GTEngine
+namespace GT
 {
     CollisionWorld::CollisionWorld()
         : BaseCollisionWorld(),

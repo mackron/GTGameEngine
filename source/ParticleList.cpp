@@ -4,7 +4,7 @@
 #include <new>
 #include <cstring>  // For memcpy()
 
-namespace GTEngine
+namespace GT
 {
     ParticleList::ParticleList(size_t initialBufferSize)
         : buffer(nullptr), bufferSize(0), count(0), startIndex(0)

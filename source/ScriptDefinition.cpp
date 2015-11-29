@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Strings/LineIterator.hpp>
 #include <GTEngine/Core/Strings/Tokenizer.hpp>
 
-namespace GTEngine
+namespace GT
 {
     ScriptDefinition::ScriptDefinition(const char* absolutePathIn, const char* relativePathIn, const char* scriptStringIn)
         : absolutePath(absolutePathIn), relativePath(relativePathIn), scriptString(scriptStringIn),
@@ -50,91 +50,91 @@ namespace GTEngine
 
                 if (workingScript.IsFunction(-1))
                 {
-                    if (GTLib::Strings::Equal(name, "OnUpdate"))
+                    if (Strings::Equal(name, "OnUpdate"))
                     {
                         this->hasOnUpdate = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnStartup"))
+                    else if (Strings::Equal(name, "OnStartup"))
                     {
                         this->hasOnStartup = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnShutdown"))
+                    else if (Strings::Equal(name, "OnShutdown"))
                     {
                         this->hasOnShutdown = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnShow"))
+                    else if (Strings::Equal(name, "OnShow"))
                     {
                         this->hasOnShow = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnHide"))
+                    else if (Strings::Equal(name, "OnHide"))
                     {
                         this->hasOnHide = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnEnterSceneNode"))
+                    else if (Strings::Equal(name, "OnEnterSceneNode"))
                     {
                         this->hasOnEnterSceneNode = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnSceneNodeEnter"))
+                    else if (Strings::Equal(name, "OnSceneNodeEnter"))
                     {
                         this->hasOnSceneNodeEnter = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnLeaveSceneNode"))
+                    else if (Strings::Equal(name, "OnLeaveSceneNode"))
                     {
                         this->hasOnLeaveSceneNode = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnSceneNodeLeave"))
+                    else if (Strings::Equal(name, "OnSceneNodeLeave"))
                     {
                         this->hasOnSceneNodeLeave = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnMouseMove"))
+                    else if (Strings::Equal(name, "OnMouseMove"))
                     {
                         this->hasOnMouseMove = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnMouseWheel"))
+                    else if (Strings::Equal(name, "OnMouseWheel"))
                     {
                         this->hasOnMouseWheel = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnMouseButtonDown"))
+                    else if (Strings::Equal(name, "OnMouseButtonDown"))
                     {
                         this->hasOnMouseButtonDown = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnMouseButtonUp"))
+                    else if (Strings::Equal(name, "OnMouseButtonUp"))
                     {
                         this->hasOnMouseButtonUp = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnMouseButtonDoubleClick"))
+                    else if (Strings::Equal(name, "OnMouseButtonDoubleClick"))
                     {
                         this->hasOnMouseButtonDoubleClick = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnKeyPressed"))
+                    else if (Strings::Equal(name, "OnKeyPressed"))
                     {
                         this->hasOnKeyPressed = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnKeyReleased"))
+                    else if (Strings::Equal(name, "OnKeyReleased"))
                     {
                         this->hasOnKeyReleased = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnSerialize"))
+                    else if (Strings::Equal(name, "OnSerialize"))
                     {
                         this->hasOnSerialize = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnDeserialize"))
+                    else if (Strings::Equal(name, "OnDeserialize"))
                     {
                         this->hasOnDeserialize = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnSerializeGlobalData"))
+                    else if (Strings::Equal(name, "OnSerializeGlobalData"))
                     {
                         this->hasOnSerializeGlobalData = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnDeserializeGlobalData"))
+                    else if (Strings::Equal(name, "OnDeserializeGlobalData"))
                     {
                         this->hasOnDeserializeGlobalData = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnGamePause"))
+                    else if (Strings::Equal(name, "OnGamePause"))
                     {
                         this->hasOnGamePause = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnGameResume"))
+                    else if (Strings::Equal(name, "OnGameResume"))
                     {
                         this->hasOnGameResume = true;
                     }
@@ -191,11 +191,11 @@ namespace GTEngine
                                             {
                                                 auto key = workingScript.ToString(-2);
 
-                                                if (GTLib::Strings::Equal<false>(key, "x"))
+                                                if (Strings::Equal<false>(key, "x"))
                                                 {
                                                     variableVec2->SetX(value);
                                                 }
-                                                else if (GTLib::Strings::Equal<false>(key, "y"))
+                                                else if (Strings::Equal<false>(key, "y"))
                                                 {
                                                     variableVec2->SetY(value);
                                                 }
@@ -245,15 +245,15 @@ namespace GTEngine
                                             {
                                                 auto key = workingScript.ToString(-2);
 
-                                                if (GTLib::Strings::Equal<false>(key, "x"))
+                                                if (Strings::Equal<false>(key, "x"))
                                                 {
                                                     variableVec3->SetX(value);
                                                 }
-                                                else if (GTLib::Strings::Equal<false>(key, "y"))
+                                                else if (Strings::Equal<false>(key, "y"))
                                                 {
                                                     variableVec3->SetY(value);
                                                 }
-                                                else if (GTLib::Strings::Equal<false>(key, "z"))
+                                                else if (Strings::Equal<false>(key, "z"))
                                                 {
                                                     variableVec3->SetZ(value);
                                                 }
@@ -307,19 +307,19 @@ namespace GTEngine
                                             {
                                                 auto key = workingScript.ToString(-2);
 
-                                                if (GTLib::Strings::Equal<false>(key, "x"))
+                                                if (Strings::Equal<false>(key, "x"))
                                                 {
                                                     variableVec4->SetX(value);
                                                 }
-                                                else if (GTLib::Strings::Equal<false>(key, "y"))
+                                                else if (Strings::Equal<false>(key, "y"))
                                                 {
                                                     variableVec4->SetY(value);
                                                 }
-                                                else if (GTLib::Strings::Equal<false>(key, "z"))
+                                                else if (Strings::Equal<false>(key, "z"))
                                                 {
                                                     variableVec4->SetZ(value);
                                                 }
-                                                else if (GTLib::Strings::Equal<false>(key, "w"))
+                                                else if (Strings::Equal<false>(key, "w"))
                                                 {
                                                     variableVec4->SetW(value);
                                                 }
@@ -527,7 +527,7 @@ namespace GTEngine
             auto variable = this->publicVariables[i];
             assert(variable != nullptr);
             {
-                if (GTLib::Strings::Equal(variable->GetName(), variableName))
+                if (Strings::Equal(variable->GetName(), variableName))
                 {
                     return variable;
                 }
@@ -556,71 +556,71 @@ namespace GTEngine
         this->ClearPublicVariables();
 
         auto markerString           = "--[[public:";
-        auto markerStringLengthInTs = GTLib::Strings::SizeInTs(markerString);
+        auto markerStringLengthInTs = Strings::SizeInTs(markerString);
 
         auto selfString             = "self.";
-        auto selfStringLengthInTs   = GTLib::Strings::SizeInTs(selfString);
+        auto selfStringLengthInTs   = Strings::SizeInTs(selfString);
 
 
         // We just iterate over line by line and check for a "--[[public:" string.
-        GTLib::Strings::LineIterator line(this->scriptString.c_str());
+        Strings::LineIterator line(this->scriptString.c_str());
         while (line)
         {
-            auto lineStart      = GTLib::Strings::TrimStart(line.start, line.end - line.start);
+            auto lineStart      = Strings::TrimStart(line.start, line.end - line.start);
             auto lineEnd        = line.end;
             auto lineLengthInTs = lineEnd - lineStart;
 
             if (lineLengthInTs > markerStringLengthInTs)
             {
-                if (GTLib::Strings::Equal(markerString, lineStart, markerStringLengthInTs))
+                if (Strings::Equal(markerString, lineStart, markerStringLengthInTs))
                 {
                     auto typeStart = lineStart + markerStringLengthInTs;
-                    auto typeEnd   = GTLib::Strings::FindFirst(typeStart, lineEnd - typeStart, "]]", 2);
+                    auto typeEnd   = Strings::FindFirst(typeStart, lineEnd - typeStart, "]]", 2);
                     auto markerEnd = typeEnd;
                     
                     if (markerEnd != nullptr && lineEnd > markerEnd + 2)
                     {
-                        typeEnd = GTLib::Strings::TrimEnd(typeStart, typeEnd - typeStart);
+                        typeEnd = Strings::TrimEnd(typeStart, typeEnd - typeStart);
 
                         // We use a simple tokenizer to grab the name. It should be the first token, and should begin with "self.". We start this after the
                         // metadata marker ("--[[public:<type>]]"). The +2 simply moves the string past the "]]"
-                        GTLib::Strings::Tokenizer token(markerEnd + 2);
+                        Strings::Tokenizer token(markerEnd + 2);
                         if (token)
                         {
                             if ((token.end - token.start) > selfStringLengthInTs)
                             {
-                                if (GTLib::Strings::Equal(selfString, token.start, selfStringLengthInTs))
+                                if (Strings::Equal(selfString, token.start, selfStringLengthInTs))
                                 {
                                     // We'll have a name. We can now construct the variable.
                                     auto nameStart = token.start + selfStringLengthInTs;
                                     auto nameEnd   = token.end;
-                                    GTLib::String variableName(nameStart, nameEnd - nameStart);
+                                    String variableName(nameStart, nameEnd - nameStart);
                                     
-                                    if (GTLib::Strings::Equal("number", typeStart, typeEnd - typeStart))
+                                    if (Strings::Equal("number", typeStart, typeEnd - typeStart))
                                     {
                                         this->publicVariables.PushBack(new ScriptVariable_Number(variableName.c_str()));
                                     }
-                                    else if (GTLib::Strings::Equal("vec2", typeStart, typeEnd - typeStart))
+                                    else if (Strings::Equal("vec2", typeStart, typeEnd - typeStart))
                                     {
                                         this->publicVariables.PushBack(new ScriptVariable_Vec2(variableName.c_str()));
                                     }
-                                    else if (GTLib::Strings::Equal("vec3", typeStart, typeEnd - typeStart))
+                                    else if (Strings::Equal("vec3", typeStart, typeEnd - typeStart))
                                     {
                                         this->publicVariables.PushBack(new ScriptVariable_Vec3(variableName.c_str()));
                                     }
-                                    else if (GTLib::Strings::Equal("vec4", typeStart, typeEnd - typeStart))
+                                    else if (Strings::Equal("vec4", typeStart, typeEnd - typeStart))
                                     {
                                         this->publicVariables.PushBack(new ScriptVariable_Vec4(variableName.c_str()));
                                     }
-                                    else if (GTLib::Strings::Equal("bool", typeStart, typeEnd - typeStart))
+                                    else if (Strings::Equal("bool", typeStart, typeEnd - typeStart))
                                     {
                                         this->publicVariables.PushBack(new ScriptVariable_Boolean(variableName.c_str()));
                                     }
-                                    else if (GTLib::Strings::Equal("string", typeStart, typeEnd - typeStart))
+                                    else if (Strings::Equal("string", typeStart, typeEnd - typeStart))
                                     {
                                         this->publicVariables.PushBack(new ScriptVariable_String(variableName.c_str()));
                                     }
-                                    else if (GTLib::Strings::Equal("prefab", typeStart, typeEnd - typeStart))
+                                    else if (Strings::Equal("prefab", typeStart, typeEnd - typeStart))
                                     {
                                         this->publicVariables.PushBack(new ScriptVariable_Prefab(variableName.c_str()));
                                     }

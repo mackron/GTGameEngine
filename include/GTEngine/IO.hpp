@@ -85,7 +85,7 @@ namespace GT
     ///
     /// @remarks
     ///     The relative path can not contain '.' and '..' characters.
-    GTLib::String GetBasePath(const char* absolutePath, const char* relativePath);
+    String GetBasePath(const char* absolutePath, const char* relativePath);
 }
 
 #endif

@@ -5,11 +5,11 @@
 
 #include <GTEngine/Core/Threading/Job.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Game;
 
-    class GameUpdateJob : public GTLib::Threading::Job
+    class GameUpdateJob : public Job
     {
     public:
 
@@ -23,7 +23,7 @@ namespace GTEngine
         */
         ~GameUpdateJob();
 
-        /// GTLib::Threading::Job::Run().
+        /// Threading::Job::Run().
         void Run();
 
 

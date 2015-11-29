@@ -5,7 +5,7 @@
 #include <GTEngine/Core/Strings/Find.hpp>          // For checking the compilation output.
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     RCCreateShader::RCCreateShader()
         : programState(nullptr), vertexShaderSource(), fragmentShaderSource(), geometryShaderSource()
@@ -159,7 +159,7 @@ namespace GTEngine
     ////////////////////////////////////////////////////
     // Private
 
-    GLuint RCCreateShader::CreateShader(GLenum type, const GTLib::String &sourceIn)
+    GLuint RCCreateShader::CreateShader(GLenum type, const String &sourceIn)
     {
         auto source       = sourceIn.c_str();
         auto sourceLength = static_cast<GLint>(sourceIn.GetLengthInTs());
@@ -184,22 +184,22 @@ namespace GTEngine
             // Whether or not we output the error message depends on the message. Some drivers output messages like "No errors." when there are no
             // errors or warnings.
 
-            const char* successStringIntel = GTLib::Strings::FindFirst(log, "No errors.");
+            const char* successStringIntel = Strings::FindFirst(log, "No errors.");
             
             const char* successStringAMD   = nullptr;
             if (type == GL_VERTEX_SHADER)
             {
-                successStringAMD = GTLib::Strings::FindFirst(log, "Vertex shader was successfully compiled");
+                successStringAMD = Strings::FindFirst(log, "Vertex shader was successfully compiled");
             }
             else if (type == GL_FRAGMENT_SHADER)
             {
-                successStringAMD = GTLib::Strings::FindFirst(log, "Fragment shader was successfully compiled");
+                successStringAMD = Strings::FindFirst(log, "Fragment shader was successfully compiled");
             }
 
             // If we can't find one of the success strings, we'll need to log the output.
             if (!(successStringIntel == log || successStringAMD == log))
             {
-                GTLib::String title;
+                String title;
                 if (type == GL_VERTEX_SHADER)
                 {
                     title = "Vertex Shader Info Log";
@@ -213,7 +213,7 @@ namespace GTEngine
                     title = "Geometry Shader Info Log";
                 }
 
-                GTEngine::Log("--- %s ---\n%s%s", title.c_str(), log, source);
+                Log("--- %s ---\n%s%s", title.c_str(), log, source);
 
 
                 // We only delete the shader object if we failed the compilation.
@@ -267,7 +267,7 @@ namespace GTEngine
             auto log = static_cast<char*>(malloc(static_cast<size_t>(logLength)));
             glGetProgramInfoLog(program, logLength, nullptr, log);
 
-            GTEngine::Log("--- Program Link Status ---\n%s", log);
+            Log("--- Program Link Status ---\n%s", log);
 
             free(log);
 

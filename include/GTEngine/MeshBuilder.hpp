@@ -12,7 +12,7 @@ class btCollisionShape;
 class btConvexHullShape;
 class btBoxShape;
 
-namespace GTEngine
+namespace GT
 {
     /// Class used for building meshes.
     ///
@@ -97,10 +97,10 @@ namespace GTEngine
         size_t vertexSizeInFloats;
 
         /// The buffer containing the vertex data.
-        GTLib::Vector<float> vertexBuffer;
+        Vector<float> vertexBuffer;
 
         /// The buffer containing the indices.
-        GTLib::Vector<unsigned int> indexBuffer;
+        Vector<unsigned int> indexBuffer;
 
         /// Whether or not the mesh builder should check for duplicate vertices. Defaults to true.
         bool checkDuplicatesOnEmit;
@@ -108,7 +108,7 @@ namespace GTEngine
 }
 
 
-namespace GTEngine
+namespace GT
 {
     /// Mesh builder class optimized for the common P3T2N3 texture format.
     class MeshBuilderP3T2N3 : public MeshBuilder
@@ -223,7 +223,7 @@ namespace GTEngine
         unsigned int ringSegmentsCount;
 
         /// The list of mesh builders for each ring.
-        GTLib::Vector<MeshBuilderP3> rings;
+        Vector<MeshBuilderP3> rings;
     };
 
 

@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-namespace GTEngine
+namespace GT
 {
     typedef size_t EventCode;
 

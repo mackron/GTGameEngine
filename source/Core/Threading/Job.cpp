@@ -2,17 +2,14 @@
 
 #include <GTEngine/Core/Threading/Job.hpp>
 
-namespace GTLib
+namespace GT
 {
-    namespace Threading
+    Job::Job()
+        : next(nullptr)
     {
-        Job::Job()
-            : next(nullptr)
-        {
-        }
+    }
 
-        Job::~Job()
-        {
-        }
+    Job::~Job()
+    {
     }
 }

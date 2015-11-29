@@ -7,7 +7,7 @@
 #include <GTEngine/Rendering/VertexFormat.hpp>
 #include <gtgl/gtgl.h>
 
-namespace GTEngine
+namespace GT
 {
     /// Render command for clearing the buffers/
     class RCDeleteVertexArray : public RenderCommand

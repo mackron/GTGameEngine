@@ -9,7 +9,7 @@
 #include <GTEngine/Core/Serializer.hpp>
 #include <GTEngine/Core/Deserializer.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Structure reprsenting a vertex weight.
     struct VertexWeightPair
@@ -30,7 +30,7 @@ namespace GTEngine
     };
 }
 
-namespace GTEngine
+namespace GT
 {
     /// Structure containing weights for a given bone.
     struct BoneWeights
@@ -41,16 +41,16 @@ namespace GTEngine
         }
 
         /// The name of the bone these weights are referring to.
-        GTLib::String name;
+        String name;
 
         /// The lsit of vertex/weight pairs.
-        GTLib::Vector<VertexWeightPair> weights;
+        Vector<VertexWeightPair> weights;
     };
 }
 
 
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a bone in a skeleton.
     class Bone
@@ -81,8 +81,8 @@ namespace GTEngine
         Bone* GetParent() { return this->parent; }
 
         /// Retrieves a direct reference to the internal vector containing the pointers to the child bones.
-              GTLib::Vector<Bone*> & GetChildren()       { return this->children; }
-        const GTLib::Vector<Bone*> & GetChildren() const { return this->children; }
+              Vector<Bone*> & GetChildren()       { return this->children; }
+        const Vector<Bone*> & GetChildren() const { return this->children; }
 
 
         /// Sets the name of the bone.
@@ -181,12 +181,12 @@ namespace GTEngine
         /// Serializes the bone, not including hierarchy information (parent, children).
         ///
         /// @param serializer [in] A reference to the serializer to write to.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the bone, not including hierarchy information (parent, children).
         ///
         /// @param deserializer [in] A reference to the deserializer to read from.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
 
@@ -197,11 +197,11 @@ namespace GTEngine
         Bone* parent;
 
         /// The children.
-        GTLib::Vector<Bone*> children;
+        Vector<Bone*> children;
 
 
         /// The name of the bone.
-        GTLib::String name;
+        String name;
 
 
         /// The relative position of the bone.

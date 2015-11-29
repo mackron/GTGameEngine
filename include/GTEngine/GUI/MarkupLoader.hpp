@@ -35,7 +35,7 @@ namespace GTGUI
         /// @param markup            [in]  The markup string.
         /// @param absoluteDirectory [in]  The absolute directory to load include files from.
         /// @param topElementID      [out] A reference to the variable that will receive the ID of the top-most element.
-        virtual bool Load(const char* markup, const char* absoluteDirectory, GTLib::String &topElementID);
+        virtual bool Load(const char* markup, const char* absoluteDirectory, GT::String &topElementID);
         
         /// Loads a markup string from a file.
         ///
@@ -80,7 +80,7 @@ namespace GTGUI
         /// @remarks
         ///     This function will get called recursively in order to handle include files. We need to keep track of loaded elements
         ///     so we can perform a post-process step.
-        bool Load(const char* markup, size_t markupSizeInBytes, const char* absoluteDirectory, GTLib::Vector<Element*> &loadedElementsOut);
+        bool Load(const char* markup, size_t markupSizeInBytes, const char* absoluteDirectory, GT::Vector<Element*> &loadedElementsOut);
         
         /// Main implementation for loading a file.
         ///
@@ -90,7 +90,7 @@ namespace GTGUI
         /// @remarks
         ///     This function will get called recursively in order to handle include files. We need to keep track of loaded elements
         ///     so we can perform a post-process step.
-        bool LoadFile(const char* filePath, GTLib::Vector<Element*> &loadedElementsOut);
+        bool LoadFile(const char* filePath, GT::Vector<Element*> &loadedElementsOut);
         
         /// Performs a post-processing step on the given elements.
         ///
@@ -98,7 +98,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     The main purpose of this step is to post events like OnShow, etc.
-        void PostLoad(const GTLib::Vector<Element*> &loadedElements);
+        void PostLoad(const GT::Vector<Element*> &loadedElements);
             
     
     private:
@@ -107,7 +107,7 @@ namespace GTGUI
         Server &m_server;
         
         /// A container for keeping track of files that have already been loaded.
-        GTLib::Dictionary<bool> m_loadedFiles;
+        GT::Dictionary<bool> m_loadedFiles;
 
 
 

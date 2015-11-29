@@ -6,7 +6,7 @@
 #include "Renderer.hpp"
 #include <GTEngine/GUI/Rendering.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// The default renderer for GUI's. This calls functions directly from the main Renderer class.
     class DefaultGUIRenderer : public GTGUI::Renderer
@@ -54,7 +54,7 @@ namespace GTEngine
     private:
 
         /// Retrieves a texture for the given image.
-        //Texture2D* AcquireTexture2DFromImage(const GTLib::Image* image);
+        //Texture2D* AcquireTexture2DFromImage(const Image* image);
 
         /// A helper for enabled all of the current state.
         void RestoreCurrentState();

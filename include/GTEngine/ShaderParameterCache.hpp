@@ -8,7 +8,7 @@
 #include "Serialization.hpp"
 #include <GTEngine/Core/Dictionary.hpp>
 
-namespace GTEngine
+namespace GT
 {
     class Texture2D;
     class TextureCube;
@@ -100,15 +100,15 @@ namespace GTEngine
 
 
         /// Retrieves the internal list of parameters.
-        const GTLib::Dictionary<ShaderParameter_Float>       & GetFloatParameters()       const { return this->floatParameters;       }
-        const GTLib::Dictionary<ShaderParameter_Float2>      & GetFloat2Parameters()      const { return this->float2Parameters;      }
-        const GTLib::Dictionary<ShaderParameter_Float3>      & GetFloat3Parameters()      const { return this->float3Parameters;      }
-        const GTLib::Dictionary<ShaderParameter_Float4>      & GetFloat4Parameters()      const { return this->float4Parameters;      }
-        const GTLib::Dictionary<ShaderParameter_Float2x2>    & GetFloat2x2Parameters()    const { return this->float2x2Parameters;    }
-        const GTLib::Dictionary<ShaderParameter_Float3x3>    & GetFloat3x3Parameters()    const { return this->float3x3Parameters;    }
-        const GTLib::Dictionary<ShaderParameter_Float4x4>    & GetFloat4x4Parameters()    const { return this->float4x4Parameters;    }
-        const GTLib::Dictionary<ShaderParameter_Texture2D>   & GetTexture2DParameters()   const { return this->texture2DParameters;   }
-        const GTLib::Dictionary<ShaderParameter_TextureCube> & GetTextureCubeParameters() const { return this->textureCubeParameters; }
+        const Dictionary<ShaderParameter_Float>       & GetFloatParameters()       const { return this->floatParameters;       }
+        const Dictionary<ShaderParameter_Float2>      & GetFloat2Parameters()      const { return this->float2Parameters;      }
+        const Dictionary<ShaderParameter_Float3>      & GetFloat3Parameters()      const { return this->float3Parameters;      }
+        const Dictionary<ShaderParameter_Float4>      & GetFloat4Parameters()      const { return this->float4Parameters;      }
+        const Dictionary<ShaderParameter_Float2x2>    & GetFloat2x2Parameters()    const { return this->float2x2Parameters;    }
+        const Dictionary<ShaderParameter_Float3x3>    & GetFloat3x3Parameters()    const { return this->float3x3Parameters;    }
+        const Dictionary<ShaderParameter_Float4x4>    & GetFloat4x4Parameters()    const { return this->float4x4Parameters;    }
+        const Dictionary<ShaderParameter_Texture2D>   & GetTexture2DParameters()   const { return this->texture2DParameters;   }
+        const Dictionary<ShaderParameter_TextureCube> & GetTextureCubeParameters() const { return this->textureCubeParameters; }
 
 
 
@@ -118,25 +118,25 @@ namespace GTEngine
         /// Serializes the parameter cache.
         ///
         /// @param serializer [in] A reference to the serializer to write to.
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(Serializer &serializer) const;
 
         /// Deserializes the parameter cache.
         ///
         /// @param deserializer [in] A reference to the deserializer to read from.
-        void Deserialize(GTLib::Deserializer &deserializer);
+        void Deserialize(Deserializer &deserializer);
 
 
     private:
 
-        GTLib::Dictionary<ShaderParameter_Float>       floatParameters;
-        GTLib::Dictionary<ShaderParameter_Float2>      float2Parameters;
-        GTLib::Dictionary<ShaderParameter_Float3>      float3Parameters;
-        GTLib::Dictionary<ShaderParameter_Float4>      float4Parameters;
-        GTLib::Dictionary<ShaderParameter_Float2x2>    float2x2Parameters;
-        GTLib::Dictionary<ShaderParameter_Float3x3>    float3x3Parameters;
-        GTLib::Dictionary<ShaderParameter_Float4x4>    float4x4Parameters;
-        GTLib::Dictionary<ShaderParameter_Texture2D>   texture2DParameters;
-        GTLib::Dictionary<ShaderParameter_TextureCube> textureCubeParameters;
+        Dictionary<ShaderParameter_Float>       floatParameters;
+        Dictionary<ShaderParameter_Float2>      float2Parameters;
+        Dictionary<ShaderParameter_Float3>      float3Parameters;
+        Dictionary<ShaderParameter_Float4>      float4Parameters;
+        Dictionary<ShaderParameter_Float2x2>    float2x2Parameters;
+        Dictionary<ShaderParameter_Float3x3>    float3x3Parameters;
+        Dictionary<ShaderParameter_Float4x4>    float4x4Parameters;
+        Dictionary<ShaderParameter_Texture2D>   texture2DParameters;
+        Dictionary<ShaderParameter_TextureCube> textureCubeParameters;
 
 
 

@@ -3,7 +3,7 @@
 #include <GTEngine/Editor/SceneEditor/SceneEditorSceneEventHandler.hpp>
 #include <GTEngine/Editor/SceneEditor/SceneEditor.hpp>
 
-namespace GTEngine
+namespace GT
 {
     SceneEditorSceneEventHandler::SceneEditorSceneEventHandler(SceneEditor &sceneEditorIn)
         : sceneEditor(sceneEditorIn)

@@ -9,7 +9,7 @@
 #include <easy_path/easy_path.h>
 #include <utility>
 
-namespace GTEngine
+namespace GT
 {
     ///////////////////////////////////////
     // Globals
@@ -42,15 +42,15 @@ namespace GTEngine
 
 
     /// The list of loaded material definitions, indexed by their absolute path.
-    static GTLib::Dictionary<MaterialDefinitionReference> MaterialDefinitions;
+    static Dictionary<MaterialDefinitionReference> MaterialDefinitions;
 
     /// The list of loaded materials.
-    static GTLib::List<Material*> LoadedMaterials;
+    static List<Material*> LoadedMaterials;
 
 
 
     /// The list of event handlers.
-    static GTLib::Vector<MaterialLibrary::EventHandler*> EventHandlers;
+    static Vector<MaterialLibrary::EventHandler*> EventHandlers;
 
     /// Helper function for calling the OnCreateMaterial() event.
     void MaterialLibrary_OnCreateMaterial(Material &material)
@@ -237,7 +237,7 @@ namespace GTEngine
 
 
             // The reference counter needs to be decremented. If this is the last reference to the material we'll delete it.
-            GTLib::String absolutePath(material->GetDefinition().absolutePath);
+            String absolutePath(material->GetDefinition().absolutePath);
 
             auto iMaterialDefinition = MaterialDefinitions.Find(absolutePath.c_str());
             if (iMaterialDefinition != nullptr)

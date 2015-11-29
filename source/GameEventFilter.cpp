@@ -2,7 +2,7 @@
 
 #include <GTEngine/GameEventFilter.hpp>
 
-namespace GTEngine
+namespace GT
 {
     GameEventFilter::GameEventFilter()
     {
@@ -28,38 +28,38 @@ namespace GTEngine
         return true;
     }
     
-    bool GameEventFilter::OnMouseButtonDown(GTLib::MouseButton &, int &, int &)
+    bool GameEventFilter::OnMouseButtonDown(MouseButton &, int &, int &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnMouseButtonUp(GTLib::MouseButton &, int &, int &)
+    bool GameEventFilter::OnMouseButtonUp(MouseButton &, int &, int &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnMouseButtonDoubleClick(GTLib::MouseButton &, int &, int &)
+    bool GameEventFilter::OnMouseButtonDoubleClick(MouseButton &, int &, int &)
     {
         return true;
     }
     
     
-    bool GameEventFilter::OnKeyPressed(GTLib::Key &)
+    bool GameEventFilter::OnKeyPressed(Key &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnKeyReleased(GTLib::Key &)
+    bool GameEventFilter::OnKeyReleased(Key &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnKeyDown(GTLib::Key &)
+    bool GameEventFilter::OnKeyDown(Key &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnKeyUp(GTLib::Key &)
+    bool GameEventFilter::OnKeyUp(Key &)
     {
         return true;
     }

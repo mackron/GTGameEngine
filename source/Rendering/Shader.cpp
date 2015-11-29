@@ -3,7 +3,7 @@
 #include <GTEngine/Rendering/Shader.hpp>
 #include <GTEngine/Material.hpp>
 
-namespace GTEngine
+namespace GT
 {
     Shader::Shader(const char* vertexSourceIn, const char* fragmentSourceIn, const char* geometrySourceIn)
         : vertexSource(vertexSourceIn), fragmentSource(fragmentSourceIn), geometrySource(geometrySourceIn)

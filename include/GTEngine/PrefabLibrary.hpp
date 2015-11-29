@@ -6,7 +6,7 @@
 #include "Prefab.hpp"
 #include <utility>
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing the library of prefabs.
     class PrefabLibrary

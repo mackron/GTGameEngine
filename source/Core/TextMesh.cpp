@@ -2,7 +2,7 @@
 
 #include <GTEngine/Core/TextMesh.hpp>
 
-namespace GTLib
+namespace GT
 {
     TextMesh::TextMesh()
         : m_vertices(), m_indices(), m_glyphMapHandle(0)

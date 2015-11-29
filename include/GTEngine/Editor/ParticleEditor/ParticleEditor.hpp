@@ -10,7 +10,7 @@
 #include "../../ParticleSystem.hpp"
 #include "../../Scene.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing the particle system editor.
     class ParticleEditor : public SubEditor

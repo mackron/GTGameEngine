@@ -7,7 +7,7 @@
 #include "Physics.hpp"
 #include "AlignedType.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// The default physics manager for scenes.
     ///

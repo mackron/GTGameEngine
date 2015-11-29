@@ -7,7 +7,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialiser list.
 #endif
 
-namespace GTEngine
+namespace GT
 {
     DynamicsWorld::DynamicsWorld()
         : solver(),

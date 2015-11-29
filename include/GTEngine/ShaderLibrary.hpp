@@ -5,7 +5,7 @@
 
 #include "Rendering/Shader.hpp"
 
-namespace GTEngine
+namespace GT
 {
     /// Static class for loading and retrieving shader objects.
     ///

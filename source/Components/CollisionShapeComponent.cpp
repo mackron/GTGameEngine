@@ -7,7 +7,7 @@
 #include <GTEngine/GTEngine.hpp>
 #undef max
 
-namespace GTEngine
+namespace GT
 {
     #define GTENGINE_MIN_CONVEX_HULL_MARGIN     0.005f
 
@@ -616,7 +616,7 @@ namespace GTEngine
         short newCollisionGroup = 0;
         short newCollisionMask  = 0;
         
-        GTLib::String base("Game.CollisionGroups.");
+        String base("Game.CollisionGroups.");
         
         for (size_t iGroup = 0; iGroup < this->collisionGroupStrings.count; ++iGroup)
         {
@@ -661,9 +661,9 @@ namespace GTEngine
     {
         this->OnPreCollisionShapeChanged();
         {
-            x = GTLib::Max(x, 0.0001f);
-            y = GTLib::Max(y, 0.0001f);
-            z = GTLib::Max(z, 0.0001f);
+            x = Max(x, 0.0001f);
+            y = Max(y, 0.0001f);
+            z = Max(z, 0.0001f);
 
             // Now we simply apply the scaling to the shape.
             this->collisionShape.setLocalScaling(btVector3(x, y, z));
@@ -695,10 +695,10 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void CollisionShapeComponent::Serialize(GTLib::Serializer &serializer) const
+    void CollisionShapeComponent::Serialize(Serializer &serializer) const
     {
         // We'll need to use an intermediary serializer for getting accurate sizes.
-        GTLib::BasicSerializer intermediarySerializer;
+        BasicSerializer intermediarySerializer;
         intermediarySerializer.Write(static_cast<uint32_t>(this->GetCollisionShapeCount()));
         intermediarySerializer.Write(static_cast<uint32_t>(this->collisionGroup));
         intermediarySerializer.Write(static_cast<uint32_t>(this->collisionMask));
@@ -926,7 +926,7 @@ namespace GTEngine
         }
     }
 
-    void CollisionShapeComponent::Deserialize(GTLib::Deserializer &deserializer)
+    void CollisionShapeComponent::Deserialize(Deserializer &deserializer)
     {
         // Before deserializing, we need to revert the scaling back to 1.0, 1.0, 1.0f. If we don't do this, the scale won't be
         // be set correctly because of the way the shapes are used.
@@ -940,8 +940,8 @@ namespace GTEngine
         uint32_t deserializedShapeCount;
         uint32_t deserializedCollisionGroup;
         uint32_t deserializedCollisionMask;
-        GTLib::Vector<GTLib::String> deserializedCollisionGroupStrings;
-        GTLib::Vector<GTLib::String> deserializedCollisionGroupMaskStrings;
+        Vector<String> deserializedCollisionGroupStrings;
+        Vector<String> deserializedCollisionGroupMaskStrings;
 
         // The first chunk must the main one. It will contain the shape count.
         if (header.id == Serialization::ChunkID_CollisionShapeComponent_Main)
@@ -966,7 +966,7 @@ namespace GTEngine
                         
                         for (uint32_t iGroup = 0; iGroup < collisionGroupStringsCount; ++iGroup)
                         {
-                            GTLib::String group;
+                            String group;
                             deserializer.ReadString(group);
                             
                             deserializedCollisionGroupStrings.PushBack(group);
@@ -978,7 +978,7 @@ namespace GTEngine
                         
                         for (uint32_t iGroup = 0; iGroup < collisionGroupMaskStringsCount; ++iGroup)
                         {
-                            GTLib::String group;
+                            String group;
                             deserializer.ReadString(group);
                             
                             deserializedCollisionGroupMaskStrings.PushBack(group);
@@ -1047,7 +1047,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+                            Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1085,7 +1085,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing CollisionShapeComponent. Sphere shape chunk version (%d) is unknown. Skipping.", header.version);
+                            Log("Error deserializing CollisionShapeComponent. Sphere shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1123,7 +1123,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing CollisionShapeComponent. Ellipsoid shape chunk version (%d) is unknown. Skipping.", header.version);
+                            Log("Error deserializing CollisionShapeComponent. Ellipsoid shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1180,7 +1180,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+                            Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1239,7 +1239,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+                            Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1257,7 +1257,7 @@ namespace GTEngine
                     case 1:
                         {
                             uint32_t                  vertexCount;
-                            GTLib::Vector<glm::vec3> vertices;
+                            Vector<glm::vec3> vertices;
                             float                     margin;
 
                             deserializer.Read(vertexCount);
@@ -1277,7 +1277,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing CollisionShapeComponent. Convex hull chunk version (%d) is unknown. Skipping.", header.version);
+                            Log("Error deserializing CollisionShapeComponent. Convex hull chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1304,7 +1304,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        GTEngine::Log("Error deserializing CollisionShapeComponent. Model convex hull chunk version (%d) is unknown. Skipping.", header.version);
+                        Log("Error deserializing CollisionShapeComponent. Model convex hull chunk version (%d) is unknown. Skipping.", header.version);
                         deserializer.Seek(header.sizeInBytes);
                     }
 
@@ -1314,7 +1314,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::Log("Error deserializing CollisionShapeComponent. Unknown shape chunk (%d). Skipping.", header.id);
+                    Log("Error deserializing CollisionShapeComponent. Unknown shape chunk (%d). Skipping.", header.id);
 
                     deserializer.Seek(header.sizeInBytes);
                     break;

@@ -18,7 +18,7 @@
 #include <GTEngine/Core/WindowManagement.hpp>
 
 // Basic globals.
-namespace GTEngine
+namespace GT
 {
     /// A pointer to the global game object.
     Game* GlobalGame = nullptr;
@@ -27,12 +27,12 @@ namespace GTEngine
     GT::Engine::EngineContext* g_EngineContext = nullptr;
 }
 
-namespace GTEngine
+namespace GT
 {
     bool _PreStartup()
     {
         // Before we can do any windowing operations we will need to initialise the window management module of GTLib.
-        GTLib::StartupWindowManager();
+        StartupWindowManager();
 
 
         // Here we'll startup the thread cache. We will do this before starting the sub-systems so that they themselves can do some
@@ -118,7 +118,7 @@ namespace GTEngine
         ThreadCache::Shutdown();
         
         // GTLib's window management module.
-        GTLib::ShutdownWindowManager();
+        ShutdownWindowManager();
 
 
         /// The engine context.
@@ -127,6 +127,7 @@ namespace GTEngine
     }
 
 
+#if 0
     const char* GetExecutableDirectory()
     {
         if (g_EngineContext != nullptr)
@@ -136,4 +137,5 @@ namespace GTEngine
 
         return nullptr;
     }
+#endif
 }

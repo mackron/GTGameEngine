@@ -8,7 +8,7 @@
 #include <easy_path/easy_path.h>
 
 
-namespace GTEngine
+namespace GT
 {
     /////////////////////////////////////
     // Globals
@@ -41,10 +41,10 @@ namespace GTEngine
 
 
     /// The list of loaded particle system definitions, indexed by their absolute path.
-    static GTLib::Dictionary<ParticleSystemDefinitionReference> LoadedDefinitions;
+    static Dictionary<ParticleSystemDefinitionReference> LoadedDefinitions;
 
     /// The list of instantiated particle system objects. We need this so we can delete them on shutdown.
-    static GTLib::Vector<ParticleSystem*> InstantiatedParticleSystems;
+    static Vector<ParticleSystem*> InstantiatedParticleSystems;
 
 
 
@@ -164,7 +164,7 @@ namespace GTEngine
 
 
             // The reference counter needs to be decremented. If this is the last reference to the particle system we'll delete it.
-            GTLib::String absolutePath(particleSystemToDelete->GetDefinition().GetAbsolutePath());
+            String absolutePath(particleSystemToDelete->GetDefinition().GetAbsolutePath());
 
             auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)

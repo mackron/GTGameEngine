@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Windowing/MouseButtons.hpp>
 #include <GTEngine/Core/Windowing/Keys.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Base class for filtering events posted by the Game class.
     ///
@@ -57,21 +57,21 @@ namespace GTEngine
         /// @param button    [in, out] The button code for the button that was pressed.
         /// @param mousePosX [in, out] The position of the mouse on the X axis, relative to the left of the game viewport.
         /// @param mousePosY [in, out] The position of the mouse on the Y axis, relative to the top of the game viewport.
-        virtual bool OnMouseButtonDown(GTLib::MouseButton &button, int &mousePosX, int &mousePosY);
+        virtual bool OnMouseButtonDown(MouseButton &button, int &mousePosX, int &mousePosY);
         
         /// Called when a mouse button is released.
         ///
         /// @param button    [in, out] The button code for the button that was released.
         /// @param mousePosX [in, out] The position of the mouse on the X axis, relative to the left of the game viewport.
         /// @param mousePosY [in, out] The position of the mouse on the Y axis, relative to the top of the game viewport.
-        virtual bool OnMouseButtonUp(GTLib::MouseButton &button, int &mousePosX, int &mousePosY);
+        virtual bool OnMouseButtonUp(MouseButton &button, int &mousePosX, int &mousePosY);
         
         /// Called when a mouse button is double-clicked.
         ///
         /// @param button    [in, out] The button code for the button that was double-clicked.
         /// @param mousePosX [in, out] The position of the mouse on the X axis, relative to the left of the game viewport.
         /// @param mousePosY [in, out] The position of the mouse on the Y axis, relative to the top of the game viewport.
-        virtual bool OnMouseButtonDoubleClick(GTLib::MouseButton &button, int &mousePosX, int &mousePosY);
+        virtual bool OnMouseButtonDoubleClick(MouseButton &button, int &mousePosX, int &mousePosY);
         
         
         /// Called when a key is pressed.
@@ -80,12 +80,12 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The difference between this and OnKeyDown() is that OnKeyPressed() does not handle auto-repeat.
-        virtual bool OnKeyPressed(GTLib::Key &key);
+        virtual bool OnKeyPressed(Key &key);
         
         /// Called when a key is released.
         ///
         /// @param key [in, out] The key code for the key that was just released.
-        virtual bool OnKeyReleased(GTLib::Key &key);
+        virtual bool OnKeyReleased(Key &key);
         
         /// Called when a key is pressed, taking auto-repeat into account.
         ///
@@ -93,12 +93,12 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The difference between this and OnKeyDown() is that OnKeyPressed() does not handle auto-repeat.
-        virtual bool OnKeyDown(GTLib::Key &key);
+        virtual bool OnKeyDown(Key &key);
         
         /// Called when a key is released.
         ///
         /// @param key [in, out] The key code for the key that was just released.
-        virtual bool OnKeyUp(GTLib::Key &key);
+        virtual bool OnKeyUp(Key &key);
         
         
         /// Called when the game window receives focus.

@@ -6,7 +6,7 @@
 #include <cstddef>
 #include "Vector.hpp"
 
-namespace GTLib
+namespace GT
 {
     namespace System
     {

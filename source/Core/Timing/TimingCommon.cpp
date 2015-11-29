@@ -6,7 +6,7 @@
 #include <GTEngine/Core/windows.hpp>
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
     namespace Timing
     {
@@ -41,7 +41,7 @@ namespace GTLib
 #else
 #include <sys/time.h>
 
-namespace GTLib
+namespace GT
 {
     namespace Timing
     {

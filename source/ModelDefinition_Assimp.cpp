@@ -20,7 +20,7 @@
     #pragma GCC diagnostic pop
 #endif
 
-namespace GTEngine
+namespace GT
 {
     /// The flags to use with assimp's ReadFile() and ReadFileFromMemory().
     static const unsigned int AssimpReadFileFlags =
@@ -255,7 +255,7 @@ namespace GTEngine
                 // If the mesh has no name we will give it a default one.
                 if (newMesh.name.IsEmpty())
                 {
-                    newMesh.name = GTLib::String::CreateFormatted("Mesh_%d", iMesh);
+                    newMesh.name = String::CreateFormatted("Mesh_%d", iMesh);
                 }
 
 
@@ -374,7 +374,7 @@ namespace GTEngine
                     // a number to the end of the original name in this case.
                     if (existingMesh->geometry != nullptr)
                     {
-                        newMesh.name = GTLib::String::CreateFormatted("%s_%d", newMesh.name.c_str(), static_cast<int>(definition.GetMeshCount()));
+                        newMesh.name = String::CreateFormatted("%s_%d", newMesh.name.c_str(), static_cast<int>(definition.GetMeshCount()));
 
                         // Set the default material before adding the mesh.
                         newMesh.material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
@@ -405,7 +405,7 @@ namespace GTEngine
                 auto bone = mesh->mBones[iBone];
                 assert(bone != nullptr);
                 {
-                    GTEngine::AddBone(scene, *bone, definition);
+                    AddBone(scene, *bone, definition);
                 }
             }
         }
@@ -427,7 +427,7 @@ namespace GTEngine
 
 
 
-    bool ModelDefinition::LoadFromAssimpFile(const GTLib::String &absolutePathIn)
+    bool ModelDefinition::LoadFromAssimpFile(const String &absolutePathIn)
     {
         Assimp::Importer importer;
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
@@ -506,7 +506,7 @@ namespace GTEngine
                             auto newNode = FindNodeByName(*scene, channel->mNodeName);
                             assert(newNode != nullptr);
                             {
-                                bone = GTEngine::AddBone(*newNode, *this);
+                                bone = GT::AddBone(*newNode, *this);
                             }
                         }
 

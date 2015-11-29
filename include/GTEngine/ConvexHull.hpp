@@ -8,7 +8,7 @@
 #include "Rendering/VertexArray.hpp"
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTEngine
+namespace GT
 {
     /// Class representing a convex hull.
     class ConvexHull
@@ -75,10 +75,10 @@ namespace GTEngine
     private:
 
         /// The list of points making up the vertices in the hull.
-        GTLib::Vector<glm::vec3> vertices;
+        Vector<glm::vec3> vertices;
 
         /// The list of indices making up the triangles in the hull. This is needed for rendering.
-        GTLib::Vector<unsigned int> indices;
+        Vector<unsigned int> indices;
 
 
 

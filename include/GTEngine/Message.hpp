@@ -73,7 +73,7 @@ namespace GT
         /// @param index [in] The index of the associated file to retrieve.
         ///
         /// @return The file path of the associated file at the given index.
-        GTLib::String GetAssociatedFileByIndex(const size_t index) const;
+        String GetAssociatedFileByIndex(const size_t index) const;
 
 
     private:
@@ -82,10 +82,10 @@ namespace GT
         MessageType m_type;
 
         /// The content of the message.
-        GTLib::String m_content;
+        String m_content;
 
         /// The list of associated files, as file paths. This will usually be asset file paths.
-        GTLib::Vector<GTLib::String> m_associatedFiles;
+        Vector<String> m_associatedFiles;
     };
 }
 
