@@ -7,8 +7,6 @@
 #include <GTLib/stdlib.hpp>
 #include <easy_path/easy_path.h>
 
-#include <cstring>
-
 namespace GT
 {
     namespace Engine
