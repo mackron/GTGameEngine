@@ -7,22 +7,9 @@
 
 namespace GT
 {
-    namespace Threading
+    void Sleep(unsigned int milliseconds)
     {
-        void Sleep(unsigned int milliseconds)
-        {
-            ::Sleep(milliseconds);
-        }
-
-        void Exit()
-        {
-            ::ExitThread(0);
-        }
-
-        uint64_t GetCurrentThreadID()
-        {
-            return (uint64_t)::GetCurrentThreadId();
-        }
+        ::Sleep(milliseconds);
     }
 }
 
@@ -34,22 +21,9 @@ namespace GT
 
 namespace GT
 {
-    namespace Threading
+    void Sleep(unsigned int milliseconds)
     {
-        void Sleep(unsigned int milliseconds)
-        {
-            usleep(milliseconds * 1000);    // <-- usleep is in microseconds.
-        }
-
-        void Exit()
-        {
-            pthread_exit(nullptr);
-        }
-
-        uint64_t GetCurrentThreadID()
-        {
-            return (uint64_t)syscall(SYS_gettid);
-        }
+        usleep(milliseconds * 1000);    // <-- usleep is in microseconds.
     }
 }
 
