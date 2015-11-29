@@ -14,7 +14,6 @@
 #include <GTLib/Deserializer.hpp>
 #include <GTLib/String.hpp>
 #include <easy_path/easy_path.h>
-//#include <ittnotify.h>
 
 #undef min
 #undef max
@@ -62,7 +61,6 @@ namespace GTEngine
           prefabDeserializingCount(0),
           insertionPosition(), insertionPlaneCollisionObject(), insertionPlaneShape(btVector3(0.0f, -1.0f, 0.0f), 0.0f)
     {
-        //__itt_resume();
         m_scene.SetPrefabLinker(this->prefabLinker);
 
         m_scene.SetDefaultViewportCamera(this->camera);
@@ -196,7 +194,6 @@ namespace GTEngine
             // The scene will be done loading by this pointer, so we can close the file.
             easyvfs_close(file);
         }
-        //__itt_pause();
     }
 
     SceneEditor::~SceneEditor()
@@ -241,7 +238,6 @@ namespace GTEngine
 
     void SceneEditor::StartPlaying()
     {
-        //__itt_resume();
         if (this->IsStopped() || this->IsPaused())
         {
             if (this->IsPaused())
@@ -393,7 +389,6 @@ namespace GTEngine
             // This must be done after setting the playback state because otherwise the controls will think it's in the old state.
             this->UpdatePlaybackControls();
         }
-        //__itt_pause();
     }
 
     void SceneEditor::PausePlaying()
@@ -425,7 +420,6 @@ namespace GTEngine
 
     void SceneEditor::StopPlaying()
     {
-        //__itt_resume();
         if (this->IsPlaying() || this->IsPaused())
         {
             this->playbackState = PlaybackState_Transitioning;
@@ -448,11 +442,11 @@ namespace GTEngine
                 script.GetGlobal("Game");
                 assert(script.IsTable(-1));
                 {
-                    script.SetTableFunction(-1, "GetGameWindowGUIElement", Scripting::GameFFI::GetGameWindowGUIElement);
-                    script.SetTableFunction(-1, "LoadScene",               Scripting::GameFFI::LoadScene);
-                    script.SetTableFunction(-1, "Pause",                   Scripting::GameFFI::Pause);
-                    script.SetTableFunction(-1, "Resume",                  Scripting::GameFFI::Resume);
-                    script.SetTableFunction(-1, "IsPaused",                Scripting::GameFFI::IsPaused);
+                    script.SetTableFunction(-1, "GetGameWindowGUIElement", GT::GameFFI::GetGameWindowGUIElement);
+                    script.SetTableFunction(-1, "LoadScene",               GT::GameFFI::LoadScene);
+                    script.SetTableFunction(-1, "Pause",                   GT::GameFFI::Pause);
+                    script.SetTableFunction(-1, "Resume",                  GT::GameFFI::Resume);
+                    script.SetTableFunction(-1, "IsPaused",                GT::GameFFI::IsPaused);
                 }
                 script.Pop(1);
 
@@ -511,7 +505,6 @@ namespace GTEngine
             this->isUpdatingFromStateStack = false;
             this->UnlockParentChangedEvents();
         }
-        //__itt_pause();
     }
 
     bool SceneEditor::IsPlaying() const
@@ -3623,7 +3616,7 @@ namespace GTEngine
                 auto definition = ScriptLibrary::Acquire(scriptRelativePath);
                 assert(definition != nullptr);
                 {
-                    Scripting::LoadScriptDefinition(*m_scene.GetRegisteredScript(), scriptRelativePath, definition->GetScriptString());
+                    GT::LoadScriptDefinition(*m_scene.GetRegisteredScript(), scriptRelativePath, definition->GetScriptString());
                 }
                 ScriptLibrary::Unacquire(definition);
             }
@@ -3657,7 +3650,7 @@ namespace GTEngine
                                 // After the script component itself has been reloaded we want to update the Lua object as well if the scene is currently registered.
                                 if (m_scene.GetRegisteredScript() != nullptr)
                                 {
-                                    Scripting::RegisterComponent(*m_scene.GetRegisteredScript(), *sceneNode, ScriptComponent::Name);
+                                    GT::RegisterComponent(*m_scene.GetRegisteredScript(), *sceneNode, ScriptComponent::Name);
                                 }
 
 

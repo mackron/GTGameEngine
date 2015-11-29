@@ -389,7 +389,6 @@ namespace GTEngine
     void Game::OpenEditor()
     {
         //CALLGRIND_ZERO_STATS;
-        //__itt_resume();
         if (m_gameStateManager.OnEditorOpening(*this))
         {
             // The main game window GUI element needs to be hidden.
@@ -421,7 +420,6 @@ namespace GTEngine
             m_gameStateManager.OnEditorOpen(*this);
         }
         //CALLGRIND_STOP_INSTRUMENTATION;
-        //__itt_pause();
     }
 
     void Game::CloseEditor()
@@ -1421,37 +1419,37 @@ namespace GTEngine
 
     void Game::PostScriptEvent_OnMouseMove(const GameEvent &e)
     {
-        Scripting::PostEvent_OnMouseMove(this->script, e.mousemove.x, e.mousemove.y);
+        GT::PostEvent_OnMouseMove(this->script, e.mousemove.x, e.mousemove.y);
     }
 
     void Game::PostScriptEvent_OnMouseWheel(const GameEvent &e)
     {
-        Scripting::PostEvent_OnMouseWheel(this->script, e.mousewheel.x, e.mousewheel.y, e.mousewheel.delta);
+        GT::PostEvent_OnMouseWheel(this->script, e.mousewheel.x, e.mousewheel.y, e.mousewheel.delta);
     }
 
     void Game::PostScriptEvent_OnMouseButtonDown(const GameEvent &e)
     {
-        Scripting::PostEvent_OnMouseButtonDown(this->script, e.mousedown.x, e.mousedown.y, e.mousedown.button);
+        GT::PostEvent_OnMouseButtonDown(this->script, e.mousedown.x, e.mousedown.y, e.mousedown.button);
     }
 
     void Game::PostScriptEvent_OnMouseButtonUp(const GameEvent &e)
     {
-        Scripting::PostEvent_OnMouseButtonUp(this->script, e.mouseup.x, e.mouseup.y, e.mouseup.button);
+        GT::PostEvent_OnMouseButtonUp(this->script, e.mouseup.x, e.mouseup.y, e.mouseup.button);
     }
 
     void Game::PostScriptEvent_OnMouseButtonDoubleClick(const GameEvent &e)
     {
-        Scripting::PostEvent_OnMouseButtonDoubleClick(this->script, e.mousedoubleclick.x, e.mousedoubleclick.y, e.mousedoubleclick.button);
+        GT::PostEvent_OnMouseButtonDoubleClick(this->script, e.mousedoubleclick.x, e.mousedoubleclick.y, e.mousedoubleclick.button);
     }
 
     void Game::PostScriptEvent_OnKeyPressed(const GameEvent &e)
     {
-        Scripting::PostEvent_OnKeyPressed(this->script, e.keypressed.key);
+        GT::PostEvent_OnKeyPressed(this->script, e.keypressed.key);
     }
 
     void Game::PostScriptEvent_OnKeyReleased(const GameEvent &e)
     {
-        Scripting::PostEvent_OnKeyReleased(this->script, e.keyreleased.key);
+        GT::PostEvent_OnKeyReleased(this->script, e.keyreleased.key);
     }
 
     void Game::PostScriptEvent_OnKeyDown(const GameEvent &e)
@@ -1528,12 +1526,12 @@ namespace GTEngine
 
     void Game::PostScriptEvent_OnPause()
     {
-        Scripting::PostEvent_OnGamePause(this->script);
+        GT::PostEvent_OnGamePause(this->script);
     }
 
     void Game::PostScriptEvent_OnResume()
     {
-        Scripting::PostEvent_OnGameResume(this->script);
+        GT::PostEvent_OnGameResume(this->script);
     }
 }
 

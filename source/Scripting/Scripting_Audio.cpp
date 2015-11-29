@@ -5,54 +5,51 @@
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/GTEngine.hpp>
 
-namespace GTEngine
+namespace GT
 {
-    namespace Scripting
+    bool LoadAudioLibrary(GTLib::Script &script)
     {
-        bool LoadAudioLibrary(GTLib::Script &script)
+        script.GetGlobal("GTEngine");
+        assert(script.IsTable(-1));
         {
-            script.GetGlobal("GTEngine");
-            assert(script.IsTable(-1));
+            script.Push("Audio");
+            script.PushNewTable();
             {
-                script.Push("Audio");
-                script.PushNewTable();
-                {
-                    script.SetTableFunction(-1, "Play", AudioFFI::Play);
-                }
-                script.SetTableValue(-3);
+                script.SetTableFunction(-1, "Play", AudioFFI::Play);
             }
-
-            return true;
+            script.SetTableValue(-3);
         }
 
-        namespace AudioFFI
+        return true;
+    }
+
+    namespace AudioFFI
+    {
+        int Play(GTLib::Script &script)
         {
-            int Play(GTLib::Script &script)
-            {
-                auto fileName = script.ToString(1);
-                auto position = Scripting::ToVector3(script, 2);
-                auto relative = script.ToBoolean(3);
+            auto fileName = script.ToString(1);
+            auto position = ToVector3(script, 2);
+            auto relative = script.ToBoolean(3);
 
-                g_EngineContext->GetSoundWorld().PlaySound(fileName, position, relative);
-                return 0;
-            }
+            GTEngine::g_EngineContext->GetSoundWorld().PlaySound(fileName, position, relative);
+            return 0;
+        }
 
-            int SetListenerPosition(GTLib::Script &script)
-            {
-                glm::vec3 pos = Scripting::ToVector3(script, 1);
-                easyaudio_set_listener_position(g_EngineContext->GetAudioPlaybackDevice(), pos.x, pos.y, pos.z);
+        int SetListenerPosition(GTLib::Script &script)
+        {
+            glm::vec3 pos = ToVector3(script, 1);
+            easyaudio_set_listener_position(GTEngine::g_EngineContext->GetAudioPlaybackDevice(), pos.x, pos.y, pos.z);
 
-                return 0;
-            }
+            return 0;
+        }
 
-            int SetListenerOrientation(GTLib::Script &script)
-            {
-                glm::vec3 forward = Scripting::ToVector3(script, 1);
-                glm::vec3 up = Scripting::ToVector3(script, 1);
-                easyaudio_set_listener_orientation(g_EngineContext->GetAudioPlaybackDevice(), forward.x, forward.y, forward.z, up.x, up.y, up.z);
+        int SetListenerOrientation(GTLib::Script &script)
+        {
+            glm::vec3 forward = ToVector3(script, 1);
+            glm::vec3 up = ToVector3(script, 1);
+            easyaudio_set_listener_orientation(GTEngine::g_EngineContext->GetAudioPlaybackDevice(), forward.x, forward.y, forward.z, up.x, up.y, up.z);
 
-                return 0;
-            }
+            return 0;
         }
     }
 }

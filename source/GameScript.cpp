@@ -27,7 +27,7 @@ namespace GTEngine
     bool GameScript::Startup()
     {
         // First we load the GTEngine scripting stuff.
-        if (Scripting::LoadGTEngineScriptLibrary(*this) && Scripting::LoadGameLibrary(*this, this->game))
+        if (GT::LoadGTEngineScriptLibrary(*this) && GT::LoadGameLibrary(*this, this->game))
         {
             // Here we load the data directories from the application config. We need to do this so that the editor has access to them. Might also come
             // in handy for game code, too. Who knows.

@@ -101,7 +101,7 @@ namespace GTEngine
             auto scriptComponent = node.GetComponent<ScriptComponent>();
             if (scriptComponent != nullptr && scriptComponent->HasOnUpdate())
             {
-                Scripting::PostSceneNodeEvent_OnUpdate(*registeredScript, node, deltaTimeInSeconds);
+                GT::PostSceneNodeEvent_OnUpdate(*registeredScript, node, deltaTimeInSeconds);
             }
         }
     }

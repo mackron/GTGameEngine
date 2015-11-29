@@ -29,7 +29,7 @@ namespace GTEngine
     bool ScriptLibrary::Startup()
     {
         WorkingScript = new GTLib::Script;
-        if (!Scripting::LoadExtendedMathLibrary(*WorkingScript))
+        if (!GT::LoadExtendedMathLibrary(*WorkingScript))
         {
             delete WorkingScript;
             return false;
@@ -91,7 +91,7 @@ namespace GTEngine
 
                     assert(GlobalGame != nullptr);
                     {
-                        Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath, scriptString);
+                        GT::LoadScriptDefinition(GlobalGame->GetScript(), relativePath, scriptString);
                     }
 
                     easyvfs_free(scriptString);
@@ -142,7 +142,7 @@ namespace GTEngine
                         {
                             assert(GlobalGame != nullptr);
                             {
-                                Scripting::UnloadScriptDefinition(GlobalGame->GetScript(), scriptDefinitionToUnacquire->GetRelativePath());
+                                GT::UnloadScriptDefinition(GlobalGame->GetScript(), scriptDefinitionToUnacquire->GetRelativePath());
                             }
 
                             delete value.first;
@@ -225,7 +225,7 @@ namespace GTEngine
 
                         assert(GlobalGame != nullptr);
                         {
-                            Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath, scriptString);
+                            GT::LoadScriptDefinition(GlobalGame->GetScript(), relativePath, scriptString);
                         }
 
                         easyvfs_free(scriptString);

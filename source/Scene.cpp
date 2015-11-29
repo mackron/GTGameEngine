@@ -527,7 +527,7 @@ namespace GTEngine
         // scene node on the script side. If we don't do this straight away, we'll run into problems when posting events to the scene node's script.
         if (this->registeredScript != nullptr && sceneNode->HasComponent<ScriptComponent>())
         {
-            Scripting::InstantiateSceneNode(*this->registeredScript, *sceneNode);
+            GT::InstantiateSceneNode(*this->registeredScript, *sceneNode);
 
             // We now need to post an OnStartup event if applicable. All scene nodes should have 1 OnStartup and 1 OnShutdown called for each time they are part
             // of the scene.
@@ -667,7 +667,7 @@ namespace GTEngine
                     // scene node on the script side. If we don't do this straight away, we'll run into problems when posting events to the scene node's script.
                     if (this->registeredScript != nullptr && sceneNode->HasComponent<ScriptComponent>())
                     {
-                        Scripting::InstantiateSceneNode(*this->registeredScript, *sceneNode);
+                        GT::InstantiateSceneNode(*this->registeredScript, *sceneNode);
 
                         // We now need to post an OnStartup event if applicable. All scene nodes should have 1 OnStartup and 1 OnShutdown called for each time they are part
                         // of the scene.
@@ -906,7 +906,7 @@ namespace GTEngine
                             {
                                 if (scriptComponent->HasOnSceneNodeEnter())
                                 {
-                                    Scripting::PostSceneNodeEvent_OnSceneNodeEnter(*this->registeredScript, *sceneNode, *enteredSceneNode);
+                                    GT::PostSceneNodeEvent_OnSceneNodeEnter(*this->registeredScript, *sceneNode, *enteredSceneNode);
                                 }
                             }
 
@@ -916,7 +916,7 @@ namespace GTEngine
                             {
                                 if (scriptComponent->HasOnEnterSceneNode())
                                 {
-                                    Scripting::PostSceneNodeEvent_OnEnterSceneNode(*this->registeredScript, *enteredSceneNode, *sceneNode);
+                                    GT::PostSceneNodeEvent_OnEnterSceneNode(*this->registeredScript, *enteredSceneNode, *sceneNode);
                                 }
                             }
                         }
@@ -939,7 +939,7 @@ namespace GTEngine
                             {
                                 if (scriptComponent->HasOnSceneNodeLeave())
                                 {
-                                    Scripting::PostSceneNodeEvent_OnSceneNodeLeave(*this->registeredScript, *sceneNode, *leftSceneNode);
+                                    GT::PostSceneNodeEvent_OnSceneNodeLeave(*this->registeredScript, *sceneNode, *leftSceneNode);
                                 }
                             }
 
@@ -949,7 +949,7 @@ namespace GTEngine
                             {
                                 if (scriptComponent->HasOnLeaveSceneNode())
                                 {
-                                    Scripting::PostSceneNodeEvent_OnLeaveSceneNode(*this->registeredScript, *leftSceneNode, *sceneNode);
+                                    GT::PostSceneNodeEvent_OnLeaveSceneNode(*this->registeredScript, *leftSceneNode, *sceneNode);
                                 }
                             }
                         }
@@ -1163,7 +1163,7 @@ namespace GTEngine
             }
 
 
-            if (Scripting::RegisterScene(script, *this))
+            if (GT::RegisterScene(script, *this))
             {
                 this->registeredScript = &script;
             }
@@ -1174,7 +1174,7 @@ namespace GTEngine
     {
         if (this->registeredScript != nullptr)
         {
-            Scripting::UnregisterScene(*this->registeredScript, *this);
+            GT::UnregisterScene(*this->registeredScript, *this);
             this->registeredScript = nullptr;
         }
     }
@@ -2514,7 +2514,7 @@ namespace GTEngine
         // The scene node will need to be uninstantiated if the scene is registered to a script.
         if (this->registeredScript != nullptr)
         {
-            Scripting::UninstantiateSceneNode(*this->registeredScript, node);
+            GT::UninstantiateSceneNode(*this->registeredScript, node);
         }
 
 
@@ -2969,7 +2969,7 @@ namespace GTEngine
                         // The scene node needs to be instantiated in the scripting environment.
                         if (this->registeredScript != nullptr)
                         {
-                            Scripting::InstantiateSceneNode(*this->registeredScript, node);
+                            GT::InstantiateSceneNode(*this->registeredScript, node);
                         }
                     }
                 }
@@ -2979,7 +2979,7 @@ namespace GTEngine
         // The component may need to be registered.
         if (this->registeredScript != nullptr/* && node.HasComponent<ScriptComponent>()*/)
         {
-            Scripting::RegisterComponent(*this->registeredScript, node, component.GetName());
+            GT::RegisterComponent(*this->registeredScript, node, component.GetName());
         }
 
 
@@ -3074,7 +3074,7 @@ namespace GTEngine
         // The component will need to be unregistered from the Lua representation, if applicable.
         if (this->registeredScript != nullptr/* && node.HasComponent<ScriptComponent>()*/)
         {
-            Scripting::UnregisterComponent(*this->registeredScript, node, component.GetName());
+            GT::UnregisterComponent(*this->registeredScript, node, component.GetName());
         }
 
 
@@ -3182,7 +3182,7 @@ namespace GTEngine
         // We will re-register the component, if applicable. We do this to ensure the scripting representation of the scene node is up-to-date.
         if (this->registeredScript != nullptr/* && node.HasComponent<ScriptComponent>()*/)
         {
-            Scripting::RegisterComponent(*this->registeredScript, node, component.GetName());
+            GT::RegisterComponent(*this->registeredScript, node, component.GetName());
         }
 
 
@@ -3216,7 +3216,7 @@ namespace GTEngine
             {
                 if (scriptComponent->HasOnStartup())
                 {
-                    Scripting::PostSceneNodeEvent_OnStartup(*this->registeredScript, sceneNode);
+                    GT::PostSceneNodeEvent_OnStartup(*this->registeredScript, sceneNode);
                 }
 
                 scriptComponent->MarkOnStartupAsCalled();
@@ -3250,7 +3250,7 @@ namespace GTEngine
             {
                 if (scriptComponent->HasOnShutdown())
                 {
-                    Scripting::PostSceneNodeEvent_OnShutdown(*this->registeredScript, sceneNode);
+                    GT::PostSceneNodeEvent_OnShutdown(*this->registeredScript, sceneNode);
                 }
 
                 scriptComponent->UnmarkOnStartupAsCalled();
@@ -3282,7 +3282,7 @@ namespace GTEngine
         {
             if (scriptComponent->HasOnSerializeGlobalData())
             {
-                Scripting::PostSceneNodeEvent_OnSerializeGlobalData(*this->registeredScript, sceneNode, serializer);
+                GT::PostSceneNodeEvent_OnSerializeGlobalData(*this->registeredScript, sceneNode, serializer);
             }
         }
     }
@@ -3311,7 +3311,7 @@ namespace GTEngine
         {
             if (scriptComponent->HasOnDeserializeGlobalData())
             {
-                Scripting::PostSceneNodeEvent_OnDeserializeGlobalData(*this->registeredScript, sceneNode, deserializer);
+                GT::PostSceneNodeEvent_OnDeserializeGlobalData(*this->registeredScript, sceneNode, deserializer);
             }
         }
     }
@@ -3405,7 +3405,7 @@ namespace GTEngine
             auto scriptComponent = node.GetComponent<ScriptComponent>();
             if (scriptComponent != nullptr && scriptComponent->HasOnShow())
             {
-                Scripting::PostSceneNodeEvent_OnShow(*this->registeredScript, node);
+                GT::PostSceneNodeEvent_OnShow(*this->registeredScript, node);
             }
         }
     }
@@ -3422,7 +3422,7 @@ namespace GTEngine
             auto scriptComponent = node.GetComponent<ScriptComponent>();
             if (scriptComponent != nullptr && scriptComponent->HasOnHide())
             {
-                Scripting::PostSceneNodeEvent_OnHide(*this->registeredScript, node);
+                GT::PostSceneNodeEvent_OnHide(*this->registeredScript, node);
             }
         }
     }
