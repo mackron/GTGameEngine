@@ -2,7 +2,7 @@
 
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/Script.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/stdlib.hpp>
 #include <easy_path/easy_path.h>

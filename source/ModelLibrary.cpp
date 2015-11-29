@@ -3,7 +3,7 @@
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>

@@ -6,7 +6,7 @@
 #include <GTEngine/DefaultSceneCullingManager.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Scripting.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTLib/ToString.hpp>
 #include <GTEngine/GTEngine.hpp>
 

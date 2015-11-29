@@ -2,7 +2,7 @@
 
 #include <GTEngine/ModelDefinition.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>

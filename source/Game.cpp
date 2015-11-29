@@ -2,7 +2,7 @@
 
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>

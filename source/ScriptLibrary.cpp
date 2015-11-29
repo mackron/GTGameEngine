@@ -3,7 +3,7 @@
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Scripting.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>

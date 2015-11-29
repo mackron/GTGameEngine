@@ -5,7 +5,7 @@
 
 #include <GTEngine/ModelDefinition.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

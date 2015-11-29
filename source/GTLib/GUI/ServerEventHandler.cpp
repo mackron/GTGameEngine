@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/GUI/ServerEventHandler.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 
 namespace GTGUI
 {

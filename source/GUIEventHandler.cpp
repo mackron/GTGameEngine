@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUIEventHandler.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 
 namespace GTEngine

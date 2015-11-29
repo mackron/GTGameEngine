@@ -8,7 +8,7 @@
 #include <GTLib/Parse.hpp>
 
 // Temp.
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 
 extern "C"
 {

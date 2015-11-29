@@ -2,7 +2,7 @@
 
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTLib/ImageUtils.hpp>
 
 

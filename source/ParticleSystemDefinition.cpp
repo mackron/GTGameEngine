@@ -2,7 +2,7 @@
 
 #include <GTEngine/ParticleSystemDefinition.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GTEngine

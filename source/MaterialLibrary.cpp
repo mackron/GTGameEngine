@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/List.hpp>

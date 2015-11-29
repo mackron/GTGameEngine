@@ -3,7 +3,7 @@
 #include <GTLib/Font.hpp>
 #include <GTLib/FontServer.hpp>
 #include <GTLib/System.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTLib/ToString.hpp>
 #include <GTLib/Map.hpp>
 #include <GTLib/Math.hpp>

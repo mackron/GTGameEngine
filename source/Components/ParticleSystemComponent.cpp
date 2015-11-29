@@ -4,7 +4,7 @@
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Scene.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 
 namespace GTEngine
 {

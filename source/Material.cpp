@@ -3,7 +3,7 @@
 #include <GTEngine/Material.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTEngine/ShaderParameter.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTLib/Parse.hpp>

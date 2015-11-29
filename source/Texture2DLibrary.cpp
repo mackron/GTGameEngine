@@ -4,7 +4,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 

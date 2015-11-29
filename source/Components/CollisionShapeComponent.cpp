@@ -3,7 +3,7 @@
 #include <GTEngine/Components/CollisionShapeComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTEngine/GTEngine.hpp>
 #undef max
 

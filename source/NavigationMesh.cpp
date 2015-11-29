@@ -2,7 +2,7 @@
 
 #include <GTEngine/NavigationMesh.hpp>
 #include <GTEngine/Scene.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Recast/RecastAlloc.h>
 

@@ -2,7 +2,7 @@
 
 #include <GTEngine/ParticleEmitter.hpp>
 #include <GTEngine/Rendering.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 
 #if defined(__GNUC__)

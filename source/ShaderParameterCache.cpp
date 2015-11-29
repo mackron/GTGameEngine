@@ -3,7 +3,7 @@
 #include <GTEngine/ShaderParameterCache.hpp>
 #include <GTEngine/ShaderParameter.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
-#include <GTLib/Errors.hpp>
+#include <GTEngine/Errors.hpp>
 
 namespace GTEngine
 {
