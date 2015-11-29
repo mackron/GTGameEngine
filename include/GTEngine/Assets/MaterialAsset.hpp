@@ -4,7 +4,7 @@
 #define GT_MaterialAsset
 
 #include "Asset.hpp"
-#include "../Graphics/GraphicsWorld.hpp"    // For material variable types.
+#include "../Graphics/GraphicsTypes.hpp"    // For material variable types.
 
 namespace GT
 {

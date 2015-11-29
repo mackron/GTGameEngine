@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Assets/Asset.hpp>
-#include <GTGameEngine/FileSystem.hpp>
+#include <GTEngine/Assets/Asset.hpp>
 #include <easy_util/easy_util.h>
 
 namespace GT
@@ -9,7 +8,7 @@ namespace GT
     Asset::Asset(const char* absolutePathOrIdentifier, AssetType type)
         : m_absolutePathOrIdentifier(), m_type(type), m_metadata()
     {
-        strcpy_s(m_absolutePathOrIdentifier, GT_MAX_PATH, absolutePathOrIdentifier);
+        strcpy_s(m_absolutePathOrIdentifier, EASYVFS_MAX_PATH, absolutePathOrIdentifier);
     }
 
     Asset::~Asset()
@@ -44,31 +43,16 @@ namespace GT
         return this->GetMetadataChunkData(name, unused);
     }
 
-    bool Asset::LoadMetadata(const char* absolutePath, FileSystem &fileSystem)
+    bool Asset::LoadMetadata(const char* absolutePath, easyvfs_context* pVFS)
     {
-        HFile hMetadataFile = fileSystem.OpenFile(absolutePath, GT::FileAccessMode::Read);
-        if (hMetadataFile != 0)
+        easyvfs_file* pMetadataFile = easyvfs_open(pVFS, absolutePath, EASYVFS_READ, 0);
+        if (pMetadataFile != nullptr)
         {
-            unsigned int fileSize = static_cast<unsigned int>(fileSystem.GetFileSize(hMetadataFile));
-            if (fileSize > 0)
-            {
-                // Read the data.
-                char* fileData = reinterpret_cast<char*>(malloc(fileSize));
-                fileSystem.ReadFile(hMetadataFile, fileSize, fileData);
-                fileSystem.CloseFile(hMetadataFile);
+            GTLib::FileDeserializer deserializer(pMetadataFile);
+            m_metadata.Deserialize(deserializer);
 
-                GTLib::BasicDeserializer deserializer(fileData, fileSize);
-                m_metadata.Deserialize(deserializer);
-
-                free(fileData);
-                return true;
-            }
-            else
-            {
-                // File size is 0.
-                fileSystem.CloseFile(hMetadataFile);
-                return false;
-            }
+            easyvfs_close(pMetadataFile);
+            return true;
         }
         else
         {

@@ -6,6 +6,11 @@
 #include <GTLib/String.hpp>
 #include <easy_audio/easy_audio.h>
 
+namespace GT
+{
+    class Asset;
+}
+
 namespace GTEngine
 {
     class SoundStreamer
@@ -75,6 +80,24 @@ namespace GTEngine
         *   \return The format of the audio.
         */
         virtual easyaudio_format GetFormat() const = 0;
+
+
+
+
+        ///////////////////////////////////////////////////////
+        //
+        // Static Functions
+        //
+        ///////////////////////////////////////////////////////
+
+        /// Helper for creating a sound streamer from an asset.
+        ///
+        /// @remarks
+        ///     Use Delete() to delete the streamer.
+        static SoundStreamer* CreateFromAsset(GT::Asset* pAsset);
+
+        /// Deletes a sound streamer that was created with CreateFromAsset().
+        static void Delete(SoundStreamer* pStreamer);
     };
 }
 

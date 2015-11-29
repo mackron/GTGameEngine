@@ -7,12 +7,10 @@
 #include <GTLib/ReferenceCountedObject.hpp>
 #include "AssetTypes.hpp"
 #include "AssetMetadata.hpp"
-#include "../FileSystem.hpp"        // For GT_MAX_PATH
+#include <easy_fs/easy_vfs.h>
 
 namespace GT
 {
-    class FileSystem;
-
     /// Class representing an asset (texture, model, sound, etc.)
     class Asset : public ReferenceCountedObject
     {
@@ -56,12 +54,12 @@ namespace GT
         /// Loads the metadata from the file at the given path.
         ///
         /// @param absolutePath [in] The absolute path of the metadata.
-        /// @param fileSystem   [in] A reference to the file system object to load the file from.
+        /// @param pVFS         [in] A pointer to the file system object to load the file from.
         ///
         /// @remarks
         ///     This is virtual so that inherited classes do custom implementations which may be required for things like procedural assets. It is
         ///     not required that inherited classes implement this, in which case the default implementation will simply try loading it from a file.
-        virtual bool LoadMetadata(const char* absolutePath, FileSystem &fileSystem);
+        virtual bool LoadMetadata(const char* absolutePath, easyvfs_context* pVFS);
 
 
         /////////////////////////////////////
@@ -75,18 +73,18 @@ namespace GT
         /// Loads the given file into the asset.
         ///
         /// @param absolutePath [in] The absolute path of the file to load.
-        /// @param fileSystem   [in] A reference to the file system object to load the file from.
+        /// @param pVFS         [in] A pointer to the file system object to load the file from.
         ///
         /// @remarks
         ///     This will replace the existing content of the asset.
-        virtual bool Load(const char* absolutePath, FileSystem &fileSystem) = 0;
+        virtual bool Load(const char* absolutePath, easyvfs_context* pVFS) = 0;
 
 
 
     private:
 
         /// The absolute path or identifier of the asset.
-        char m_absolutePathOrIdentifier[GT_MAX_PATH];
+        char m_absolutePathOrIdentifier[EASYVFS_MAX_PATH];
 
         /// The asset type.
         AssetType m_type;

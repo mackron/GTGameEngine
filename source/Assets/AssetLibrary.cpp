@@ -1,17 +1,23 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Assets/AssetLibrary.hpp>
-#include <GTGameEngine/Assets/Asset.hpp>
-#include <GTGameEngine/Assets/AssetAllocator.hpp>
-#include <GTGameEngine/FileSystem.hpp>
-#include "../external/easy_path/easy_path.h"
+#include <GTEngine/Assets/AssetLibrary.hpp>
+#include <GTEngine/Assets/Asset.hpp>
+#include <GTEngine/Assets/AssetAllocator.hpp>
+#include <easy_path/easy_path.h>
+
+#if defined(GT_BUILD_DEFAULT_ASSETS)
+#include "DefaultAssetAllocator.hpp"
+#endif
 
 namespace GT
 {
-    AssetLibrary::AssetLibrary(FileSystem &fileSystem)
-        : m_fileSystem(fileSystem),
+    AssetLibrary::AssetLibrary()
+        : m_pVFS(nullptr),
           m_allocators(),
           m_loadedAssets()
+#if defined(GT_BUILD_DEFAULT_ASSETS)
+        , m_pDefaultAssetAllocator(nullptr)
+#endif
     {
     }
 
@@ -20,9 +26,21 @@ namespace GT
     }
     
 
-    bool AssetLibrary::Startup()
+    bool AssetLibrary::Startup(easyvfs_context* pVFS)
     {
-        return true;
+        // Don't do anything if it's already been initialized.
+        if (m_pVFS == nullptr)
+        {
+            m_pVFS = pVFS;
+
+#if defined(GT_BUILD_DEFAULT_ASSETS)
+            // Create and register the default allocator.
+            m_pDefaultAssetAllocator = new DefaultAssetAllocator();
+            this->RegisterAllocator(*m_pDefaultAssetAllocator);
+#endif
+        }
+
+        return m_pVFS != nullptr;
     }
 
     void AssetLibrary::Shutdown()
@@ -42,12 +60,21 @@ namespace GT
 
         m_loadedAssets.Clear();
         m_allocators.Clear();
+
+
+
+#if defined(GT_BUILD_DEFAULT_ASSETS)
+        delete m_pDefaultAssetAllocator;
+        m_pDefaultAssetAllocator = nullptr;
+#endif
+
+        m_pVFS = nullptr;
     }
 
 
-    FileSystem & AssetLibrary::GetFileSystem() const
+    easyvfs_context* AssetLibrary::GetVFS() const
     {
-        return m_fileSystem;
+        return m_pVFS;
     }
 
 
@@ -56,15 +83,15 @@ namespace GT
         // When an asset is cached, the absolute path is used to retrieve the cached object. It is possible, however, for an asset to not actually
         // be loaded from a file, in which case filePathOrIdentifier is used as the unique identifier without any modification.
 
-        char absolutePathOrIdentifier[GT_MAX_PATH];
-        if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier, GT_MAX_PATH))
+        char absolutePathOrIdentifier[EASYVFS_MAX_PATH];
+        if (!easyvfs_find_absolute_path(m_pVFS, filePathOrIdentifier, absolutePathOrIdentifier, sizeof(absolutePathOrIdentifier)))
         {
             // The file could not be found, but there may be a metadata file. It is possible that the data for an asset is
             // entirely defined in the metadata file, we'll look for that file too.
-            char metadataPath[GT_MAX_PATH];
-            easypath_copyandappendextension(metadataPath, GT_MAX_PATH, filePathOrIdentifier, "gtdata");
+            char metadataPath[EASYVFS_MAX_PATH];
+            easypath_copyandappendextension(metadataPath, EASYVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
 
-            if (m_fileSystem.FindAbsolutePath(metadataPath, absolutePathOrIdentifier, GT_MAX_PATH))
+            if (easyvfs_find_absolute_path(m_pVFS, metadataPath, absolutePathOrIdentifier, sizeof(absolutePathOrIdentifier)))
             {
                 // The metadata file was found. Later on we'll load the metadata for real, so we'll need to remove the ".gtdata" extension beforehand.
                 easypath_removeextension(absolutePathOrIdentifier);
@@ -72,7 +99,7 @@ namespace GT
             else
             {
                 // The file nor it's metadata file could not be found, but the asset loader might be using it as a unique identifier, so we just use it as-is in this case.
-                GTLib::Strings::Copy(absolutePathOrIdentifier, filePathOrIdentifier);
+                strcpy_s(absolutePathOrIdentifier, filePathOrIdentifier);
             }
         }
 
@@ -99,13 +126,13 @@ namespace GT
                 if (pAsset != nullptr)
                 {
                     // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
-                    char metadataAbsolutePath[GT_MAX_PATH];
-                    easypath_copyandappendextension(metadataAbsolutePath, GT_MAX_PATH, absolutePathOrIdentifier, "gtdata");
-                    pAsset->LoadMetadata(metadataAbsolutePath, m_fileSystem);
+                    char metadataAbsolutePath[EASYVFS_MAX_PATH];
+                    easypath_copyandappendextension(metadataAbsolutePath, EASYVFS_MAX_PATH, absolutePathOrIdentifier, "gtdata");
+                    pAsset->LoadMetadata(metadataAbsolutePath, m_pVFS);
 
 
                     // Load the asset after the metadata.
-                    if (pAsset->Load(absolutePathOrIdentifier, m_fileSystem))
+                    if (pAsset->Load(absolutePathOrIdentifier, m_pVFS))
                     {
                         m_loadedAssets.Add(absolutePathOrIdentifier, pAsset);
                         return pAsset;
@@ -182,16 +209,16 @@ namespace GT
 
     void AssetLibrary::Reload(const char* filePathOrIdentifier)
     {
-        char absolutePathOrIdentifier[GT_MAX_PATH];
-        if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier, GT_MAX_PATH))
+        char absolutePathOrIdentifier[EASYVFS_MAX_PATH];
+        if (!easyvfs_find_absolute_path(m_pVFS, filePathOrIdentifier, absolutePathOrIdentifier, sizeof(absolutePathOrIdentifier)))
         {
-            char metadataPath[GT_MAX_PATH];
-            easypath_copyandappendextension(metadataPath, GT_MAX_PATH, filePathOrIdentifier, "gtdata");
+            char metadataPath[EASYVFS_MAX_PATH];
+            easypath_copyandappendextension(metadataPath, EASYVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
 
-            if (!m_fileSystem.FindAbsolutePath(metadataPath, absolutePathOrIdentifier, GT_MAX_PATH))
+            if (!easyvfs_find_absolute_path(m_pVFS, metadataPath, absolutePathOrIdentifier, sizeof(absolutePathOrIdentifier)))
             {
                 // The file nor it's metadata file could not be found, but the asset loader might be using it as a unique token, so we just assume use it as-is for the absolute path in this case.
-                GTLib::Strings::Copy(absolutePathOrIdentifier, filePathOrIdentifier);
+                strcpy_s(absolutePathOrIdentifier, filePathOrIdentifier);
             }
         }
 
@@ -202,12 +229,12 @@ namespace GT
             assert(pAsset != nullptr);
             {
                 // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
-                char metadataAbsolutePath[GT_MAX_PATH];
-                easypath_copyandappendextension(metadataAbsolutePath, GT_MAX_PATH, filePathOrIdentifier, "gtdata");
-                pAsset->LoadMetadata(metadataAbsolutePath, m_fileSystem);
+                char metadataAbsolutePath[EASYVFS_MAX_PATH];
+                easypath_copyandappendextension(metadataAbsolutePath, EASYVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
+                pAsset->LoadMetadata(metadataAbsolutePath, m_pVFS);
 
                 // Load the asset after the metadata.
-                if (pAsset->Load(absolutePathOrIdentifier, m_fileSystem))
+                if (pAsset->Load(absolutePathOrIdentifier, m_pVFS))
                 {
                 }
                 else

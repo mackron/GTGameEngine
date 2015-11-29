@@ -5,15 +5,18 @@
 
 #include <GTLib/Vector.hpp>
 #include <GTLib/Dictionary.hpp>
-#include <GTLib/String.hpp>
+#include "../Config.hpp"
 #include "AssetTypes.hpp"
+#include <easy_fs/easy_vfs.h>
 
 namespace GT
 {
     class Asset;
     class AssetAllocator;
-    class FileSystem;
 
+#if defined(GT_BUILD_DEFAULT_ASSETS)
+    class DefaultAssetAllocator;
+#endif
 
 
     /// Class for managing every type of asset.
@@ -26,21 +29,21 @@ namespace GT
     public:
 
         /// Constructor.
-        AssetLibrary(FileSystem &fileSystem);
+        AssetLibrary();
 
         /// Destructor.
         ~AssetLibrary();
 
 
         /// Starts up the asset library.
-        bool Startup();
+        bool Startup(easyvfs_context* pVFS);
 
         /// Shuts down the asset library.
         void Shutdown();
 
 
         /// Retrieves a reference to the asset library that is being used to load the asset files.
-        FileSystem & GetFileSystem() const;
+        easyvfs_context* GetVFS() const;
 
 
         /// Loads an asset using the give file path.
@@ -99,14 +102,21 @@ namespace GT
 
     private:
 
-        /// A reference to the file system to use when loading and unloading assets.
-        FileSystem &m_fileSystem;
+        /// A pointer to the file system to use when loading and unloading assets.
+        easyvfs_context* m_pVFS;
 
         /// The list of allocators.
         GTLib::Vector<AssetAllocator*> m_allocators;
 
         /// The list of loaded assets, by absolute file path.
         GTLib::Dictionary<Asset*> m_loadedAssets;
+
+
+        
+#if defined(GT_BUILD_DEFAULT_ASSETS)
+        /// A pointer to the default asset allocator. This is always present if at least one default asset is included in the build.
+        DefaultAssetAllocator* m_pDefaultAssetAllocator;
+#endif
 
 
     private:    // No copying.

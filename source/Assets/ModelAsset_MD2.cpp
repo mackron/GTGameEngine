@@ -3,8 +3,7 @@
 #include "ModelAsset_MD2.hpp"
 
 #if defined(GT_BUILD_MD2)
-#include <GTGameEngine/FileSystem.hpp>
-#include "../external/easy_path/easy_path.h"
+#include <easy_util/easy_util.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -268,143 +267,130 @@ namespace GT
     }
 
 
-    bool ModelAsset_MD2::Load(const char* absolutePath, GT::FileSystem &fileSystem)
+    bool ModelAsset_MD2::Load(const char* absolutePath, easyvfs_context* pVFS)
     {
-        HFile hFile = fileSystem.OpenFile(absolutePath, FileAccessMode::Read);
-        if (hFile != 0)
+        size_t fileSize;
+        uint8_t* pFileData = reinterpret_cast<uint8_t*>(easyvfs_open_and_read_binary_file(pVFS, absolutePath, &fileSize));
+        if (pFileData != nullptr)
         {
-            unsigned int fileSize = static_cast<unsigned int>(fileSystem.GetFileSize(hFile));
-            if (fileSize > sizeof(md2_header))
+            bool result = true;
+
+            md2_header* header = reinterpret_cast<md2_header*>(pFileData);
+            if (header->ident == '2PDI' && header->version == 8)
             {
-                bool result = true;
-
-                uint8_t* fileData = reinterpret_cast<uint8_t*>(malloc(fileSize));
-                fileSystem.ReadFile(hFile, fileSize, fileData);
-                fileSystem.CloseFile(hFile);
-
-                md2_header* header = reinterpret_cast<md2_header*>(fileData);
-                if (header->ident == '2PDI' && header->version == 8)
+                if (fileSize > static_cast<unsigned int>(header->ofs_glcmds))
                 {
-                    if (fileSize > static_cast<unsigned int>(header->ofs_glcmds))
+                    auto md2TexCoords = reinterpret_cast<md2_texcoord*        >(pFileData + header->ofs_st);
+                    auto md2Indices   = reinterpret_cast<md2_triangle_indices*>(pFileData + header->ofs_tris);
+
+                    // MD2 separates the position/texcoord/normal. We want them to be interlaced. To do this, we need to convert the position/texcoord index pair
+                    // from MD2 into just a singular index. We do this by simply counting the number of unique combinations of index pairs.
+                    GTLib::Vector<md2_index_pair> uniqueIndexPairs(header->num_tris);
+                    GTLib::Vector<uint32_t> actualIndices(header->num_tris);
+
+                    for (int32_t iIndex = 0; iIndex < header->num_tris; ++iIndex)
                     {
-                        auto md2TexCoords = reinterpret_cast<md2_texcoord*        >(fileData + header->ofs_st);
-                        auto md2Indices   = reinterpret_cast<md2_triangle_indices*>(fileData + header->ofs_tris);
-
-                        // MD2 separates the position/texcoord/normal. We want them to be interlaced. To do this, we need to convert the position/texcoord index pair
-                        // from MD2 into just a singular index. We do this by simply counting the number of unique combinations of index pairs.
-                        GTLib::Vector<md2_index_pair> uniqueIndexPairs(header->num_tris);
-                        GTLib::Vector<uint32_t> actualIndices(header->num_tris);
-
-                        for (int32_t iIndex = 0; iIndex < header->num_tris; ++iIndex)
+                        for (int iCorner = 0; iCorner < 3; ++iCorner)
                         {
-                            for (int iCorner = 0; iCorner < 3; ++iCorner)
-                            {
-                                md2_index_pair pair(md2Indices[iIndex].positionIndex[iCorner], md2Indices[iIndex].texcoordIndex[iCorner]);
+                            md2_index_pair pair(md2Indices[iIndex].positionIndex[iCorner], md2Indices[iIndex].texcoordIndex[iCorner]);
 
-                                size_t existingIndexLocation;
-                                if (uniqueIndexPairs.FindFirstIndexOf(pair, existingIndexLocation))
-                                {
-                                    actualIndices.PushBack(static_cast<uint32_t>(existingIndexLocation));
-                                }
-                                else
-                                {
-                                    actualIndices.PushBack(static_cast<uint32_t>(uniqueIndexPairs.GetCount()));
-                                    uniqueIndexPairs.PushBack(pair);
-                                }
+                            size_t existingIndexLocation;
+                            if (uniqueIndexPairs.FindFirstIndexOf(pair, existingIndexLocation))
+                            {
+                                actualIndices.PushBack(static_cast<uint32_t>(existingIndexLocation));
+                            }
+                            else
+                            {
+                                actualIndices.PushBack(static_cast<uint32_t>(uniqueIndexPairs.GetCount()));
+                                uniqueIndexPairs.PushBack(pair);
                             }
                         }
+                    }
 
-                        m_vertexCountPerFrame = static_cast<unsigned int>(uniqueIndexPairs.GetCount());
-                        m_vertexCount         = static_cast<unsigned int>(m_vertexCountPerFrame * header->num_frames);
-                        m_vertexData          = new MD2MeshVertex[m_vertexCount];
+                    m_vertexCountPerFrame = static_cast<unsigned int>(uniqueIndexPairs.GetCount());
+                    m_vertexCount         = static_cast<unsigned int>(m_vertexCountPerFrame * header->num_frames);
+                    m_vertexData          = new MD2MeshVertex[m_vertexCount];
 
-                        m_indexCount = static_cast<unsigned int>(actualIndices.GetCount());
-                        m_indexData  = new uint32_t[m_indexCount];
-                        memcpy(m_indexData, actualIndices.buffer, m_indexCount * sizeof(uint32_t));
+                    m_indexCount = static_cast<unsigned int>(actualIndices.GetCount());
+                    m_indexData  = new uint32_t[m_indexCount];
+                    memcpy(m_indexData, actualIndices.buffer, m_indexCount * sizeof(uint32_t));
 
-                        m_materialOffsetCountPair[0] = 0;
-                        m_materialOffsetCountPair[1] = static_cast<uint32_t>(m_indexCount);
+                    m_materialOffsetCountPair[0] = 0;
+                    m_materialOffsetCountPair[1] = static_cast<uint32_t>(m_indexCount);
 
 
-                        // Frames
-                        for (int32_t iTriangle = 0; iTriangle < header->num_tris; ++iTriangle)
+                    // Frames
+                    for (int32_t iTriangle = 0; iTriangle < header->num_tris; ++iTriangle)
+                    {
+                        for (int iCorner = 0; iCorner < 3; ++iCorner)
                         {
-                            for (int iCorner = 0; iCorner < 3; ++iCorner)
+                            short positionIndexMD2 = md2Indices[iTriangle].positionIndex[iCorner];
+                            short texcoordIndexMD2 = md2Indices[iTriangle].texcoordIndex[iCorner];
+
+                            size_t actualIndexLocation;
+                            if (uniqueIndexPairs.FindFirstIndexOf(md2_index_pair(positionIndexMD2, texcoordIndexMD2), actualIndexLocation))
                             {
-                                short positionIndexMD2 = md2Indices[iTriangle].positionIndex[iCorner];
-                                short texcoordIndexMD2 = md2Indices[iTriangle].texcoordIndex[iCorner];
-
-                                size_t actualIndexLocation;
-                                if (uniqueIndexPairs.FindFirstIndexOf(md2_index_pair(positionIndexMD2, texcoordIndexMD2), actualIndexLocation))
+                                for (int32_t iFrame = 0; iFrame < header->num_frames; ++iFrame)
                                 {
-                                    for (int32_t iFrame = 0; iFrame < header->num_frames; ++iFrame)
-                                    {
-                                        auto frameHeader = reinterpret_cast<md2_frame_header*>((fileData + header->ofs_frames) + (iFrame * header->framesize));
-                                        auto md2Vertices = reinterpret_cast<md2_vertex*      >((fileData + header->ofs_frames) + (iFrame * header->framesize) + sizeof(md2_frame_header));
+                                    auto frameHeader = reinterpret_cast<md2_frame_header*>((pFileData + header->ofs_frames) + (iFrame * header->framesize));
+                                    auto md2Vertices = reinterpret_cast<md2_vertex*      >((pFileData + header->ofs_frames) + (iFrame * header->framesize) + sizeof(md2_frame_header));
 
-                                        float position[3];
-                                        position[0] = (md2Vertices[positionIndexMD2].v[0] * frameHeader->scale[0]) + frameHeader->translate[0];
-                                        position[1] = (md2Vertices[positionIndexMD2].v[1] * frameHeader->scale[1]) + frameHeader->translate[1];
-                                        position[2] = (md2Vertices[positionIndexMD2].v[2] * frameHeader->scale[2]) + frameHeader->translate[2];
+                                    float position[3];
+                                    position[0] = (md2Vertices[positionIndexMD2].v[0] * frameHeader->scale[0]) + frameHeader->translate[0];
+                                    position[1] = (md2Vertices[positionIndexMD2].v[1] * frameHeader->scale[1]) + frameHeader->translate[1];
+                                    position[2] = (md2Vertices[positionIndexMD2].v[2] * frameHeader->scale[2]) + frameHeader->translate[2];
 
-                                        float texcoord[2];
-                                        texcoord[0] = static_cast<float>(md2TexCoords[texcoordIndexMD2].s) / header->skinwidth;
-                                        texcoord[1] = static_cast<float>(md2TexCoords[texcoordIndexMD2].t) / header->skinheight;
+                                    float texcoord[2];
+                                    texcoord[0] = static_cast<float>(md2TexCoords[texcoordIndexMD2].s) / header->skinwidth;
+                                    texcoord[1] = static_cast<float>(md2TexCoords[texcoordIndexMD2].t) / header->skinheight;
 
-                                        float normal[3];
-                                        normal[0] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][0];
-                                        normal[1] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][1];
-                                        normal[2] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][2];
+                                    float normal[3];
+                                    normal[0] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][0];
+                                    normal[1] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][1];
+                                    normal[2] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][2];
 
 
-                                        size_t vertexDataLocation = (iFrame * m_vertexCountPerFrame) + actualIndexLocation;
+                                    size_t vertexDataLocation = (iFrame * m_vertexCountPerFrame) + actualIndexLocation;
 
-                                        m_vertexData[vertexDataLocation].position[0] = position[0];
-                                        m_vertexData[vertexDataLocation].position[1] = position[1];
-                                        m_vertexData[vertexDataLocation].position[2] = position[2];
+                                    m_vertexData[vertexDataLocation].position[0] = position[0];
+                                    m_vertexData[vertexDataLocation].position[1] = position[1];
+                                    m_vertexData[vertexDataLocation].position[2] = position[2];
 
-                                        m_vertexData[vertexDataLocation].texcoord[0] = texcoord[0];
-                                        m_vertexData[vertexDataLocation].texcoord[1] = texcoord[1];
+                                    m_vertexData[vertexDataLocation].texcoord[0] = texcoord[0];
+                                    m_vertexData[vertexDataLocation].texcoord[1] = texcoord[1];
 
-                                        m_vertexData[vertexDataLocation].normal[0] = normal[0];
-                                        m_vertexData[vertexDataLocation].normal[1] = normal[1];
-                                        m_vertexData[vertexDataLocation].normal[2] = normal[2];
-                                    }
-                                }
-                                else
-                                {
-                                    // Should never hit this.
-                                    assert(false);
+                                    m_vertexData[vertexDataLocation].normal[0] = normal[0];
+                                    m_vertexData[vertexDataLocation].normal[1] = normal[1];
+                                    m_vertexData[vertexDataLocation].normal[2] = normal[2];
                                 }
                             }
+                            else
+                            {
+                                // Should never hit this.
+                                assert(false);
+                            }
                         }
+                    }
 
 
-                        m_keyframeCount = static_cast<unsigned int>(header->num_frames);
-                        result = true;
-                    }
-                    else
-                    {
-                        // File is too small.
-                        result = false;
-                    }
+                    m_keyframeCount = static_cast<unsigned int>(header->num_frames);
+                    result = true;
                 }
                 else
                 {
-                    // Magic number or version is incorrect.
+                    // File is too small.
                     result = false;
                 }
-                
-
-                free(fileData);
-                return result;
             }
             else
             {
-                // The file size is incorrect.
-                fileSystem.CloseFile(hFile);
-                return false;
+                // Magic number or version is incorrect.
+                result = false;
             }
+                
+
+            easyvfs_free(pFileData);
+            return result;
         }
         else
         {
@@ -518,7 +504,7 @@ namespace GT
         
         if (materialNameOut != nullptr && materialNameSizeInBytes > 0)
         {
-            easypath_strcpy(materialNameOut, materialNameSizeInBytes, "default");
+            strcpy_s(materialNameOut, materialNameSizeInBytes, "default");
         }
     }
 

@@ -3,9 +3,7 @@
 #include "MaterialAsset_MTL.hpp"
 
 #if defined(GT_BUILD_MTL)
-#include <GTGameEngine/FileSystem.hpp>
-#include "../external/easy_mtl/easy_mtl.h"
-#include "../external/easy_mtl/extras/easy_mtl_compiler_mtl.h"
+#include <easy_draw/easy_mtl.h>
 
 namespace GT
 {
@@ -21,50 +19,37 @@ namespace GT
     }
 
 
-    bool MaterialAsset_MTL::Load(const char* absolutePath, FileSystem &fileSystem)
+    bool MaterialAsset_MTL::Load(const char* absolutePath, easyvfs_context* pVFS)
     {
-        HFile hFile = fileSystem.OpenFile(absolutePath, FileAccessMode::Read);
-        if (hFile != 0)
+        size_t fileSize;
+        char* pFileData = easyvfs_open_and_read_text_file(pVFS, absolutePath, &fileSize);
+        if (pFileData != NULL && fileSize > 6)
         {
-            unsigned int fileSize = static_cast<unsigned int>(fileSystem.GetFileSize(hFile));
-            if (fileSize > 6)
+            bool result = true;
+
+            easymtl_material materialSource;
+            if (easymtl_compile_wavefront_mtl(&materialSource, pFileData, fileSize, "FS_TexCoord"))
             {
-                bool result = true;
+                m_dataSizeInBytes = materialSource.sizeInBytes;
+                m_pData = malloc(materialSource.sizeInBytes);
+                memcpy(m_pData, materialSource.pRawData, materialSource.sizeInBytes);
 
-                char* fileData = reinterpret_cast<char*>(malloc(fileSize + 1));
-                fileSystem.ReadFile(hFile, fileSize, fileData);
-                fileSystem.CloseFile(hFile);
-
-                fileData[fileSize] = '\0';
-
-                easymtl_material materialSource;
-                if (easymtl_compile_wavefront_mtl(&materialSource, fileData, fileSize, "FS_TexCoord"))
-                {
-                    m_dataSizeInBytes = materialSource.sizeInBytes;
-                    m_pData = malloc(materialSource.sizeInBytes);
-                    memcpy(m_pData, materialSource.pRawData, materialSource.sizeInBytes);
-
-                    easymtl_uninit(&materialSource);
-                    result = true;
-                }
-                else
-                {
-                    result = false;
-                }
-
-
-                // At this point the file has been parsed, so free the file data...
-                free(fileData);
-
-                return result;
+                easymtl_uninit(&materialSource);
+                result = true;
             }
             else
             {
-                fileSystem.CloseFile(hFile);
+                result = false;
             }
-        }
 
-        return false;
+
+            easyvfs_free(pFileData);
+            return result;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 

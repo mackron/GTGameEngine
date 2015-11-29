@@ -1,7 +1,11 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTEngine/Audio/SoundWorld.hpp>
+#include <GTEngine/Assets/SoundAsset.hpp>
 #include <GTEngine/EngineContext.hpp>
+
+#include "../Audio/Streamers/SoundStreamer_WAV.hpp"
+#include "../Audio/Streamers/SoundStreamer_Vorbis.hpp"
 
 namespace GT
 {
@@ -11,6 +15,9 @@ namespace GT
         {
             // A pointer to the engine context.
             GT::Engine::EngineContext* pEngineContext;
+
+            // The asset that was used to create the streamer.
+            GT::Asset* pAsset;
 
             // A pointer to the streamer.
             GTEngine::SoundStreamer* pStreamer;
@@ -22,8 +29,11 @@ namespace GT
             EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(easyaudio_get_sound_extra_data(pSound));
             assert(pSoundData != NULL);
 
-            pSoundData->pEngineContext->GetAssetLibrary().CloseSoundStreamer(pSoundData->pStreamer);
+            GTEngine::SoundStreamer::Delete(pSoundData->pStreamer);
             pSoundData->pStreamer = NULL;
+
+            pSoundData->pEngineContext->GetAssetLibrary().Unload(pSoundData->pAsset);
+            pSoundData->pAsset = NULL;
         }
 
         static easyaudio_bool EA_OnSoundRead(easyaudio_sound* pSound, void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut)
@@ -84,40 +94,48 @@ namespace GT
 
         bool SoundWorld::PlaySound(const char* filePath, const glm::vec3 &position, bool relative)
         {
-            // TODO: Don't use streaming for tiny sounds.
-
-            // We need to first open a streamer.
-            GTEngine::SoundStreamer* pStreamer = m_engineContext.GetAssetLibrary().OpenSoundStreamer(filePath);
-            if (pStreamer != nullptr)
+            GT::Asset* pAsset = m_engineContext.GetAssetLibrary().Load(filePath);
+            if (pAsset != nullptr)
             {
-                EA_SoundData extraData;
-                extraData.pEngineContext = &m_engineContext;
-                extraData.pStreamer      = pStreamer;
+                // TODO: Don't use streaming for tiny sounds.
 
-                easyaudio_sound_desc desc;
-                desc.flags         = 0;
-                desc.format        = pStreamer->GetFormat();
-                desc.channels      = pStreamer->GetNumChannels();
-                desc.sampleRate    = pStreamer->GetSampleRate();
-                desc.bitsPerSample = pStreamer->GetBitsPerSample();
-                desc.sizeInBytes   = 0;
-                desc.pInitialData  = nullptr;
-                desc.onDelete      = EA_OnSoundDelete;
-                desc.onRead        = EA_OnSoundRead;
-                desc.onSeek        = EA_OnSoundSeek;
-                desc.extraDataSize = sizeof(EA_SoundData);
-                desc.pExtraData    = &extraData;
-                if (desc.channels == 1) {
-                    desc.flags = EASYAUDIO_ENABLE_3D;
+                GTEngine::SoundStreamer* pStreamer = GTEngine::SoundStreamer::CreateFromAsset(pAsset);
+                if (pStreamer != nullptr && pStreamer->Initialize())
+                {
+                    EA_SoundData extraData;
+                    extraData.pEngineContext = &m_engineContext;
+                    extraData.pAsset         = pAsset;
+                    extraData.pStreamer      = pStreamer;
 
-                    if (relative) {
-                        desc.flags = EASYAUDIO_RELATIVE_3D;
+                    easyaudio_sound_desc desc;
+                    desc.flags         = 0;
+                    desc.format        = pStreamer->GetFormat();
+                    desc.channels      = pStreamer->GetNumChannels();
+                    desc.sampleRate    = pStreamer->GetSampleRate();
+                    desc.bitsPerSample = pStreamer->GetBitsPerSample();
+                    desc.sizeInBytes   = 0;
+                    desc.pData         = nullptr;
+                    desc.onDelete      = EA_OnSoundDelete;
+                    desc.onRead        = EA_OnSoundRead;
+                    desc.onSeek        = EA_OnSoundSeek;
+                    desc.extraDataSize = sizeof(EA_SoundData);
+                    desc.pExtraData    = &extraData;
+                    if (desc.channels == 1) {
+                        desc.flags = EASYAUDIO_ENABLE_3D;
+
+                        if (relative) {
+                            desc.flags = EASYAUDIO_RELATIVE_3D;
+                        }
                     }
+
+                    easyaudio_play_inline_sound_3f(m_pWorld, desc, position.x, position.y, position.z);
+
+                    return true;
                 }
 
-                easyaudio_play_inline_sound_3f(m_pWorld, desc, position.x, position.y, position.z);
 
-                return true;
+                // If we get here it means we an error occured and we need to fall through and unload the asset and return false.
+                m_engineContext.GetAssetLibrary().Unload(pAsset);
             }
 
             return false;

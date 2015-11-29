@@ -3,10 +3,9 @@
 #include "ModelAsset_OBJ.hpp"
 
 #if defined(GT_BUILD_OBJ)
-#include <GTGameEngine/FileSystem.hpp>
-#include <GTGameEngine/Math.hpp>
+#include <GTEngine/Math.hpp>
 #include <GTLib/Vector.hpp>
-#include "../external/easy_path/easy_path.h"
+#include <easy_util/easy_util.h>
 
 // TODO: Correctly handle "usemtl" to properly handle multiple materials.
 
@@ -229,227 +228,212 @@ namespace GT
     }
 
 
-    bool ModelAsset_OBJ::Load(const char* absolutePath, GT::FileSystem &fileSystem)
+    bool ModelAsset_OBJ::Load(const char* absolutePath, easyvfs_context* pVFS)
     {
-        HFile hFile = fileSystem.OpenFile(absolutePath, FileAccessMode::Read);
-        if (hFile != 0)
+        size_t fileSize;
+        char* pFileData = easyvfs_open_and_read_text_file(pVFS, absolutePath, &fileSize);
+        if (pFileData != 0 && fileSize > 0)
         {
-            unsigned int fileSize = static_cast<unsigned int>(fileSystem.GetFileSize(hFile));
-            if (fileSize > 0)
+            GTLib::Vector<glm::vec4>    positions;
+            GTLib::Vector<glm::vec4>    texcoords;
+            GTLib::Vector<glm::vec4>    normals;
+            GTLib::Vector<OBJFace> faces;
+
+            GTLib::Vector<OBJFaceVertex> uniqueIndices;
+            GTLib::Vector<uint32_t>      actualIndices;
+
+            const char* str    = pFileData;
+            const char* strEnd = str + fileSize;
+
+            // We just go over the file data line by line.
+            while (str < strEnd)
             {
-                bool result = true;
-
-                char* fileData = reinterpret_cast<char*>(malloc(fileSize + 1));
-                fileSystem.ReadFile(hFile, fileSize, fileData);
-                fileSystem.CloseFile(hFile);
-
-                fileData[fileSize] = '\0';
-
-
-                GTLib::Vector<vec4>    positions;
-                GTLib::Vector<vec4>    texcoords;
-                GTLib::Vector<vec4>    normals;
-                GTLib::Vector<OBJFace> faces;
-
-                GTLib::Vector<OBJFaceVertex> uniqueIndices;
-                GTLib::Vector<uint32_t>      actualIndices;
-
-                const char* str    = fileData;
-                const char* strEnd = str + fileSize;
-
-                // We just go over the file data line by line.
-                while (str < strEnd)
+                if (str + 1 < strEnd)
                 {
-                    if (str + 1 < strEnd)
+                    const uint16_t next16 = reinterpret_cast<const uint16_t*>(str)[0];
+
+                    if (next16 == ' v' || next16 == '\tv')
                     {
-                        const uint16_t next16 = reinterpret_cast<const uint16_t*>(str)[0];
+                        // Position. Only supporting X, Y and Z. W and colours are ignored.
+                        str += 2;
 
-                        if (next16 == ' v' || next16 == '\tv')
+                        float value[3];
+                        value[0] = OBJ_atof(str, strEnd, &str);
+                        value[1] = OBJ_atof(str, strEnd, &str);
+                        value[2] = OBJ_atof(str, strEnd, &str);
+
+                        positions.PushBack(glm::vec4(value[0], value[1], value[2], 1.0f));
+                    }
+                    else if (next16 == 'tv')
+                    {
+                        // Texture Coordinate.
+                        str += 3;
+
+                        float value[2];
+                        value[0] = OBJ_atof(str, strEnd, &str);
+                        value[1] = OBJ_atof(str, strEnd, &str);
+
+                        texcoords.PushBack(glm::vec4(value[0], value[1], 0.0f, 0.0f));
+                    }
+                    else if (next16 == 'nv')
+                    {
+                        // Normal.
+                        str += 3;
+
+                        float value[3];
+                        value[0] = OBJ_atof(str, strEnd, &str);
+                        value[1] = OBJ_atof(str, strEnd, &str);
+                        value[2] = OBJ_atof(str, strEnd, &str);
+
+                        normals.PushBack(glm::vec4(value[0], value[1], value[2], 0.0f));
+                    }
+                    else if (next16 == ' f' || next16 == '\tf')
+                    {
+                        // Face. Only supporting triangles.
+                        str += 2;
+
+                        OBJFace face;
+                        OBJ_ParseFace(str, strEnd, face, &str);
+
+                        faces.PushBack(face);
+
+                        for (size_t iVertex = 0; iVertex < 3; ++iVertex)
                         {
-                            // Position. Only supporting X, Y and Z. W and colours are ignored.
-                            str += 2;
-
-                            float value[3];
-                            value[0] = OBJ_atof(str, strEnd, &str);
-                            value[1] = OBJ_atof(str, strEnd, &str);
-                            value[2] = OBJ_atof(str, strEnd, &str);
-
-                            positions.PushBack(vec4(value[0], value[1], value[2], 1.0f));
-                        }
-                        else if (next16 == 'tv')
-                        {
-                            // Texture Coordinate.
-                            str += 3;
-
-                            float value[2];
-                            value[0] = OBJ_atof(str, strEnd, &str);
-                            value[1] = OBJ_atof(str, strEnd, &str);
-
-                            texcoords.PushBack(vec4(value[0], value[1], 0.0f, 0.0f));
-                        }
-                        else if (next16 == 'nv')
-                        {
-                            // Normal.
-                            str += 3;
-
-                            float value[3];
-                            value[0] = OBJ_atof(str, strEnd, &str);
-                            value[1] = OBJ_atof(str, strEnd, &str);
-                            value[2] = OBJ_atof(str, strEnd, &str);
-
-                            normals.PushBack(vec4(value[0], value[1], value[2], 0.0f));
-                        }
-                        else if (next16 == ' f' || next16 == '\tf')
-                        {
-                            // Face. Only supporting triangles.
-                            str += 2;
-
-                            OBJFace face;
-                            OBJ_ParseFace(str, strEnd, face, &str);
-
-                            faces.PushBack(face);
-
-                            for (size_t iVertex = 0; iVertex < 3; ++iVertex)
+                            size_t existingIndexLocation;
+                            if (uniqueIndices.FindFirstIndexOf(face.v[iVertex], existingIndexLocation))
                             {
-                                size_t existingIndexLocation;
-                                if (uniqueIndices.FindFirstIndexOf(face.v[iVertex], existingIndexLocation))
-                                {
-                                    actualIndices.PushBack(static_cast<uint32_t>(existingIndexLocation));
-                                }
-                                else
-                                {
-                                    actualIndices.PushBack(static_cast<uint32_t>(uniqueIndices.GetCount()));
-                                    uniqueIndices.PushBack(face.v[iVertex]);
-                                }
+                                actualIndices.PushBack(static_cast<uint32_t>(existingIndexLocation));
+                            }
+                            else
+                            {
+                                actualIndices.PushBack(static_cast<uint32_t>(uniqueIndices.GetCount()));
+                                uniqueIndices.PushBack(face.v[iVertex]);
                             }
                         }
-                        else if (next16 == 'su')
+                    }
+                    else if (next16 == 'su')
+                    {
+                        // "usemtl"
+                        str += 2;
+                        if (str + 5 < strEnd)
                         {
-                            // "usemtl"
-                            str += 2;
-                            if (str + 5 < strEnd)
+                            if (reinterpret_cast<const uint32_t*>(str)[0] == 'ltme')
                             {
-                                if (reinterpret_cast<const uint32_t*>(str)[0] == 'ltme')
-                                {
 
-                                }
                             }
-                        }
-                        else
-                        {
-                            // We don't know what the token is, so skip over the line.
                         }
                     }
                     else
                     {
-                        // Empty line. Skip it.
+                        // We don't know what the token is, so skip over the line.
                     }
+                }
+                else
+                {
+                    // Empty line. Skip it.
+                }
 
 
-                    // Move to the end of the line
-                    while (str < strEnd && *str != '\n')
-                    {
-                        str += 1;
-                    }
-
-                    // Move past the new-line character which will take us to the beginning of the next line.
+                // Move to the end of the line
+                while (str < strEnd && *str != '\n')
+                {
                     str += 1;
                 }
 
-                // At this point the file has been parsed, so free the file data...
-                free(fileData);
+                // Move past the new-line character which will take us to the beginning of the next line.
+                str += 1;
+            }
 
-                // ... and start converting the data to our own format. OBJ separates positions, texture coordinates and normals, but we want them
-                // to be interlaced.
-                //
-                // If there is no position, texture coordinate or normal we will add a default one to the list.
-                if (positions.GetCount() == 0)
+            // At this point the file has been parsed, so free the file data...
+            easyvfs_free(pFileData);
+
+            // ... and start converting the data to our own format. OBJ separates positions, texture coordinates and normals, but we want them
+            // to be interlaced.
+            //
+            // If there is no position, texture coordinate or normal we will add a default one to the list.
+            if (positions.GetCount() == 0)
+            {
+                positions.PushBack(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+            }
+            if (texcoords.GetCount() == 0)
+            {
+                positions.PushBack(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+            }
+            if (normals.GetCount() == 0)
+            {
+                normals.PushBack(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));
+            }
+
+
+
+            m_vertexCount = static_cast<unsigned int>(uniqueIndices.GetCount());
+            m_vertexData  = new OBJMeshVertex[m_vertexCount];
+
+            m_indexCount = static_cast<unsigned int>(actualIndices.GetCount());
+            m_indexData  = new uint32_t[m_indexCount];
+            memcpy(m_indexData, actualIndices.buffer, m_indexCount * sizeof(uint32_t));
+
+            m_materialOffsetCountPair[0] = 0;
+            m_materialOffsetCountPair[1] = static_cast<uint32_t>(m_indexCount);
+
+
+            for (size_t iFace = 0; iFace < faces.GetCount(); ++iFace)
+            {
+                for (size_t iVertex = 0; iVertex < 3; ++iVertex)
                 {
-                    positions.PushBack(vec4(0.0f, 0.0f, 0.0f, 1.0f));
-                }
-                if (texcoords.GetCount() == 0)
-                {
-                    positions.PushBack(vec4(0.0f, 0.0f, 0.0f, 0.0f));
-                }
-                if (normals.GetCount() == 0)
-                {
-                    normals.PushBack(vec4(0.0f, 0.0f, -1.0f, 0.0f));
-                }
-
-
-
-                m_vertexCount = static_cast<unsigned int>(uniqueIndices.GetCount());
-                m_vertexData  = new OBJMeshVertex[m_vertexCount];
-
-                m_indexCount = static_cast<unsigned int>(actualIndices.GetCount());
-                m_indexData  = new uint32_t[m_indexCount];
-                memcpy(m_indexData, actualIndices.buffer, m_indexCount * sizeof(uint32_t));
-
-                m_materialOffsetCountPair[0] = 0;
-                m_materialOffsetCountPair[1] = static_cast<uint32_t>(m_indexCount);
-
-
-                for (size_t iFace = 0; iFace < faces.GetCount(); ++iFace)
-                {
-                    for (size_t iVertex = 0; iVertex < 3; ++iVertex)
+                    size_t actualIndexLocation;
+                    if (uniqueIndices.FindFirstIndexOf(faces[iFace].v[iVertex], actualIndexLocation))
                     {
-                        size_t actualIndexLocation;
-                        if (uniqueIndices.FindFirstIndexOf(faces[iFace].v[iVertex], actualIndexLocation))
-                        {
-                            int positionIndexOBJ = faces[iFace].v[iVertex].positionIndex;
-                            int texcoordIndexOBJ = faces[iFace].v[iVertex].texcoordIndex;
-                            int normalIndexOBJ   = faces[iFace].v[iVertex].normalIndex;
+                        int positionIndexOBJ = faces[iFace].v[iVertex].positionIndex;
+                        int texcoordIndexOBJ = faces[iFace].v[iVertex].texcoordIndex;
+                        int normalIndexOBJ   = faces[iFace].v[iVertex].normalIndex;
 
-                            // The indices need to be normalized. An OBJ file can have positive and negative indices. Positive indices are 1-based indices that
-                            // one would typically expect. Negative indices are "relative" where all we need to do is add the vertex count to it.
-                            if (positionIndexOBJ > 0) {
-                                positionIndexOBJ -= 1;
-                            } else {
-                                positionIndexOBJ += static_cast<int>(positions.GetCount());
-                            }
-
-                            if (texcoordIndexOBJ > 0) {
-                                texcoordIndexOBJ -= 1;
-                            } else {
-                                texcoordIndexOBJ += static_cast<int>(texcoords.GetCount());
-                            }
-
-                            if (normalIndexOBJ > 0) {
-                                normalIndexOBJ -= 1;
-                            } else {
-                                normalIndexOBJ += static_cast<int>(normals.GetCount());
-                            }
-
-
-                            m_vertexData[actualIndexLocation].position[0] = positions[positionIndexOBJ][0];
-                            m_vertexData[actualIndexLocation].position[1] = positions[positionIndexOBJ][1];
-                            m_vertexData[actualIndexLocation].position[2] = positions[positionIndexOBJ][2];
-
-                            m_vertexData[actualIndexLocation].texcoord[0] = texcoords[texcoordIndexOBJ][0];
-                            m_vertexData[actualIndexLocation].texcoord[1] = texcoords[texcoordIndexOBJ][1];
-
-                            m_vertexData[actualIndexLocation].normal[0]   = normals[normalIndexOBJ][0];
-                            m_vertexData[actualIndexLocation].normal[1]   = normals[normalIndexOBJ][1];
-                            m_vertexData[actualIndexLocation].normal[2]   = normals[normalIndexOBJ][2];
+                        // The indices need to be normalized. An OBJ file can have positive and negative indices. Positive indices are 1-based indices that
+                        // one would typically expect. Negative indices are "relative" where all we need to do is add the vertex count to it.
+                        if (positionIndexOBJ > 0) {
+                            positionIndexOBJ -= 1;
+                        } else {
+                            positionIndexOBJ += static_cast<int>(positions.GetCount());
                         }
-                        else
-                        {
-                            // Should never hit this
-                            assert(false);
+
+                        if (texcoordIndexOBJ > 0) {
+                            texcoordIndexOBJ -= 1;
+                        } else {
+                            texcoordIndexOBJ += static_cast<int>(texcoords.GetCount());
                         }
+
+                        if (normalIndexOBJ > 0) {
+                            normalIndexOBJ -= 1;
+                        } else {
+                            normalIndexOBJ += static_cast<int>(normals.GetCount());
+                        }
+
+
+                        m_vertexData[actualIndexLocation].position[0] = positions[positionIndexOBJ][0];
+                        m_vertexData[actualIndexLocation].position[1] = positions[positionIndexOBJ][1];
+                        m_vertexData[actualIndexLocation].position[2] = positions[positionIndexOBJ][2];
+
+                        m_vertexData[actualIndexLocation].texcoord[0] = texcoords[texcoordIndexOBJ][0];
+                        m_vertexData[actualIndexLocation].texcoord[1] = texcoords[texcoordIndexOBJ][1];
+
+                        m_vertexData[actualIndexLocation].normal[0]   = normals[normalIndexOBJ][0];
+                        m_vertexData[actualIndexLocation].normal[1]   = normals[normalIndexOBJ][1];
+                        m_vertexData[actualIndexLocation].normal[2]   = normals[normalIndexOBJ][2];
+                    }
+                    else
+                    {
+                        // Should never hit this
+                        assert(false);
                     }
                 }
-
-
-                return result;
             }
-            else
-            {
-                fileSystem.CloseFile(hFile);
-            }
+
+            return true;
         }
-
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
 
@@ -553,12 +537,14 @@ namespace GT
 
     void ModelAsset_OBJ::GetMeshMaterialName(unsigned int meshIndex, unsigned int materialIndex, char* materialNameOut, unsigned int materialNameSizeInBytes) const
     {
+        (void)materialIndex;
+
         assert(meshIndex == 0);
 
         if (materialNameOut != nullptr && materialNameSizeInBytes > 0)
         {
             // TODO: Implement this properly.
-            easypath_strcpy(materialNameOut, materialNameSizeInBytes, "default");
+            strcpy_s(materialNameOut, materialNameSizeInBytes, "default");
         }
     }
 

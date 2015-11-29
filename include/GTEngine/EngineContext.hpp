@@ -7,7 +7,8 @@
 #include "MessageDispatcher.hpp"
 #include "DefaultMessageHandler.hpp"
 #include "Audio/SoundWorld.hpp"
-#include "AssetLibrary.hpp"
+//#include "AssetLibrary.hpp"
+#include "Assets/AssetLibrary.hpp"
 #include <GTLib/Vector.hpp>
 #include <GTLib/Threading.hpp>
 #include <easy_util/easy_util.h>

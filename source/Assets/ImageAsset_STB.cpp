@@ -1,95 +1,53 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include "ImageAsset_STB.hpp"
-#include <GTGameEngine/Config.hpp>
-#include <GTGameEngine/FileSystem.hpp>
-
-#define STB_IMAGE_IMPLEMENTATION
-#define STBI_NO_STDIO
-#define STBI_NO_BMP
-#define STBI_NO_GIF
-#define STBI_NO_HDR
-#define STBI_NO_PIC
-#define STBI_NO_PNM
-
-#if !defined(GT_BUILD_PNG)
-#define STBI_NO_PNG
-#endif
-#if !defined(GT_BUILD_TGA)
-#define STBI_NO_TGA
-#endif
-#if !defined(GT_BUILD_JPG)
-#define STBI_NO_JPEG
-#endif
-#if !defined(GT_BUILD_PSD)
-#define STBI_NO_PSD
-#endif
-
-#if defined(__clang__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wreserved-id-macro"
-    #pragma GCC diagnostic ignored "-Wshadow"
-    #pragma GCC diagnostic ignored "-Wunused-function"
-    #pragma GCC diagnostic ignored "-Wcast-align"
-    #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-    #pragma GCC diagnostic ignored "-Wdisabled-macro-expansion"
-    #pragma GCC diagnostic ignored "-Wunused-parameter"
-    #pragma GCC diagnostic ignored "-Wold-style-cast"
-#elif defined(_MSC_VER)
-    #pragma warning(push)
-    #pragma warning(disable:4100)
-    #pragma warning(disable:4456)
-    #pragma warning(disable:4457)
-    #pragma warning(disable:4505)
-#endif
-#include "../external/stb/stb_image.h"
-#if defined(__clang__)
-    #pragma GCC diagnostic pop
-#elif defined(_MSC_VER)
-    #pragma warning(pop)
-#endif
+#include <GTEngine/Config.hpp>
+#include <GTEngine/external/stb_image.h>
 
 namespace GT
 {
     struct STBICallbackData
     {
-        GT::FileSystem* pFileSystem;
-        GT::HFile hFile;
+        /// A pointer to the virtual file.
+        easyvfs_file* pFile;
     };
 
     int STBI_Read(void* user, char *data, int size)
     {
-        auto callbackData = reinterpret_cast<STBICallbackData*>(user);
-        assert(callbackData != nullptr);
+        STBICallbackData* pCallbackData = reinterpret_cast<STBICallbackData*>(user);
+        assert(pCallbackData != nullptr);
         {
-            assert(callbackData->pFileSystem != nullptr);
-            assert(callbackData->hFile       != 0);
+            assert(pCallbackData->pFile != nullptr);
 
-            return static_cast<int>(callbackData->pFileSystem->ReadFile(callbackData->hFile, static_cast<unsigned int>(size), data));
+            unsigned int bytesRead;
+            if (easyvfs_read(pCallbackData->pFile, data, static_cast<unsigned int>(size), &bytesRead))
+            {
+                return bytesRead;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 
     void STBI_Skip(void* user, int n)
     {
-        auto callbackData = reinterpret_cast<STBICallbackData*>(user);
-        assert(callbackData != nullptr);
+        STBICallbackData* pCallbackData = reinterpret_cast<STBICallbackData*>(user);
+        assert(pCallbackData != nullptr);
         {
-            assert(callbackData->pFileSystem != nullptr);
-            assert(callbackData->hFile       != 0);
-
-            callbackData->pFileSystem->SeekFile(callbackData->hFile, n, GT::FileSeekOrigin::Current);
+            assert(pCallbackData->pFile != nullptr);
+            easyvfs_seek(pCallbackData->pFile, n, easyvfs_current);
         }
     }
 
     int STBI_EOF(void* user)
     {
-        auto callbackData = reinterpret_cast<STBICallbackData*>(user);
-        assert(callbackData != nullptr);
+        STBICallbackData* pCallbackData = reinterpret_cast<STBICallbackData*>(user);
+        assert(pCallbackData != nullptr);
         {
-            assert(callbackData->pFileSystem != nullptr);
-            assert(callbackData->hFile       != 0);
-
-            return callbackData->pFileSystem->TellFile(callbackData->hFile) == callbackData->pFileSystem->GetFileSize(callbackData->hFile);
+            assert(pCallbackData->pFile != nullptr);
+            return easyvfs_eof(pCallbackData->pFile);
         }
     }
 
@@ -110,16 +68,15 @@ namespace GT
     }
 
 
-    bool ImageAsset_STB::Load(const char* absolutePath, GT::FileSystem &fileSystem)
+    bool ImageAsset_STB::Load(const char* absolutePath, easyvfs_context* pVFS)
     {
-        GT::HFile hFile = fileSystem.OpenFile(absolutePath, GT::FileAccessMode::Read);
-        if (hFile != 0)
+        easyvfs_file* pFile = easyvfs_open(pVFS, absolutePath, EASYVFS_READ, 0);
+        if (pFile != nullptr)
         {
             bool result = false;
 
             STBICallbackData callbackData;
-            callbackData.pFileSystem = &fileSystem;
-            callbackData.hFile       = hFile;
+            callbackData.pFile = pFile;
 
             stbi_io_callbacks stbiCallbacks;
             stbiCallbacks.read = STBI_Read;
@@ -139,7 +96,7 @@ namespace GT
                 result = true;
             }
 
-            fileSystem.CloseFile(hFile);
+            easyvfs_close(pFile);
             return result;
         }
         else

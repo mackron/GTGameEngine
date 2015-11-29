@@ -3,10 +3,10 @@
 #ifndef GT_ModelAsset_MD2
 #define GT_ModelAsset_MD2
 
-#include <GTGameEngine/Config.hpp>
+#include <GTEngine/Config.hpp>
 
 #if defined(GT_BUILD_MD2)
-#include <GTGameEngine/Assets/ModelAsset.hpp>
+#include <GTEngine/Assets/ModelAsset.hpp>
 #include <GTLib/Vector.hpp>
 
 namespace GT
@@ -32,7 +32,7 @@ namespace GT
 
 
         /// @copydoc ModelAsset::Load()
-        bool Load(const char* absolutePath, GT::FileSystem &fileSystem);
+        bool Load(const char* absolutePath, easyvfs_context* pContext);
 
 
         /// @copydoc ModelAsset::GetMeshCount()

@@ -3,7 +3,7 @@
 #ifndef GT_ImageAsset_STB
 #define GT_ImageAsset_STB
 
-#include <GTGameEngine/Assets/ImageAsset.hpp>
+#include <GTEngine/Assets/ImageAsset.hpp>
 
 namespace GT
 {
@@ -20,7 +20,7 @@ namespace GT
 
 
         /// @copydoc GT::Asset::Load()
-        bool Load(const char* absolutePath, GT::FileSystem &fileSystem);
+        bool Load(const char* absolutePath, easyvfs_context* pVFS);
 
         /// @copydoc GT::ImageAsset::GetImageWidth()
         unsigned int GetImageWidth() const;

@@ -1,7 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Assets/MaterialAsset.hpp>
-#include "../external/easy_mtl/easy_mtl.h"
+#include <GTEngine/Assets/MaterialAsset.hpp>
+#include <easy_draw/easy_mtl.h>
+#include <easy_util/easy_util.h>
 
 namespace GT
 {
@@ -43,7 +44,7 @@ namespace GT
                 easymtl_identifier* pIdentifier = easymtl_getidentifier(&material, pInput->identifierIndex);
                 if (pIdentifier != nullptr)
                 {
-                    easymtl_strcpy(variableOut.name, 28, pIdentifier->name);
+                    strcpy_s(variableOut.name, 28, pIdentifier->name);
                     variableOut.type = GraphicsMaterialVariableType(pIdentifier->type);
                     memcpy(variableOut.path.value, pInput->path.value, 224);
 
@@ -75,7 +76,7 @@ namespace GT
             easymtl_property* pProperty = easymtl_getpropertybyindex(&material, index);
             if (pProperty != nullptr)
             {
-                easymtl_strcpy(variableOut.name, 28, pProperty->name);
+                strcpy_s(variableOut.name, 28, pProperty->name);
                 variableOut.type = GraphicsMaterialVariableType(pProperty->type);
                 memcpy(variableOut.path.value, pProperty->path.value, 224);
 

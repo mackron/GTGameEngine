@@ -3,10 +3,10 @@
 #ifndef GT_MaterialAsset_MTL
 #define GT_MaterialAsset_MTL
 
-#include <GTGameEngine/Config.hpp>
+#include <GTEngine/Config.hpp>
 
 #if defined(GT_BUILD_MTL)
-#include <GTGameEngine/Assets/MaterialAsset.hpp>
+#include <GTEngine/Assets/MaterialAsset.hpp>
 
 namespace GT
 {
@@ -23,7 +23,7 @@ namespace GT
 
 
         /// @copydoc Asset::Load()
-        bool Load(const char* absolutePath, FileSystem &fileSystem);
+        bool Load(const char* absolutePath, easyvfs_context* pVFS);
 
 
         /// @copydoc MaterialAsset::GetData()

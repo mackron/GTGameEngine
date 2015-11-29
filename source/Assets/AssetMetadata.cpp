@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Assets/AssetMetadata.hpp>
+#include <GTEngine/Assets/AssetMetadata.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

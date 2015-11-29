@@ -2,6 +2,8 @@
 
 #include "SoundStreamer_Vorbis.hpp"
 
+#if defined(GT_BUILD_VORBIS)
+
 namespace GT
 {
     namespace Engine
@@ -74,7 +76,7 @@ namespace GT
 
         unsigned int SoundStreamer_Vorbis::GetBitsPerSample() const
         {
-            return sizeof(float) * 8;   // Float data.
+            return sizeof(float) * 8;   // Float data. Multiply by 8 for it's bits per sample, not bytes.
         }
 
         unsigned int SoundStreamer_Vorbis::GetSampleRate() const
@@ -88,3 +90,5 @@ namespace GT
         }
     }
 }
+
+#endif

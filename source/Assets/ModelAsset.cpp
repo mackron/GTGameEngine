@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Assets/ModelAsset.hpp>
+#include <GTEngine/Assets/ModelAsset.hpp>
 
 namespace GT
 {

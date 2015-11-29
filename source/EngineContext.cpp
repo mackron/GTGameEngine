@@ -120,6 +120,16 @@ namespace GT
 
 
 
+            //// Asset Library ////
+            if (!m_assetLibrary.Startup(m_pVFS))
+            {
+                this->PostErrorMessage("Failed to initialize asset library.");
+                //return false;
+            }
+
+
+
+
             //////////////////////////////////////////
             // Audio System
             

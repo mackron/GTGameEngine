@@ -3,6 +3,9 @@
 #ifndef __GT_Engine_SoundStreamer_Vorbis_hpp_
 #define __GT_Engine_SoundStreamer_Vorbis_hpp_
 
+#include <GTEngine/Config.hpp>
+
+#if defined(GT_BUILD_VORBIS)
 #include <GTEngine/Audio/SoundStreamer.hpp>
 
 #define STB_VORBIS_HEADER_ONLY
@@ -73,5 +76,7 @@ namespace GT
         };
     }
 }
+
+#endif
 
 #endif
