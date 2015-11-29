@@ -2,7 +2,6 @@
 
 #include <GTLib/Windowing/Clipboard.hpp>
 #include <GTLib/WindowManagement.hpp>
-#include <GTLib/Strings.hpp>
 #include <GTLib/Vector.hpp>
 
 #if defined(_WIN32)
