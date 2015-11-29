@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ParticleEmitter_hpp_
-#define __GTEngine_ParticleEmitter_hpp_
+#ifndef GT_ParticleEmitter
+#define GT_ParticleEmitter
 
 #include "Particle.hpp"
 #include "ParticleList.hpp"

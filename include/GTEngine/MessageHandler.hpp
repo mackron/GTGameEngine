@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_MessageHandler_hpp_
-#define __GT_MessageHandler_hpp_
+#ifndef GT_MessageHandler
+#define GT_MessageHandler
 
 #include "Message.hpp"
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_ImageDataConverter_hpp_
-#define __GTLib_ImageDataConverter_hpp_
+#ifndef GT_ImageDataConverter
+#define GT_ImageDataConverter
 
 #include "ImageFormats.hpp"
 

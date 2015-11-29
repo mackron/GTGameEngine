@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_ImageFormats_hpp_
-#define __GTLib_ImageFormats_hpp_
+#ifndef GT_ImageFormats
+#define GT_ImageFormats
 
 #include <cstddef>
 

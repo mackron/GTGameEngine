@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_BinarySearchTree_hpp_
-#define __GTLib_BinarySearchTree_hpp_
+#ifndef GT_BinarySearchTree
+#define GT_BinarySearchTree
 
 namespace GT
 {

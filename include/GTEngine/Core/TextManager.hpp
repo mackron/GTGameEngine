@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTType_TextManager_hpp_
-#define __GTType_TextManager_hpp_
+#ifndef __GTType_TextManager
+#define __GTType_TextManager
 
 #include <GTEngine/Core/Font.hpp>
 #include <GTEngine/Core/TextMesh.hpp>

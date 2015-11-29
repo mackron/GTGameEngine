@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_RenderingModes_hpp_
-#define __GTLib_RenderingModes_hpp_
+#ifndef GT_RenderingModes
+#define GT_RenderingModes
 
 namespace GT
 {

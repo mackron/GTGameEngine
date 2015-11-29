@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTEngine_GUIImageManager_hpp_
-#define __GTEngine_GUIImageManager_hpp_
+#ifndef GT_GUIImageManager
+#define GT_GUIImageManager
 
 #include <GTEngine/GUI/ImageManager.hpp>
 #include "Rendering/Texture2D.hpp"

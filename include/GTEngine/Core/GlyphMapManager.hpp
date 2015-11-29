@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GlyphMapManager_hpp_
-#define __GTLib_GlyphMapManager_hpp_
+#ifndef GT_GlyphMapManager
+#define GT_GlyphMapManager
 
 #include <cstddef>
 #include <cstdint>
@@ -100,7 +100,7 @@ namespace GT
     };
 }
 
-#endif // __GTLib_GlyphMapManager_hpp_
+#endif // GT_GlyphMapManager
 
 
 

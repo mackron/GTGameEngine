@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Iterator_hpp_
-#define __GTLib_Strings_Iterator_hpp_
+#ifndef GT_Strings_Iterator
+#define GT_Strings_Iterator
 
 #include "NextChar.hpp"
 #include <cstdint>

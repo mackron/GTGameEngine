@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_System_hpp_
-#define __GTLib_System_hpp_
+#ifndef GT_System
+#define GT_System
 
 #include <cstddef>
 #include "Vector.hpp"

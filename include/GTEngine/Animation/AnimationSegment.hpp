@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_AnimationSegment_hpp_
-#define __GTEngine_AnimationSegment_hpp_
+#ifndef GT_AnimationSegment
+#define GT_AnimationSegment
 
 #include <cstdint>
 #include <GTEngine/Core/String.hpp>

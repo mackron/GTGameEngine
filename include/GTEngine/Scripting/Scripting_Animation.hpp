@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Scripting_Animation_hpp_
-#define __GTEngine_Scripting_Animation_hpp_
+#ifndef GT_Scripting_Animation
+#define GT_Scripting_Animation
 
 #include "../GameScript.hpp"
 #include "../Animation/AnimationSequence.hpp"

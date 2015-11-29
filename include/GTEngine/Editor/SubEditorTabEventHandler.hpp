@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SubEditorTabEventHandler_hpp_
-#define __GTEngine_SubEditorTabEventHandler_hpp_
+#ifndef GT_SubEditorTabEventHandler
+#define GT_SubEditorTabEventHandler
 
 #include <GTEngine/GUI/ElementEventHandler.hpp>
 

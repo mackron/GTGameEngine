@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_MaterialEditor_hpp_
-#define __GTEngine_MaterialEditor_hpp_
+#ifndef GT_MaterialEditor
+#define GT_MaterialEditor
 
 #include "../SubEditor.hpp"
 #include "../Editor3DViewportEventHandler.hpp"

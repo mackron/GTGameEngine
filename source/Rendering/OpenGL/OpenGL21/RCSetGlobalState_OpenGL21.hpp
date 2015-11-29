@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_OpenGL21_RCSetGlobalState_hpp_
-#define __GTEngine_Rendering_OpenGL21_RCSetGlobalState_hpp_
+#ifndef GT_Rendering_OpenGL21_RCSetGlobalState
+#define GT_Rendering_OpenGL21_RCSetGlobalState
 
 #include <GTEngine/Core/Vector.hpp>
 #include <gtgl/gtgl.h>

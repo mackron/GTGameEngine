@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Create_hpp_
-#define __GTLib_Strings_Create_hpp_
+#ifndef GT_Strings_Create
+#define GT_Strings_Create
 
 #include "../BasicBuffer.hpp"
 #include "../stdio.hpp"

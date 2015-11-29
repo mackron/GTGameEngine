@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Threading_Thread_hpp_
-#define __GTLib_Threading_Thread_hpp_
+#ifndef GT_Threading_Thread
+#define GT_Threading_Thread
 
 #include "Job.hpp"
 

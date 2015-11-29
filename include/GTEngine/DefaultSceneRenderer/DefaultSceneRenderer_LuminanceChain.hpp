@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneRenderer_LuminanceChain_hpp_
-#define __GTEngine_DefaultSceneRenderer_LuminanceChain_hpp_
+#ifndef GT_DefaultSceneRenderer_LuminanceChain
+#define GT_DefaultSceneRenderer_LuminanceChain
 
 #include <GTEngine/Core/Vector.hpp>
 

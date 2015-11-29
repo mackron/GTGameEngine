@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Benchmarker_hpp_
-#define __GTLib_Benchmarker_hpp_
+#ifndef GT_Benchmarker
+#define GT_Benchmarker
 
 #include "TimingCommon.hpp"
 

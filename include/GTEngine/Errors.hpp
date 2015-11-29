@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Errors_hpp_
-#define __GTLib_Errors_hpp_
+#ifndef GT_Errors
+#define GT_Errors
 
 #include "Errors.hpp"
 #include <cstdarg>  // For variable arguments.

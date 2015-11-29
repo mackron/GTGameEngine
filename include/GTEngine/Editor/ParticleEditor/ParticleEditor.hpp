@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ParticleEditor_hpp_
-#define __GTEngine_ParticleEditor_hpp_
+#ifndef GT_ParticleEditor
+#define GT_ParticleEditor
 
 #include "../SubEditor.hpp"
 #include "../Editor3DViewportEventHandler.hpp"

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_GameEventCodes_hpp_
-#define __GTEngine_GameEventCodes_hpp_
+#ifndef GT_GameEventCodes
+#define GT_GameEventCodes
 
 #include <cstddef>
 

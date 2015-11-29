@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_LineIterator_hpp_
-#define __GTLib_LineIterator_hpp_
+#ifndef GT_LineIterator
+#define GT_LineIterator
 
 #include "Find.hpp"
 #include "Tokenizer.hpp"

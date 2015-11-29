@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_Engine_SoundStreamer_Vorbis_hpp_
-#define __GT_Engine_SoundStreamer_Vorbis_hpp_
+#ifndef GT_SoundStreamer_Vorbis
+#define GT_SoundStreamer_Vorbis
 
 #include <GTEngine/Config.hpp>
 

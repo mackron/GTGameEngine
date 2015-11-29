@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_Engine_DefaultMessageHandler_hpp_
-#define __GT_Engine_DefaultMessageHandler_hpp_
+#ifndef GT_DefaultMessageHandler
+#define GT_DefaultMessageHandler
 
 #include "MessageHandler.hpp"
 #include <GTEngine/Core/Log.hpp>
@@ -41,4 +41,4 @@ namespace GT
     };
 }
 
-#endif // !__GT_Engine_DefaultMessageHandler_hpp_
+#endif // !GT_DefaultMessageHandler

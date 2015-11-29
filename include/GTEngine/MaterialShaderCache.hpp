@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_MaterialShaderCache_hpp_
-#define __GTEngine_MaterialShaderCache_hpp_
+#ifndef GT_MaterialShaderCache
+#define GT_MaterialShaderCache
 
 #include "Material.hpp"
 #include <GTEngine/Core/Map.hpp>

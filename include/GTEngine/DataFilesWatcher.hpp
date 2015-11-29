@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DataFilesWatcher_hpp_
-#define __GTEngine_DataFilesWatcher_hpp_
+#ifndef GT_DataFilesWatcher
+#define GT_DataFilesWatcher
 
 #include <GTEngine/Core/Dictionary.hpp>
 #include <GTEngine/Core/List.hpp>

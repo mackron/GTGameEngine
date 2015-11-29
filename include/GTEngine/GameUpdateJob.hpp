@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_GameUpdateJob_hpp_
-#define __GTEngine_GameUpdateJob_hpp_
+#ifndef GT_GameUpdateJob
+#define GT_GameUpdateJob
 
 #include <GTEngine/Core/Threading/Job.hpp>
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_NavigationMesh_hpp_
-#define __GTEngine_NavigationMesh_hpp_
+#ifndef GT_NavigationMesh
+#define GT_NavigationMesh
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Log_hpp_
-#define __GTLib_Log_hpp_
+#ifndef GT_Log
+#define GT_Log
 
 #include "Vector.hpp"
 #include <easy_fs/easy_vfs.h>

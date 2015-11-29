@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_Engine_EngineContext
-#define __GT_Engine_EngineContext
+#ifndef GT_EngineContext
+#define GT_EngineContext
 
 #include "ApplicationConfig.hpp"
 #include "MessageDispatcher.hpp"

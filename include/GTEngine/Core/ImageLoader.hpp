@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_ImageLoader_hpp_
-#define __GTLib_ImageLoader_hpp_
+#ifndef GT_ImageLoader
+#define GT_ImageLoader
 
 #include "ImageFileInfo.hpp"
 #include "Mipmap.hpp"

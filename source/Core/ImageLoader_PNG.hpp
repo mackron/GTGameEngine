@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_ImageLoader_PNG_hpp_
-#define __GTLib_ImageLoader_PNG_hpp_
+#ifndef GT_ImageLoader_PNG
+#define GT_ImageLoader_PNG
 #ifndef GTLIB_NO_PNG
 
 #include <GTEngine/Core/ImageLoader.hpp>

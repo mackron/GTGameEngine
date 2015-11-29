@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneUpdateManager_hpp_
-#define __GTEngine_DefaultSceneUpdateManager_hpp_
+#ifndef GT_DefaultSceneUpdateManager
+#define GT_DefaultSceneUpdateManager
 
 #include "SceneUpdateManager.hpp"
 #include "SceneNode.hpp"

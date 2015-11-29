@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_ShaderState_OpenGL21_hpp_
-#define __GTEngine_Rendering_ShaderState_OpenGL21_hpp_
+#ifndef GT_Rendering_ShaderState_OpenGL21
+#define GT_Rendering_ShaderState_OpenGL21
 
 #include <GTEngine/Math.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>

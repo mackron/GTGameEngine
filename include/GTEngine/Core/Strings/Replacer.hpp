@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Replacer_hpp_
-#define __GTLib_Strings_Replacer_hpp_
+#ifndef GT_Strings_Replacer
+#define GT_Strings_Replacer
 
 #include "../BasicBuffer.hpp"
 #include "Size.hpp"

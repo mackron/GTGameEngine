@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_CPUVertexShader_Skinning_hpp_
-#define __GTEngine_CPUVertexShader_Skinning_hpp_
+#ifndef GT_CPUVertexShader_Skinning
+#define GT_CPUVertexShader_Skinning
 
 #include "CPUVertexShader.hpp"
 #include "SkinningVertexAttribute.hpp"

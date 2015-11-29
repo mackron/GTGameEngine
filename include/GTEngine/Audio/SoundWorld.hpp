@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_Engine_SoundWorld_hpp_
-#define __GT_Engine_SoundWorld_hpp_
+#ifndef GT_SoundWorld
+#define GT_SoundWorld
 
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/Threading/Mutex.hpp>
@@ -69,4 +69,4 @@ namespace GT
     };
 }
 
-#endif // !__GT_Engine_SoundWorld_hpp_
+#endif // !GT_SoundWorld

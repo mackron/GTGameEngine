@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_WindowEventHandler_hpp_
-#define __GTLib_WindowEventHandler_hpp_
+#ifndef GT_WindowEventHandler
+#define GT_WindowEventHandler
 
 #include "MouseButtons.hpp"
 #include "Keys.hpp"

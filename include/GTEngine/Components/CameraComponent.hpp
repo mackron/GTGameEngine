@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_CameraComponent_hpp_
-#define __GTEngine_CameraComponent_hpp_
+#ifndef GT_CameraComponent
+#define GT_CameraComponent
 
 #include "../Component.hpp"
 #include "../Math.hpp"

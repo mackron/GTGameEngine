@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_FontEngine_hpp_
-#define __GTLib_FontEngine_hpp_
+#ifndef GT_FontEngine
+#define GT_FontEngine
 
 #include "GlyphMapManager.hpp"
 #include "FontInfo.hpp"
@@ -228,4 +228,4 @@ namespace GT
     };
 }
 
-#endif // __GTLib_FontEngine_hpp_
+#endif // GT_FontEngine

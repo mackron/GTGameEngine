@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_ServerXMLParser_hpp_
-#define __GTLib_GUI_ServerXMLParser_hpp_
+#ifndef GT_GUI_ServerXMLParser
+#define GT_GUI_ServerXMLParser
 
 #include "ServerEventHandler.hpp"
 #include <GTEngine/Core/BasicBuffer.hpp>

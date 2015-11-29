@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_TypeConversion_hpp_
-#define __GTEngine_TypeConversion_hpp_
+#ifndef GT_TypeConversion
+#define GT_TypeConversion
 
 #include <GTEngine/Rendering/TextureFilters.hpp>
 #include <GTEngine/Rendering/TextureWrapModes.hpp>

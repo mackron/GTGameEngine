@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ApplicationConfig_hpp_
-#define __GTEngine_ApplicationConfig_hpp_
+#ifndef GT_ApplicationConfig
+#define GT_ApplicationConfig
 
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/String.hpp>

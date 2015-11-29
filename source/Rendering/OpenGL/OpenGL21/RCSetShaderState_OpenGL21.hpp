@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_OpenGL21_RCSetShaderState_hpp_
-#define __GTEngine_Rendering_OpenGL21_RCSetShaderState_hpp_
+#ifndef GT_Rendering_OpenGL21_RCSetShaderState
+#define GT_Rendering_OpenGL21_RCSetShaderState
 
 #include <GTEngine/ShaderParameterCache.hpp>
 #include <GTEngine/Core/Dictionary.hpp>

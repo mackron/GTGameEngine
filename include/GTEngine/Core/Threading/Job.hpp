@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Job_hpp_
-#define __GTLib_Job_hpp_
+#ifndef GT_Job
+#define GT_Job
 
 namespace GT
 {

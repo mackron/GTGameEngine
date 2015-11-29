@@ -29,8 +29,8 @@
 *   work.
 */
 
-#ifndef __GTLib_X11_hpp_
-#define __GTLib_X11_hpp_
+#ifndef GT_X11
+#define GT_X11
 
 #ifdef __linux__
 

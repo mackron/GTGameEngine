@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Copy_hpp_
-#define __GTLib_Strings_Copy_hpp_
+#ifndef GT_Strings_Copy
+#define GT_Strings_Copy
 
 #include "Iterator.hpp"
 #include "Size.hpp"

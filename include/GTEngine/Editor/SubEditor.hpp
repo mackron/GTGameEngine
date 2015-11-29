@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SubEditor_hpp_
-#define __GTEngine_SubEditor_hpp_
+#ifndef GT_SubEditor
+#define GT_SubEditor
 
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/GUI/Server.hpp>

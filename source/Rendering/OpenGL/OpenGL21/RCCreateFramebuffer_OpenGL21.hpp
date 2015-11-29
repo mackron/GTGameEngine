@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_OpenGL21_RCCreateFramebuffer_hpp_
-#define __GTEngine_Rendering_OpenGL21_RCCreateFramebuffer_hpp_
+#ifndef GT_Rendering_OpenGL21_RCCreateFramebuffer
+#define GT_Rendering_OpenGL21_RCCreateFramebuffer
 
 #include "../../RenderCommand.hpp"
 #include "FramebufferState_OpenGL21.hpp"

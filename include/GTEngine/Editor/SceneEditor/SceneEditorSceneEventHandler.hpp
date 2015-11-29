@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneEditorSceneEventHandler_hpp_
-#define __GTEngine_SceneEditorSceneEventHandler_hpp_
+#ifndef GT_SceneEditorSceneEventHandler
+#define GT_SceneEditorSceneEventHandler
 
 #include "../../SceneEventHandler.hpp"
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_StyleScriptCompiler_hpp_
-#define __GTLib_GUI_StyleScriptCompiler_hpp_
+#ifndef GT_GUI_StyleScriptCompiler
+#define GT_GUI_StyleScriptCompiler
 
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Vector.hpp>

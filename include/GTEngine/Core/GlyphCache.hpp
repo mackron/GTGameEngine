@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GlyphCache_hpp_
-#define __GTLib_GlyphCache_hpp_
+#ifndef GT_GlyphCache
+#define GT_GlyphCache
 
 #include "FontEngine.hpp"
 #include "GlyphMapLayout.hpp"
@@ -136,4 +136,4 @@ namespace GT
     };
 }
 
-#endif // __GTLib_GlyphCache_hpp_
+#endif // GT_GlyphCache

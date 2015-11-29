@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ModelEditor_hpp_
-#define __GTEngine_ModelEditor_hpp_
+#ifndef GT_ModelEditor
+#define GT_ModelEditor
 
 #include "../SubEditor.hpp"
 #include "../Editor3DViewportEventHandler.hpp"

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_OpenGL21_RCDeleteShader_hpp_
-#define __GTEngine_Rendering_OpenGL21_RCDeleteShader_hpp_
+#ifndef GT_Rendering_OpenGL21_RCDeleteShader
+#define GT_Rendering_OpenGL21_RCDeleteShader
 
 #include <gtgl/gtgl.h>
 

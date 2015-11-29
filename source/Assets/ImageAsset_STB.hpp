@@ -51,4 +51,4 @@ namespace GT
     };
 }
 
-#endif // !__GT_ImageAsset_STB_hpp_
+#endif // !GT_ImageAsset_STB

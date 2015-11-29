@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ModelDefinition_hpp_
-#define __GTEngine_ModelDefinition_hpp_
+#ifndef GT_ModelDefinition
+#define GT_ModelDefinition
 
 #include "Rendering/VertexArray.hpp"
 #include "Material.hpp"

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_CollisionShapeTypes_hpp_
-#define __GTEngine_CollisionShapeTypes_hpp_
+#ifndef GT_CollisionShapeTypes
+#define GT_CollisionShapeTypes
 
 #include <BulletCollision/CollisionShapes/btCylinderShape.h>
 #include <BulletCollision/CollisionShapes/btCapsuleShape.h>

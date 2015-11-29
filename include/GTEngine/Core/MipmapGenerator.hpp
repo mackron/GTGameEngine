@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_MipmapGenerator_hpp_
-#define __GTLib_MipmapGenerator_hpp_
+#ifndef GT_MipmapGenerator
+#define GT_MipmapGenerator
 
 #include "Mipmap.hpp"
 #include "ImageUtils.hpp"

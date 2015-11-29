@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Serializer_hpp_
-#define __GTLib_Serializer_hpp_
+#ifndef GT_Serializer
+#define GT_Serializer
 
 #include <cstdlib>
 #include <cstring>      // For memcpy()

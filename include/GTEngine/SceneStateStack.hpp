@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneStateStack_hpp_
-#define __GTEngine_SceneStateStack_hpp_
+#ifndef GT_SceneStateStack
+#define GT_SceneStateStack
 
 #include "SceneStateStackBranch.hpp"
 #include <GTEngine/Core/Map.hpp>

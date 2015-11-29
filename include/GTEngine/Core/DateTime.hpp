@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_DateTime_hpp_
-#define __GTLib_DateTime_hpp_
+#ifndef GT_DateTime
+#define GT_DateTime
 
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Parse.hpp>

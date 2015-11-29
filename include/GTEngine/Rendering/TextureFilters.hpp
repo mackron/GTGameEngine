@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_TextureFilters_hpp_
-#define __GTEngine_Rendering_TextureFilters_hpp_
+#ifndef GT_Rendering_TextureFilters
+#define GT_Rendering_TextureFilters
 
 namespace GT
 {

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_Mesh_hpp_
-#define __GTLib_GUI_Mesh_hpp_
+#ifndef GT_GUI_Mesh
+#define GT_GUI_Mesh
 
 #include "../ImageManager.hpp"
 #include <GTEngine/Core/Colour.hpp>

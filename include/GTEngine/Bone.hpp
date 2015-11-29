@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Bone_hpp_
-#define __GTEngine_Bone_hpp_
+#ifndef GT_Bone
+#define GT_Bone
 
 #include "Math.hpp"
 #include <GTEngine/Core/Vector.hpp>

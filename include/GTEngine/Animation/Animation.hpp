@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Animation_hpp_
-#define __GTEngine_Animation_hpp_
+#ifndef GT_Animation
+#define GT_Animation
 
 #include "AnimationChannel.hpp"
 #include "AnimationSegment.hpp"

@@ -133,6 +133,6 @@ namespace GT
     };
 }
 
-#endif // !__GT_ModelAsset_MD2_hpp_
+#endif // !GT_ModelAsset_MD2
 
 #endif

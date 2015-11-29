@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_MessageDispatcher_hpp_
-#define __GT_MessageDispatcher_hpp_
+#ifndef GT_MessageDispatcher
+#define GT_MessageDispatcher
 
 #include "MessageHandler.hpp"
 #include <GTEngine/Core/Vector.hpp>
@@ -82,4 +82,4 @@ namespace GT
     };
 }
 
-#endif // !__GT_MessageDispatcher_hpp_
+#endif // !GT_MessageDispatcher

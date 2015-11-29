@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ProximityComponent_hpp_
-#define __GTEngine_ProximityComponent_hpp_
+#ifndef GT_ProximityComponent
+#define GT_ProximityComponent
 
 #include "CollisionShapeComponent.hpp"
 #include "../AlignedType.hpp"

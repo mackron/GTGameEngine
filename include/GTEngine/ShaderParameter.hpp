@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ShaderParameter_hpp_
-#define __GTEngine_ShaderParameter_hpp_
+#ifndef GT_ShaderParameter
+#define GT_ShaderParameter
 
 #include "Texture2DLibrary.hpp"
 #include "Math.hpp"

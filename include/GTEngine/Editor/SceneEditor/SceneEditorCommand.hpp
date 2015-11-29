@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneEditorCommand_hpp_
-#define __GTEngine_SceneEditorCommand_hpp_
+#ifndef GT_SceneEditorCommand
+#define GT_SceneEditorCommand
 
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/Serializer.hpp>

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Component_hpp_
-#define __GTEngine_Component_hpp_
+#ifndef GT_Component
+#define GT_Component
 
 #include <GTEngine/Serialization.hpp>
 

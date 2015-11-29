@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_WindowEventCallback_hpp_
-#define __GTLib_WindowEventCallback_hpp_
+#ifndef GT_WindowEventCallback
+#define GT_WindowEventCallback
 
 #include "WindowEvent.hpp"
 
@@ -171,4 +171,4 @@ namespace GT
     };
 }
 
-#endif // !__GTLib_WindowEventCallback_hpp_
+#endif // !GT_WindowEventCallback

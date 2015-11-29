@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTType_TextMesh_hpp_
-#define __GTType_TextMesh_hpp_
+#ifndef __GTType_TextMesh
+#define __GTType_TextMesh
 
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/GlyphMapManager.hpp>       // <-- For GlyphMapHandle.

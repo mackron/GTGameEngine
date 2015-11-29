@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_PointToPointConstraintComponent_hpp_
-#define __GTEngine_PointToPointConstraintComponent_hpp_
+#ifndef GT_PointToPointConstraintComponent
+#define GT_PointToPointConstraintComponent
 
 #include "../Component.hpp"
 #include "../Physics.hpp"

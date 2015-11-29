@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Math_hpp_
-#define __GTEngine_Math_hpp_
+#ifndef GT_Math
+#define GT_Math
 
 #if defined(_MSC_VER)
     #pragma warning(push)

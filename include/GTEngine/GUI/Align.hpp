@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_Align_hpp_
-#define __GTLib_GUI_Align_hpp_
+#ifndef GT_GUI_Align
+#define GT_GUI_Align
 
 namespace GTGUI
 {

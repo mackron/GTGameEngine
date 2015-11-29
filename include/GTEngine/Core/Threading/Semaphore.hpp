@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Threading_Semaphore_hpp_
-#define __GTLib_Threading_Semaphore_hpp_
+#ifndef GT_Threading_Semaphore
+#define GT_Threading_Semaphore
 
 #include <cstdint>
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneNodeEventHandler_hpp_
-#define __GTEngine_SceneNodeEventHandler_hpp_
+#ifndef GT_SceneNodeEventHandler
+#define GT_SceneNodeEventHandler
 
 #include "Physics/Bullet.hpp"
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneCullingManager_hpp_
-#define __GTEngine_DefaultSceneCullingManager_hpp_
+#ifndef GT_DefaultSceneCullingManager
+#define GT_DefaultSceneCullingManager
 
 #include "SceneCullingManager.hpp"
 #include "Physics/CollisionWorld.hpp"

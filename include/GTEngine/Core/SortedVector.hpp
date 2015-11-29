@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_SortedVector_hpp_
-#define __GTLib_SortedVector_hpp_
+#ifndef GT_SortedVector
+#define GT_SortedVector
 
 #include "stdlib.hpp"
 #include <cstring>          // For memcpy().

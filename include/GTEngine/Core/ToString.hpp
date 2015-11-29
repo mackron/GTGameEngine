@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_ToString_hpp_
-#define __GTLib_ToString_hpp_
+#ifndef GT_ToString
+#define GT_ToString
 
 #include <cstdint>
 #include "String.hpp"

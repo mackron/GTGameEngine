@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_StyleClass_hpp_
-#define __GTLib_GUI_StyleClass_hpp_
+#ifndef GT_GUI_StyleClass
+#define GT_GUI_StyleClass
 
 #include <GTEngine/Script.hpp>
 #include <GTEngine/Core/List.hpp>

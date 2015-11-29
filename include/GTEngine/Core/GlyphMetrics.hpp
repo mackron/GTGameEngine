@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTTYpe_GlyphMetrics_hpp_
-#define __GTTYpe_GlyphMetrics_hpp_
+#ifndef __GTTYpe_GlyphMetrics
+#define __GTTYpe_GlyphMetrics
 
 namespace GT
 {
@@ -32,4 +32,4 @@ namespace GT
     };
 }
 
-#endif // __GTTYpe_GlyphMetrics_hpp_
+#endif // __GTTYpe_GlyphMetrics

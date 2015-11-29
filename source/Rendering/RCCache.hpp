@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_RCCache_hpp_
-#define __GTEngine_Rendering_RCCache_hpp_
+#ifndef GT_Rendering_RCCache
+#define GT_Rendering_RCCache
 
 #include <GTEngine/Core/Vector.hpp>
 #include <new>

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_FontServer_hpp_
-#define __GTLib_FontServer_hpp_
+#ifndef GT_FontServer
+#define GT_FontServer
 
 #include "FontEngine.hpp"
 #include "FontEventHandler.hpp"

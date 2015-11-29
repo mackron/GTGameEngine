@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ThreadCache_hpp_
-#define __GTEngine_ThreadCache_hpp_
+#ifndef GT_ThreadCache
+#define GT_ThreadCache
 
 #include <GTEngine/Core/Threading.hpp>
 #include <cstddef>

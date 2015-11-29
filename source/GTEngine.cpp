@@ -125,17 +125,4 @@ namespace GT
         delete g_EngineContext;
         g_EngineContext = nullptr;
     }
-
-
-#if 0
-    const char* GetExecutableDirectory()
-    {
-        if (g_EngineContext != nullptr)
-        {
-            return g_EngineContext->GetExecutableDirectoryAbsolutePath();
-        }
-
-        return nullptr;
-    }
-#endif
 }

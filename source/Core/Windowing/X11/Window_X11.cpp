@@ -14,7 +14,7 @@ namespace GT
 {
     // These externs are defined in WindowManagement.cpp
     extern Atom g_atom_WM_DELETE_WINDOW;
-    extern Atom g_atom_GT_WINDOW;
+    extern Atom g_atomGT_WINDOW;
     
     // Flags.
     extern const uint32_t DeleteColormap;
@@ -78,7 +78,7 @@ namespace GT
             
             
             // We need to map our window handle to the X11 window so we can retrieve it from the X11 window when the need arises.
-            XChangeProperty(window->display, window->window, g_atom_GT_WINDOW, XA_INTEGER, 8, PropModeReplace, reinterpret_cast<unsigned char*>(&window), sizeof(window));
+            XChangeProperty(window->display, window->window, g_atomGT_WINDOW, XA_INTEGER, 8, PropModeReplace, reinterpret_cast<unsigned char*>(&window), sizeof(window));
             
             return window;
         }

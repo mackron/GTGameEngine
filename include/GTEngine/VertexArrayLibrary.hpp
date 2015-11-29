@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_VertexArrayLibrary_hpp_
-#define __GTEngine_VertexArrayLibrary_hpp_
+#ifndef GT_VertexArrayLibrary
+#define GT_VertexArrayLibrary
 
 #include "Rendering/VertexArray.hpp"
 #include "Physics.hpp"

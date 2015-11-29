@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_GameObject_hpp_
-#define __GTEngine_GameObject_hpp_
+#ifndef GT_GameObject
+#define GT_GameObject
 
 #include "SceneNode.hpp"
 

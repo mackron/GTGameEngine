@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Particle_hpp_
-#define __GTEngine_Particle_hpp_
+#ifndef GT_Particle
+#define GT_Particle
 
 #include "Math.hpp"
 

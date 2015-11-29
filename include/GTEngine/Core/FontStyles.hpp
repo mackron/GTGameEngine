@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_FontStyles_hpp_
-#define __GTLib_FontStyles_hpp_
+#ifndef GT_FontStyles
+#define GT_FontStyles
 
 #include <cstdint>
 
@@ -19,5 +19,5 @@ namespace GT
     static const uint32_t FontStyle_Oblique    = (1 << 9);
 }
 
-#endif // __GTLib_FontStyles_hpp_
+#endif // GT_FontStyles
 

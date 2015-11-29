@@ -39,7 +39,7 @@ namespace GT
     Atom g_atom_CLIPBOARD        = 0;
     Atom g_atom_TARGETS          = 0;
     Atom g_atom_TEXT             = 0;
-    Atom g_atom_GT_WINDOW    = 0;
+    Atom g_atomGT_WINDOW    = 0;
     
     // Flags.
     extern const uint32_t DeleteColormap             = (1 << 0);
@@ -226,7 +226,7 @@ namespace GT
                 g_atom_CLIPBOARD        = XInternAtom(g_X11Display, "CLIPBOARD",        True);
                 g_atom_TARGETS          = XInternAtom(g_X11Display, "TARGETS",          True);
                 g_atom_TEXT             = XInternAtom(g_X11Display, "TEXT",             True);
-                g_atom_GT_WINDOW    = XInternAtom(g_X11Display, "GT_WINDOW",    False);     // <-- For assigning a WindowHandle to an X11 window.
+                g_atomGT_WINDOW    = XInternAtom(g_X11Display, "GT_WINDOW",    False);     // <-- For assigning a WindowHandle to an X11 window.
             }
         }
         
@@ -698,7 +698,7 @@ namespace GT
         unsigned long  nitems;
         unsigned long  dataSizeInBytes;
         unsigned char* windowHandleBytes;
-        if (XGetWindowProperty(display, window, g_atom_GT_WINDOW, 0, sizeof(WindowHandle), False, AnyPropertyType, &type, &format, &nitems, &dataSizeInBytes, &windowHandleBytes) == Success && windowHandleBytes != nullptr)
+        if (XGetWindowProperty(display, window, g_atomGT_WINDOW, 0, sizeof(WindowHandle), False, AnyPropertyType, &type, &format, &nitems, &dataSizeInBytes, &windowHandleBytes) == Success && windowHandleBytes != nullptr)
         {
             if (nitems == sizeof(WindowHandle))
             {

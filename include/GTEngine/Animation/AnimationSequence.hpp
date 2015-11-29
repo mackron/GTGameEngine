@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_AnimationSequence_hpp_
-#define __GTEngine_AnimationSequence_hpp_
+#ifndef GT_AnimationSequence
+#define GT_AnimationSequence
 
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Vector.hpp>

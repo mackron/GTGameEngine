@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_GUIEventHandler_hpp_
-#define __GTEngine_GUIEventHandler_hpp_
+#ifndef GT_GUIEventHandler
+#define GT_GUIEventHandler
 
 #include <GTEngine/GUI/ServerEventHandler.hpp>
 

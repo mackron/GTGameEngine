@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Model_hpp_
-#define __GTEngine_Model_hpp_
+#ifndef GT_Model
+#define GT_Model
 
 #include "ModelDefinition.hpp"
 #include "Mesh.hpp"

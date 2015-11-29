@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Editor3DViewportEventHandler_hpp_
-#define __GTEngine_Editor3DViewportEventHandler_hpp_
+#ifndef GT_Editor3DViewportEventHandler
+#define GT_Editor3DViewportEventHandler
 
 #include <GTEngine/GUI/ElementEventHandler.hpp>
 #include "../Rendering/VertexArray.hpp"

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTEngine_GamePackager_hpp_
-#define __GTEngine_GamePackager_hpp_
+#ifndef GT_GamePackager
+#define GT_GamePackager
 
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Vector.hpp>

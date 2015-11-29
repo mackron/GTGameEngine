@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_GameWindowEventHandler_hpp_
-#define __GTEngine_GameWindowEventHandler_hpp_
+#ifndef GT_GameWindowEventHandler
+#define GT_GameWindowEventHandler
 
 #include <GTEngine/Core/Window.hpp>
 

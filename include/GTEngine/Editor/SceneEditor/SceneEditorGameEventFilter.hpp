@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTGameEngine_SceneEditorGameEventFilter_hpp_
-#define __GTGameEngine_SceneEditorGameEventFilter_hpp_
+#ifndef GT_SceneEditorGameEventFilter
+#define GT_SceneEditorGameEventFilter
 
 #include "../../GameEventFilter.hpp"
 #include <GTEngine/GUI/Element.hpp>

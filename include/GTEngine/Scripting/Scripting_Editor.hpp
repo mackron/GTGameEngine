@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Scripting_Editor_hpp_
-#define __GTEngine_Scripting_Editor_hpp_
+#ifndef GT_Scripting_Editor
+#define GT_Scripting_Editor
 
 #include "../GameScript.hpp"
 

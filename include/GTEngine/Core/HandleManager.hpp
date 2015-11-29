@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_HandleManager_hpp_
-#define __GT_HandleManager_hpp_
+#ifndef GT_HandleManager
+#define GT_HandleManager
 
 #include "Vector.hpp"
 #include <functional>
@@ -218,4 +218,4 @@ namespace GT
     };
 }
 
-#endif // !__GT_HandleManager_hpp_
+#endif // !GT_HandleManager

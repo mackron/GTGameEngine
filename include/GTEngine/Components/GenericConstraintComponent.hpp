@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_GenericConstraintComponent_hpp_
-#define __GTEngine_GenericConstraintComponent_hpp_
+#ifndef GT_GenericConstraintComponent
+#define GT_GenericConstraintComponent
 
 #include "../Component.hpp"
 #include "../Physics.hpp"

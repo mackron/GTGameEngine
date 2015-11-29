@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_List_hpp_
-#define __GTLib_Strings_List_hpp_
+#ifndef GT_Strings_List
+#define GT_Strings_List
 
 #include "../stdlib.hpp"
 #include "Size.hpp"

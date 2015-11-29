@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ScriptComponent_hpp_
-#define __GTEngine_ScriptComponent_hpp_
+#ifndef GT_ScriptComponent
+#define GT_ScriptComponent
 
 #include "../Component.hpp"
 #include "../ScriptDefinition.hpp"

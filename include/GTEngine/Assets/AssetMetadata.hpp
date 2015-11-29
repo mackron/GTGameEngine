@@ -144,4 +144,4 @@ namespace GT
     };
 }
 
-#endif // !__GT_AseetMetadata_hpp_
+#endif // !GT_AseetMetadata

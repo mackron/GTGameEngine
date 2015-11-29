@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_OpenGL21_RCCreateShader_hpp_
-#define __GTEngine_Rendering_OpenGL21_RCCreateShader_hpp_
+#ifndef GT_Rendering_OpenGL21_RCCreateShader
+#define GT_Rendering_OpenGL21_RCCreateShader
 
 #include <GTEngine/Core/String.hpp>
 #include <gtgl/gtgl.h>

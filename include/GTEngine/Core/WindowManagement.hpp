@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_WindowManagement_hpp_
-#define __GTLib_WindowManagement_hpp_
+#ifndef GT_WindowManagement
+#define GT_WindowManagement
 
 #include "WindowEventCallback.hpp"
 

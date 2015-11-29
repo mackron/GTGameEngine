@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneStateStackRestoreCommands_hpp_
-#define __GTEngine_SceneStateStackRestoreCommands_hpp_
+#ifndef GT_SceneStateStackRestoreCommands
+#define GT_SceneStateStackRestoreCommands
 
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/Map.hpp>

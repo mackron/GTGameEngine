@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_VertexArray_hpp_
-#define __GTEngine_VertexArray_hpp_
+#ifndef GT_VertexArray
+#define GT_VertexArray
 
 #include "VertexFormat.hpp"
 #include "../Math.hpp"

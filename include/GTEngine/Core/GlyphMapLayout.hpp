@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GlyphMapLayout_hpp_
-#define __GTLib_GlyphMapLayout_hpp_
+#ifndef GT_GlyphMapLayout
+#define GT_GlyphMapLayout
 
 #include <GTEngine/Core/Vector.hpp>
 
@@ -92,4 +92,4 @@ namespace GT
     };
 }
 
-#endif // __GTLib_GlyphMapLayout_hpp_
+#endif // GT_GlyphMapLayout

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_AnimationTrack_hpp_
-#define __GTEngine_AnimationTrack_hpp_
+#ifndef GT_AnimationTrack
+#define GT_AnimationTrack
 
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Serialization.hpp>

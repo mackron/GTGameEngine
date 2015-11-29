@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SkinningVertexAttribute_hpp_
-#define __GTEngine_SkinningVertexAttribute_hpp_
+#ifndef GT_SkinningVertexAttribute
+#define GT_SkinningVertexAttribute
 
 #include <GTEngine/Bone.hpp>
 #include <GTEngine/Core/Vector.hpp>

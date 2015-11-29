@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Timing_TimingCommon_hpp_
-#define __GTLib_Timing_TimingCommon_hpp_
+#ifndef GT_Timing_TimingCommon
+#define GT_Timing_TimingCommon
 
 namespace GT
 {

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Framebuffer_hpp_
-#define __GTEngine_Framebuffer_hpp_
+#ifndef GT_Framebuffer
+#define GT_Framebuffer
 
 #include <GTEngine/Core/Map.hpp>
 #include <cstddef>

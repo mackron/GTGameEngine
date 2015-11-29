@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DynamicsComponent_hpp_
-#define __GTEngine_DynamicsComponent_hpp_
+#ifndef GT_DynamicsComponent
+#define GT_DynamicsComponent
 
 #include "CollisionShapeComponent.hpp"
 #include "../AlignedType.hpp"

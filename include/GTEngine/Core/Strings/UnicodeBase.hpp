@@ -2,8 +2,8 @@
 *   Some of the code here is taken from ftp://www.unicode.org/Public/PROGRAMS/CVTUTF/.
 *   The full copyright notice can be found at the bottom of this document.
 */
-#ifndef __GTLib_Strings_UnicodeBase_hpp_
-#define __GTLib_Strings_UnicodeBase_hpp_
+#ifndef GT_Strings_UnicodeBase
+#define GT_Strings_UnicodeBase
 
 #include <cstddef>
 #include <cassert>

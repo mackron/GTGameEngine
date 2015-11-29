@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_ImageUtils_hpp_
-#define __GTLib_ImageUtils_hpp_
+#ifndef GT_ImageUtils
+#define GT_ImageUtils
 
 #include "ImageFormats.hpp"
 

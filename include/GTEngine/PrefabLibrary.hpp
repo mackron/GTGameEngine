@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_PrefabLibrary_hpp_
-#define __GTEngine_PrefabLibrary_hpp_
+#ifndef GT_PrefabLibrary
+#define GT_PrefabLibrary
 
 #include "Prefab.hpp"
 #include <utility>

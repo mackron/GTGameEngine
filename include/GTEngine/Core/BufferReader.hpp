@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_BufferReader_hpp_
-#define __GT_BufferReader_hpp_
+#ifndef GT_BufferReader
+#define GT_BufferReader
 
 #include <cstdint>
 #include <cstring>

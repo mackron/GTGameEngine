@@ -2,8 +2,8 @@
 
 // Clang has errors with C++0x and noexcept when using std::map. We will fix it by doing our own map... This is only very
 // basic. Need to do some documentation. Hopefully Clang will be fixed for their 3.0 release.
-#ifndef __GTLib_Map_hpp_
-#define __GTLib_Map_hpp_
+#ifndef GT_Map
+#define GT_Map
 
 #include "stdlib.hpp"
 

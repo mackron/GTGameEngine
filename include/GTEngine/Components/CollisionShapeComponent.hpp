@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_CollisionShapeComponent_hpp_
-#define __GTEngine_CollisionShapeComponent_hpp_
+#ifndef GT_CollisionShapeComponent
+#define GT_CollisionShapeComponent
 
 #include "../Physics.hpp"
 #include "../Component.hpp"

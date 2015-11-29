@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ShadowVolume_hpp_
-#define __GTEngine_ShadowVolume_hpp_
+#ifndef GT_ShadowVolume
+#define GT_ShadowVolume
 
 #include "Rendering/VertexArray.hpp"
 #include "Math.hpp"

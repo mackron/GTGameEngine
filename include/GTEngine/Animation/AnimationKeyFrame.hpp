@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_AnimationKeyFrame_hpp_
-#define __GTEngine_AnimationKeyFrame_hpp_
+#ifndef GT_AnimationKeyFrame
+#define GT_AnimationKeyFrame
 
 namespace GT
 {

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_IO_hpp_
-#define __GTEngine_IO_hpp_
+#ifndef GT_IO
+#define GT_IO
 
 #include <GTEngine/Assets/AssetTypes.hpp>
 #include <GTEngine/Core/String.hpp>

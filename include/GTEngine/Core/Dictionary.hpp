@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Dictionary_hpp_
-#define __GTLib_Dictionary_hpp_
+#ifndef GT_Dictionary
+#define GT_Dictionary
 
 #include "Strings/Compare.hpp"
 #include "Strings/Create.hpp"

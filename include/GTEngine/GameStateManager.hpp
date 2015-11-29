@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GT_Engine_GameStateManager_hpp_
-#define __GT_Engine_GameStateManager_hpp_
+#ifndef GT_GameStateManager
+#define GT_GameStateManager
 
 #include <GTEngine/Core/Serializer.hpp>
 #include <GTEngine/Core/Deserializer.hpp>

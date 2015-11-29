@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ImageEditor_hpp_
-#define __GTEngine_ImageEditor_hpp_
+#ifndef GT_ImageEditor
+#define GT_ImageEditor
 
 #include "../SubEditor.hpp"
 #include "../../Texture2DLibrary.hpp"

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneCullingDbvtPolicy_hpp_
-#define __GTEngine_SceneCullingDbvtPolicy_hpp_
+#ifndef GT_SceneCullingDbvtPolicy
+#define GT_SceneCullingDbvtPolicy
 
 #include "Physics.hpp"
 #include <GTEngine/Core/Vector.hpp>

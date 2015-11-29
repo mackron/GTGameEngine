@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneRenderer_VisibilityProcessor_hpp_
-#define __GTEngine_DefaultSceneRenderer_VisibilityProcessor_hpp_
+#ifndef GT_DefaultSceneRenderer_VisibilityProcessor
+#define GT_DefaultSceneRenderer_VisibilityProcessor
 
 #include "DefaultSceneRenderer_Mesh.hpp"
 #include "DefaultSceneRenderer_LightManager.hpp"

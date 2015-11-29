@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_Caret_hpp_
-#define __GTLib_GUI_Caret_hpp_
+#ifndef GT_GUI_Caret
+#define GT_GUI_Caret
 
 #include <GTEngine/Core/Colour.hpp>
 #include "Element.hpp"

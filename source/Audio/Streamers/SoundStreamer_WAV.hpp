@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Audio_SoundStreamer_WAV_hpp_
-#define __GTEngine_Audio_SoundStreamer_WAV_hpp_
+#ifndef GT_Audio_SoundStreamer_WAV
+#define GT_Audio_SoundStreamer_WAV
 
 #include <GTEngine/Audio/SoundStreamer.hpp>
 

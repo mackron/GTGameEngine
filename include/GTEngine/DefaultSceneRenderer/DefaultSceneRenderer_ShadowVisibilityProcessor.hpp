@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneRenderer_ShadowVisibilityProcessor_hpp_
-#define __GTEngine_DefaultSceneRenderer_ShadowVisibilityProcessor_hpp_
+#ifndef GT_DefaultSceneRenderer_ShadowVisibilityProcessor
+#define GT_DefaultSceneRenderer_ShadowVisibilityProcessor
 
 #include "../SceneCullingManager.hpp"
 #include "DefaultSceneRenderer_Mesh.hpp"

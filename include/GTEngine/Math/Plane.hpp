@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Plane_hpp_
-#define __GTEngine_Plane_hpp_
+#ifndef GT_Plane
+#define GT_Plane
 
 #if defined(_MSC_VER)
     #pragma warning(push)

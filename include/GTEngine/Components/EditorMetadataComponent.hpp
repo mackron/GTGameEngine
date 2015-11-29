@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_EditorMetadataComponent_hpp_
-#define __GTEngine_EditorMetadataComponent_hpp_
+#ifndef GT_EditorMetadataComponent
+#define GT_EditorMetadataComponent
 
 #include "../Component.hpp"
 #include "../Math.hpp"

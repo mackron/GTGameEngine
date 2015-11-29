@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Editor_SceneEditorPrefabLinker_hpp_
-#define __GTEngine_Editor_SceneEditorPrefabLinker_hpp_
+#ifndef GT_Editor_SceneEditorPrefabLinker
+#define GT_Editor_SceneEditorPrefabLinker
 
 #include "../../DefaultPrefabLinker.hpp"
 

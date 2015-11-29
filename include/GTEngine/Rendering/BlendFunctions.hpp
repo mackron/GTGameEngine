@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_BlendFunctions_hpp_
-#define __GTEngine_Rendering_BlendFunctions_hpp_
+#ifndef GT_Rendering_BlendFunctions
+#define GT_Rendering_BlendFunctions
 
 #include <GTEngine/Core/Strings/Equal.hpp>
 

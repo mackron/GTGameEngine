@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneNodeMap_hpp_
-#define __GTEngine_SceneNodeMap_hpp_
+#ifndef GT_SceneNodeMap
+#define GT_SceneNodeMap
 
 #include "SceneNode.hpp"
 

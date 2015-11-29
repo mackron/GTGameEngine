@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_IO_cstdio_HPP_
-#define __GTLib_IO_cstdio_HPP_
+#ifndef GT_IO_cstdio_HPP_
+#define GT_IO_cstdio_HPP_
 
 #include <cstdarg>
 #include <cstdio>

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneEditorPhysicsManager_hpp_
-#define __GTEngine_SceneEditorPhysicsManager_hpp_
+#ifndef GT_SceneEditorPhysicsManager
+#define GT_SceneEditorPhysicsManager
 
 #include "../../DefaultScenePhysicsManager.hpp"
 

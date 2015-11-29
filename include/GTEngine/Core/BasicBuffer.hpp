@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_BasicBuffer_hpp_
-#define __GT_BasicBuffer_hpp_
+#ifndef GT_BasicBuffer
+#define GT_BasicBuffer
 
 #include <cstddef>
 

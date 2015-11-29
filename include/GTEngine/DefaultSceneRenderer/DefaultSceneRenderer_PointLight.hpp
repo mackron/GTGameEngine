@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneRenderer_ShadowPointLight_hpp_
-#define __GTEngine_DefaultSceneRenderer_ShadowPointLight_hpp_
+#ifndef GT_DefaultSceneRenderer_ShadowPointLight
+#define GT_DefaultSceneRenderer_ShadowPointLight
 
 #include "DefaultSceneRenderer_ShadowVisibilityProcessor.hpp"
 

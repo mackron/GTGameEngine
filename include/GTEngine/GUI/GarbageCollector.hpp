@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_GarbageCollector_hpp_
-#define __GTLib_GUI_GarbageCollector_hpp_
+#ifndef GT_GUI_GarbageCollector
+#define GT_GUI_GarbageCollector
 
 #include <GTEngine/Core/List.hpp>
 

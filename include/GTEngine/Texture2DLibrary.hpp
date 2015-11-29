@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Texture2DLibrary_hpp_
-#define __GTEngine_Texture2DLibrary_hpp_
+#ifndef GT_Texture2DLibrary
+#define GT_Texture2DLibrary
 
 #include "Rendering/Texture2D.hpp"
 

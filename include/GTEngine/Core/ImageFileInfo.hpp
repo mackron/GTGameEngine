@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_ImageInfo_hpp_
-#define __GTLib_ImageInfo_hpp_
+#ifndef GT_ImageInfo
+#define GT_ImageInfo
 
 #include "ImageFormats.hpp"
 #include <easy_fs/easy_vfs.h>

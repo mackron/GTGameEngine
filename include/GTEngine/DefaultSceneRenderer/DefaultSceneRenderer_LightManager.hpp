@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneRenderer_LightManager_hpp_
-#define __GTEngine_DefaultSceneRenderer_LightManager_hpp_
+#ifndef GT_DefaultSceneRenderer_LightManager
+#define GT_DefaultSceneRenderer_LightManager
 
 #include "DefaultSceneRenderer_DirectionalLight.hpp"
 #include "DefaultSceneRenderer_PointLight.hpp"

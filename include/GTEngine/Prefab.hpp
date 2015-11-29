@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Prefab_hpp_
-#define __GTEngine_Prefab_hpp_
+#ifndef GT_Prefab
+#define GT_Prefab
 
 #include "Serialization.hpp"
 #include "SceneNode.hpp"

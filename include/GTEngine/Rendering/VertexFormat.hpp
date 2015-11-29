@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_VertexFormat_hpp_
-#define __GTEngine_VertexFormat_hpp_
+#ifndef GT_VertexFormat
+#define GT_VertexFormat
 
 #include "VertexAttributes.hpp"
 #include <GTEngine/Core/Serializer.hpp>

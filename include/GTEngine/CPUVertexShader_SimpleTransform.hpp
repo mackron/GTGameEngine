@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_CPUVertexShader_SimpleTransform_hpp_
-#define __GTEngine_CPUVertexShader_SimpleTransform_hpp_
+#ifndef GT_CPUVertexShader_SimpleTransform
+#define GT_CPUVertexShader_SimpleTransform
 
 #include "CPUVertexShader.hpp"
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_AnimationKey_hpp_
-#define __GTEngine_AnimationKey_hpp_
+#ifndef GT_AnimationKey
+#define GT_AnimationKey
 
 #include "../Math.hpp"
 

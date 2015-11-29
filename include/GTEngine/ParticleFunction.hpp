@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ParticleFunction_hpp_
-#define __GTEngine_ParticleFunction_hpp_
+#ifndef GT_ParticleFunction
+#define GT_ParticleFunction
 
 #include "ParticleFunctionTypes.hpp"
 #include "Particle.hpp"

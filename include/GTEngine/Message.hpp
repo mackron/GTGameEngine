@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_Message
-#define __GT_Message
+#ifndef GT_Message
+#define GT_Message
 
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Vector.hpp>

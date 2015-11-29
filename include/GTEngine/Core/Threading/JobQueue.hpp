@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_JobQueue_hpp_
-#define __GTLib_JobQueue_hpp_
+#ifndef GT_JobQueue
+#define GT_JobQueue
 
 #include "Job.hpp"
 

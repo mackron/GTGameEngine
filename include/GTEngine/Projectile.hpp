@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Projectile_hpp_
-#define __GTEngine_Projectile_hpp_
+#ifndef GT_Projectile
+#define GT_Projectile
 
 #include "Math.hpp"
 

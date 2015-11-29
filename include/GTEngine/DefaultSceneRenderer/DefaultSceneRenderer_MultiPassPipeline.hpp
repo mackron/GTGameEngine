@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneRenderer_MultiPassPipeline_hpp_
-#define __GTEngine_DefaultSceneRenderer_MultiPassPipeline_hpp_
+#ifndef GT_DefaultSceneRenderer_MultiPassPipeline
+#define GT_DefaultSceneRenderer_MultiPassPipeline
 
 #include <GTEngine/Core/Map.hpp>
 #include <GTEngine/Core/Vector.hpp>

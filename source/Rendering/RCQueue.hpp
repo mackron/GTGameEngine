@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_RCQueue_hpp_
-#define __GTEngine_RCQueue_hpp_
+#ifndef GT_RCQueue
+#define GT_RCQueue
 
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/Threading/Mutex.hpp>

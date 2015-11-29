@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_GameEvent_hpp_
-#define __GTEngine_GameEvent_hpp_
+#ifndef GT_GameEvent
+#define GT_GameEvent
 
 #include "GameEventCodes.hpp"
 #include <GTEngine/Core/Windowing/Keys.hpp>

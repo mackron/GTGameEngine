@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_RenderCommand_hpp_
-#define __GTEngine_RenderCommand_hpp_
+#ifndef GT_RenderCommand
+#define GT_RenderCommand
 
 namespace GT
 {

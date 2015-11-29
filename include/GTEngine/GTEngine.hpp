@@ -23,8 +23,8 @@ THE SOFTWARE.
 */
 
 
-#ifndef __GTEngine_hpp_
-#define __GTEngine_hpp_
+#ifndef GTGE
+#define GTGE
 
 #include "Game.hpp"
 #include "EngineContext.hpp"
@@ -79,18 +79,6 @@ namespace GT
     ///
     /// @param game [in] The game object returned by Startup().
     void Shutdown(Game* game);
-
-
-
-
-    /// Retrieves the directory containing the executable.
-    ///
-    /// @return The directory containing the executable.
-    //const char* GetExecutableDirectory();
-
-    
-    /// Retrieves the version string.
-    //inline const char* GetVersionString() { return GTENGINE_VERSION_STRING; }
 }
 
 #endif

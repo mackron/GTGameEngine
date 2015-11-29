@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Renderer_DefaultGUIRenderer_hpp_
-#define __GTEngine_Renderer_DefaultGUIRenderer_hpp_
+#ifndef GT_Renderer_DefaultGUIRenderer
+#define GT_Renderer_DefaultGUIRenderer
 
 #include "Renderer.hpp"
 #include <GTEngine/GUI/Rendering.hpp>

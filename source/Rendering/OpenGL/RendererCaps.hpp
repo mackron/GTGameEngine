@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_OpenGL_RendererCaps_hpp_
-#define __GTEngine_Rendering_OpenGL_RendererCaps_hpp_
+#ifndef GT_Rendering_OpenGL_RendererCaps
+#define GT_Rendering_OpenGL_RendererCaps
 
 #include <gtgl/gtgl.h>
 

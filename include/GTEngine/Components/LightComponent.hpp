@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_LightComponent_hpp_
-#define __GTEngine_LightComponent_hpp_
+#ifndef GT_LightComponent
+#define GT_LightComponent
 
 #include "../Component.hpp"
 #include "../Math.hpp"

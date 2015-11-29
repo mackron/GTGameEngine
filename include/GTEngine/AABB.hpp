@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_AABB_hpp_
-#define __GTEngine_AABB_hpp_
+#ifndef GT_AABB
+#define GT_AABB
 
 /// The AABB class is actually just the btAABB class. Might as well repurpose it.
 #if defined(__GNUC__)

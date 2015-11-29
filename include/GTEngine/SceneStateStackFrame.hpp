@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneStateStackFrame_hpp_
-#define __GTEngine_SceneStateStackFrame_hpp_
+#ifndef GT_SceneStateStackFrame
+#define GT_SceneStateStackFrame
 
 #include "SceneStateStackStagingArea.hpp"
 

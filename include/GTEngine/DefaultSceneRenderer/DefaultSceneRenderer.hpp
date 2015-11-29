@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneRenderer_hpp_
-#define __GTEngine_DefaultSceneRenderer_hpp_
+#ifndef GT_DefaultSceneRenderer
+#define GT_DefaultSceneRenderer
 
 #include "../SceneRenderer.hpp"
 #include "../Scene.hpp"

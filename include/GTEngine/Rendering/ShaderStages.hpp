@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ShaderStages_hpp_
-#define __GTEngine_ShaderStages_hpp_
+#ifndef GT_ShaderStages
+#define GT_ShaderStages
 
 namespace GT
 {

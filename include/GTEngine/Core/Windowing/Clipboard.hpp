@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Clipboard_hpp_
-#define __GTLib_Clipboard_hpp_
+#ifndef GT_Clipboard
+#define GT_Clipboard
 
 #include <GTEngine/Core/String.hpp>
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Scripting_Audio_hpp_
-#define __GTEngine_Scripting_Audio_hpp_
+#ifndef GT_Scripting_Audio
+#define GT_Scripting_Audio
 
 #include "../GameScript.hpp"
 

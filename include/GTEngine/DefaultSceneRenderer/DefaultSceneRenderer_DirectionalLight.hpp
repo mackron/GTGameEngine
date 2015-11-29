@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneRenderer_DirectionalLight_hpp_
-#define __GTEngine_DefaultSceneRenderer_DirectionalLight_hpp_
+#ifndef GT_DefaultSceneRenderer_DirectionalLight
+#define GT_DefaultSceneRenderer_DirectionalLight
 
 #include "DefaultSceneRenderer_ShadowVisibilityProcessor.hpp"
 

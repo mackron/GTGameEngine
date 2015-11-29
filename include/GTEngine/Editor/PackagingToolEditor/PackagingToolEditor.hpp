@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Editor_PackagingToolEditor_hpp_
-#define __GTEngine_Editor_PackagingToolEditor_hpp_
+#ifndef GT_Editor_PackagingToolEditor
+#define GT_Editor_PackagingToolEditor
 
 #include "../SubEditor.hpp"
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_ElementEventHandler_hpp_
-#define __GTLib_GUI_ElementEventHandler_hpp_
+#ifndef GT_GUI_ElementEventHandler
+#define GT_GUI_ElementEventHandler
 
 #include <GTEngine/Core/Windowing/Keys.hpp>
 

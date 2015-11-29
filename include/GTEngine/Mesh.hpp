@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Mesh_hpp_
-#define __GTEngine_Mesh_hpp_
+#ifndef GT_Mesh
+#define GT_Mesh
 
 #include "Material.hpp"
 #include "Math.hpp"

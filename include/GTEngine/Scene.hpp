@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Scene_hpp_
-#define __GTEngine_Scene_hpp_
+#ifndef GT_Scene
+#define GT_Scene
 
 #include "SceneNode.hpp"
 #include "SceneViewport.hpp"

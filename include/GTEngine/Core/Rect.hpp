@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Rect_hpp_
-#define __GTLib_Rect_hpp_
+#ifndef GT_Rect
+#define GT_Rect
 
 #include <cstdio>
 #include <GTEngine/Core/Math.hpp>

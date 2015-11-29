@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ScriptVariable_hpp_
-#define __GTEngine_ScriptVariable_hpp_
+#ifndef GT_ScriptVariable
+#define GT_ScriptVariable
 
 #include "ScriptVariableTypes.hpp"
 #include <GTEngine/Core/String.hpp>

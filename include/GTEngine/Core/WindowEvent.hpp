@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_WindowEvent_hpp_
-#define __GTLib_WindowEvent_hpp_
+#ifndef GT_WindowEvent
+#define GT_WindowEvent
 
 #include "Windowing/Keys.hpp"
 #include "Windowing/MouseButtons.hpp"
@@ -195,4 +195,4 @@ namespace GT
 #endif
 }
 
-#endif // !__GTLib_WindowEvent_hpp_
+#endif // !GT_WindowEvent

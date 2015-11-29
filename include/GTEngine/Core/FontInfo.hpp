@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_FontInfo_hpp_
-#define __GTLib_FontInfo_hpp_
+#ifndef GT_FontInfo
+#define GT_FontInfo
 
 #include "FontStyles.hpp"
 #include "GlyphRenderingModes.hpp"

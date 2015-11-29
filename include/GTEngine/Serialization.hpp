@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Serialization_hpp_
-#define __GTEngine_Serialization_hpp_
+#ifndef GT_Serialization
+#define GT_Serialization
 
 #include <GTEngine/Core/Serializer.hpp>
 #include <GTEngine/Core/Deserializer.hpp>

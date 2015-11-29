@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Shader_hpp_
-#define __GTEngine_Shader_hpp_
+#ifndef GT_Shader
+#define GT_Shader
 
 #include "ShaderStages.hpp"
 #include "../Math.hpp"

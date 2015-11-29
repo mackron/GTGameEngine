@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __PAG1_MeshBuilder_hpp_
-#define __PAG1_MeshBuilder_hpp_
+#ifndef GT_MeshBuilder
+#define GT_MeshBuilder
 
 #include <GTEngine/Core/Vector.hpp>
 #include "Rendering/DrawModes.hpp"

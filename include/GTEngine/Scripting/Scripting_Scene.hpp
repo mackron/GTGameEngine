@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Scripting_Scene_hpp_
-#define __GTEngine_Scripting_Scene_hpp_
+#ifndef GT_Scripting_Scene
+#define GT_Scripting_Scene
 
 #include "../GameScript.hpp"
 #include "../Scene.hpp"

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Tokenizer_hpp_
-#define __GTLib_Strings_Tokenizer_hpp_
+#ifndef GT_Strings_Tokenizer
+#define GT_Strings_Tokenizer
 
 #include "Find.hpp"
 #include "Size.hpp"

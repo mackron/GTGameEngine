@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Editor_AxisArrows_hpp_
-#define __GTEngine_Editor_AxisArrows_hpp_
+#ifndef GT_Editor_AxisArrows
+#define GT_Editor_AxisArrows
 
 #include "../SceneRenderer.hpp"
 #include "../SceneNode.hpp"

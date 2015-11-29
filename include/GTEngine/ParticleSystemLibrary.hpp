@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ParticleSystemLibrary_hpp_
-#define __GTEngine_ParticleSystemLibrary_hpp_
+#ifndef GT_ParticleSystemLibrary
+#define GT_ParticleSystemLibrary
 
 #include "ParticleSystem.hpp"
 

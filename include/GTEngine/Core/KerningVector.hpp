@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_KerningVector_hpp_
-#define __GTLib_KerningVector_hpp_
+#ifndef GT_KerningVector
+#define GT_KerningVector
 
 namespace GT
 {
@@ -17,4 +17,4 @@ namespace GT
     };
 }
 
-#endif // __GTLib_KerningVector_hpp_
+#endif // GT_KerningVector

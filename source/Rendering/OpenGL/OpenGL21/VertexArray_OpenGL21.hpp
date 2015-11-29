@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_VertexArray_OpenGL21_hpp_
-#define __GTEngine_VertexArray_OpenGL21_hpp_
+#ifndef GT_VertexArray_OpenGL21
+#define GT_VertexArray_OpenGL21
 
 #include <GTEngine/Rendering/VertexArray.hpp>
 #include <gtgl/gtgl.h>

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_TextureCube_hpp_
-#define __GTEngine_TextureCube_hpp_
+#ifndef GT_TextureCube
+#define GT_TextureCube
 
 #include "Texture2D.hpp"
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_MarkupLoader_hpp_
-#define __GTLib_GUI_MarkupLoader_hpp_
+#ifndef GT_GUI_MarkupLoader
+#define GT_GUI_MarkupLoader
 
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Dictionary.hpp>
@@ -117,4 +117,4 @@ namespace GTGUI
     };
 }
 
-#endif // __GTLib_GUI_MarkupLoader_hpp_
+#endif // GT_GUI_MarkupLoader

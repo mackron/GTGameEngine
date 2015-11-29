@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Game_hpp_
-#define __GTEngine_Game_hpp_
+#ifndef GT_Game
+#define GT_Game
 
 #include "GameEventQueue.hpp"
 #include "GameEventFilter.hpp"

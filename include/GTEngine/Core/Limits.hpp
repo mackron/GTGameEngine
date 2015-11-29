@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Limits_hpp_
-#define __GTLib_Limits_hpp_
+#ifndef GT_Limits
+#define GT_Limits
 
 #include <cstdint>
 

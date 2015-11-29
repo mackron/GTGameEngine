@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Image_hpp_
-#define __GTLib_Image_hpp_
+#ifndef GT_Image
+#define GT_Image
 
 #include "ImageFormats.hpp"
 #include "Mipmap.hpp"

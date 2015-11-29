@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_DefaultSceneRenderer_MaterialShaders_hpp_
-#define __GTEngine_DefaultSceneRenderer_MaterialShaders_hpp_
+#ifndef GT_DefaultSceneRenderer_MaterialShaders
+#define GT_DefaultSceneRenderer_MaterialShaders
 
 #include "../Rendering/Shader.hpp"
 #include "DefaultSceneRenderer_MaterialShaderID.hpp"

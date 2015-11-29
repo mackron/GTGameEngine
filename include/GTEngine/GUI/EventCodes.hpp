@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_GameEventCodes_hpp_
-#define __GTLib_GUI_GameEventCodes_hpp_
+#ifndef GT_GUI_GameEventCodes
+#define GT_GUI_GameEventCodes
 
 namespace GTGUI
 {

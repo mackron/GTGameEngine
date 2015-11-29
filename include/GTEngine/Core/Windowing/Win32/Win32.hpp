@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Win32_hpp_
-#define __GTLib_Win32_hpp_
+#ifndef GT_Win32
+#define GT_Win32
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GUI_ServerEventHandler_hpp_
-#define __GTLib_GUI_ServerEventHandler_hpp_
+#ifndef GT_GUI_ServerEventHandler
+#define GT_GUI_ServerEventHandler
 
 #include <GTEngine/Core/Cursors.hpp>
 #include <GTEngine/Core/Font.hpp>

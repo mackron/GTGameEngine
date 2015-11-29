@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Physics_GenericConstraint_hpp_
-#define __GTEngine_Physics_GenericConstraint_hpp_
+#ifndef GT_Physics_GenericConstraint
+#define GT_Physics_GenericConstraint
 
 #include "Bullet.hpp"
 #include "../Math.hpp"

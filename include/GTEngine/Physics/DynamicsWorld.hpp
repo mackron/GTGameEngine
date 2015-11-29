@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Physics_DynamicsWorld_hpp_
-#define __GTEngine_Physics_DynamicsWorld_hpp_
+#ifndef GT_Physics_DynamicsWorld
+#define GT_Physics_DynamicsWorld
 
 #include "BaseCollisionWorld.hpp"
 #include "RigidBody.hpp"

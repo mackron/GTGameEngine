@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Timing_Stopwatch_hpp_
-#define __GTLib_Timing_Stopwatch_hpp_
+#ifndef GT_Timing_Stopwatch
+#define GT_Timing_Stopwatch
 
 #include "TimingCommon.hpp"
 

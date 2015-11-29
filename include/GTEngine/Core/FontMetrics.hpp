@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_FontMetrics_hpp_
-#define __GTLib_FontMetrics_hpp_
+#ifndef GT_FontMetrics
+#define GT_FontMetrics
 
 namespace GT
 {
@@ -25,4 +25,4 @@ namespace GT
     };
 }
 
-#endif // __GTLib_FontMetrics_hpp_
+#endif // GT_FontMetrics

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Colour_hpp_
-#define __GTLib_Colour_hpp_
+#ifndef GT_Colour
+#define GT_Colour
 
 #include <cstddef>
 

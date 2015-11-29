@@ -2,8 +2,8 @@
 
 // This file is the Win32 implementation of FontEngine.
 
-#ifndef __GTLib_FontEngine_Win32_hpp_
-#define __GTLib_FontEngine_Win32_hpp_
+#ifndef GT_FontEngine_Win32
+#define GT_FontEngine_Win32
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
 #include <GTEngine/Core/FontEngine.hpp>
@@ -94,4 +94,4 @@ namespace GT
 }
 
 #endif	// __WIN32__
-#endif	// __GTLib_FontEngine_Win32_hpp_
+#endif	// GT_FontEngine_Win32

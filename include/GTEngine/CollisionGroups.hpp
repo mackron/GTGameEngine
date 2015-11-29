@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_CollisionGroups_hpp_
-#define __GTEngine_CollisionGroups_hpp_
+#ifndef GT_CollisionGroups
+#define GT_CollisionGroups
 
 namespace GT
 {

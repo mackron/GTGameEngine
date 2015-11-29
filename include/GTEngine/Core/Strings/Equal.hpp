@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Equal_hpp_
-#define __GTLib_Strings_Equal_hpp_
+#ifndef GT_Strings_Equal
+#define GT_Strings_Equal
 
 #include "NextChar.hpp"
 #include "Compare.hpp"

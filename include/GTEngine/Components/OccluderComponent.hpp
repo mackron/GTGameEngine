@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_OccluderComponent_hpp_
-#define __GTEngine_OccluderComponent_hpp_
+#ifndef GT_OccluderComponent
+#define GT_OccluderComponent
 
 #include "../Component.hpp"
 #include "../Physics.hpp"

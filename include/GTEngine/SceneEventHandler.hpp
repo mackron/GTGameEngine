@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneEventHandler_hpp_
-#define __GTEngine_SceneEventHandler_hpp_
+#ifndef GT_SceneEventHandler
+#define GT_SceneEventHandler
 
 #include <cstdint>
 

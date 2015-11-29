@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Math_hpp_
-#define __GTLib_Math_hpp_
+#ifndef GT_Math_Core
+#define GT_Math_Core
 
 #include <cmath>
 #include <cstdint>

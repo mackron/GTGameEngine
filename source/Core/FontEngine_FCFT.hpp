@@ -2,8 +2,8 @@
 
 // This file is the Fontconfig/FreeType implementation of FontEngine. At the moment, this is only used by the Linux build.
 
-#ifndef __GTLib_FontEngine_FCFT_hpp_
-#define __GTLib_FontEngine_FCFT_hpp_
+#ifndef GT_FontEngine_FCFT
+#define GT_FontEngine_FCFT
 
 #if defined(__linux__)
 #include <GTEngine/Core/FontEngine.hpp>
@@ -123,4 +123,4 @@ namespace GT
     };
 }
 #endif  // __linux__
-#endif  // __GTLib_FontEngine_FCFT_hpp_
+#endif  // GT_FontEngine_FCFT

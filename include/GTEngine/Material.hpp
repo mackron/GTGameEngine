@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Material_hpp_
-#define __GTEngine_Material_hpp_
+#ifndef GT_Material
+#define GT_Material
 
 #include <GTEngine/Core/String.hpp>
 #include "ShaderParameterCache.hpp"

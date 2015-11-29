@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Renderering_TextureWrapModes_hpp_
-#define __GTEngine_Renderering_TextureWrapModes_hpp_
+#ifndef GT_Renderering_TextureWrapModes
+#define GT_Renderering_TextureWrapModes
 
 namespace GT
 {

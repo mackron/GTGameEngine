@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneNodeMotionState_hpp_
-#define __GTEngine_SceneNodeMotionState_hpp_
+#ifndef GT_SceneNodeMotionState
+#define GT_SceneNodeMotionState
 
 #include "Bullet.hpp"
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ConvexHull_hpp_
-#define __GTEngine_ConvexHull_hpp_
+#ifndef GT_ConvexHull
+#define GT_ConvexHull
 
 #include "Math.hpp"
 #include "ConvexHullBuildSettings.hpp"

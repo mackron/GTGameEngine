@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_Rendering_OpenGL_CapabilityBits_hpp_
-#define __GTEngine_Rendering_OpenGL_CapabilityBits_hpp_
+#ifndef GT_Rendering_OpenGL_CapabilityBits
+#define GT_Rendering_OpenGL_CapabilityBits
 
 #define SCISSOR_TEST_BIT            (1 << 1)
 #define BLENDING_BIT                (1 << 2)

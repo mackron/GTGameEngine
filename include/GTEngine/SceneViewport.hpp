@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_SceneViewport_hpp_
-#define __GTEngine_SceneViewport_hpp_
+#ifndef GT_SceneViewport
+#define GT_SceneViewport
 
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Components/LightComponent.hpp>

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ShaderParameterCache_hpp_
-#define __GTEngine_ShaderParameterCache_hpp_
+#ifndef GT_ShaderParameterCache
+#define GT_ShaderParameterCache
 
 #include "ShaderParameter.hpp"
 #include "Math.hpp"

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_MeshCollisionShape_hpp_
-#define __GTEngine_MeshCollisionShape_hpp_
+#ifndef GT_MeshCollisionShape
+#define GT_MeshCollisionShape
 
 #include "Bullet.hpp"
 #include "../Model.hpp"

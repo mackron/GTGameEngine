@@ -1,6 +1,6 @@
 
-#ifndef __GT_G711_h_
-#define __GT_G711_h_
+#ifndef GT_G711_h_
+#define GT_G711_h_
 
 #if defined(__cplusplus)
 extern "C" {

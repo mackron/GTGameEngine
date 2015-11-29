@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_ConvexHullBuildSettings_hpp_
-#define __GTEngine_ConvexHullBuildSettings_hpp_
+#ifndef GT_ConvexHullBuildSettings
+#define GT_ConvexHullBuildSettings
 
 namespace GT
 {

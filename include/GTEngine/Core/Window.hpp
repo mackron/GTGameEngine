@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Window_hpp_
-#define __GTLib_Window_hpp_
+#ifndef GT_Window
+#define GT_Window
 
 #include "Windowing/InternalWindowObjects.hpp"
 #include "Windowing/WindowEventHandler.hpp"

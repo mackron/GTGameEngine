@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Cursors_hpp_
-#define __GTLib_Cursors_hpp_
+#ifndef GT_Cursors
+#define GT_Cursors
 
 #include <GTEngine/Core/Strings/Equal.hpp>
 

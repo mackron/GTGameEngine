@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTGameEngine_GameEventFilter_hpp_
-#define __GTGameEngine_GameEventFilter_hpp_
+#ifndef GT_GameEventFilter
+#define GT_GameEventFilter
 
 #include <GTEngine/Core/Windowing/MouseButtons.hpp>
 #include <GTEngine/Core/Windowing/Keys.hpp>

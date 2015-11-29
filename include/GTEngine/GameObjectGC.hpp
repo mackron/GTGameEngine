@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#ifndef __GTEngine_GameObjectGC_hpp_
-#define __GTEngine_GameObjectGC_hpp_
+#ifndef GT_GameObjectGC
+#define GT_GameObjectGC
 
 #include "GameObject.hpp"
 #include <GTEngine/Core/List.hpp>
