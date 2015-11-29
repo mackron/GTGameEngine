@@ -21,11 +21,12 @@
 #include "../../Physics/CollisionWorld.hpp"
 #include "../../ModelLibrary.hpp"
 #include "../../Texture2DLibrary.hpp"
+#include "../../AlignedType.hpp"
 
 namespace GTEngine
 {
     /// Class representing a scene editor.
-    class SceneEditor : public SubEditor
+    class SceneEditor : public SubEditor, public SIMDAlignedType
     {
     public:
 

@@ -7,6 +7,7 @@
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/MeshBuilder.hpp>
+#include <GTEngine/VertexArrayLibrary.hpp>
 
 namespace GTEngine
 {

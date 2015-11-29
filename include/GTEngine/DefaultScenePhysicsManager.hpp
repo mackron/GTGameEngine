@@ -5,13 +5,14 @@
 
 #include "ScenePhysicsManager.hpp"
 #include "Physics.hpp"
+#include "AlignedType.hpp"
 
 namespace GTEngine
 {
     /// The default physics manager for scenes.
     ///
     /// This can oftern act as the base class for custom managers instead of ScenePhysicsManager.
-    class DefaultScenePhysicsManager : public ScenePhysicsManager
+    class DefaultScenePhysicsManager : public ScenePhysicsManager, public SIMDAlignedType
     {
     public:
 

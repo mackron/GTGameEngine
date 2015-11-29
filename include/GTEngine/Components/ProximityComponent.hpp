@@ -4,6 +4,7 @@
 #define __GTEngine_ProximityComponent_hpp_
 
 #include "CollisionShapeComponent.hpp"
+#include "../AlignedType.hpp"
 #include <GTLib/SortedVector.hpp>
 
 namespace GTEngine
@@ -12,7 +13,7 @@ namespace GTEngine
     ///
     /// This component does not do any dynamics operations such as collision response and physics simulation. It is used only for checking
     /// whether or not objects are in proximity to other objects.
-    class ProximityComponent : public GTEngine::CollisionShapeComponent
+    class ProximityComponent : public CollisionShapeComponent, public SIMDAlignedType
     {
     public:
 

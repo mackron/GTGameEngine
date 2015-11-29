@@ -8,6 +8,7 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/Scripting.hpp>
+#include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTLib/Serializer.hpp>
 #include <GTLib/Deserializer.hpp>

@@ -5,6 +5,7 @@
 
 #include "../Component.hpp"
 #include "../Physics.hpp"
+#include "../AlignedType.hpp"
 
 namespace GTEngine
 {
@@ -13,7 +14,7 @@ namespace GTEngine
     /// The engine uses the physics engine internally for doing occlusion culling. Thus, this component uses a collision object as it's main attribute. Unlike
     /// DynamicsComponent, OccluderComponent can only have a single box shape attached. This is due to occluders never really being made up of anything other
     /// than very simple primitives, for efficiency.
-    class OccluderComponent : public Component
+    class OccluderComponent : public Component, public SIMDAlignedType
     {
     public:
 

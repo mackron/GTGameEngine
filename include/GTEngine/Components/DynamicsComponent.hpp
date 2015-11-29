@@ -4,7 +4,7 @@
 #define __GTEngine_DynamicsComponent_hpp_
 
 #include "CollisionShapeComponent.hpp"
-#include "../VertexArrayLibrary.hpp"        // TODO: Check if we can remove this.
+#include "../AlignedType.hpp"
 #include <GTLib/Vector.hpp>
 
 namespace GTEngine
@@ -12,7 +12,7 @@ namespace GTEngine
     /// Class representing a dynamics component.
     ///
     /// The dynamics component is used to do collision detection and physics. 
-    class DynamicsComponent : public GTEngine::CollisionShapeComponent
+    class DynamicsComponent : public CollisionShapeComponent, public SIMDAlignedType
     {
     public:
 
@@ -209,7 +209,7 @@ namespace GTEngine
 
         /// A very temporary pointer that keeps track of the world the rigid body is contained in. This is used for when the rigid body
         /// needs to be removed from and then re-added to the world.
-        GTEngine::DynamicsWorld* m_world;
+        DynamicsWorld* m_world;
 
         
         /// The mass of the rigid body. Defaults to 0 (static).

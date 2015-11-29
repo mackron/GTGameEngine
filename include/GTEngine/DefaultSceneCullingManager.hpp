@@ -8,6 +8,7 @@
 #include "Model.hpp"
 #include "CollisionGroups.hpp"
 #include "SceneNode.hpp"
+#include "AlignedType.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -206,7 +207,7 @@ namespace GTEngine
 
 
         /// Base structure containing the culling object of a scene node.
-        struct CullingObject
+        struct CullingObject : public SIMDAlignedType
         {
             /// A reference to the owner scene node.
             SceneNode &sceneNode;

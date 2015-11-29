@@ -9,10 +9,11 @@
 #include "../CollisionGroups.hpp"
 #include "../SceneRenderer.hpp"
 #include "../SceneNodeEventHandler.hpp"
+#include "../AlignedType.hpp"
 
 namespace GTEngine
 {
-    class EditorMetadataComponent : public Component
+    class EditorMetadataComponent : public Component, public SIMDAlignedType
     {
     public:
 
