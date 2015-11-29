@@ -15,7 +15,7 @@ namespace GTEngine
     ImageEditor::ImageEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           m_viewportElement(nullptr), m_viewportEventHandler(*this),
-          m_image(Texture2DLibrary::Acquire(absolutePath, GTEngine::IO::GetBasePath(absolutePath, relativePath).c_str())), m_zoom(1.0f)
+          m_image(Texture2DLibrary::Acquire(absolutePath, GT::GetBasePath(absolutePath, relativePath).c_str())), m_zoom(1.0f)
     {
         if (m_image != nullptr)
         {

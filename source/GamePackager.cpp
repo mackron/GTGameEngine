@@ -60,7 +60,7 @@ namespace GTEngine
                     //
                     // If the file is a model file that is not a .gtmodel, we need to check if it has an associated .gtmodel file that's newer. If so, we can
                     // ignore the original model file.
-                    if (GTEngine::IO::IsSupportedModelExtension(fileName) && !GTLib::Path::ExtensionEqual(fileName, ".gtmodel"))
+                    if (GT::IsSupportedModelExtension(fileName) && !GTLib::Path::ExtensionEqual(fileName, ".gtmodel"))
                     {
                         // It's a non-gtmodel file. We need to look for an associated .gtmodel file.
                         easyvfs_file_info gtmodelInfo;

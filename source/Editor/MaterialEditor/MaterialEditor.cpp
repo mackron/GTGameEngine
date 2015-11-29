@@ -39,7 +39,7 @@ namespace GTEngine
 
 
         // We'll load the material here. What we want to do is pass an absolute path, which will in turn require us to specify the base part of the path that would be used to make it relative.
-        GTLib::String basePath = GTEngine::IO::GetBasePath(absolutePath, relativePath);
+        GTLib::String basePath = GT::GetBasePath(absolutePath, relativePath);
         this->material = MaterialLibrary::Create(absolutePath, basePath.c_str());
 
         // Now we apply the material to the model.

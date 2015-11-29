@@ -600,11 +600,11 @@ namespace GTEngine
             {
                 Texture2DLibrary::Reload(item.info.absolutePath);
             }
-            else if (IO::IsSupportedMaterialExtension(item.info.absolutePath))
+            else if (GT::IsSupportedMaterialExtension(item.info.absolutePath))
             {
                 MaterialLibrary::Reload(item.info.absolutePath);
             }
-            else if (IO::IsSupportedParticleSystemExtension(item.info.absolutePath))
+            else if (GT::IsSupportedParticleSystemExtension(item.info.absolutePath))
             {
                 ParticleSystemLibrary::Reload(item.info.absolutePath);
             }

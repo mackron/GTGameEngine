@@ -245,7 +245,7 @@ namespace GTEngine
                 else
                 {
                     // The file might have an associated .gtmodel file. We'll let it pass if so.
-                    if (GTEngine::IO::IsSupportedModelExtension(path))
+                    if (GT::IsSupportedModelExtension(path))
                     {
                         char pathWithExt[EASYVFS_MAX_PATH];
                         easypath_copyandappendextension(pathWithExt, sizeof(pathWithExt), path, "gtmodel");
@@ -282,7 +282,7 @@ namespace GTEngine
                 if (!easyvfs_is_existing_file(g_EngineContext->GetVFS(), absolutePath))
                 {
                     // The file doesn't exist, but it might be a model so we'll need to check if it's got an associated .gtmodel file.
-                    if (GTEngine::IO::IsSupportedModelExtension(absolutePath))
+                    if (GT::IsSupportedModelExtension(absolutePath))
                     {
                         char absolutePathWithExt[EASYVFS_MAX_PATH];
                         easypath_copyandappendextension(absolutePathWithExt, sizeof(absolutePathWithExt), absolutePath, "gtmodel");
@@ -302,7 +302,7 @@ namespace GTEngine
 
 
                 // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
-                AssetClass type = GTEngine::IO::GetAssetClassFromExtension(absolutePath);
+                AssetClass type = GT::GetAssetClassFromExtension(absolutePath);
 
                 switch (type)
                 {

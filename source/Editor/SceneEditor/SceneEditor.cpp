@@ -2781,7 +2781,7 @@ namespace GTEngine
     void SceneEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
         // We want to go through and notify the editor of a change to the model component of any scene node referencing this file (if it's a model file).
-        if (GTEngine::IO::IsSupportedModelExtension(item.info.absolutePath))
+        if (GT::IsSupportedModelExtension(item.info.absolutePath))
         {
             size_t sceneNodeCount = m_scene.GetSceneNodeCount();
 
@@ -2849,7 +2849,7 @@ namespace GTEngine
                 char relativePath[EASYVFS_MAX_PATH];
                 if (easypath_to_relative(item.info.absolutePath, mostLikelyBasePath, relativePath, sizeof(relativePath)))
                 {
-                    if (GTEngine::IO::IsSupportedPrefabExtension(item.info.absolutePath))
+                    if (GT::IsSupportedPrefabExtension(item.info.absolutePath))
                     {
                         this->RelinkSceneNodesLinkedToPrefab(relativePath);
                     }

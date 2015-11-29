@@ -786,37 +786,37 @@ namespace GTEngine
 
             int IsModelFile(GTLib::Script &script)
             {
-                script.Push(IO::IsSupportedModelExtension(script.ToString(1)));
+                script.Push(GT::IsSupportedModelExtension(script.ToString(1)));
                 return 1;
             }
 
             int IsImageFile(GTLib::Script &script)
             {
-                script.Push(IO::IsSupportedImageExtension(script.ToString(1)));
+                script.Push(GT::IsSupportedImageExtension(script.ToString(1)));
                 return 1;
             }
 
             int IsSoundFile(GTLib::Script &script)
             {
-                script.Push(IO::IsSupportedSoundExtension(script.ToString(1)));
+                script.Push(GT::IsSupportedSoundExtension(script.ToString(1)));
                 return 1;
             }
 
             int IsSceneFile(GTLib::Script &script)
             {
-                script.Push(IO::IsSupportedSceneExtension(script.ToString(1)));
+                script.Push(GT::IsSupportedSceneExtension(script.ToString(1)));
                 return 1;
             }
 
             int IsPrefabFile(GTLib::Script &script)
             {
-                script.Push(IO::IsSupportedPrefabExtension(script.ToString(1)));
+                script.Push(GT::IsSupportedPrefabExtension(script.ToString(1)));
                 return 1;
             }
 
             int IsScriptFile(GTLib::Script &script)
             {
-                script.Push(IO::IsSupportedScriptExtension(script.ToString(1)));
+                script.Push(GT::IsSupportedScriptExtension(script.ToString(1)));
                 return 1;
             }
 
