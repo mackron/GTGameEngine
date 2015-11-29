@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTLib/Scripting.hpp>
+#include <GTEngine/Scripting.hpp>
 
 #include <GTLib/Strings/List.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
@@ -362,11 +362,6 @@ namespace GT
         return this->LoadFile(pVFS, filename) && this->Execute(returnValueCount);
     }
 
-
-    bool Script::LoadGTLibrary()
-    {
-        return LoadGTScriptLibrary(*this);
-    }
 
 
     bool Script::Call(int numArgs, int numResults)

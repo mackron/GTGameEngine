@@ -3,7 +3,7 @@
 #ifndef __GTLib_GUI_ScriptServer_hpp_
 #define __GTLib_GUI_ScriptServer_hpp_
 
-#include <GTLib/Script.hpp>
+#include <GTEngine/Script.hpp>
 
 namespace GTGUI
 {

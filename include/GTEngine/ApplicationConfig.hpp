@@ -5,7 +5,7 @@
 
 #include <GTLib/Vector.hpp>
 #include <GTLib/String.hpp>
-#include <GTLib/Script.hpp>
+#include <GTEngine/Script.hpp>
 #include <easy_fs/easy_vfs.h>
 
 namespace GT

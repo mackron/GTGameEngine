@@ -1058,7 +1058,8 @@ namespace GTGUI
     
     bool ScriptServer::LoadDefaults()
     {
-        bool success = this->script->LoadGTLibrary();
+        //bool success = this->script->LoadGTLibrary();
+        //bool success = GT::LoadGTCoreScriptLibrary(*this);
         
         // Here we add a pointer to the server.
         this->script->Push(&this->server);
@@ -1066,6 +1067,7 @@ namespace GTGUI
         
         
         // GTGUI utilities
+        bool success = true;
         success = success && this->Execute
         (
             "GTGUI = {};"

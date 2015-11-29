@@ -2,7 +2,7 @@
 
 #include <GTEngine/ScriptDefinition.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
-#include <GTLib/Script.hpp>
+#include <GTEngine/Script.hpp>
 #include <GTLib/Strings/LineIterator.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 

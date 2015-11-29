@@ -2,7 +2,7 @@
 
 #include <GTEngine/Scripting/Scripting_SceneNode.hpp>
 #include <GTEngine/Scripting/Scripting_Math.hpp>
-#include <GTLib/Scripting.hpp>
+#include <GTEngine/Scripting.hpp>
 
 namespace GT
 {

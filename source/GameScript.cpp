@@ -18,6 +18,12 @@ namespace GTEngine
         : game(game), lastError(), loadedFiles(), errorHandler(*this)
     {
         this->AttachErrorHandler(errorHandler);
+
+        // Load the core library.
+        //
+        // TODO: Move this into Startup() so we can handle errors properly. Can't do it right now because the GUI system depends on this being
+        //       initialized during the constructor.
+        GT::LoadGTCoreScriptLibrary(*this);
     }
 
     GameScript::~GameScript()

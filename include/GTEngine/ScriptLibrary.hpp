@@ -4,7 +4,7 @@
 #define __GTEngine_ScriptLibrary_hpp_
 
 #include "ScriptDefinition.hpp"
-#include <GTLib/Script.hpp>
+#include <GTEngine/Script.hpp>
 
 namespace GTEngine
 {

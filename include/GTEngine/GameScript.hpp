@@ -3,7 +3,7 @@
 #ifndef __GTEngine_GameScript_hpp_
 #define __GTEngine_GameScript_hpp_
 
-#include <GTLib/Script.hpp>
+#include <GTEngine/Script.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/Vector.hpp>
 #include <easy_fs/easy_vfs.h>

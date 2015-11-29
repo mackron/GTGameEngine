@@ -18,8 +18,8 @@
 #include "SceneStateStack.hpp"
 #include "Prefab.hpp"
 #include "DefaultPrefabLinker.hpp"
+#include "Script.hpp"
 #include <GTLib/SortedVector.hpp>
-#include <GTLib/Script.hpp>
 
 
 /// Contact test callbacks.

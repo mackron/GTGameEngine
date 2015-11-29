@@ -291,10 +291,6 @@ namespace GT
         virtual bool LoadFileAndExecute(easyvfs_context* pVFS, const char* filename, int returnValueCount = -1);
 
 
-        /// Loads the GT library.
-        bool LoadGTLibrary();
-
-
         /**
         *   \brief                  Calls the function that was last pushed onto the script's stack.
         *   \param  numArgs    [in] The number of arguments that have been pushed onto the stack for this function.

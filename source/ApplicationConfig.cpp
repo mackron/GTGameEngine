@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/ApplicationConfig.hpp>
-#include <GTLib/Script.hpp>
+#include <GTEngine/Script.hpp>
 #include <GTLib/Errors.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/stdlib.hpp>

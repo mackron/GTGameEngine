@@ -3,7 +3,7 @@
 #ifndef __GTLib_GUI_StyleClass_hpp_
 #define __GTLib_GUI_StyleClass_hpp_
 
-#include <GTLib/Script.hpp>
+#include <GTEngine/Script.hpp>
 #include <GTLib/List.hpp>
 #include "StyleAttribute.hpp"
 
