@@ -108,7 +108,7 @@ namespace GT
 
 
     /// Class representing the threading job to execute for processing a chunk of vertices.
-    class ProcessVertexShaderJob : public Job
+    class ProcessVertexShaderJob : public ThreadJob
     {
     public:
 

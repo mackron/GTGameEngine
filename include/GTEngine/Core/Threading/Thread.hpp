@@ -3,7 +3,7 @@
 #ifndef GT_Threading_Thread
 #define GT_Threading_Thread
 
-#include "Job.hpp"
+#include "ThreadJob.hpp"
 
 namespace GT
 {
@@ -65,7 +65,7 @@ namespace GT
         *   \brief           Constructor for automatically starting the execution of a thread.
         *   \param  job [in] A reference to the job that should be executed.
         */
-        Thread(Job &job);
+        Thread(ThreadJob &job);
             
         /**
         *   \brief  Destructor.
@@ -97,7 +97,7 @@ namespace GT
         /**
         *   \brief  Begins executing the thread using the job.
         */
-        bool Start(Job &job, bool block = true);
+        bool Start(ThreadJob &job, bool block = true);
 
         /// Marks the thread as wanting to stop executing.
         ///

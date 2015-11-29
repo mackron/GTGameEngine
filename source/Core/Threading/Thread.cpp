@@ -84,7 +84,7 @@ namespace GT
     {
         if (data)
         {
-            ((Job *)data)->Run();
+            ((ThreadJob *)data)->Run();
         }
     }
 
@@ -102,7 +102,7 @@ namespace GT
         this->Start(entryProc, entryData);
     }
 
-    Thread::Thread(Job &job)
+    Thread::Thread(ThreadJob &job)
         : data(nullptr)
     {
         this->ctor();
@@ -156,7 +156,7 @@ namespace GT
         return true;
     }
 
-    bool Thread::Start(Job &job, bool block)
+    bool Thread::Start(ThreadJob &job, bool block)
     {
         return this->Start(JobThreadProc, &job, block);
     }

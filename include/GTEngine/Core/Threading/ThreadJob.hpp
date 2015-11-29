@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_Job
-#define GT_Job
+#ifndef GT_ThreadJob
+#define GT_ThreadJob
 
 namespace GT
 {
@@ -17,15 +17,15 @@ namespace GT
     *   A job contains a pointer to the next job that should be executed after it. This allows jobs to be chained together, forming
     *   a list. The next job is only ever managed by the JobQueue class.
     */
-    class Job
+    class ThreadJob
     {
     public:
 
         /// Constructor.
-        Job();
+        ThreadJob();
             
         /// Destructor.
-        virtual ~Job();
+        virtual ~ThreadJob();
 
         /**
         *   \brief  Runs the job.
@@ -39,12 +39,12 @@ namespace GT
         friend class JobQueue;
         
         /// A pointer to the job that should be executed after this one.
-        Job *next;
+        ThreadJob *next;
             
             
     private:    // No copying.
-        Job(const Job &);
-        Job & operator=(const Job &);
+        ThreadJob(const ThreadJob &);
+        ThreadJob & operator=(const ThreadJob &);
     };
 }
 

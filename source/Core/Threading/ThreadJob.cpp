@@ -1,15 +1,15 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Threading/Job.hpp>
+#include <GTEngine/Core/Threading/ThreadJob.hpp>
 
 namespace GT
 {
-    Job::Job()
+    ThreadJob::ThreadJob()
         : next(nullptr)
     {
     }
 
-    Job::~Job()
+    ThreadJob::~ThreadJob()
     {
     }
 }

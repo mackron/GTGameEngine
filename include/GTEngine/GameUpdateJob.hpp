@@ -3,13 +3,13 @@
 #ifndef GT_GameUpdateJob
 #define GT_GameUpdateJob
 
-#include <GTEngine/Core/Threading/Job.hpp>
+#include <GTEngine/Core/Threading/ThreadJob.hpp>
 
 namespace GT
 {
     class Game;
 
-    class GameUpdateJob : public Job
+    class GameUpdateJob : public ThreadJob
     {
     public:
 
