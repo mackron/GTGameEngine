@@ -4,7 +4,7 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 
-#include <GTLib/GUI/Server.hpp>
+#include <GTEngine/GUI/Server.hpp>
 
 
 namespace GTEngine

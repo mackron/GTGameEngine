@@ -3,7 +3,7 @@
 #ifndef __GTEngine_SubEditorTabEventHandler_hpp_
 #define __GTEngine_SubEditorTabEventHandler_hpp_
 
-#include <GTLib/GUI/ElementEventHandler.hpp>
+#include <GTEngine/GUI/ElementEventHandler.hpp>
 
 namespace GTEngine
 {

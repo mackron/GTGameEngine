@@ -4,7 +4,7 @@
 #define __GTEngine_Renderer_DefaultGUIRenderer_hpp_
 
 #include "Renderer.hpp"
-#include <GTLib/GUI/Rendering.hpp>
+#include <GTEngine/GUI/Rendering.hpp>
 
 namespace GTEngine
 {

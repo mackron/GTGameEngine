@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Editor3DViewportEventHandler_hpp_
 #define __GTEngine_Editor3DViewportEventHandler_hpp_
 
-#include <GTLib/GUI/ElementEventHandler.hpp>
+#include <GTEngine/GUI/ElementEventHandler.hpp>
 #include "../Rendering/VertexArray.hpp"
 
 namespace GTEngine

@@ -6,7 +6,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/GUI/Server.hpp>
+#include <GTEngine/GUI/Server.hpp>
 #include <GTLib/Keyboard.hpp>
 #include <easy_path/easy_path.h>
 
