@@ -5,8 +5,8 @@
 
 #include "Serialization.hpp"
 #include "SceneNode.hpp"
-#include <GTLib/Vector.hpp>
-#include <GTLib/Map.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/Map.hpp>
 
 
 namespace GTEngine

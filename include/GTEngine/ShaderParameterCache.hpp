@@ -6,7 +6,7 @@
 #include "ShaderParameter.hpp"
 #include "Math.hpp"
 #include "Serialization.hpp"
-#include <GTLib/Dictionary.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
 
 namespace GTEngine
 {

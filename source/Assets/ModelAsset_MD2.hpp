@@ -7,7 +7,7 @@
 
 #if defined(GT_BUILD_MD2)
 #include <GTEngine/Assets/ModelAsset.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GT
 {

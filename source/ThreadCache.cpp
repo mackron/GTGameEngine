@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/ThreadCache.hpp>
-#include <GTLib/Map.hpp>
-#include <GTLib/System.hpp>
+#include <GTEngine/Core/Map.hpp>
+#include <GTEngine/Core/System.hpp>
 
 
 // Globals.

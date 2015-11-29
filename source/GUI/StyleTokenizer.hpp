@@ -4,7 +4,7 @@
 #define __LICKGUI_STYLETOKENIZER_HPP_
 
 #include <cstddef>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 
 #define haszero(v) (((v) - 0x01010101UL) & ~(v) & 0x80808080UL)
 #define hasvalue(x,n) (haszero((x) ^ (~0UL/255 * (n))))

@@ -5,7 +5,7 @@
 
 #include <GTEngine/GUI/StyleStack.hpp>
 #include <GTEngine/GUI/Element.hpp>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 
 namespace GTGUI
 {

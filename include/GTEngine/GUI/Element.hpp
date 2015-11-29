@@ -7,11 +7,11 @@
 #include "ElementEventHandler.hpp"
 #include "Rendering/ElementRenderingData.hpp"
 
-#include <GTLib/Rect.hpp>
-#include <GTLib/Threading.hpp>
-#include <GTLib/List.hpp>
-#include <GTLib/Vector.hpp>
-#include <GTLib/TextManager.hpp>
+#include <GTEngine/Core/Rect.hpp>
+#include <GTEngine/Core/Threading.hpp>
+#include <GTEngine/Core/List.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/TextManager.hpp>
 #include <bitset>
 
 namespace GTGUI

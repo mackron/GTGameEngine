@@ -4,7 +4,7 @@
 #define __GTEngine_SceneStateStack_hpp_
 
 #include "SceneStateStackBranch.hpp"
-#include <GTLib/Map.hpp>
+#include <GTEngine/Core/Map.hpp>
 
 namespace GTEngine
 {

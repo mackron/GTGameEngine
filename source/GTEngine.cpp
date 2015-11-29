@@ -15,7 +15,7 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/MessageDispatcher.hpp>
-#include <GTLib/WindowManagement.hpp>
+#include <GTEngine/Core/WindowManagement.hpp>
 
 // Basic globals.
 namespace GTEngine

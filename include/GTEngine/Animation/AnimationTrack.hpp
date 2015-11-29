@@ -3,7 +3,7 @@
 #ifndef __GTEngine_AnimationTrack_hpp_
 #define __GTEngine_AnimationTrack_hpp_
 
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Serialization.hpp>
 
 namespace GTEngine

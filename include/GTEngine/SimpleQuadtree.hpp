@@ -3,7 +3,7 @@
 #ifndef __GTEngine_SimpleQuadtree_hpp_
 #define __GTEngine_SimpleQuadtree_hpp_
 
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <cstdio>
 
 namespace GTEngine

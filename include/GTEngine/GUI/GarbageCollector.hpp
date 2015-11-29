@@ -3,7 +3,7 @@
 #ifndef __GTLib_GUI_GarbageCollector_hpp_
 #define __GTLib_GUI_GarbageCollector_hpp_
 
-#include <GTLib/List.hpp>
+#include <GTEngine/Core/List.hpp>
 
 namespace GTGUI
 {

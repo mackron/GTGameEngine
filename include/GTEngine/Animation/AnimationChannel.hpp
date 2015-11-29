@@ -5,7 +5,7 @@
 
 #include "AnimationKeyFrame.hpp"
 #include "AnimationKey.hpp"
-#include <GTLib/Map.hpp>
+#include <GTEngine/Core/Map.hpp>
 
 namespace GTEngine
 {

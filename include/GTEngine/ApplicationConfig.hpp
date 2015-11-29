@@ -3,8 +3,8 @@
 #ifndef __GTEngine_ApplicationConfig_hpp_
 #define __GTEngine_ApplicationConfig_hpp_
 
-#include <GTLib/Vector.hpp>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
 #include <GTEngine/Script.hpp>
 #include <easy_fs/easy_vfs.h>
 

@@ -2,8 +2,8 @@
 
 #include <GTEngine/GUI/StyleClass.hpp>
 #include <GTEngine/GUI/StyleServer.hpp>
-#include <GTLib/Strings/Create.hpp>
-//#include <GTLib/Math.hpp>
+#include <GTEngine/Core/Strings/Create.hpp>
+//#include <GTEngine/Core/Math.hpp>
 
 #include "StyleAttributeHandler.hpp"
 

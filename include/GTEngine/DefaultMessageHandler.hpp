@@ -4,7 +4,7 @@
 #define __GT_Engine_DefaultMessageHandler_hpp_
 
 #include "MessageHandler.hpp"
-#include <GTLib/Log.hpp>
+#include <GTEngine/Core/Log.hpp>
 #include <easy_fs/easy_vfs.h>
 
 namespace GT

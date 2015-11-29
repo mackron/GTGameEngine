@@ -7,7 +7,7 @@
 #include "../Editor3DViewportEventHandler.hpp"
 #include "../EditorGrid.hpp"
 #include "../../Scene.hpp"
-#include <GTLib/Random.hpp>
+#include <GTEngine/Core/Random.hpp>
 
 namespace GTEngine
 {

@@ -3,8 +3,8 @@
 #ifndef __GTEngine_DefaultSceneRenderer_MaterialUniformNameCache_hpp_
 #define __GTEngine_DefaultSceneRenderer_MaterialUniformNameCache_hpp_
 
-#include <GTLib/Vector.hpp>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
 
 namespace GTEngine
 {

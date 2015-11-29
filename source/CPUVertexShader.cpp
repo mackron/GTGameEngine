@@ -2,7 +2,7 @@
 
 #include <GTEngine/CPUVertexShader.hpp>
 #include <GTEngine/ThreadCache.hpp>
-#include <GTLib/Timing.hpp>
+#include <GTEngine/Core/Timing.hpp>
 
 
 // Helpers

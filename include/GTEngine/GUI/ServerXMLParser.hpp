@@ -4,9 +4,9 @@
 #define __GTLib_GUI_ServerXMLParser_hpp_
 
 #include "ServerEventHandler.hpp"
-#include <GTLib/BasicBuffer.hpp>
-#include <GTLib/Strings/Create.hpp>
-#include <GTLib/Strings/List.hpp>
+#include <GTEngine/Core/BasicBuffer.hpp>
+#include <GTEngine/Core/Strings/Create.hpp>
+#include <GTEngine/Core/Strings/List.hpp>
 
 namespace GTGUI
 {

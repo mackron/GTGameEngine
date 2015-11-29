@@ -4,7 +4,7 @@
 #define __GTEngine_AnimationSegment_hpp_
 
 #include <cstdint>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 
 namespace GTEngine
 {

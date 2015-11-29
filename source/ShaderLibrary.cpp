@@ -5,9 +5,9 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
 #include <GTEngine/Errors.hpp>
-#include <GTLib/Dictionary.hpp>
-#include <GTLib/Vector.hpp>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)
@@ -17,7 +17,7 @@
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
-#include <GTLib/rapidxml.hpp>
+#include <GTEngine/Core/rapidxml.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif

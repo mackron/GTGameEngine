@@ -5,7 +5,7 @@
 #include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
 #include <GTEngine/Math.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTLib/Timing.hpp>
+#include <GTEngine/Core/Timing.hpp>
 #include <cfloat>
 
 #undef min

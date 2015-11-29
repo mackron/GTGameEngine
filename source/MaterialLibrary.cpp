@@ -3,9 +3,9 @@
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/Dictionary.hpp>
-#include <GTLib/List.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
+#include <GTEngine/Core/List.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>
 

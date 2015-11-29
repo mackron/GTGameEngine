@@ -3,8 +3,8 @@
 #ifndef __GTEngine_Scripting_hpp_
 #define __GTEngine_Scripting_hpp_
 
-#include <GTLib/Serializer.hpp>
-#include <GTLib/Deserializer.hpp>
+#include <GTEngine/Core/Serializer.hpp>
+#include <GTEngine/Core/Deserializer.hpp>
 #include <GTEngine/Script.hpp>
 #include "Scripting/Scripting_Game.hpp"
 #include "Scripting/Scripting_Math.hpp"

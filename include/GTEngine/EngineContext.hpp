@@ -9,8 +9,8 @@
 #include "Audio/SoundWorld.hpp"
 //#include "AssetLibrary.hpp"
 #include "Assets/AssetLibrary.hpp"
-#include <GTLib/Vector.hpp>
-#include <GTLib/Threading.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/Threading.hpp>
 #include <easy_util/easy_util.h>
 #include <easy_fs/easy_vfs.h>
 

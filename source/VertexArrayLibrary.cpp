@@ -2,7 +2,7 @@
 
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/MeshBuilder.hpp>
-#include <GTLib/Math.hpp>
+#include <GTEngine/Core/Math.hpp>
 
 
 namespace GTEngine

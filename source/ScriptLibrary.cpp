@@ -4,7 +4,7 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTLib/Dictionary.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>
 

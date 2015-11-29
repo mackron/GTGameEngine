@@ -3,7 +3,7 @@
 #ifndef __GTEngine_DefaultSceneRenderer_LuminanceChain_hpp_
 #define __GTEngine_DefaultSceneRenderer_LuminanceChain_hpp_
 
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTEngine
 {

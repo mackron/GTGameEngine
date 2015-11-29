@@ -3,7 +3,7 @@
 #include <GTEngine/PrefabLibrary.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTLib/Dictionary.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>
 

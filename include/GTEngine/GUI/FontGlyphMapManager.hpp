@@ -4,8 +4,8 @@
 #define __GTLib_GUI_FontGlyphMapManager_hpp_
 
 #include "ImageManager.hpp"             // For GTGUI::ImageHandle.
-#include <GTLib/Vector.hpp>
-#include <GTLib/GlyphMapManager.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/GlyphMapManager.hpp>
 
 namespace GTGUI
 {

@@ -7,7 +7,7 @@
 #include "Mesh.hpp"
 #include "Animation/Animation.hpp"
 #include "Serialization.hpp"
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 
 namespace GTEngine

@@ -4,8 +4,8 @@
 #define __GTLib_GUI_Mesh_hpp_
 
 #include "../ImageManager.hpp"
-#include <GTLib/Colour.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Colour.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTGUI
 {

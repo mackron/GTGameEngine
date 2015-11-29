@@ -19,7 +19,7 @@
 #include "Prefab.hpp"
 #include "DefaultPrefabLinker.hpp"
 #include "Script.hpp"
-#include <GTLib/SortedVector.hpp>
+#include <GTEngine/Core/SortedVector.hpp>
 
 
 /// Contact test callbacks.

@@ -4,7 +4,7 @@
 #define __GTEngine_SceneCullingDbvtPolicy_hpp_
 
 #include "Physics.hpp"
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

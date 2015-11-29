@@ -6,7 +6,7 @@
 #include "SceneUpdateManager.hpp"
 #include "SceneNode.hpp"
 #include "Physics/DynamicsWorld.hpp"
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTEngine
 {

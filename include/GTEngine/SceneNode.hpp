@@ -21,10 +21,10 @@
 #include "Components/PrefabComponent.hpp"
 #include "Components/EditorMetadataComponent.hpp"
 
-#include <GTLib/Dictionary.hpp>
-#include <GTLib/List.hpp>
-#include <GTLib/Map.hpp>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
+#include <GTEngine/Core/List.hpp>
+#include <GTEngine/Core/Map.hpp>
+#include <GTEngine/Core/String.hpp>
 
 namespace GTEngine
 {

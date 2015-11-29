@@ -3,8 +3,8 @@
 #ifndef __GT_Engine_SoundWorld_hpp_
 #define __GT_Engine_SoundWorld_hpp_
 
-#include <GTLib/Vector.hpp>
-#include <GTLib/Threading/Mutex.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/Threading/Mutex.hpp>
 #include "../Math.hpp"
 #include <easy_audio/easy_audio.h>
 

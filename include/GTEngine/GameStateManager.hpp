@@ -3,9 +3,9 @@
 #ifndef __GT_Engine_GameStateManager_hpp_
 #define __GT_Engine_GameStateManager_hpp_
 
-#include <GTLib/Serializer.hpp>
-#include <GTLib/Deserializer.hpp>
-#include <GTLib/Dictionary.hpp>
+#include <GTEngine/Core/Serializer.hpp>
+#include <GTEngine/Core/Deserializer.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
 #include <GTEngine/GameEvent.hpp>
 
 namespace GTEngine

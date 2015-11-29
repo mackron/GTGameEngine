@@ -3,8 +3,8 @@
 #include <GTEngine/ScriptDefinition.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Script.hpp>
-#include <GTLib/Strings/LineIterator.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
+#include <GTEngine/Core/Strings/LineIterator.hpp>
+#include <GTEngine/Core/Strings/Tokenizer.hpp>
 
 namespace GTEngine
 {

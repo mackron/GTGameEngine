@@ -4,8 +4,8 @@
 #define __GTEngine_ScriptDefinition_hpp_
 
 #include "ScriptVariable.hpp"
-#include <GTLib/String.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTEngine
 {

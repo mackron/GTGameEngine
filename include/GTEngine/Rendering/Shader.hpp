@@ -6,7 +6,7 @@
 #include "ShaderStages.hpp"
 #include "../Math.hpp"
 #include "../ShaderParameterCache.hpp"
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 
 namespace GTEngine
 {

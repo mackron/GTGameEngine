@@ -3,8 +3,8 @@
 #ifndef __GTGameEngine_GameEventFilter_hpp_
 #define __GTGameEngine_GameEventFilter_hpp_
 
-#include <GTLib/Windowing/MouseButtons.hpp>
-#include <GTLib/Windowing/Keys.hpp>
+#include <GTEngine/Core/Windowing/MouseButtons.hpp>
+#include <GTEngine/Core/Windowing/Keys.hpp>
 
 namespace GTEngine
 {

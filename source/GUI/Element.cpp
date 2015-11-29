@@ -2,10 +2,10 @@
 
 #include <GTEngine/GUI/Element.hpp>
 #include <GTEngine/GUI/Server.hpp>
-#include <GTLib/Strings/Create.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
-#include <GTLib/ToString.hpp>
-#include <GTLib/Math.hpp>
+#include <GTEngine/Core/Strings/Create.hpp>
+#include <GTEngine/Core/Strings/Tokenizer.hpp>
+#include <GTEngine/Core/ToString.hpp>
+#include <GTEngine/Core/Math.hpp>
 #include <GTEngine/GTEngine.hpp>
 
 namespace GTGUI

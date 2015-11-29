@@ -6,7 +6,7 @@
 #include "Math.hpp"
 #include "ConvexHullBuildSettings.hpp"
 #include "Rendering/VertexArray.hpp"
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTEngine
 {

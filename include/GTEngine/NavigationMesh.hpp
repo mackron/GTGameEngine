@@ -19,7 +19,7 @@
 #endif
 
 
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include "Math.hpp"
 #include "Serialization.hpp"
 #include "MeshBuilder.hpp"

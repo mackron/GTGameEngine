@@ -4,10 +4,10 @@
 #define __GTEngine_Bone_hpp_
 
 #include "Math.hpp"
-#include <GTLib/Vector.hpp>
-#include <GTLib/String.hpp>
-#include <GTLib/Serializer.hpp>
-#include <GTLib/Deserializer.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Serializer.hpp>
+#include <GTEngine/Core/Deserializer.hpp>
 
 namespace GTEngine
 {

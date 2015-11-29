@@ -3,8 +3,8 @@
 #ifndef GT_AssetLibrary
 #define GT_AssetLibrary
 
-#include <GTLib/Vector.hpp>
-#include <GTLib/Dictionary.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
 #include "../Config.hpp"
 #include "AssetTypes.hpp"
 #include <easy_fs/easy_vfs.h>

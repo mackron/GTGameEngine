@@ -2,8 +2,8 @@
 
 #include <GTEngine/IO.hpp>
 #include <GTEngine/ModelLibrary.hpp>
-#include <GTLib/ImageLoader.hpp>
-#include <GTLib/Strings/Find.hpp>
+#include <GTEngine/Core/ImageLoader.hpp>
+#include <GTEngine/Core/Strings/Find.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT

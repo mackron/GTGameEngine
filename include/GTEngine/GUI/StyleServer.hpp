@@ -8,9 +8,9 @@
 #include "StyleScriptError.hpp"
 #include "StyleScriptCompiler.hpp"
 
-#include <GTLib/Dictionary.hpp>
-#include <GTLib/BinarySearchTree.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
+#include <GTEngine/Core/BinarySearchTree.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTGUI
 {

@@ -3,8 +3,8 @@
 #ifndef __GTEngine_RCQueue_hpp_
 #define __GTEngine_RCQueue_hpp_
 
-#include <GTLib/Vector.hpp>
-#include <GTLib/Threading/Mutex.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/Threading/Mutex.hpp>
 
 namespace GTEngine
 {

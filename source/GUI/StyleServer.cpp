@@ -3,8 +3,8 @@
 #include "StyleTokenizer.hpp"
 #include "StyleAttributeHandler.hpp"
 #include <GTEngine/GUI/Server.hpp>
-#include <GTLib/String.hpp>
-#include <GTLib/stdlib.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/stdlib.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 

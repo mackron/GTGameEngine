@@ -3,7 +3,7 @@
 #include <GTEngine/GUI/Rendering/ElementRenderingData.hpp>
 #include <GTEngine/GUI/Element.hpp>
 #include <GTEngine/GUI/Server.hpp>
-#include <GTLib/TextManager.hpp>
+#include <GTEngine/Core/TextManager.hpp>
 #include <cmath>
 
 

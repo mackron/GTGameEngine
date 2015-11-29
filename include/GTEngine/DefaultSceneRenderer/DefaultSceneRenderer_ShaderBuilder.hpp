@@ -5,7 +5,7 @@
 
 #include "DefaultSceneRenderer_MaterialShaderID.hpp"
 #include "../Material.hpp"
-#include <GTLib/Map.hpp>
+#include <GTEngine/Core/Map.hpp>
 
 namespace GTEngine
 {

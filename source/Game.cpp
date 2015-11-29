@@ -16,10 +16,10 @@
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GamePackager.hpp>
 #include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
-#include <GTLib/System.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
-#include <GTLib/String.hpp>
-#include <GTLib/Keyboard.hpp>
+#include <GTEngine/Core/System.hpp>
+#include <GTEngine/Core/Strings/Tokenizer.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Keyboard.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)

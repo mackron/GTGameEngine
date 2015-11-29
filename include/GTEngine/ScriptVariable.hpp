@@ -4,7 +4,7 @@
 #define __GTEngine_ScriptVariable_hpp_
 
 #include "ScriptVariableTypes.hpp"
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 
 namespace GTEngine
 {

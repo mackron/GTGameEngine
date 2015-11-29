@@ -11,7 +11,7 @@
 #include <GTEngine/Rendering/BlendEquations.hpp>
 #include <GTEngine/Rendering/RendererFunctions.hpp>
 #include <GTEngine/Rendering/StencilOperations.hpp>
-#include <GTLib/ImageFormats.hpp>
+#include <GTEngine/Core/ImageFormats.hpp>
 #include <gtgl/gtgl.h>
 
 #if defined(__clang__)

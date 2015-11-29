@@ -3,7 +3,7 @@
 #ifndef __GTEngine_SceneViewport_hpp_
 #define __GTEngine_SceneViewport_hpp_
 
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Components/LightComponent.hpp>
 #include <GTEngine/Components/ModelComponent.hpp>
 #include "Math.hpp"

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTEngine/GUI/StyleClassTree.hpp>
-//#include <GTLib/Strings/Compare.hpp>
+//#include <GTEngine/Core/Strings/Compare.hpp>
 
 namespace GTGUI
 {

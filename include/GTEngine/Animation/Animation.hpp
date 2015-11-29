@@ -8,7 +8,7 @@
 #include "AnimationSequence.hpp"
 #include "AnimationTrack.hpp"
 #include "../Serialization.hpp"
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTEngine
 {

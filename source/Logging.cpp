@@ -2,7 +2,7 @@
 
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/Strings/Create.hpp>
+#include <GTEngine/Core/Strings/Create.hpp>
 
 namespace GTEngine
 {

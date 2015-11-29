@@ -3,8 +3,8 @@
 #ifndef __GTEngine_AnimationSequence_hpp_
 #define __GTEngine_AnimationSequence_hpp_
 
-#include <GTLib/String.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTEngine
 {

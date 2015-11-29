@@ -3,7 +3,7 @@
 #ifndef __GTEngine_ThreadCache_hpp_
 #define __GTEngine_ThreadCache_hpp_
 
-#include <GTLib/Threading.hpp>
+#include <GTEngine/Core/Threading.hpp>
 #include <cstddef>
 
 namespace GTEngine

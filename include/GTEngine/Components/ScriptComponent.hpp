@@ -5,7 +5,7 @@
 
 #include "../Component.hpp"
 #include "../ScriptDefinition.hpp"
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTEngine
 {

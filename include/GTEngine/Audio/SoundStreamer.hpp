@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Audio_SoundStreamer_hpp_
 #define __GTEngine_Audio_SoundStreamer_hpp_
 
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 #include <easy_audio/easy_audio.h>
 
 namespace GT

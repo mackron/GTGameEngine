@@ -4,7 +4,7 @@
 
 #if defined(GT_BUILD_OBJ)
 #include <GTEngine/Math.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <easy_util/easy_util.h>
 
 // TODO: Correctly handle "usemtl" to properly handle multiple materials.

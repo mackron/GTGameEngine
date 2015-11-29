@@ -4,7 +4,7 @@
 #define __GTEngine_IO_hpp_
 
 #include <GTEngine/Assets/AssetTypes.hpp>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 
 namespace GT
 {

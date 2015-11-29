@@ -2,10 +2,10 @@
 
 #include <GTEngine/GUI/Server.hpp>
 #include <GTEngine/GUI/StandardLibrary.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
-#include <GTLib/Strings/Create.hpp>
-#include <GTLib/Strings/Equal.hpp>
-#include <GTLib/ToString.hpp>
+#include <GTEngine/Core/Strings/Tokenizer.hpp>
+#include <GTEngine/Core/Strings/Create.hpp>
+#include <GTEngine/Core/Strings/Equal.hpp>
+#include <GTEngine/Core/ToString.hpp>
 #include <cassert>
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>

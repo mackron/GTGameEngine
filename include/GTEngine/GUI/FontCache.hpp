@@ -3,8 +3,8 @@
 #ifndef __GTLib_GUI_FontCache_hpp_
 #define __GTLib_GUI_FontCache_hpp_
 
-#include <GTLib/FontServer.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/FontServer.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTGUI
 {

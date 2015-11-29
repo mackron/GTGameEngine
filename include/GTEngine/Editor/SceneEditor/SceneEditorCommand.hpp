@@ -3,8 +3,8 @@
 #ifndef __GTEngine_SceneEditorCommand_hpp_
 #define __GTEngine_SceneEditorCommand_hpp_
 
-#include <GTLib/Vector.hpp>
-#include <GTLib/Serializer.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/Serializer.hpp>
 
 namespace GTEngine
 {

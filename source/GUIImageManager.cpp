@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUIImageManager.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTLib/ImageLoader.hpp>
+#include <GTEngine/Core/ImageLoader.hpp>
 
 namespace GTEngine
 {

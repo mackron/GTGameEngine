@@ -3,7 +3,7 @@
 #ifndef __GTLib_GUI_Caret_hpp_
 #define __GTLib_GUI_Caret_hpp_
 
-#include <GTLib/Colour.hpp>
+#include <GTEngine/Core/Colour.hpp>
 #include "Element.hpp"
 #include "Rendering/Mesh.hpp"
 

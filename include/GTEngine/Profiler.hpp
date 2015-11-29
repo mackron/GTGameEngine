@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Profiler_hpp_
 #define __GTEngine_Profiler_hpp_
 
-#include <GTLib/Timing.hpp>
+#include <GTEngine/Core/Timing.hpp>
 
 namespace GTEngine
 {

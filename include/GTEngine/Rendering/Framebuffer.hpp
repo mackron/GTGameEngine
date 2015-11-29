@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Framebuffer_hpp_
 #define __GTEngine_Framebuffer_hpp_
 
-#include <GTLib/Map.hpp>
+#include <GTEngine/Core/Map.hpp>
 #include <cstddef>
 
 namespace GTEngine

@@ -3,7 +3,7 @@
 #ifndef __GTEngine_DefaultSceneRenderer_LightGroup_hpp_
 #define __GTEngine_DefaultSceneRenderer_LightGroup_hpp_
 
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

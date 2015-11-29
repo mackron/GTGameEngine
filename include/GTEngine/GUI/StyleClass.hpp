@@ -4,7 +4,7 @@
 #define __GTLib_GUI_StyleClass_hpp_
 
 #include <GTEngine/Script.hpp>
-#include <GTLib/List.hpp>
+#include <GTEngine/Core/List.hpp>
 #include "StyleAttribute.hpp"
 
 #if defined(_MSC_VER)

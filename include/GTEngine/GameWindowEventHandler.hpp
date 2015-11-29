@@ -3,7 +3,7 @@
 #ifndef __GTEngine_GameWindowEventHandler_hpp_
 #define __GTEngine_GameWindowEventHandler_hpp_
 
-#include <GTLib/Window.hpp>
+#include <GTEngine/Core/Window.hpp>
 
 namespace GTEngine
 {

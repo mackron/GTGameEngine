@@ -3,7 +3,7 @@
 #ifndef __GTEngine_SubEditor_hpp_
 #define __GTEngine_SubEditor_hpp_
 
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 #include <GTEngine/GUI/Server.hpp>
 
 #include "SubEditorTabEventHandler.hpp"

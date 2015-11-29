@@ -3,7 +3,7 @@
 #ifndef __PAG1_MeshBuilder_hpp_
 #define __PAG1_MeshBuilder_hpp_
 
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include "Rendering/DrawModes.hpp"
 #include "Rendering/VertexFormat.hpp"
 #include "Math.hpp"

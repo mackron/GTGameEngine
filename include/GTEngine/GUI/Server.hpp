@@ -17,13 +17,13 @@
 #include "FontGlyphMapManager.hpp"
 #include "FontCache.hpp"
 #include "ElementTree.hpp"
-#include <GTLib/Point.hpp>
-#include <GTLib/Rect.hpp>
-#include <GTLib/Dictionary.hpp>
-#include <GTLib/SortedVector.hpp>
-#include <GTLib/Timing.hpp>
-#include <GTLib/Threading.hpp>
-#include <GTLib/FontServer.hpp>
+#include <GTEngine/Core/Point.hpp>
+#include <GTEngine/Core/Rect.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
+#include <GTEngine/Core/SortedVector.hpp>
+#include <GTEngine/Core/Timing.hpp>
+#include <GTEngine/Core/Threading.hpp>
+#include <GTEngine/Core/FontServer.hpp>
 
 /*
 --- Implementation Details ---

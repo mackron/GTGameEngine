@@ -3,10 +3,10 @@
 #ifndef __GTEngine_SceneStateStackRestoreCommands_hpp_
 #define __GTEngine_SceneStateStackRestoreCommands_hpp_
 
-#include <GTLib/Vector.hpp>
-#include <GTLib/Map.hpp>
-#include <GTLib/Serializer.hpp>
-#include <GTLib/Deserializer.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/Map.hpp>
+#include <GTEngine/Core/Serializer.hpp>
+#include <GTEngine/Core/Deserializer.hpp>
 
 namespace GTEngine
 {

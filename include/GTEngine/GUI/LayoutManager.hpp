@@ -4,8 +4,8 @@
 #define __GTLib_GUI_LayoutManager_hpp_
 
 #include "Element.hpp"
-#include <GTLib/BinarySearchTree.hpp>
-#include <GTLib/List.hpp>
+#include <GTEngine/Core/BinarySearchTree.hpp>
+#include <GTEngine/Core/List.hpp>
 
 namespace GTGUI
 {

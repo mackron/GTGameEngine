@@ -4,8 +4,8 @@
 #define __GTEngine_VertexFormat_hpp_
 
 #include "VertexAttributes.hpp"
-#include <GTLib/Serializer.hpp>
-#include <GTLib/Deserializer.hpp>
+#include <GTEngine/Core/Serializer.hpp>
+#include <GTEngine/Core/Deserializer.hpp>
 #include <cstddef>
 
 #define GTENGINE_MAX_VERTEX_ATTRIBS       16

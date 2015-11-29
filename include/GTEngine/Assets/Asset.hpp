@@ -3,8 +3,8 @@
 #ifndef GT_Asset
 #define GT_Asset
 
-#include <GTLib/String.hpp>
-#include <GTLib/ReferenceCountedObject.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/ReferenceCountedObject.hpp>
 #include "AssetTypes.hpp"
 #include "AssetMetadata.hpp"
 #include <easy_fs/easy_vfs.h>

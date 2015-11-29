@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_OpenGL21_RCSetGlobalState_hpp_
 #define __GTEngine_Rendering_OpenGL21_RCSetGlobalState_hpp_
 
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 

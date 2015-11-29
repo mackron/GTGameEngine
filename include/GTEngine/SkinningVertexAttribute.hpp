@@ -4,7 +4,7 @@
 #define __GTEngine_SkinningVertexAttribute_hpp_
 
 #include <GTEngine/Bone.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTEngine
 {

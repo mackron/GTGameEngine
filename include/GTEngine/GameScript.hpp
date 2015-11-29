@@ -4,8 +4,8 @@
 #define __GTEngine_GameScript_hpp_
 
 #include <GTEngine/Script.hpp>
-#include <GTLib/String.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <easy_fs/easy_vfs.h>
 
 namespace GTEngine

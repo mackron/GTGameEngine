@@ -3,8 +3,8 @@
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTLib/Dictionary.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <easy_path/easy_path.h>
 
 

@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Renderer_hpp_
 #define __GTEngine_Renderer_hpp_
 
-#include <GTLib/Window.hpp>
+#include <GTEngine/Core/Window.hpp>
 #include "Texture2D.hpp"
 #include "TextureCube.hpp"
 #include "Shader.hpp"

@@ -15,7 +15,7 @@
 #include "DefaultSceneRenderer_MaterialUniformNameCache.hpp"
 
 
-#include <GTLib/Map.hpp>
+#include <GTEngine/Core/Map.hpp>
 #include <utility>
 
 namespace GTEngine

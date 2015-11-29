@@ -3,8 +3,8 @@
 #ifndef __GTEngine_Serialization_hpp_
 #define __GTEngine_Serialization_hpp_
 
-#include <GTLib/Serializer.hpp>
-#include <GTLib/Deserializer.hpp>
+#include <GTEngine/Core/Serializer.hpp>
+#include <GTEngine/Core/Deserializer.hpp>
 #include <cstdint>
 
 namespace GTEngine

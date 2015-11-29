@@ -4,7 +4,7 @@
 #define __GTEngine_GameObjectGC_hpp_
 
 #include "GameObject.hpp"
-#include <GTLib/List.hpp>
+#include <GTEngine/Core/List.hpp>
 
 namespace GTEngine
 {

@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Material_hpp_
 #define __GTEngine_Material_hpp_
 
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 #include "ShaderParameterCache.hpp"
 #include "Serialization.hpp"
 #include "Rendering/BlendEquations.hpp"

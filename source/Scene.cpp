@@ -7,7 +7,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTLib/ToString.hpp>
+#include <GTEngine/Core/ToString.hpp>
 #include <GTEngine/GTEngine.hpp>
 
 #if defined(_MSC_VER)

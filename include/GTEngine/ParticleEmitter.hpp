@@ -9,7 +9,7 @@
 #include "MaterialLibrary.hpp"
 #include "Serialization.hpp"
 #include "Rendering/VertexArray.hpp"
-#include <GTLib/Random.hpp>
+#include <GTEngine/Core/Random.hpp>
 
 namespace GTEngine
 {

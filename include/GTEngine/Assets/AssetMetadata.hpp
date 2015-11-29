@@ -3,9 +3,9 @@
 #ifndef GT_AseetMetadata
 #define GT_AseetMetadata
 
-#include <GTLib/Vector.hpp>
-#include <GTLib/Serializer.hpp>
-#include <GTLib/Deserializer.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/Serializer.hpp>
+#include <GTEngine/Core/Deserializer.hpp>
 
 namespace GT
 {

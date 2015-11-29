@@ -4,8 +4,8 @@
 #define __GTEngine_GameEvent_hpp_
 
 #include "GameEventCodes.hpp"
-#include <GTLib/Windowing/Keys.hpp>
-#include <GTLib/Windowing/MouseButtons.hpp>
+#include <GTEngine/Core/Windowing/Keys.hpp>
+#include <GTEngine/Core/Windowing/MouseButtons.hpp>
 
 namespace GTEngine
 {

@@ -3,8 +3,8 @@
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/Script.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTLib/String.hpp>
-#include <GTLib/stdlib.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/stdlib.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT

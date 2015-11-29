@@ -15,9 +15,9 @@
 #include "GUIImageManager.hpp"
 #include "Rendering/DefaultGUIRenderer.hpp"
 #include "GameStateManager.hpp"
-#include <GTLib/Threading.hpp>
-#include <GTLib/Timing.hpp>
-#include <GTLib/FontServer.hpp>
+#include <GTEngine/Core/Threading.hpp>
+#include <GTEngine/Core/Timing.hpp>
+#include <GTEngine/Core/FontServer.hpp>
 #include <GTEngine/GUI/Server.hpp>
 
 namespace GTEngine

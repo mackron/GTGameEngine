@@ -3,7 +3,7 @@
 #ifndef __GTLib_GUI_ElementEventHandler_hpp_
 #define __GTLib_GUI_ElementEventHandler_hpp_
 
-#include <GTLib/Windowing/Keys.hpp>
+#include <GTEngine/Core/Windowing/Keys.hpp>
 
 namespace GTGUI
 {

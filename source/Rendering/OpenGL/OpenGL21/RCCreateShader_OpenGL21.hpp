@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_OpenGL21_RCCreateShader_hpp_
 #define __GTEngine_Rendering_OpenGL21_RCCreateShader_hpp_
 
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 #include <gtgl/gtgl.h>
 
 #include "../../RenderCommand.hpp"

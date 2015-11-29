@@ -5,10 +5,10 @@
 
 #include <GTEngine/Math.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTLib/Dictionary.hpp>
-#include <GTLib/Map.hpp>
-#include <GTLib/Vector.hpp>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
+#include <GTEngine/Core/Map.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
 #include <gtgl/gtgl.h>
 
 #include "TextureState_OpenGL21.hpp"

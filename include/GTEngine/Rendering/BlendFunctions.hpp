@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_BlendFunctions_hpp_
 #define __GTEngine_Rendering_BlendFunctions_hpp_
 
-#include <GTLib/Strings/Equal.hpp>
+#include <GTEngine/Core/Strings/Equal.hpp>
 
 namespace GTEngine
 {

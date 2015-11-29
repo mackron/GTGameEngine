@@ -3,8 +3,8 @@
 #ifndef __GT_Message
 #define __GT_Message
 
-#include <GTLib/String.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GT
 {

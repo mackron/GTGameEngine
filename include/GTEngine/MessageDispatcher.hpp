@@ -4,7 +4,7 @@
 #define __GT_MessageDispatcher_hpp_
 
 #include "MessageHandler.hpp"
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 #undef PostMessage
 

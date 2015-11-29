@@ -2,10 +2,10 @@
 
 #include <GTEngine/Scripting.hpp>
 
-#include <GTLib/Strings/List.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
-#include <GTLib/ToString.hpp>
-#include <GTLib/Parse.hpp>
+#include <GTEngine/Core/Strings/List.hpp>
+#include <GTEngine/Core/Strings/Tokenizer.hpp>
+#include <GTEngine/Core/ToString.hpp>
+#include <GTEngine/Core/Parse.hpp>
 
 // Temp.
 #include <GTEngine/Errors.hpp>

@@ -7,7 +7,7 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Physics/CollisionShapeTypes.hpp>
 #include <easy_path/easy_path.h>
-#include <GTLib/System.hpp>
+#include <GTEngine/Core/System.hpp>
 
 // Temp until we get some more support in Script.
 extern "C"

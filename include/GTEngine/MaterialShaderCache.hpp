@@ -4,7 +4,7 @@
 #define __GTEngine_MaterialShaderCache_hpp_
 
 #include "Material.hpp"
-#include <GTLib/Map.hpp>
+#include <GTEngine/Core/Map.hpp>
 
 namespace GTEngine
 {

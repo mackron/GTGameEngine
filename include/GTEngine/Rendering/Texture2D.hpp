@@ -5,9 +5,9 @@
 
 #include "TextureFilters.hpp"
 #include "TextureWrapModes.hpp"
-#include <GTLib/Image.hpp>
-#include <GTLib/Map.hpp>
-#include <GTLib/List.hpp>
+#include <GTEngine/Core/Image.hpp>
+#include <GTEngine/Core/Map.hpp>
+#include <GTEngine/Core/List.hpp>
 
 namespace GTEngine
 {

@@ -3,7 +3,7 @@
 #ifndef __GTEngine_GameUpdateJob_hpp_
 #define __GTEngine_GameUpdateJob_hpp_
 
-#include <GTLib/Threading/Job.hpp>
+#include <GTEngine/Core/Threading/Job.hpp>
 
 namespace GTEngine
 {

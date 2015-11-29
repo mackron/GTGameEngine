@@ -6,8 +6,8 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/ShaderParameter.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/Parse.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
+#include <GTEngine/Core/Parse.hpp>
+#include <GTEngine/Core/Strings/Tokenizer.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)
@@ -17,7 +17,7 @@
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
-#include <GTLib/rapidxml.hpp>
+#include <GTEngine/Core/rapidxml.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif

@@ -7,7 +7,7 @@
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/GUI/Server.hpp>
-#include <GTLib/Keyboard.hpp>
+#include <GTEngine/Core/Keyboard.hpp>
 #include <easy_path/easy_path.h>
 
 using namespace GT;     // <-- Delete me later when we change to the GT namespace!

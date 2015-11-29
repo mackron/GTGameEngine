@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTEngine/Errors.hpp>
-#include <GTLib/Threading/Mutex.hpp>
-#include <GTLib/stdlib.hpp>
-#include <GTLib/stdio.hpp>
+#include <GTEngine/Core/Threading/Mutex.hpp>
+#include <GTEngine/Core/stdlib.hpp>
+#include <GTEngine/Core/stdio.hpp>
 
 namespace GT
 {

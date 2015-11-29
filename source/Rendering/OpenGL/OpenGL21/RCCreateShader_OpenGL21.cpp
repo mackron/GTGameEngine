@@ -2,7 +2,7 @@
 
 #include "RCCreateShader_OpenGL21.hpp"
 #include <GTEngine/Logging.hpp>
-#include <GTLib/Strings/Find.hpp>          // For checking the compilation output.
+#include <GTEngine/Core/Strings/Find.hpp>          // For checking the compilation output.
 #include <gtgl/gtgl.h>
 
 namespace GTEngine

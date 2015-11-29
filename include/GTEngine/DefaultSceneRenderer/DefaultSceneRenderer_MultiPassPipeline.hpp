@@ -3,8 +3,8 @@
 #ifndef __GTEngine_DefaultSceneRenderer_MultiPassPipeline_hpp_
 #define __GTEngine_DefaultSceneRenderer_MultiPassPipeline_hpp_
 
-#include <GTLib/Map.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Map.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Material.hpp>
 
 namespace GTEngine

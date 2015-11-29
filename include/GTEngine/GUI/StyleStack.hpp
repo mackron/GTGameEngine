@@ -5,7 +5,7 @@
 
 #include "StyleClass.hpp"
 #include "StyleAttribute.hpp"
-#include <GTLib/List.hpp>
+#include <GTEngine/Core/List.hpp>
 
 namespace GTGUI
 {

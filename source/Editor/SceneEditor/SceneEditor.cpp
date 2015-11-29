@@ -10,9 +10,9 @@
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/Serializer.hpp>
-#include <GTLib/Deserializer.hpp>
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/Serializer.hpp>
+#include <GTEngine/Core/Deserializer.hpp>
+#include <GTEngine/Core/String.hpp>
 #include <easy_path/easy_path.h>
 
 #undef min

@@ -8,11 +8,11 @@
 #include "Planes.hpp"
 #include "Align.hpp"
 #include "FontStyles.hpp"
-#include <GTLib/Colour.hpp>
-#include <GTLib/String.hpp>
-#include <GTLib/Parse.hpp>
-#include <GTLib/stdio.hpp>
-#include <GTLib/stdlib.hpp>
+#include <GTEngine/Core/Colour.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Parse.hpp>
+#include <GTEngine/Core/stdio.hpp>
+#include <GTEngine/Core/stdlib.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

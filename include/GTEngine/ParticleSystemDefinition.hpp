@@ -3,7 +3,7 @@
 #ifndef __GTEngine_ParticleSystemDefinition_hpp_
 #define __GTEngine_ParticleSystemDefinition_hpp_
 
-#include <GTLib/String.hpp>
+#include <GTEngine/Core/String.hpp>
 #include "ParticleEmitter.hpp"
 
 namespace GTEngine

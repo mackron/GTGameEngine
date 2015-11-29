@@ -3,7 +3,7 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTLib/ImageUtils.hpp>
+#include <GTEngine/Core/ImageUtils.hpp>
 
 
 #include <gtgl/gtgl.h>
@@ -11,7 +11,7 @@
 #if defined(_WIN32)
 #include <WinGDI.h>
 #else
-#include <GTLib/Windowing/X11/X11.hpp>
+#include <GTEngine/Core/Windowing/X11/X11.hpp>
 #endif
 
 

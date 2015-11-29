@@ -3,8 +3,8 @@
 #ifndef __GTLib_GUI_ServerEventHandler_hpp_
 #define __GTLib_GUI_ServerEventHandler_hpp_
 
-#include <GTLib/Cursors.hpp>
-#include <GTLib/Font.hpp>
+#include <GTEngine/Core/Cursors.hpp>
+#include <GTEngine/Core/Font.hpp>
 
 namespace GTGUI
 {

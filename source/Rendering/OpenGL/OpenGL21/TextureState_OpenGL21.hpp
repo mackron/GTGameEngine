@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_TextureState_OpenGL21_hpp_
 #define __GTEngine_Rendering_TextureState_OpenGL21_hpp_
 
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 #include <gtgl/gtgl.h>
 
 

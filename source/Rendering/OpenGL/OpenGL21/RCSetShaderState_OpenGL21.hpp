@@ -4,7 +4,7 @@
 #define __GTEngine_Rendering_OpenGL21_RCSetShaderState_hpp_
 
 #include <GTEngine/ShaderParameterCache.hpp>
-#include <GTLib/Dictionary.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 

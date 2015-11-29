@@ -3,9 +3,9 @@
 #ifndef __GTLib_GUI_MarkupLoader_hpp_
 #define __GTLib_GUI_MarkupLoader_hpp_
 
-#include <GTLib/String.hpp>
-#include <GTLib/Dictionary.hpp>
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Dictionary.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 #include <GTEngine/GUI/ServerXMLParser.hpp>
 

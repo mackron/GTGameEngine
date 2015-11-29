@@ -4,7 +4,7 @@
 #define __GTLib_GUI_DefaultWindowEventHandler_hpp_
 
 
-#include <GTLib/WindowEventHandler.hpp>
+#include <GTEngine/Core/WindowEventHandler.hpp>
 #include "Rendering.hpp"
 #include "Caret.hpp"
 

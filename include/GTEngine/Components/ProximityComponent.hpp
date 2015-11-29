@@ -5,7 +5,7 @@
 
 #include "CollisionShapeComponent.hpp"
 #include "../AlignedType.hpp"
-#include <GTLib/SortedVector.hpp>
+#include <GTEngine/Core/SortedVector.hpp>
 
 namespace GTEngine
 {

@@ -4,9 +4,9 @@
 #define __GTLib_Script_hpp_
 
 #include <cstddef>
-#include <GTLib/Vector.hpp>
-#include <GTLib/String.hpp>
-#include <GTLib/Strings/LineIterator.hpp>
+#include <GTEngine/Core/Vector.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Strings/LineIterator.hpp>
 #include <easy_fs/easy_vfs.h>
 
 namespace GT

@@ -3,9 +3,9 @@
 #ifndef __GTLib_GUI_StyleScriptError_hpp_
 #define __GTLib_GUI_StyleScriptError_hpp_
 
-#include <GTLib/String.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
-#include <GTLib/Strings/LineIterator.hpp>
+#include <GTEngine/Core/String.hpp>
+#include <GTEngine/Core/Strings/Tokenizer.hpp>
+#include <GTEngine/Core/Strings/LineIterator.hpp>
 
 namespace GTGUI
 {

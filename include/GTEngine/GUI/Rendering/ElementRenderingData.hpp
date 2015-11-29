@@ -5,7 +5,7 @@
 
 #include "Mesh.hpp"
 #include "../GarbageCollector.hpp"
-#include <GTLib/Vector.hpp>
+#include <GTEngine/Core/Vector.hpp>
 
 namespace GTGUI
 {

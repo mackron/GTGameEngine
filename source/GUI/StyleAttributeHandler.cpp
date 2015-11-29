@@ -4,7 +4,7 @@
 #include <GTEngine/GUI/StyleStack.hpp>
 #include <GTEngine/GUI/Element.hpp>
 #include <GTEngine/GUI/Server.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
+#include <GTEngine/Core/Strings/Tokenizer.hpp>
 
 /* !!! Don't forget to add new attribute handlers to StyleServer::LoadStyleAttributeHandlers(). It's at the end of StyleServer.cpp. !!! */
 
