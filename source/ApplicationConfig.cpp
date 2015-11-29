@@ -4,7 +4,6 @@
 #include <GTLib/Script.hpp>
 #include <GTLib/Errors.hpp>
 #include <GTLib/String.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/stdlib.hpp>
 #include <easy_path/easy_path.h>
 
@@ -58,10 +57,10 @@ namespace GT
                     m_script.GetTableValue(-2);
                     if (m_script.IsString(-1))
                     {
-                        GTLib::Path absPath(m_script.ToString(-1));
-                        absPath.MakeAbsolute(cwd);
+                        char absPath[EASYVFS_MAX_PATH];
+                        easypath_to_absolute(m_script.ToString(-1), cwd, absPath, sizeof(absPath));
 
-                        m_dataDirectories.PushBack(absPath.c_str());
+                        m_dataDirectories.PushBack(absPath);
                     }
                     else if (m_script.IsTable(-1))
                     {
@@ -70,9 +69,6 @@ namespace GT
                         {
                             if (m_script.IsString(-1))
                             {
-                                //GTLib::Path absPath(m_script.ToString(-1));
-                                //absPath.MakeAbsolute(cwd);
-
                                 char absPath[EASYVFS_MAX_PATH];
                                 easypath_copyandappend(absPath, sizeof(absPath), cwd, m_script.ToString(-1));
 

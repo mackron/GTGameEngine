@@ -6,7 +6,6 @@
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/List.hpp>
 #include <GTLib/Vector.hpp>
-#include <GTLib/Path.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>
 
@@ -150,7 +149,7 @@ namespace GTEngine
         char relativePath[EASYVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
-        if (GTLib::Path::IsAbsolute(fileName))
+        if (easypath_isabsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {

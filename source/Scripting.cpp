@@ -6,9 +6,7 @@
 #include <GTEngine/PrefabLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Physics/CollisionShapeTypes.hpp>
-
-#include <GTLib/Path.hpp>
-
+#include <easy_path/easy_path.h>
 
 namespace GTEngine
 {
@@ -824,7 +822,7 @@ namespace GTEngine
             {
                 // There can be any number of text files. Perhaps we should assume that if it's not a resouce file like a model and texture, we should assume a text file?
 
-                auto extension = GTLib::Path::Extension(script.ToString(1));
+                auto extension = easypath_extension(script.ToString(1));
 
                 bool result = GTLib::Strings::Equal<false>(extension, "")       ||
                               GTLib::Strings::Equal<false>(extension, "txt")    ||

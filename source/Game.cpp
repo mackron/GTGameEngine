@@ -19,8 +19,8 @@
 #include <GTLib/System.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/String.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/Keyboard.hpp>
+#include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -525,20 +525,20 @@ namespace GTEngine
 
     bool Game::PackageForDistribution(const char* outputDirectory, const char* executableName)
     {
-        GTLib::Path absoluteOutputDirectory(g_EngineContext->GetExecutableDirectoryAbsolutePath());
-        absoluteOutputDirectory.Append(outputDirectory);
+        char absoluteOutputDirectory[EASYVFS_MAX_PATH];
+        easypath_copyandappend(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), g_EngineContext->GetExecutableDirectoryAbsolutePath(), outputDirectory);
 
         // We will start by creating the output directory.
-        if (!easyvfs_is_existing_directory(g_EngineContext->GetVFS(), absoluteOutputDirectory.c_str()))
+        if (!easyvfs_is_existing_directory(g_EngineContext->GetVFS(), absoluteOutputDirectory))
         {
-            if (!easyvfs_mkdir(g_EngineContext->GetVFS(), absoluteOutputDirectory.c_str()))
+            if (!easyvfs_mkdir(g_EngineContext->GetVFS(), absoluteOutputDirectory))
             {
                 // Failed to create the output directory.
                 return false;
             }
         }
 
-        GTEngine::GamePackager packager(absoluteOutputDirectory.c_str());
+        GTEngine::GamePackager packager(absoluteOutputDirectory);
 
 
         // We will start by copying over the data directories.
@@ -550,9 +550,9 @@ namespace GTEngine
             }
         }
 
-        if (GTLib::Path::ExtensionEqual(g_EngineContext->GetExecutableAbsolutePath(), "exe"))
+        if (easypath_extensionequal(g_EngineContext->GetExecutableAbsolutePath(), "exe"))
         {
-            if (GTLib::Path::ExtensionEqual(executableName, "exe"))
+            if (easypath_extensionequal(executableName, "exe"))
             {
                 packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), executableName);
             }
@@ -590,7 +590,7 @@ namespace GTEngine
         {
             // It's not a directory.
 
-            auto extension = GTLib::Path::Extension(item.info.absolutePath);
+            auto extension = easypath_extension(item.info.absolutePath);
 
             if (ModelLibrary::IsExtensionSupported(extension))
             {

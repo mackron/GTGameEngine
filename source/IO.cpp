@@ -3,7 +3,6 @@
 #include <GTEngine/IO.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTLib/ImageLoader.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/Strings/Find.hpp>
 #include <easy_path/easy_path.h>
 
@@ -11,52 +10,52 @@ namespace GT
 {
     bool IsSupportedImageExtension(const char* fileName)
     {
-        return GTLib::ImageLoader::IsExtensionSupported(GTLib::Path::Extension(fileName));
+        return GTLib::ImageLoader::IsExtensionSupported(easypath_extension(fileName));
     }
 
     bool IsSupportedModelExtension(const char* fileName)
     {
-        return GTEngine::ModelLibrary::IsExtensionSupported(GTLib::Path::Extension(fileName));
+        return GTEngine::ModelLibrary::IsExtensionSupported(easypath_extension(fileName));
     }
 
     bool IsSupportedMaterialExtension(const char* fileName)
     {
-        auto extension = GTLib::Path::Extension(fileName);
+        const char* extension = easypath_extension(fileName);
 
         return GTLib::Strings::Equal<false>(extension, "material") ||
-                GTLib::Strings::Equal<false>(extension, "gtmaterial");
+               GTLib::Strings::Equal<false>(extension, "gtmaterial");
     }
 
     bool IsSupportedSoundExtension(const char* fileName)
     {
-        const char* extension = GTLib::Path::Extension(fileName);
+        const char* extension = easypath_extension(fileName);
             
         return GTLib::Strings::Equal<false>(extension, "wav") ||
-                GTLib::Strings::Equal<false>(extension, "ogg");
+               GTLib::Strings::Equal<false>(extension, "ogg");
     }
 
     bool IsSupportedParticleSystemExtension(const char* fileName)
     {
-        return GTLib::Strings::Equal<false>(GTLib::Path::Extension(fileName), "gtparticle");
+        return GTLib::Strings::Equal<false>(easypath_extension(fileName), "gtparticle");
     }
 
     bool IsSupportedSceneExtension(const char* fileName)
     {
-        return GTLib::Strings::Equal<false>(GTLib::Path::Extension(fileName), "gtscene");
+        return GTLib::Strings::Equal<false>(easypath_extension(fileName), "gtscene");
     }
 
     bool IsSupportedPrefabExtension(const char* fileName)
     {
-        return GTLib::Strings::Equal<false>(GTLib::Path::Extension(fileName), "gtprefab");
+        return GTLib::Strings::Equal<false>(easypath_extension(fileName), "gtprefab");
     }
 
     bool IsSupportedScriptExtension(const char* fileName)
     {
-        auto extension = GTLib::Path::Extension(fileName);
+        auto extension = easypath_extension(fileName);
 
         return GTLib::Strings::Equal<false>(extension, "gtscript") ||
-                GTLib::Strings::Equal<false>(extension, "script")   ||
-                GTLib::Strings::Equal<false>(extension, "lua");
+               GTLib::Strings::Equal<false>(extension, "script")   ||
+               GTLib::Strings::Equal<false>(extension, "lua");
     }
 
 

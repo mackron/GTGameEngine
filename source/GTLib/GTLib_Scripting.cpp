@@ -3,7 +3,6 @@
 #include <GTLib/Scripting.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/Dictionary.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/Timing.hpp>
 #include <GTLib/System.hpp>
 #include <GTLib/Windowing/Keys.hpp>

@@ -4,7 +4,6 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTLib/Path.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)
@@ -475,7 +474,7 @@ namespace GTEngine
             }
             else
             {
-                if (GTLib::Path::ExtensionEqual(item.info.absolutePath, "gtmodel"))
+                if (easypath_extensionequal(item.info.absolutePath, "gtmodel"))
                 {
                     char absolutePathNoExt[EASYVFS_MAX_PATH];
                     easypath_copyandremoveextension(absolutePathNoExt, sizeof(absolutePathNoExt), item.info.absolutePath);

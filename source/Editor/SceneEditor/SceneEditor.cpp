@@ -12,7 +12,6 @@
 #include <GTEngine/GTEngine.hpp>
 #include <GTLib/Serializer.hpp>
 #include <GTLib/Deserializer.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/String.hpp>
 #include <easy_path/easy_path.h>
 //#include <ittnotify.h>

@@ -3,7 +3,6 @@
 #include <GTEngine/Editor/SubEditor.hpp>
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTLib/Path.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)

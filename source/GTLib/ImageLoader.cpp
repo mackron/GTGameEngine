@@ -1,11 +1,11 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/ImageLoader.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/Log.hpp>
 #include <GTLib/Strings/Equal.hpp>
 #include <GTLib/Strings/Create.hpp>
 #include <GTEngine/GTEngine.hpp>
+#include <easy_path/easy_path.h>
 
 // TODO: Delete this once DDS is implemented.
 #define GTLIB_NO_DDS
@@ -51,7 +51,7 @@ namespace GTLib
 {
     ImageLoader * ImageLoader::Create(const char *filename)
     {
-        auto    extension = GTLib::Path::Extension(filename);
+        const char*  extension = easypath_extension(filename);
         ImageLoader* loader    = nullptr;
         
 #ifndef GTLIB_NO_PNG

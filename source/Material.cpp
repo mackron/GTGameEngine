@@ -8,7 +8,6 @@
 #include <GTEngine/GTEngine.hpp>
 #include <GTLib/Parse.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
-#include <GTLib/Path.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)
@@ -287,7 +286,7 @@ namespace GTEngine
         char newRelativePath[EASYVFS_MAX_PATH];
 
 
-        if (GTLib::Path::IsAbsolute(fileNameIn))
+        if (easypath_isabsolute(fileNameIn))
         {
             strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 

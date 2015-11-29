@@ -3,7 +3,8 @@
 #include <GTLib/GUI/StyleScriptCompiler.hpp>
 #include "StyleTokenizer.hpp"
 
-#include <GTLib/Path.hpp>
+#include <easy_fs/easy_vfs.h>
+#include <easy_path/easy_path.h>
 
 namespace GTGUI
 {
@@ -629,9 +630,16 @@ namespace GTGUI
                                                                         }
 
                                                                         // We have the URL, so now it needs to translated into an absolute path and added to the value string.
-                                                                        GTLib::Path translatedURL(url.c_str());
+                                                                        //GTLib::Path translatedURL(url.c_str());
+                                                                        //if (baseURLPath != nullptr) {
+                                                                        //    translatedURL.MakeAbsolute(baseURLPath);
+                                                                        //}
+
+                                                                        char translatedURL[EASYVFS_MAX_PATH];
                                                                         if (baseURLPath != nullptr) {
-                                                                            translatedURL.MakeAbsolute(baseURLPath);
+                                                                            easypath_to_absolute(url.c_str(), baseURLPath, translatedURL, sizeof(translatedURL));
+                                                                        } else {
+                                                                            strcpy_s(translatedURL, sizeof(translatedURL), url.c_str());
                                                                         }
 
                                                                         // We may need to ensure we place a space between the existing value string and the url.
@@ -640,7 +648,7 @@ namespace GTGUI
                                                                             value.Append(" ");
                                                                         }
 
-                                                                        value.Append(translatedURL.c_str());
+                                                                        value.Append(translatedURL);
                                                                     }
                                                                     else
                                                                     {

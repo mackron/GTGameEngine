@@ -5,7 +5,6 @@
 #include <GTLib/Strings/Create.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/ToString.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/Math.hpp>
 #include <GTEngine/GTEngine.hpp>
 

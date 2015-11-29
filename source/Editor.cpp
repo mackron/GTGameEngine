@@ -7,7 +7,6 @@
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTLib/GUI/Server.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/Keyboard.hpp>
 #include <easy_path/easy_path.h>
 
@@ -222,7 +221,7 @@ namespace GTEngine
 
         if (!isSpecialEditor)
         {
-            if (GTLib::Path::IsAbsolute(path))
+            if (easypath_isabsolute(path))
             {
                 if (relativeTo != nullptr)
                 {
@@ -395,7 +394,7 @@ namespace GTEngine
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTLib::Path::IsRelative(path))
+            if (easypath_isrelative(path))
             {
                 if (relativeTo != nullptr)
                 {
@@ -438,7 +437,7 @@ namespace GTEngine
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTLib::Path::IsRelative(path))
+            if (easypath_isrelative(path))
             {
                 if (relativeTo != nullptr)
                 {
@@ -518,7 +517,7 @@ namespace GTEngine
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTLib::Path::IsRelative(path))
+            if (easypath_isrelative(path))
             {
                 if (relativeTo != nullptr)
                 {
@@ -617,7 +616,7 @@ namespace GTEngine
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTLib::Path::IsRelative(path))
+            if (easypath_isrelative(path))
             {
                 if (relativeTo != nullptr)
                 {
@@ -682,7 +681,7 @@ namespace GTEngine
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTLib::Path::IsRelative(path))
+            if (easypath_isrelative(path))
             {
                 if (relativeTo != nullptr)
                 {
@@ -716,7 +715,7 @@ namespace GTEngine
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTLib::Path::IsRelative(path))
+            if (easypath_isrelative(path))
             {
                 if (relativeTo != nullptr)
                 {
@@ -751,11 +750,10 @@ namespace GTEngine
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTLib::Path::IsRelative(path))
+            if (easypath_isrelative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
                     easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -842,7 +840,7 @@ namespace GTEngine
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTLib::Path::IsRelative(path))
+            if (easypath_isrelative(path))
             {
                 if (relativeTo != nullptr)
                 {

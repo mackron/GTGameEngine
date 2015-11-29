@@ -4,7 +4,6 @@
 #include "StyleAttributeHandler.hpp"
 #include <GTLib/GUI/Server.hpp>
 #include <GTLib/String.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/stdlib.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>

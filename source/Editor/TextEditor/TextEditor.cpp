@@ -4,8 +4,8 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Scripting.hpp>
-#include <GTLib/Path.hpp>
 #include <GTEngine/GTEngine.hpp>
+#include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -30,7 +30,7 @@ namespace GTEngine
             auto &script = this->GetScript();
 
             // We need to determine whether or not we are running a script.
-            auto extension = GTLib::Path::Extension(absolutePath);
+            const char* extension = easypath_extension(absolutePath);
             assert(extension != nullptr);
             {
                 this->isScriptFile = GTLib::Strings::Equal<false>(extension, "lua")    ||

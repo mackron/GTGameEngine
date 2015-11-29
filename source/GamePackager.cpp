@@ -3,7 +3,6 @@
 #include <GTEngine/GamePackager.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/Path.hpp>
 #include <easy_path/easy_path.h>
 #include <easy_fs/easy_vfs.h>
 
@@ -60,7 +59,7 @@ namespace GTEngine
                     //
                     // If the file is a model file that is not a .gtmodel, we need to check if it has an associated .gtmodel file that's newer. If so, we can
                     // ignore the original model file.
-                    if (GT::IsSupportedModelExtension(fileName) && !GTLib::Path::ExtensionEqual(fileName, ".gtmodel"))
+                    if (GT::IsSupportedModelExtension(fileName) && !easypath_extensionequal(fileName, ".gtmodel"))
                     {
                         // It's a non-gtmodel file. We need to look for an associated .gtmodel file.
                         easyvfs_file_info gtmodelInfo;
@@ -117,30 +116,40 @@ namespace GTEngine
     {
         if (!this->executableRelativePath.IsEmpty())
         {
-            GTLib::Path executableDirectory(this->outputDirectoryAbsolutePath.c_str());
-            executableDirectory.Append(executableRelativePath.c_str());
-            executableDirectory.RemoveLast();            // <-- Remove the file name, leaving the executable directory.
+            char executableDirectory[EASYVFS_MAX_PATH];
+            easypath_copyandappend(executableDirectory, sizeof(executableDirectory), this->outputDirectoryAbsolutePath.c_str(), executableRelativePath.c_str());
+            easypath_remove_file_name(executableDirectory);
+
+            //GTLib::Path executableDirectory(this->outputDirectoryAbsolutePath.c_str());
+            //executableDirectory.Append(executableRelativePath.c_str());
+            //executableDirectory.RemoveLast();            // <-- Remove the file name, leaving the executable directory.
 
             // With the executable directory determined we can determine the paths of the data directories.
             GTLib::Vector<GTLib::String> dataDirectoryConfigPaths;
             for (size_t iDataDirectory = 0; iDataDirectory < this->dataDirectoryRelativePaths.count; ++iDataDirectory)
             {
-                GTLib::Path dataDirectoryAbsolutePath((this->outputDirectoryAbsolutePath + "/" + this->dataDirectoryRelativePaths[iDataDirectory]).c_str());
-                dataDirectoryAbsolutePath.Clean();
+                //GTLib::Path dataDirectoryAbsolutePath((this->outputDirectoryAbsolutePath + "/" + this->dataDirectoryRelativePaths[iDataDirectory]).c_str());
+                //dataDirectoryAbsolutePath.Clean();
+
+                char dataDirectoryAbsolutePath[EASYVFS_MAX_PATH];
+                easypath_append_and_clean(dataDirectoryAbsolutePath, sizeof(dataDirectoryAbsolutePath), this->outputDirectoryAbsolutePath.c_str(), this->dataDirectoryRelativePaths[iDataDirectory].c_str());
 
                 //GTLib::Path dataDirectoryRelativePath(GTLib::IO::ToRelativePath(dataDirectoryAbsolutePath.c_str(), executableDirectory.c_str()).c_str());
                 //dataDirectoryRelativePath.Clean();
 
                 char dataDirectoryRelativePath[EASYVFS_MAX_PATH];
-                easypath_to_relative(dataDirectoryAbsolutePath.c_str(), executableDirectory.c_str(), dataDirectoryRelativePath, sizeof(dataDirectoryRelativePath));
+                easypath_to_relative(dataDirectoryAbsolutePath, executableDirectory, dataDirectoryRelativePath, sizeof(dataDirectoryRelativePath));
 
                 dataDirectoryConfigPaths.PushBack(dataDirectoryRelativePath);
             }
 
-            GTLib::Path configPath(executableDirectory.c_str());
-            configPath.Append("config.lua");
+            //GTLib::Path configPath(executableDirectory.c_str());
+            //configPath.Append("config.lua");
 
-            easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), configPath.c_str(), EASYVFS_WRITE, 0);
+            char configPath[EASYVFS_MAX_PATH];
+            easypath_copyandappend(configPath, sizeof(configPath), executableDirectory, "config.lua");
+
+            easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), configPath, EASYVFS_WRITE, 0);
             if (pFile != nullptr)
             {
                 for (size_t iDataDirectory = 0; iDataDirectory < dataDirectoryConfigPaths.count; ++iDataDirectory)

@@ -6,9 +6,9 @@
 #include <GTLib/Strings/Create.hpp>
 #include <GTLib/Strings/Equal.hpp>
 #include <GTLib/ToString.hpp>
-#include <GTLib/Path.hpp>
 #include <cassert>
 #include <GTEngine/GTEngine.hpp>
+#include <easy_path/easy_path.h>
 
 // Server
 namespace GTGUI
@@ -656,7 +656,7 @@ namespace GTGUI
     {
         if (m_imageManager != nullptr)
         {
-            if (GTLib::Path::IsAbsolute(absURLOrID))
+            if (easypath_isabsolute(absURLOrID))
             {
                 // We will first check that the image isn't already loaded. If it is, we just return the existing image.
                 auto iImage = this->loadedImages.Find(absURLOrID);

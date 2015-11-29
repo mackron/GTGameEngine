@@ -5,7 +5,6 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/Path.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GTEngine
@@ -38,7 +37,7 @@ namespace GTEngine
         char newAbsolutePath[EASYVFS_MAX_PATH];
         char newRelativePath[EASYVFS_MAX_PATH];
 
-        if (GTLib::Path::IsAbsolute(fileNameIn))
+        if (easypath_isabsolute(fileNameIn))
         {
             strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 
@@ -64,7 +63,7 @@ namespace GTEngine
 
 
         char nativeAbsolutePath[EASYVFS_MAX_PATH];
-        if (GTLib::Path::ExtensionEqual(newAbsolutePath, "gtmodel"))
+        if (easypath_extensionequal(newAbsolutePath, "gtmodel"))
         {
             strcpy_s(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath);
 

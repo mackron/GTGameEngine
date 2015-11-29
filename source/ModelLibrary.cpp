@@ -6,7 +6,6 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/Path.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)
@@ -102,7 +101,7 @@ namespace GTEngine
         char relativePath[EASYVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
-        if (GTLib::Path::IsAbsolute(fileName))
+        if (easypath_isabsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
@@ -228,7 +227,7 @@ namespace GTEngine
         char fileName[EASYVFS_MAX_PATH];
         strcpy_s(fileName, sizeof(fileName), fileNameIn);
 
-        if (GTLib::Path::ExtensionEqual(fileName, "gtmodel"))
+        if (easypath_extensionequal(fileName, "gtmodel"))
         {
             easypath_removeextension(fileName);
         }
@@ -275,7 +274,7 @@ namespace GTEngine
     {
         // We have a model, so now we need to check that we can open the file.
         GTLib::String fileName(fileNameIn);
-        if (!GTLib::Path::ExtensionEqual(fileNameIn, "gtmodel"))
+        if (!easypath_extensionequal(fileNameIn, "gtmodel"))
         {
             fileName += ".gtmodel";
         }
@@ -304,7 +303,7 @@ namespace GTEngine
         auto iDefinition = LoadedDefinitions.Find(fileName);
         if (iDefinition == nullptr)
         {
-            if (GTLib::Path::ExtensionEqual(fileName, "gtmodel"))
+            if (easypath_extensionequal(fileName, "gtmodel"))
             {
                 char fileNameWithoutExtension[EASYVFS_MAX_PATH];
                 easypath_copyandremoveextension(fileNameWithoutExtension, sizeof(fileNameWithoutExtension), fileName);
