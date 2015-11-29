@@ -7,6 +7,8 @@
 #include <GTLib/Strings/Find.hpp>
 #include <easy_path/easy_path.h>
 
+using namespace GT; // <-- Delete me later when we change to the GT namespace!
+
 namespace GTEngine
 {
     namespace IO
@@ -63,52 +65,52 @@ namespace GTEngine
 
 
 
-        AssetType GetAssetTypeFromExtension(const char* fileName)
+        AssetType GetAssetClassFromExtension(const char* fileName)
         {
             // If the path is a directory instead of a file, we need to return AssetType_None.
             if (GTLib::Strings::IsNullOrEmpty(easypath_filename(fileName)))
             {
-                return AssetType_None;
+                return AssetClass_Unknown;
             }
             else
             {
                 if (IsSupportedImageExtension(fileName))
                 {
-                    return AssetType_Image;
+                    return AssetClass_Image;
                 }
                 else if (IsSupportedModelExtension(fileName))
                 {
-                    return AssetType_Model;
+                    return AssetClass_Model;
                 }
                 else if (IsSupportedMaterialExtension(fileName))
                 {
-                    return AssetType_Material;
+                    return AssetClass_Material;
                 }
                 else if (IsSupportedSoundExtension(fileName))
                 {
-                    return AssetType_Sound;
+                    return AssetClass_Sound;
                 }
                 else if (IsSupportedParticleSystemExtension(fileName))
                 {
-                    return AssetType_ParticleSystem;
+                    return AssetClass_ParticleSystem;
                 }
                 else if (IsSupportedSceneExtension(fileName))
                 {
-                    return AssetType_Scene;
+                    return AssetClass_Scene;
                 }
                 else if (IsSupportedPrefabExtension(fileName))
                 {
-                    return AssetType_Prefab;
+                    return AssetClass_Prefab;
                 }
                 else if (IsSupportedScriptExtension(fileName))
                 {
-                    return AssetType_Script;
+                    return AssetClass_Script;
                 }
                 else
                 {
-                    // If we don't have an extension, check that we actually have a file.
+                    // If we don't have an extension assume it's a text file.
 
-                    return AssetType_TextFile;
+                    return AssetClass_TextFile;
                 }
             }
         }

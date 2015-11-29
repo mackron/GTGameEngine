@@ -11,6 +11,7 @@
 #include <GTLib/Keyboard.hpp>
 #include <easy_path/easy_path.h>
 
+using namespace GT;     // <-- Delete me later when we change to the GT namespace!
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -301,52 +302,52 @@ namespace GTEngine
 
 
                 // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
-                auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath);
+                AssetClass type = GTEngine::IO::GetAssetClassFromExtension(absolutePath);
 
                 switch (type)
                 {
-                case AssetType_Image:
+                case AssetClass_Image:
                     {
                         newSubEditor = new ImageEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
-                case AssetType_Model:
+                case AssetClass_Model:
                     {
                         newSubEditor = new ModelEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
-                case AssetType_Material:
+                case AssetClass_Material:
                     {
                         newSubEditor = new MaterialEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
 
-                case AssetType_Scene:
+                case AssetClass_Scene:
                     {
                         newSubEditor = new SceneEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
-                case AssetType_ParticleSystem:
+                case AssetClass_ParticleSystem:
                     {
                         newSubEditor = new ParticleEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
-                case AssetType_Script:
-                case AssetType_TextFile:
+                case AssetClass_Script:
+                case AssetClass_TextFile:
                     {
                         newSubEditor = new TextEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
 
-                case AssetType_Sound:
-                case AssetType_Prefab:
-                case AssetType_None:
+                case AssetClass_Sound:
+                case AssetClass_Prefab:
+                case AssetClass_Unknown:
                 default:
                     {
                         // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create

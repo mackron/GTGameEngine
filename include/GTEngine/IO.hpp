@@ -3,7 +3,7 @@
 #ifndef __GTEngine_IO_hpp_
 #define __GTEngine_IO_hpp_
 
-#include <GTEngine/AssetTypes.hpp>
+#include <GTEngine/Assets/AssetTypes.hpp>
 #include <GTLib/String.hpp>
 
 namespace GTEngine
@@ -76,7 +76,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If the asset type is unknown, it will assume a text file.
-        AssetType GetAssetTypeFromExtension(const char* fileName);
+        GT::AssetClass GetAssetClassFromExtension(const char* fileName);
 
 
 

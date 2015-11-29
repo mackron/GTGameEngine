@@ -15,11 +15,16 @@ namespace GT
     //  0x00000000 - 0x000000FF : Reserved by the engine.
     //  0x00000100 - 0xFFFFFFFF : Custom
 
-    static const AssetClass AssetClass_Unknown   = 0x00000000;
-    static const AssetClass AssetClass_Image     = 0x00000001;
-    static const AssetClass AssetClass_Material  = 0x00000002;
-    static const AssetClass AssetClass_Model     = 0x00000003;
-    static const AssetClass AssetClass_Sound     = 0x00000004;
+    static const AssetClass AssetClass_Unknown        = 0x00000000;
+    static const AssetClass AssetClass_Image          = 0x00000001;
+    static const AssetClass AssetClass_Material       = 0x00000002;
+    static const AssetClass AssetClass_Model          = 0x00000003;
+    static const AssetClass AssetClass_Sound          = 0x00000004;
+    static const AssetClass AssetClass_ParticleSystem = 0x00000005;
+    static const AssetClass AssetClass_Script         = 0x00000006;
+    static const AssetClass AssetClass_Scene          = 0x00000007;
+    static const AssetClass AssetClass_Prefab         = 0x00000008;
+    static const AssetClass AssetClass_TextFile       = 0x00000009;
 
 
     // Asset Type Ranges
