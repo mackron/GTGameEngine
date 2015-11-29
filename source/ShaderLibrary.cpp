@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/ShaderLibrary.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
+#include <GTLib/Errors.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTLib/String.hpp>
@@ -496,12 +496,12 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::PostError("ShaderLibrary - There was an unknown error loading a <shader> tag. This shader will be ignored.");
+                    GT::PostError("ShaderLibrary - There was an unknown error loading a <shader> tag. This shader will be ignored.");
                 }
             }
             else
             {
-                GTEngine::PostError("ShaderLibrary - <shader> tags must have an 'id' attribute.");
+                GT::PostError("ShaderLibrary - <shader> tags must have an 'id' attribute.");
             }
         }
 
@@ -530,7 +530,7 @@ namespace GTEngine
             }
             catch (rapidxml::parse_error &e)
             {
-                GTEngine::PostError("ShaderLibrary: %s", e.what());
+                GT::PostError("ShaderLibrary: %s", e.what());
                 return false;
             }
             

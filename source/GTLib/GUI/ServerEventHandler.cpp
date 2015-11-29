@@ -9,12 +9,12 @@ namespace GTGUI
     
     void ServerEventHandler::OnError(const char *msg)
     {
-        GTLib::PostError("%s", msg);
+        GT::PostError("%s", msg);
     }
     
     void ServerEventHandler::OnWarning(const char *msg)
     {
-        GTLib::PostError("%s", msg);
+        GT::PostError("%s", msg);
     }
     
     void ServerEventHandler::OnLog(const char *)

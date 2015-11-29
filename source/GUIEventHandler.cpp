@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUIEventHandler.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 
 namespace GTEngine
@@ -18,7 +18,7 @@ namespace GTEngine
 
     void GUIEventHandler::OnError(const char* msg)
     {
-        GTEngine::PostError("%s", msg);
+        GT::PostError("%s", msg);
     }
 
     void GUIEventHandler::OnWarning(const char* msg)

@@ -4,7 +4,7 @@
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Scene.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 
 namespace GTEngine
 {
@@ -202,7 +202,7 @@ namespace GTEngine
         }
         else
         {
-            GTEngine::PostError("Error deserializing particle system component. Unknown chunk ID (%d).", header.id);
+            GT::PostError("Error deserializing particle system component. Unknown chunk ID (%d).", header.id);
         }
     }
 

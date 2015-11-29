@@ -2,7 +2,7 @@
 
 #include <GTEngine/ParticleEmitter.hpp>
 #include <GTEngine/Rendering.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 
 #if defined(__GNUC__)
@@ -928,7 +928,7 @@ namespace GTEngine
         }
         else
         {
-            GTEngine::PostError("Error deserializing particle emitter. Unknown chunk ID (%d).", header.id);
+            GT::PostError("Error deserializing particle emitter. Unknown chunk ID (%d).", header.id);
             return;
         }
     }

@@ -2,7 +2,7 @@
 
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
@@ -794,12 +794,12 @@ namespace GTEngine
             else
             {
                 // We couldn't create a window, which means the renderer is not usable...
-                GTEngine::PostError("Error initialising renderer.");
+                GT::PostError("Error initialising renderer.");
             }
         }
         else
         {
-            GTEngine::PostError("Error initialising scripting environment.");
+            GT::PostError("Error initialising scripting environment.");
         }
 
         return false;

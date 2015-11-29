@@ -5,8 +5,8 @@
 #include <GTEngine/DefaultScenePhysicsManager.hpp>
 #include <GTEngine/DefaultSceneCullingManager.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/Scripting.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTLib/ToString.hpp>
 #include <GTEngine/GTEngine.hpp>
 
@@ -351,7 +351,7 @@ namespace GTEngine
                 // If a scene node of the same ID already exists, we have a bug somewhere.
                 if (this->sceneNodes.Exists(uniqueID))
                 {
-                    GTEngine::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", GTLib::ToString(uniqueID).c_str());
+                    GT::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", GTLib::ToString(uniqueID).c_str());
                     return;
                 }
             }
@@ -381,7 +381,7 @@ namespace GTEngine
         }
         else
         {
-            GTEngine::PostError("Error: Attempting to add a scene node to a scene while it is already part of a different scene. Ignoring.");
+            GT::PostError("Error: Attempting to add a scene node to a scene while it is already part of a different scene. Ignoring.");
         }
     }
 

@@ -2,7 +2,7 @@
 
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTLib/ImageUtils.hpp>
 
 
@@ -267,7 +267,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::PostError("Error creating OpenGL context. %s", gtglGetLastError()->message);
+                GT::PostError("Error creating OpenGL context. %s", gtglGetLastError()->message);
             }
         }
 

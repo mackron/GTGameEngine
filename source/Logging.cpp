@@ -36,6 +36,5 @@ namespace GTEngine
 
         // We're finished with the formatted string, so it needs to be deleted.
         GTLib::Strings::Delete(formattedStr);
-
     }
 }

@@ -2,7 +2,7 @@
 
 #include <GTEngine/NavigationMesh.hpp>
 #include <GTEngine/Scene.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Recast/RecastAlloc.h>
 
@@ -224,34 +224,34 @@ namespace GTEngine
                                     }
                                     else
                                     {
-                                        GTEngine::PostError("NavigationMesh: Failed to init nav mesh query object.");
+                                        GT::PostError("NavigationMesh: Failed to init nav mesh query object.");
                                     }
                                 }
                                 else
                                 {
                                     dtFree(navData);
-                                    GTEngine::PostError("NavigationMesh: Failed to init detail nav mesh.");
+                                    GT::PostError("NavigationMesh: Failed to init detail nav mesh.");
                                 }
                             }
                             else
                             {
                                 dtFree(navData);
-                                GTEngine::PostError("NavigationMesh: Error creating Detour nav mesh data.");
+                                GT::PostError("NavigationMesh: Error creating Detour nav mesh data.");
                             }
                         }
                         else
                         {
-                            GTEngine::PostError("NavigationMesh: Error creating detail mesh.");
+                            GT::PostError("NavigationMesh: Error creating detail mesh.");
                         }
                     }
                     else
                     {
-                        GTEngine::PostError("NavigationMesh: Error creating main navigation mesh.");
+                        GT::PostError("NavigationMesh: Error creating main navigation mesh.");
                     }
                 }
                 else
                 {
-                    GTEngine::PostError("NavigationMesh: Error creating contours.");
+                    GT::PostError("NavigationMesh: Error creating contours.");
                 }
 
 
@@ -259,14 +259,14 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::PostError("NavigationMesh: Error creating compact heightfield.");
+                GT::PostError("NavigationMesh: Error creating compact heightfield.");
             }
 
             rcFreeCompactHeightfield(compactHeightfield);
         }
         else
         {
-            GTEngine::PostError("NavigationMesh: Error creating heightfield.");
+            GT::PostError("NavigationMesh: Error creating heightfield.");
         }
 
         rcFreeHeightField(heightfield);

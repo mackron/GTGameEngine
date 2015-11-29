@@ -3,7 +3,7 @@
 #include <GTEngine/Components/CollisionShapeComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTEngine/GTEngine.hpp>
 #undef max
 
@@ -992,7 +992,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::PostError("Error deserializing  CollisionShapeComponent. Main chunk version (%d) is unknown. This chunk has been skipped. Nothing has been modified.", header.version);
+                    GT::PostError("Error deserializing  CollisionShapeComponent. Main chunk version (%d) is unknown. This chunk has been skipped. Nothing has been modified.", header.version);
 
                     deserializer.Seek(header.sizeInBytes);
                     return;
@@ -1001,7 +1001,7 @@ namespace GTEngine
         }
         else
         {
-            GTEngine::PostError("Error deserializing CollisionShapeComponent. The first chunk must the main chunk, but instead it is (%d). This chunk has been skipped. Nothing has been modified.", header.id);
+            GT::PostError("Error deserializing CollisionShapeComponent. The first chunk must the main chunk, but instead it is (%d). This chunk has been skipped. Nothing has been modified.", header.id);
 
             deserializer.Seek(header.sizeInBytes);
             return;

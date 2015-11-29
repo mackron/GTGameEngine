@@ -3,7 +3,7 @@
 #include <GTEngine/ShaderParameterCache.hpp>
 #include <GTEngine/ShaderParameter.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 
 namespace GTEngine
 {
@@ -668,7 +668,7 @@ namespace GTEngine
 
             default:
                 {
-                    GTEngine::PostError("Failed to deserialize ShaderParameterCache. Unknown version (%d).", header.version);
+                    GT::PostError("Failed to deserialize ShaderParameterCache. Unknown version (%d).", header.version);
                     break;
                 }
             }

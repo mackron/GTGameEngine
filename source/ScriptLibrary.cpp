@@ -2,8 +2,8 @@
 
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/Scripting.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>
@@ -69,7 +69,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                GT::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return nullptr;
             }
         }
@@ -101,7 +101,7 @@ namespace GTEngine
                 {
                     if (!silenceMissingFileWarning)
                     {
-                        GTEngine::PostError("Can not find file: %s", fileName);
+                        GT::PostError("Can not find file: %s", fileName);
                     }
                 }
             }
@@ -117,7 +117,7 @@ namespace GTEngine
         {
             if (!silenceMissingFileWarning)
             {
-                GTEngine::PostError("Can not find file: %s", fileName);
+                GT::PostError("Can not find file: %s", fileName);
             }
         }
 
@@ -169,7 +169,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                GT::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return false;
             }
         }
@@ -198,7 +198,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::PostError("Attempting to reload a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                GT::PostError("Attempting to reload a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return false;
             }
         }

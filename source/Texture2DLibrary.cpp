@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/GTEngine.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 
@@ -63,7 +63,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                GT::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return nullptr;
             }
         }
@@ -101,7 +101,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::PostError("Can not find file: %s", fileName);
+                    GT::PostError("Can not find file: %s", fileName);
                     return nullptr;
                 }
             }

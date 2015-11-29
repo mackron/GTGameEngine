@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include "SoundStreamer_WAV.hpp"
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 
 
 #define WAVE_FORMAT_PCM        0x1
@@ -125,19 +125,19 @@ namespace GTEngine
         // The first 4 bytes should read "RIFF".
         if (*fileData32++ != ChunkID_RIFF)
         {
-            GTEngine::PostError("SoundStreamer_WAV::ReadRIFFHeader() - File is not a RIFF file.");
+            GT::PostError("SoundStreamer_WAV::ReadRIFFHeader() - File is not a RIFF file.");
 		    return false;
         }
 
         if (*fileData32++ == 0)
         {
-            GTEngine::PostError("SoundStreamer_WAV::ReadRIFFHeader() - cksize is 0.");
+            GT::PostError("SoundStreamer_WAV::ReadRIFFHeader() - cksize is 0.");
             return false;
         }
 
         if (*fileData32++ != ChunkID_WAVE)
         {
-            GTEngine::PostError("SoundStreamer_WAV::ReadRIFFHeader() - File is not a WAVE file.");
+            GT::PostError("SoundStreamer_WAV::ReadRIFFHeader() - File is not a WAVE file.");
 		    return false;
         }
 
@@ -163,7 +163,7 @@ namespace GTEngine
                     m_formatCode = chunkData[0];
 			        if (m_formatCode != WAVE_FORMAT_PCM && m_formatCode != WAVE_FORMAT_IEEE_FLOAT && m_formatCode != WAVE_FORMAT_ALAW && m_formatCode != WAVE_FORMAT_MULAW)
 			        {
-                        GTEngine::PostError("SoundStreamer_WAV::ReadRIFFChunks() - Unsupported compression format.");
+                        GT::PostError("SoundStreamer_WAV::ReadRIFFChunks() - Unsupported compression format.");
 				        return false;
 			        }
 
@@ -218,7 +218,7 @@ namespace GTEngine
 
         if (!foundFMT || !foundDATA)
 	    {
-            GTEngine::PostError("SoundStreamer_WAV::ReadRIFFChunks() - FMT and/or DATA chunks were not found.");
+            GT::PostError("SoundStreamer_WAV::ReadRIFFChunks() - FMT and/or DATA chunks were not found.");
 		    return false;
 	    }
 

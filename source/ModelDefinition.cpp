@@ -2,7 +2,7 @@
 
 #include <GTEngine/ModelDefinition.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTLib/Errors.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>
@@ -47,7 +47,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
+                GT::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
                 return false;
             }
         }
