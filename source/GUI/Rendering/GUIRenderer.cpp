@@ -1,16 +1,16 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/Rendering/Renderer.hpp>
+#include <GTEngine/GUI/Rendering/GUIRenderer.hpp>
 #include <GTEngine/GUI/Server.hpp>
 
 namespace GTGUI
 {
-    Renderer::Renderer()
+    GUIRenderer::GUIRenderer()
         : currentTexture(0), isScissorSetToViewport(false), isBlendingEnabled(false)
     {
     }
 
-    Renderer::~Renderer()
+    GUIRenderer::~GUIRenderer()
     {
     }
 
@@ -19,43 +19,43 @@ namespace GTGUI
     ////////////////////////////////////////////////////////////////////////
     // Virtual Methods
 
-    void Renderer::Begin(const Server &)
+    void GUIRenderer::Begin(const Server &)
     {
     }
 
-    void Renderer::End()
+    void GUIRenderer::End()
     {
     }
 
-    void Renderer::SetScissor(int, int, unsigned int, unsigned int)
+    void GUIRenderer::SetScissor(int, int, unsigned int, unsigned int)
     {
     }
 
-    void Renderer::BeginElementOnDrawEvent(Element &)
+    void GUIRenderer::BeginElementOnDrawEvent(Element &)
     {
     }
 
-    void Renderer::EndElementOnDrawEvent(Element &)
+    void GUIRenderer::EndElementOnDrawEvent(Element &)
     {
     }
 
-    void Renderer::SetOffset(float, float)
+    void GUIRenderer::SetOffset(float, float)
     {
     }
 
-    void Renderer::EnableBlending()
+    void GUIRenderer::EnableBlending()
     {
     }
 
-    void Renderer::DisableBlending()
+    void GUIRenderer::DisableBlending()
     {
     }
 
-    void Renderer::SetTexture(ImageHandle)
+    void GUIRenderer::SetTexture(ImageHandle)
     {
     }
 
-    void Renderer::Draw(const float*, size_t, const unsigned int*, size_t)
+    void GUIRenderer::Draw(const float*, size_t, const unsigned int*, size_t)
     {
     }
 
@@ -64,7 +64,7 @@ namespace GTGUI
     ////////////////////////////////////////////////////////////////////////
     // Non-Virtual Methods
 
-    void Renderer::RenderElement(Server &server, Element &element)
+    void GUIRenderer::RenderElement(Server &server, Element &element)
     {
         // Helpers to make things a bit easier to use.
         const GT::Rect<int> &clippingRect      = element.layout.clippingRect;
@@ -74,7 +74,7 @@ namespace GTGUI
         if (clippingRect.right > clippingRect.left && clippingRect.bottom > clippingRect.top)
         {
             // We're going to grab the text cursor mesh for use later on.
-            GTGUI::Mesh* caretMesh = nullptr;
+            GUIMesh* caretMesh = nullptr;
 
             auto &caret = server.GetCaret();
             if (caret.IsVisible() && &element == caret.GetOwner())
@@ -279,18 +279,18 @@ namespace GTGUI
         }
     }
 
-    void Renderer::_SetScissor(int x, int y, unsigned int width, unsigned int height, bool isSetToWholeViewport)
+    void GUIRenderer::_SetScissor(int x, int y, unsigned int width, unsigned int height, bool isSetToWholeViewport)
     {
         this->SetScissor(x, y, width, height);
         this->isScissorSetToViewport = isSetToWholeViewport;
     }
 
-    void Renderer::_SetOffset(float offsetX, float offsetY)
+    void GUIRenderer::_SetOffset(float offsetX, float offsetY)
     {
         this->SetOffset(offsetX, offsetY);
     }
 
-    void Renderer::_SetTexture(GTGUI::ImageHandle texture)
+    void GUIRenderer::_SetTexture(GTGUI::ImageHandle texture)
     {
         if (texture != this->currentTexture)
         {
@@ -299,7 +299,7 @@ namespace GTGUI
         }
     }
 
-    void Renderer::_EnableBlending()
+    void GUIRenderer::_EnableBlending()
     {
         if (!this->isBlendingEnabled)
         {
@@ -307,7 +307,7 @@ namespace GTGUI
         }
     }
 
-    void Renderer::_DisableBlending()
+    void GUIRenderer::_DisableBlending()
     {
         if (this->isBlendingEnabled)
         {
@@ -315,7 +315,7 @@ namespace GTGUI
         }
     }
 
-    void Renderer::_Draw(GTGUI::Mesh* mesh)
+    void GUIRenderer::_Draw(GUIMesh* mesh)
     {
         this->Draw(mesh->GetVertices(), mesh->GetVertexCount(), mesh->GetIndices(), mesh->GetIndexCount());
     }

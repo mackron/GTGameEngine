@@ -113,7 +113,7 @@ namespace GTGUI
             auto  opacity = this->owner->GetAbsoluteOpacity();
 
 
-            MeshVertex vertices[4];
+            GUIMeshVertex vertices[4];
 
             // Left/Bottom
             vertices[0].positionX = left;     vertices[0].positionY = bottom;
@@ -142,7 +142,7 @@ namespace GTGUI
                 2, 3, 0
             };
 
-            this->mesh = new Mesh(vertices, 4, indices, 6);
+            this->mesh = new GUIMesh(vertices, 4, indices, 6);
 
             this->isRenderingDataValid = true;
         }

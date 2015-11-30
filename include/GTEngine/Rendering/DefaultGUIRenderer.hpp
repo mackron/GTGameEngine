@@ -9,7 +9,7 @@
 namespace GT
 {
     /// The default renderer for GUI's. This calls functions directly from the main Renderer class.
-    class DefaultGUIRenderer : public GTGUI::Renderer
+    class DefaultGUIRenderer : public GTGUI::GUIRenderer
     {
     public:
 

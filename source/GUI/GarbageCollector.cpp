@@ -3,7 +3,7 @@
 #include <GTEngine/GUI/GarbageCollector.hpp>
 #include <GTEngine/GUI/Element.hpp>
 #include <GTEngine/GUI/Server.hpp>
-#include <GTEngine/GUI/Rendering/Mesh.hpp>
+#include <GTEngine/GUI/Rendering/GUIMesh.hpp>
 
 namespace GTGUI
 {
@@ -75,8 +75,8 @@ namespace GTGUI
         this->garbageElements.Append(GCItem<Element>(element, counter));
     }
 
-    void GarbageCollector::MarkForCollection(Mesh &mesh, int counter)
+    void GarbageCollector::MarkForCollection(GUIMesh &mesh, int counter)
     {
-        this->garbageMeshes.Append(GCItem<Mesh>(mesh, counter));
+        this->garbageMeshes.Append(GCItem<GUIMesh>(mesh, counter));
     }
 }

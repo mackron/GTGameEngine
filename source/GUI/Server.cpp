@@ -187,7 +187,7 @@ namespace GTGUI
         m_imageManager = newImageManager;
     }
 
-    void Server::SetRenderer(Renderer* newRenderer)
+    void Server::SetRenderer(GUIRenderer* newRenderer)
     {
         m_renderer = newRenderer;
     }

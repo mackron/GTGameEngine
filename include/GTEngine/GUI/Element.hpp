@@ -5,7 +5,7 @@
 
 #include "StyleStack.hpp"
 #include "ElementEventHandler.hpp"
-#include "Rendering/ElementRenderingData.hpp"
+#include "Rendering/GUIElementRenderingData.hpp"
 
 #include <GTEngine/Core/Rect.hpp>
 #include <GTEngine/Core/Threading.hpp>
@@ -963,7 +963,7 @@ namespace GTGUI
 
 
         /// The rendering data for this element.
-        mutable ElementRenderingData renderingData;
+        mutable GUIElementRenderingData renderingData;
 
 
         /// Keeps track of whether or not the text rendering data is valid.

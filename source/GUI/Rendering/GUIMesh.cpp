@@ -1,15 +1,15 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/Rendering/Mesh.hpp>
+#include <GTEngine/GUI/Rendering/GUIMesh.hpp>
 
 namespace GTGUI
 {
-    Mesh::Mesh()
+    GUIMesh::GUIMesh()
         : vertices(), indices(), texture(0)
     {
     }
 
-    Mesh::Mesh(const MeshVertex* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, ImageHandle textureIn)
+    GUIMesh::GUIMesh(const GUIMeshVertex* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, ImageHandle textureIn)
         : vertices(vertexCount), indices(indexCount), texture(textureIn)
     {
         for (size_t i = 0; i < vertexCount; ++i)
@@ -23,12 +23,12 @@ namespace GTGUI
         }
     }
 
-    Mesh::~Mesh()
+    GUIMesh::~GUIMesh()
     {
     }
 
 
-    void Mesh::SetVertexColours(float r, float g, float b)
+    void GUIMesh::SetVertexColours(float r, float g, float b)
     {
         for (size_t i = 0; i < this->vertices.count; ++i)
         {
@@ -39,7 +39,7 @@ namespace GTGUI
         }
     }
 
-    void Mesh::SetVertexColours(float r, float g, float b, float a)
+    void GUIMesh::SetVertexColours(float r, float g, float b, float a)
     {
         for (size_t i = 0; i < this->vertices.count; ++i)
         {
@@ -51,7 +51,7 @@ namespace GTGUI
         }
     }
 
-    void Mesh::SetVertexAlpha(float a)
+    void GUIMesh::SetVertexAlpha(float a)
     {
         for (size_t i = 0; i < this->vertices.count; ++i)
         {
@@ -61,7 +61,7 @@ namespace GTGUI
     }
 
 
-    void Mesh::SetFromP2T2Colour(const float* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, const GT::Colour &colour)
+    void GUIMesh::SetFromP2T2Colour(const float* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, const GT::Colour &colour)
     {
         const size_t vertexComponentCount = 4;
 
@@ -73,7 +73,7 @@ namespace GTGUI
         {
             auto vertexIn = verticesIn + (i * vertexComponentCount);
 
-            MeshVertex vertex;
+            GUIMeshVertex vertex;
             vertex.positionX = vertexIn[0];
             vertex.positionY = vertexIn[1];
             vertex.texCoordX = vertexIn[2];

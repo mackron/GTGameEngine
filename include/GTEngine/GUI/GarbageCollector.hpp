@@ -8,7 +8,7 @@
 namespace GTGUI
 {
     class Element;
-    class Mesh;
+    class GUIMesh;
 
     /// Structure representing an item in the garbage collector that's waiting to be collected.
     template <typename T>
@@ -68,7 +68,7 @@ namespace GTGUI
         /// Marks a mesh for collection.
         ///
         /// @param mesh [in] A reference to the mesh being collected.
-        void MarkForCollection(Mesh &mesh, int counter = 1);
+        void MarkForCollection(GUIMesh &mesh, int counter = 1);
 
 
 
@@ -78,7 +78,7 @@ namespace GTGUI
         GT::List<GCItem<Element>> garbageElements;
 
         /// The list of garbage meshes.
-        GT::List<GCItem<Mesh>> garbageMeshes;
+        GT::List<GCItem<GUIMesh>> garbageMeshes;
     };
 }
 

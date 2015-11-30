@@ -199,12 +199,12 @@ namespace GTGUI
         ///     Only a single renderer can be attached to a server at a time.
         ///     @par
         ///     This is a simple setter so it is the responsibility of the client application for cleanup and whatnot.
-        void SetRenderer(Renderer* renderer);
-        void SetRenderer(Renderer &renderer) { this->SetRenderer(&renderer); }
+        void SetRenderer(GUIRenderer* renderer);
+        void SetRenderer(GUIRenderer &renderer) { this->SetRenderer(&renderer); }
 
         /// Retrieves a pointer to the current renderer.
-              Renderer* GetRenderer()       { return m_renderer; }
-        const Renderer* GetRenderer() const { return m_renderer; }
+              GUIRenderer* GetRenderer()       { return m_renderer; }
+        const GUIRenderer* GetRenderer() const { return m_renderer; }
 
 
 
@@ -911,7 +911,7 @@ namespace GTGUI
 
         /// A pointer to the renderer. This can be null, so we use a pointer instead of a reference. If this is null, rendering commands
         /// will simply not be posted.
-        Renderer* m_renderer;
+        GUIRenderer* m_renderer;
         
         
         /// A binary search tree containing all of the loaded elements. This is index by the element's ID.

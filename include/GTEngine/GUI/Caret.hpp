@@ -5,7 +5,7 @@
 
 #include <GTEngine/Core/Colour.hpp>
 #include "Element.hpp"
-#include "Rendering/Mesh.hpp"
+#include "Rendering/GUIMesh.hpp"
 
 
 namespace GTGUI
@@ -92,8 +92,8 @@ namespace GTGUI
         void InvalidateRenderingData();
 
         /// Retrieves the mesh representing the visual representation of the caret.
-              Mesh* GetMesh()       { return this->mesh; }
-        const Mesh* GetMesh() const { return this->mesh; }
+              GUIMesh* GetMesh()       { return this->mesh; }
+        const GUIMesh* GetMesh() const { return this->mesh; }
 
 
 
@@ -132,7 +132,7 @@ namespace GTGUI
         bool isRenderingDataValid;
 
         /// The caret's mesh.
-        Mesh* mesh;
+        GUIMesh* mesh;
 
 
     private:    // No copying.

@@ -9,7 +9,7 @@ namespace GTGUI
 {
     class Server;
     class Element;
-    class Mesh;
+    class GUIMesh;
 
     /// Virtual class acting as the base class for GUI renderers.
     ///
@@ -19,15 +19,15 @@ namespace GTGUI
     /// The default offset should be 0,0.
     /// The default texture should be null.
     /// Blending should be disabled by default.
-    class Renderer
+    class GUIRenderer
     {
     public:
 
         /// Constructor.
-        Renderer();
+        GUIRenderer();
 
         /// Destructor.
-        virtual ~Renderer();
+        virtual ~GUIRenderer();
 
 
 
@@ -145,7 +145,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     This just a helper to keep things simpler.
-        void _Draw(GTGUI::Mesh* mesh);
+        void _Draw(GUIMesh* mesh);
         
 
         /// The current texture.
@@ -161,8 +161,8 @@ namespace GTGUI
 
 
     private:    // No copying.
-        Renderer(const Renderer &);
-        Renderer & operator=(const Renderer &);
+        GUIRenderer(const GUIRenderer &);
+        GUIRenderer & operator=(const GUIRenderer &);
     };
 }
 

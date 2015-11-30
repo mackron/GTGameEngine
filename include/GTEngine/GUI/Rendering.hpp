@@ -3,6 +3,6 @@
 #ifndef GT_GUI_Rendering
 #define GT_GUI_Rendering
 
-#include "Rendering/Renderer.hpp"
+#include "Rendering/GUIRenderer.hpp"
 
 #endif

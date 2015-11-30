@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/Rendering/ElementRenderingData.hpp>
+#include <GTEngine/GUI/Rendering/GUIElementRenderingData.hpp>
 #include <GTEngine/GUI/Element.hpp>
 #include <GTEngine/GUI/Server.hpp>
 #include <GTEngine/Core/TextManager.hpp>
@@ -19,14 +19,14 @@ namespace GTGUI
 
 
 
-    ElementRenderingData::ElementRenderingData(GarbageCollector &gcIn)
+    GUIElementRenderingData::GUIElementRenderingData(GarbageCollector &gcIn)
         : gc(gcIn),
           textMeshes(), shadowMesh(nullptr), borderMesh(nullptr), backgroundMesh(nullptr), backgroundImageMesh(nullptr),
           absoluteOpacity(1.0f)
     {
     }
 
-    ElementRenderingData::~ElementRenderingData()
+    GUIElementRenderingData::~GUIElementRenderingData()
     {
         this->DeleteTextMeshes();
         this->DeleteShadowMesh();
@@ -35,7 +35,7 @@ namespace GTGUI
     }
 
 
-    void ElementRenderingData::UpdateTextMeshes(const Element &element)
+    void GUIElementRenderingData::UpdateTextMeshes(const Element &element)
     {
         this->DeleteTextMeshes();
 
@@ -55,19 +55,19 @@ namespace GTGUI
                 auto meshIn = iMesh->value;
                 assert(meshIn != nullptr);
                 
-                auto vertices    = reinterpret_cast<const MeshVertex*>(meshIn->GetVertices());
+                auto vertices    = reinterpret_cast<const GUIMeshVertex*>(meshIn->GetVertices());
                 auto vertexCount = meshIn->GetVertexCount();
                 auto indices     = meshIn->GetIndices();
                 auto indexCount  = meshIn->GetIndexCount();
                 auto glyphMap    = meshIn->GetGlyphMapHandle();     // <-- In GTGUI, a GlyphMapHandle is just a Image*. This can be null.
 
-                auto mesh = new Mesh(vertices, vertexCount, indices, indexCount, glyphMap);
+                auto mesh = new GUIMesh(vertices, vertexCount, indices, indexCount, glyphMap);
                 this->textMeshes.PushBack(mesh);
             }
         }
     }
 
-    void ElementRenderingData::UpdateTextMeshesColour(const GT::Colour &colour)
+    void GUIElementRenderingData::UpdateTextMeshesColour(const GT::Colour &colour)
     {
         for (size_t i = 0; i < this->textMeshes.count; ++i)
         {
@@ -76,7 +76,7 @@ namespace GTGUI
     }
 
 
-    void ElementRenderingData::UpdateShadowMesh(const Element &element)
+    void GUIElementRenderingData::UpdateShadowMesh(const Element &element)
     {
         this->DeleteShadowMesh();
 
@@ -86,7 +86,7 @@ namespace GTGUI
             //
             // There are two rectangles for each shadow. The inner rectangle is a solid colour. The outer rectangle is a transparent colour. The colours will
             // be interpolated to give a pseudo blur effect.
-            GT::Vector<MeshVertex>   vertices;
+            GT::Vector<GUIMeshVertex>   vertices;
             GT::Vector<unsigned int> indices;
 
             float radius = element.style.shadowBlurRadius->value;
@@ -104,7 +104,7 @@ namespace GTGUI
 
             
 
-            MeshVertex vertex;
+            GUIMeshVertex vertex;
             vertex.texCoordX = 0.0f; vertex.texCoordY = 0.0f;
 
             auto &colour  = element.style.shadowColour->value;
@@ -271,17 +271,17 @@ namespace GTGUI
                 indices.PushBack(3);
             }
 
-            this->shadowMesh = new Mesh(&vertices[0], vertices.count, &indices[0], indices.count);
+            this->shadowMesh = new GUIMesh(&vertices[0], vertices.count, &indices[0], indices.count);
         }
     }
 
-    void ElementRenderingData::UpdateBorderMesh(const Element &element)
+    void GUIElementRenderingData::UpdateBorderMesh(const Element &element)
     {
         this->DeleteBorderMesh();
 
         auto opacity = element.GetAbsoluteOpacity();
 
-        MeshVertex vertex;
+        GUIMeshVertex vertex;
 
         vertex.colourA   = opacity;
         vertex.texCoordX = 0.0f;
@@ -289,7 +289,7 @@ namespace GTGUI
 
 
 
-        GT::Vector<MeshVertex>   vertices;
+        GT::Vector<GUIMeshVertex>   vertices;
         GT::Vector<unsigned int> indices;
 
         if (element.style.borderLeftWidth->value > 0.0f)
@@ -416,11 +416,11 @@ namespace GTGUI
                 indices.PushBack(startIndex + 0);
             }
 
-            this->borderMesh = new Mesh(&vertices[0], vertices.count, &indices[0], indices.count);
+            this->borderMesh = new GUIMesh(&vertices[0], vertices.count, &indices[0], indices.count);
         }
     }
 
-    void ElementRenderingData::UpdateBackgroundMeshes(const Element &element)
+    void GUIElementRenderingData::UpdateBackgroundMeshes(const Element &element)
     {
         this->DeleteBackgroundMeshes();
 
@@ -438,7 +438,7 @@ namespace GTGUI
             auto  opacity = element.GetAbsoluteOpacity();
 
 
-            MeshVertex vertices[4];
+            GUIMeshVertex vertices[4];
 
             vertices[0].positionX = left;     vertices[0].positionY = bottom;
             vertices[0].texCoordX = 0.0f;     vertices[0].texCoordY = 0.0f;
@@ -464,7 +464,7 @@ namespace GTGUI
             };
 
 
-            this->backgroundMesh = new Mesh(vertices, 4, indices, 6);
+            this->backgroundMesh = new GUIMesh(vertices, 4, indices, 6);
         }
 
 
@@ -588,7 +588,7 @@ namespace GTGUI
 
 
                 // With the positions and UVs generated, we can now build the Mesh object.
-                MeshVertex vertices[4];
+                GUIMeshVertex vertices[4];
 
                 vertices[0].positionX = left;     vertices[0].positionY = bottom;
                 vertices[0].texCoordX = uvLeft;   vertices[0].texCoordY = uvBottom;
@@ -614,19 +614,19 @@ namespace GTGUI
                 };
 
 
-                this->backgroundImageMesh = new Mesh(vertices, 4, indices, 6);
+                this->backgroundImageMesh = new GUIMesh(vertices, 4, indices, 6);
                 this->backgroundImageMesh->SetTexture(image);
             }
         }
     }
 
 
-    void ElementRenderingData::SetAbsoluteOpacity(float newAbsoluteOpacity)
+    void GUIElementRenderingData::SetAbsoluteOpacity(float newAbsoluteOpacity)
     {
         this->absoluteOpacity = newAbsoluteOpacity;
     }
 
-    float ElementRenderingData::GetAbsoluteOpacity() const
+    float GUIElementRenderingData::GetAbsoluteOpacity() const
     {
         return this->absoluteOpacity;
     }
@@ -636,7 +636,7 @@ namespace GTGUI
     ///////////////////////////////////////////////
     // Private
 
-    void ElementRenderingData::DeleteTextMeshes()
+    void GUIElementRenderingData::DeleteTextMeshes()
     {
         for (size_t i = 0; i < this->textMeshes.count; ++i)
         {
@@ -645,19 +645,19 @@ namespace GTGUI
         this->textMeshes.Clear();
     }
 
-    void ElementRenderingData::DeleteShadowMesh()
+    void GUIElementRenderingData::DeleteShadowMesh()
     {
         this->gc.MarkForCollection(*this->shadowMesh);
         this->shadowMesh = nullptr;
     }
 
-    void ElementRenderingData::DeleteBorderMesh()
+    void GUIElementRenderingData::DeleteBorderMesh()
     {
         this->gc.MarkForCollection(*this->borderMesh);
         this->borderMesh = nullptr;
     }
 
-    void ElementRenderingData::DeleteBackgroundMeshes()
+    void GUIElementRenderingData::DeleteBackgroundMeshes()
     {
         this->gc.MarkForCollection(*this->backgroundMesh);
         this->gc.MarkForCollection(*this->backgroundImageMesh);

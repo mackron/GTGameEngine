@@ -10,7 +10,7 @@
 namespace GTGUI
 {
     /// Structure representing a vertex in a mesh.
-    struct MeshVertex
+    struct GUIMeshVertex
     {
         float positionX;
         float positionY;
@@ -29,16 +29,16 @@ namespace GTGUI
     /// The vertex data will be in XY/UV/RGBA format, i.e. 8 floating point values for each vertex.
     ///
     /// Each mesh can only have a single texture applied to it. This makes it much, much easier to integrate into renderers.
-    class Mesh
+    class GUIMesh
     {
     public:
 
         /// Constructor.
-        Mesh();
-        Mesh(const MeshVertex* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, ImageHandle texture = 0);
+        GUIMesh();
+        GUIMesh(const GUIMeshVertex* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, ImageHandle texture = 0);
 
         /// Destructor.
-        ~Mesh();
+        ~GUIMesh();
 
 
         /// Retrieves a pointer to the buffer containing the vertex data.
@@ -88,7 +88,7 @@ namespace GTGUI
     private:
 
         /// The list of vertices in the mesh.
-        GT::Vector<MeshVertex> vertices;
+        GT::Vector<GUIMeshVertex> vertices;
 
         /// The list of indices in the mesh.
         GT::Vector<unsigned int> indices;
@@ -98,8 +98,8 @@ namespace GTGUI
 
 
     private:    // No copying for now.
-        Mesh(const Mesh &);
-        Mesh & operator=(const Mesh &);
+        GUIMesh(const GUIMesh &);
+        GUIMesh & operator=(const GUIMesh &);
     };
 }
 
