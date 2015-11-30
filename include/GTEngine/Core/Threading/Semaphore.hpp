@@ -7,12 +7,10 @@
 
 namespace GT
 {
-    /**
-    *   \brief  Class representing a semaphore.
-    *
-    *   When a semaphores count is larger than 0, it will allow a thread to pass it's gate. Otherwise, that thread
-    *   will need to wait until a slot becomes available.
-    */
+    /// Class representing a semaphore.
+    ///
+    /// When a semaphores count is larger than 0, it will allow a thread to pass it's gate. Otherwise, that thread
+    /// will need to wait until a slot becomes available.
     class Semaphore
     {
     public:

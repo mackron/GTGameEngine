@@ -5,41 +5,30 @@
 
 namespace GT
 {
-    /**
-    *   \brief  Class representing a mutex.
-    *
-    *   A mutex is a simple sycnronization object prevents more than one thread from executing the same code at the same time.
-    *
-    *   These mutexes do not work across processes.
-    */
+    /// Class representing a mutex.
+    ///
+    /// These mutexes are not inter-process.
     class Mutex
     {
     public:
         
-        /**
-        *   \brief  Constructor.
-        *
-        *   \remarks
-        *       The mutex will be in a signaled/unlocked state by default.
-        */
+        /// Constructor.
+        /// 
+        /// @remarks
+        ///     The mutex will be in a signaled/unlocked state by default.
         Mutex();
             
-        /**
-        *   \brief  Destructor.
-        *
-        *   Remember that once the mutex is destructed, wait() and release() will be undefined. Ensure any threads
-        *   using the mutex do not try to use it after it has been destructed.
-        */
+        /// Destructor.
+        ///
+        /// @remarks
+        ///     Remember that once the mutex is destructed, Lock() and Unlock() will be undefined. Ensure any threads
+        ///     using the mutex do not try to use it after it has been destructed.
         ~Mutex();
             
-        /**
-        *   \brief  Waits for the mutex to become signaled. This function will automatically put the mutex back into a non-signaled state.
-        */
+        /// Waits for the mutex to become signaled. This function will automatically put the mutex back into a non-signaled state.
         void Lock();
             
-        /**
-        *   \brief  Releases the mutex, putting it into a signaled state.
-        */
+        /// Releases the mutex, putting it into a signaled state.
         void Unlock();
         
         
