@@ -3,7 +3,7 @@
 #ifndef GT_GUIPlanes
 #define GT_GUIPlanes
 
-namespace GTGUI
+namespace GT
 {
     enum GUIPlane
     {

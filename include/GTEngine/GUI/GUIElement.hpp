@@ -14,7 +14,7 @@
 #include <GTEngine/Core/TextManager.hpp>
 #include <bitset>
 
-namespace GTGUI
+namespace GT
 {
     class GUIServer;
 

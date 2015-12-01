@@ -7,7 +7,7 @@
 #include <cmath>
 
 
-namespace GTGUI
+namespace GT
 {
     // Some math stuff, mainly for rounded corners.
     static const float pi = 3.14159265f;

@@ -6,7 +6,7 @@
 #include <GTEngine/Core/FontServer.hpp>
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTGUI
+namespace GT
 {
     /// Class used for caching fonts so same fonts are reused instead of re-loaded.
     ///

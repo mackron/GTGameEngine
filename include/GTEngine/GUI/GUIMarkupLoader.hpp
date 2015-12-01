@@ -9,7 +9,7 @@
 
 #include <GTEngine/GUI/GUIServerXMLParser.hpp>
 
-namespace GTGUI
+namespace GT
 {
     class GUIServer;
     class GUIElement;

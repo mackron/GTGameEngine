@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUI/GUIFontCache.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIFontCache::GUIFontCache(GT::FontServer &fontServer)
         : m_fontServer(fontServer), m_loadedFonts(16)

@@ -7,7 +7,7 @@
 #include <GTEngine/GUI/GUIElement.hpp>
 #include <GTEngine/Core/String.hpp>
 
-namespace GTGUI
+namespace GT
 {
     class GUIElement;
 
@@ -172,7 +172,7 @@ namespace GTGUI
     };
 
 
-namespace GTGUI
+namespace GT
 {
     // This group is the primitive attribute handlers. Shorthand handlers are after these.
     namespace AttributeHandlers

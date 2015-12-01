@@ -23,7 +23,7 @@ using namespace GT;
 
 using namespace rapidxml;
 
-namespace GTGUI
+namespace GT
 {
     GUIServerXMLParser::GUIServerXMLParser()
         : buffer(), lastError(),

@@ -7,7 +7,7 @@
 #include <GTEngine/Core/BinarySearchTree.hpp>
 #include <GTEngine/Core/List.hpp>
 
-namespace GTGUI
+namespace GT
 {
     class GUILayoutManager
     {

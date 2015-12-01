@@ -11,7 +11,7 @@
 // Delete the headers below later on.
 #include <iostream>
 
-namespace GTGUI
+namespace GT
 {
     /// Event handler used by the style server for intercepting styling errors.
     class GUIStyleServerCompilerErrorHandler : public GUIStyleScriptCompilerErrorHandler
@@ -655,7 +655,7 @@ namespace GTGUI
 // This section here implements the LoadGUIStyleAttributeHandlers() method. We keep this separate so that it's easy to find as new style attributes are added.
 #define ADD_HANDLER(ctor) this->AddGUIStyleAttributeHandler(*(new ctor))
 
-namespace GTGUI
+namespace GT
 {
     void GUIStyleServer::LoadGUIStyleAttributeHandlers()
     {

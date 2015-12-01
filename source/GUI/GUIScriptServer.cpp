@@ -4,7 +4,7 @@
 #include <cassert>
 #include <GTEngine/GTEngine.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIScriptServer::GUIScriptServer(GUIServer &server, GT::Script* script)
         : server(server), script(script), deleteScript(false)

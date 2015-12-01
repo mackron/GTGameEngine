@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUI/GUIElementTree.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIElementTree::GUIElementTree()
         : m_root(nullptr), m_removeBySuccessor(false)

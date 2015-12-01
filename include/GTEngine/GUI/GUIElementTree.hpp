@@ -5,7 +5,7 @@
 
 #include "GUIElement.hpp"
 
-namespace GTGUI
+namespace GT
 {
     /// Class representing a tree data structure for storing elements.
     ///

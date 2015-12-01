@@ -8,7 +8,7 @@
 
 /* !!! Don't forget to add new attribute handlers to GUIStyleServer::LoadGUIStyleAttributeHandlers(). It's at the end of GUIStyleServer.cpp. !!! */
 
-namespace GTGUI
+namespace GT
 {
     // Primitive style attributes. Shorthand attributes are below these ones.
     namespace AttributeHandlers
@@ -2776,7 +2776,7 @@ namespace GTGUI
 
 
 
-namespace GTGUI
+namespace GT
 {
     GUIStyleAttributeHandler::GUIStyleAttributeHandler()
     {

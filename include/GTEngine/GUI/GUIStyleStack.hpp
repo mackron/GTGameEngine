@@ -7,7 +7,7 @@
 #include "GUIStyleAttribute.hpp"
 #include <GTEngine/Core/List.hpp>
 
-namespace GTGUI
+namespace GT
 {
     // GUIElement.hpp includes this file.
     class GUIElement;

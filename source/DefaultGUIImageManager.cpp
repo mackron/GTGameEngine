@@ -18,24 +18,24 @@ namespace GT
     ///////////////////////////////////////////
     // Create
     
-    GTGUI::GUIImageHandle DefaultGUIImageManager::CreateImage(unsigned int width, unsigned int height, GTGUI::GUIImageFormat format, void* data)
+    GUIImageHandle DefaultGUIImageManager::CreateImage(unsigned int width, unsigned int height, GUIImageFormat format, void* data)
     {
         return this->CreateImage(width, height, format, const_cast<const void*>(data));
     }
     
-    GTGUI::GUIImageHandle DefaultGUIImageManager::CreateImage(unsigned int width, unsigned int height, GTGUI::GUIImageFormat format, const void* data)
+    GUIImageHandle DefaultGUIImageManager::CreateImage(unsigned int width, unsigned int height, GUIImageFormat format, const void* data)
     {
         // First, translate the format to a GTLib format. If it's not a supported format, we need to return 0.
         auto translatedFormat = ImageFormat_None;
-        if (format == GTGUI::GUIImageFormat_RGB8)
+        if (format == GUIImageFormat_RGB8)
         {
             translatedFormat = ImageFormat_RGB8;
         }
-        else if (format == GTGUI::GUIImageFormat_RGBA8)
+        else if (format == GUIImageFormat_RGBA8)
         {
             translatedFormat = ImageFormat_RGBA8;
         }
-        else if (format == GTGUI::GUIImageFormat_A8)
+        else if (format == GUIImageFormat_A8)
         {
             translatedFormat = ImageFormat_R8;
         }
@@ -56,10 +56,10 @@ namespace GT
             Renderer::SetTexture2DFilter(texture, TextureFilter_Nearest, TextureFilter_Nearest);
         }
         
-        return reinterpret_cast<GTGUI::GUIImageHandle>(texture);
+        return reinterpret_cast<GUIImageHandle>(texture);
     }
     
-    GTGUI::GUIImageHandle DefaultGUIImageManager::LoadImage(const char* filePath)
+    GUIImageHandle DefaultGUIImageManager::LoadImage(const char* filePath)
     {
         auto loader = ImageLoader::Create(filePath);
         if (loader != nullptr)
@@ -72,19 +72,19 @@ namespace GT
                 Mipmap mipmap;
                 if (loader->LoadMipmap(0, mipmap))      // <-- '0' means the base mipmap.
                 {
-                    GTGUI::GUIImageFormat format;
+                    GUIImageFormat format;
                     
                     if (info.format == ImageFormat_RGBA8)
                     {
-                        format = GTGUI::GUIImageFormat_RGBA8;
+                        format = GUIImageFormat_RGBA8;
                     }
                     else if (info.format == ImageFormat_R8)
                     {
-                        format = GTGUI::GUIImageFormat_A8;
+                        format = GUIImageFormat_A8;
                     }
                     else
                     {
-                        format = GTGUI::GUIImageFormat_RGB8;
+                        format = GUIImageFormat_RGB8;
                     }
 
                     return this->CreateImage(mipmap.width, mipmap.height, format, mipmap.data);
@@ -107,7 +107,7 @@ namespace GT
     ///////////////////////////////////////////
     // Delete
 
-    void DefaultGUIImageManager::DeleteImage(GTGUI::GUIImageHandle imageToDelete)
+    void DefaultGUIImageManager::DeleteImage(GUIImageHandle imageToDelete)
     {
         Renderer::DeleteTexture2D(reinterpret_cast<Texture2D*>(imageToDelete));
     }
@@ -116,7 +116,7 @@ namespace GT
     ///////////////////////////////////////////
     // Update
 
-    void DefaultGUIImageManager::SetImageSubData(GTGUI::GUIImageHandle image, unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, void* data)
+    void DefaultGUIImageManager::SetImageSubData(GUIImageHandle image, unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, void* data)
     {
         auto texture = reinterpret_cast<Texture2D*>(image);
         assert(texture != nullptr);
@@ -129,7 +129,7 @@ namespace GT
     ///////////////////////////////////////////
     // Properties
 
-    void DefaultGUIImageManager::GetImageDimensions(GTGUI::GUIImageHandle image, unsigned int &widthOut, unsigned int &heightOut) const
+    void DefaultGUIImageManager::GetImageDimensions(GUIImageHandle image, unsigned int &widthOut, unsigned int &heightOut) const
     {
         auto texture = reinterpret_cast<Texture2D*>(image);
         assert(texture != nullptr);
@@ -139,7 +139,7 @@ namespace GT
         }
     }
 
-    GTGUI::GUIImageFormat DefaultGUIImageManager::GetImageFormat(GTGUI::GUIImageHandle image) const
+    GUIImageFormat DefaultGUIImageManager::GetImageFormat(GUIImageHandle image) const
     {
         auto texture = reinterpret_cast<Texture2D*>(image);
         assert(texture != nullptr);
@@ -147,18 +147,18 @@ namespace GT
             auto format = texture->GetFormat();
             if (format == ImageFormat_RGB8)
             {
-                return GTGUI::GUIImageFormat_RGB8;
+                return GUIImageFormat_RGB8;
             }
             else if (format == ImageFormat_RGBA8)
             {
-                return GTGUI::GUIImageFormat_RGBA8;
+                return GUIImageFormat_RGBA8;
             }
             else if (format == ImageFormat_R8)
             {
-                return GTGUI::GUIImageFormat_A8;
+                return GUIImageFormat_A8;
             }
         }
         
-        return GTGUI::GUIImageFormat_Unknown;
+        return GUIImageFormat_Unknown;
     }
 }

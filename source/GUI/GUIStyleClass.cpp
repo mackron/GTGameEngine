@@ -5,7 +5,7 @@
 #include <GTEngine/Core/Strings/Create.hpp>
 #include "GUIStyleAttributeHandler.hpp"
 
-namespace GTGUI
+namespace GT
 {
     GUIStyleClassType ToStyleClassType(const char *name, ptrdiff_t nameSizeInBytes)
     {
@@ -33,7 +33,7 @@ namespace GTGUI
     }
 }
 
-namespace GTGUI
+namespace GT
 {
     GUIStyleClass::GUIStyleClass(GUIStyleServer &server, const char* name, ptrdiff_t nameSizeInBytes)
         : server(server), name(GT::Strings::Create(name, nameSizeInBytes)), type(GUIStyleClassType_Normal), includes(nullptr), hosts(),

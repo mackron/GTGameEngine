@@ -5,7 +5,7 @@
 #include <GTEngine/Core/Strings/Find.hpp>
 #include <cstring>
 
-namespace GTGUI
+namespace GT
 {
     GUIStyleTokenizer::GUIStyleTokenizer(const char *script)
         : start(script), end(script), lineStart(script), lineNumber(1),

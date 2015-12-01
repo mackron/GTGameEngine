@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUI/GUIStandardLibrary.hpp>
 
-namespace GTGUI
+namespace GT
 {
     bool GUIStandardLibrary::Load(GUIServer &server)
     {

@@ -6,7 +6,7 @@
 #include <GTEngine/Core/Cursors.hpp>
 #include <GTEngine/Core/Font.hpp>
 
-namespace GTGUI
+namespace GT
 {
     /**
     *   \brief  Base class for handling events from the server.

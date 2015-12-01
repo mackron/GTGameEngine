@@ -290,7 +290,7 @@ namespace GT
     {
     }
 
-    void TextEditor::TextAreaEventHandler::OnTextChanged(GTGUI::GUIElement &)
+    void TextEditor::TextAreaEventHandler::OnTextChanged(GUIElement &)
     {
         assert(this->ownerTextEditor != nullptr);
         {

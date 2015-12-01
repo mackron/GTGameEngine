@@ -5,7 +5,7 @@
 
 #include "../GUIImageManager.hpp"
 
-namespace GTGUI
+namespace GT
 {
     class GUIServer;
     class GUIElement;

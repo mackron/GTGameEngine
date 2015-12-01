@@ -14,7 +14,7 @@ namespace GT
     }
     
     
-    void SceneEditorGameEventFilter::SetViewportElement(GTGUI::GUIElement* viewport)
+    void SceneEditorGameEventFilter::SetViewportElement(GUIElement* viewport)
     {
         m_viewport = viewport;
     }

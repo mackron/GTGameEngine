@@ -35,7 +35,7 @@ namespace GT
     }
 
 
-    void DefaultGUIRenderer::Begin(const GTGUI::GUIServer &server)
+    void DefaultGUIRenderer::Begin(const GUIServer &server)
     {
         // We need to do a little bit of initialisation.
         unsigned int newViewportWidth;
@@ -83,11 +83,11 @@ namespace GT
         }
     }
 
-    void DefaultGUIRenderer::BeginElementOnDrawEvent(GTGUI::GUIElement &)
+    void DefaultGUIRenderer::BeginElementOnDrawEvent(GUIElement &)
     {
     }
 
-    void DefaultGUIRenderer::EndElementOnDrawEvent(GTGUI::GUIElement &)
+    void DefaultGUIRenderer::EndElementOnDrawEvent(GUIElement &)
     {
         // Anything that may be been changed needs to be resetored.
         this->RestoreCurrentState();
@@ -109,7 +109,7 @@ namespace GT
         this->uniformsRequirePush = true;
     }
 
-    void DefaultGUIRenderer::SetTexture(GTGUI::GUIImageHandle image)
+    void DefaultGUIRenderer::SetTexture(GUIImageHandle image)
     {
         if (image == 0)
         {
@@ -176,7 +176,7 @@ namespace GT
     {
         GT::Renderer::SetCurrentShader(this->currentShader);          // <-- Don't use this->SetCurrentShader() here.
         this->SetOffset(this->currentOffsetX, this->currentOffsetY);
-        this->SetTexture(reinterpret_cast<GTGUI::GUIImageHandle>(this->currentTexture));
+        this->SetTexture(reinterpret_cast<GUIImageHandle>(this->currentTexture));
 
         if (this->isBlendingEnabled)
         {

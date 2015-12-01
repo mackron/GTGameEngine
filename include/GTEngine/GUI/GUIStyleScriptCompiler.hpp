@@ -8,7 +8,7 @@
 #include <GTEngine/Core/Dictionary.hpp>
 #include "GUIStyleScriptError.hpp"
 
-namespace GTGUI
+namespace GT
 {
     /// Class representing an attribute inside a style class. This is just a simple key/value string pair.
     class GUIStyleScriptCompilerClassAttribute

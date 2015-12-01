@@ -515,7 +515,7 @@ static const struct {
 
 
 
-namespace GTGUI
+namespace GT
 {
     bool GUIStandardLibrary::LoadImages(GUIServer &server)
     {

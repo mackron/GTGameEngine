@@ -1129,7 +1129,7 @@ namespace GT
             }
         }
 
-        // When using this function, we're going to assume the window has been managed from the GTGUI::X11 namespace. If this
+        // When using this function, we're going to assume the window has been managed from the X11 namespace. If this
         // is not the case, the application will need to pump it's own events.
         if (g_event.type != None)
         {

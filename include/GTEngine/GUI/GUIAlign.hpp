@@ -3,7 +3,7 @@
 #ifndef GT_GUIAlign
 #define GT_GUIAlign
 
-namespace GTGUI
+namespace GT
 {
     enum GUIAlign
     {

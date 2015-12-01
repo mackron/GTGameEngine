@@ -5,7 +5,7 @@
 #include <easy_fs/easy_vfs.h>
 #include <easy_path/easy_path.h>
 
-namespace GTGUI
+namespace GT
 {
     ///////////////////////////////////////////////
     // GUIStyleScriptCompilerClassAttribute

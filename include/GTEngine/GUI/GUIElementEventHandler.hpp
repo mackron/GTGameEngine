@@ -5,7 +5,7 @@
 
 #include <GTEngine/Core/Windowing/Keys.hpp>
 
-namespace GTGUI
+namespace GT
 {
     class GUIElement;
 

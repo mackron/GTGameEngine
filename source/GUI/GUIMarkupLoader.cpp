@@ -5,7 +5,7 @@
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
-namespace GTGUI
+namespace GT
 {
     GUIMarkupLoader::GUIMarkupLoader(GUIServer &server)
         : m_server(server), m_loadedFiles()

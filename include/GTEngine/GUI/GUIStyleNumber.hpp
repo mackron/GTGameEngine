@@ -3,7 +3,7 @@
 #ifndef GT_GUIStyleNumber
 #define GT_GUIStyleNumber
 
-namespace GTGUI
+namespace GT
 {
     enum GUIStyleNumberFormat
     {

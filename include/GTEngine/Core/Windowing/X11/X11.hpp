@@ -25,7 +25,7 @@
 *
 *   The X11 namespace uses metadata to attach additional details to an X11 Display/Window combo. It needs to be aware
 *   of any windows that are currently in use. The OnWindowCreated() and OnWindowDestroyed() functions need to be used
-*   for any window that needs to be managed by the GTGUI::X11 namespace. Without doing this, other functions won't
+*   for any window that needs to be managed by the X11 namespace. Without doing this, other functions won't
 *   work.
 */
 
@@ -104,7 +104,7 @@ namespace GT
         *   \return                The X11 Window handle to the new window.
         *
         *   \remarks
-        *       The returned window is NOT a GTGUI::Window, but an Xlib window handle.
+        *       The returned window is NOT a Window, but an Xlib window handle.
         *       \par
         *       This function will call OnWindowCreated() internally. No need to call it again.
         *       \par
@@ -113,7 +113,7 @@ namespace GT
         ::Window CreateWindow(XVisualInfo *vi, Colormap colourmap, bool overrideRedirect = false);
 
         /**
-        *   \brief               Destroys a window created with GTGUI::X11::CreateWindow().
+        *   \brief               Destroys a window created with X11::CreateWindow().
         *   \param  display [in] The connection to the X server.
         *   \parma  window  [in] A handle to the window that is being destroyed.
         */

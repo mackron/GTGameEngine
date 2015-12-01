@@ -5,7 +5,7 @@
 #include <GTEngine/GUI/GUIServer.hpp>
 #include <GTEngine/GUI/Rendering/GUIMesh.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIGarbageCollector::GUIGarbageCollector()
         : garbageElements(), garbageMeshes()

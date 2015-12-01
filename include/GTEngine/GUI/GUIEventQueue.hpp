@@ -5,7 +5,7 @@
 
 #include "GUIEvent.hpp"
 
-namespace GTGUI
+namespace GT
 {
     /// Class representing a queue of events.
     ///

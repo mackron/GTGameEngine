@@ -8,7 +8,7 @@
 #include <GTEngine/Core/Strings/Create.hpp>
 #include <GTEngine/Core/Strings/List.hpp>
 
-namespace GTGUI
+namespace GT
 {
     /**
     *   \brief  Class for parsing GTGUI GUIServer XML scripts.

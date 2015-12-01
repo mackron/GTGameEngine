@@ -8,7 +8,7 @@
 #include <GTEngine/Core/Math.hpp>
 #include <GTEngine/GTEngine.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIElement::GUIElement(const char* id, GUIServer &server)
         : id(GT::Strings::Create(id)), server(server), parent(nullptr), firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
@@ -1293,7 +1293,7 @@ namespace GTGUI
 }
 
 // --- Private ---
-namespace GTGUI
+namespace GT
 {
     void GUIElement::AttachStyleClass(GUIStyleClass &styleClass, GT::Vector<GUIStyleClass*> &alreadyAttached, bool refresh)
     {
@@ -1348,7 +1348,7 @@ namespace GTGUI
 /////////////////////////////////////////////////
 // TextEventHandler
 
-namespace GTGUI
+namespace GT
 {
     void GUIElement::TextEventHandler::OnTextChanged(const char*)
     {

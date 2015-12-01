@@ -23,8 +23,8 @@ namespace GT
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::GUIElement* GetMainElement()       { return this->mainElement; }
-        const GTGUI::GUIElement* GetMainElement() const { return this->mainElement; }
+              GUIElement* GetMainElement()       { return this->mainElement; }
+        const GUIElement* GetMainElement() const { return this->mainElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -37,7 +37,7 @@ namespace GT
     private:
 
         /// The main GUI element.
-        GTGUI::GUIElement* mainElement;
+        GUIElement* mainElement;
         
         
     private:    // No copying.

@@ -3,11 +3,11 @@
 #ifndef GT_GUIFontGlyphMapManager
 #define GT_GUIFontGlyphMapManager
 
-#include "GUIImageManager.hpp"             // For GTGUI::GUIImageHandle.
+#include "GUIImageManager.hpp"             // For GUIImageHandle.
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/GlyphMapManager.hpp>
 
-namespace GTGUI
+namespace GT
 {
     class GUIServer;
     

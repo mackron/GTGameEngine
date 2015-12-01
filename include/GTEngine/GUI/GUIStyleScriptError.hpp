@@ -7,7 +7,7 @@
 #include <GTEngine/Core/Strings/Tokenizer.hpp>
 #include <GTEngine/Core/Strings/LineIterator.hpp>
 
-namespace GTGUI
+namespace GT
 {
     struct GUIStyleScriptError
     {

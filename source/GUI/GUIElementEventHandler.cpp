@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUI/GUIElementEventHandler.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIElementEventHandler::~GUIElementEventHandler()
     {

@@ -12,7 +12,7 @@
 #include "Editor/PackagingToolEditor/PackagingToolEditor.hpp"
 #include "DataFilesWatcher.hpp"
 
-namespace GTGUI
+namespace GT
 {
     class GUIElement;
     class GUIServer;
@@ -37,7 +37,7 @@ namespace GT
 
 
         /// Initialises the editor.
-        bool Startup(GTGUI::GUIServer &guiServer);
+        bool Startup(GUIServer &guiServer);
 
         /// Whether or not the editor is initialised.
         bool IsStarted() const { return this->isStarted; }
@@ -197,7 +197,7 @@ namespace GT
         ///     Internally, the editor uses absolute paths to associate editors with files. If 'path' is relative, it will need to be converted
         ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
         ///     relative.
-        GTGUI::GUIElement* GetFileEditorElement(const char* path, const char* relativeTo = nullptr);
+        GUIElement* GetFileEditorElement(const char* path, const char* relativeTo = nullptr);
 
 
         /// Retrieves a pointer to the editor that is currently being shown.
@@ -304,25 +304,25 @@ namespace GT
             }
 
             /// The main editor element. Every single element used by the editor is a child of this element.
-            GTGUI::GUIElement* EditorMain;
+            GUIElement* EditorMain;
 
             /// The center, center panel element. This will be dynamically shown and hidden as tabs are added or removed.
-            GTGUI::GUIElement* EditorCenterCenterPanel;
+            GUIElement* EditorCenterCenterPanel;
 
             /// The center, center panel element for showing a small help cheat-sheet type thing. When this is shown, EditorCenterCenterPanel
             /// will be hidden, and vice versa.
-            GTGUI::GUIElement* EditorCenterCenterPanelHelp;
+            GUIElement* EditorCenterCenterPanelHelp;
 
             // Menu buttons.
-            GTGUI::GUIElement* File_Save;
-            GTGUI::GUIElement* File_SaveAll;
-            GTGUI::GUIElement* File_Close;
-            GTGUI::GUIElement* File_CloseAll;
+            GUIElement* File_Save;
+            GUIElement* File_SaveAll;
+            GUIElement* File_Close;
+            GUIElement* File_CloseAll;
 
 
             // GUI elements for the profiling information.
-            GTGUI::GUIElement* Editor_Delta;
-            GTGUI::GUIElement* Editor_FPS;
+            GUIElement* Editor_Delta;
+            GUIElement* Editor_FPS;
 
         }GUI;
 
@@ -378,7 +378,7 @@ namespace GT
             static Game   & GetGame(GT::Script &script);
             static Editor & GetEditor(GT::Script &script);
 
-            static void PushElement(GT::Script &script, GTGUI::GUIElement* element);
+            static void PushElement(GT::Script &script, GUIElement* element);
 
 
             static int Open(GT::Script &script);

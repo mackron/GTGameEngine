@@ -5,7 +5,7 @@
 
 #include <GTEngine/Core/List.hpp>
 
-namespace GTGUI
+namespace GT
 {
     class GUIElement;
     class GUIMesh;

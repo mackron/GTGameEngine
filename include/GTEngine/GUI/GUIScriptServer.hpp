@@ -5,7 +5,7 @@
 
 #include <GTEngine/Script.hpp>
 
-namespace GTGUI
+namespace GT
 {
     class GUIServer;
     class GUIElement;

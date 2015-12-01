@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUI/GUIImageManager.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIImageManager::GUIImageManager()
     {

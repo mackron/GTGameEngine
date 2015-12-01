@@ -41,7 +41,7 @@ namespace GT
         }
     }
 
-    bool Editor::Startup(GTGUI::GUIServer &guiServer)
+    bool Editor::Startup(GUIServer &guiServer)
     {
         if (!this->isStarted)
         {
@@ -833,7 +833,7 @@ namespace GT
     }
 
 
-    GTGUI::GUIElement* Editor::GetFileEditorElement(const char* path, const char* relativeTo)
+    GUIElement* Editor::GetFileEditorElement(const char* path, const char* relativeTo)
     {
         char absolutePath[EASYVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
@@ -1249,7 +1249,7 @@ namespace GT
     }
 
 
-    void Editor::FFI::PushElement(GT::Script &script, GTGUI::GUIElement* element)
+    void Editor::FFI::PushElement(GT::Script &script, GUIElement* element)
     {
         if (element != nullptr)
         {

@@ -7,7 +7,7 @@
 #include "../GUIGarbageCollector.hpp"
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTGUI
+namespace GT
 {
     class GUIElement;
 

@@ -3,7 +3,7 @@
 #include <GTEngine/GUI/GUIFontGlyphMapManager.hpp>
 #include <GTEngine/GUI/GUIServer.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIFontGlyphMapManager::GUIFontGlyphMapManager(GUIServer &server)
         : m_server(server), m_glyphMaps()
@@ -26,7 +26,7 @@ namespace GTGUI
             size_t dataSize = width * height;
             auto initialData = malloc(dataSize);
             
-            GT::GlyphMapHandle newImage = static_cast<GT::GlyphMapHandle>(imageManager->CreateImage(width, height, GTGUI::GUIImageFormat_A8, initialData));
+            GT::GlyphMapHandle newImage = static_cast<GT::GlyphMapHandle>(imageManager->CreateImage(width, height, GUIImageFormat_A8, initialData));
             this->m_glyphMaps.PushBack(newImage);
             
             

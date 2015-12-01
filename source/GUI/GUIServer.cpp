@@ -11,7 +11,7 @@
 #include <easy_path/easy_path.h>
 
 // GUIServer
-namespace GTGUI
+namespace GT
 {
     GUIServer::GUIServer(GT::Script* script, GUIImageManager* imageManagerIn)
         : operationMode(OperationMode_Delayed),
@@ -2439,7 +2439,7 @@ namespace GTGUI
                 this->registeredImages.Remove(id);
             }
 
-            this->registeredImages.Add(id, m_imageManager->CreateImage(width, height, (bpp == 3) ? GTGUI::GUIImageFormat_RGB8 : GTGUI::GUIImageFormat_RGBA8, data));
+            this->registeredImages.Add(id, m_imageManager->CreateImage(width, height, (bpp == 3) ? GUIImageFormat_RGB8 : GUIImageFormat_RGBA8, data));
         }
     }
 

@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-namespace GTGUI
+namespace GT
 {
     typedef size_t GUIImageHandle;
     

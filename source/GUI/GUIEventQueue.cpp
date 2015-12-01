@@ -3,7 +3,7 @@
 #include <GTEngine/GUI/GUIEventQueue.hpp>
 #include <cassert>
 
-namespace GTGUI
+namespace GT
 {
     GUIEventQueue::GUIEventQueue()
         : buffer(nullptr), bufferSize(0), eventCount(0), nextEventIndex(0)

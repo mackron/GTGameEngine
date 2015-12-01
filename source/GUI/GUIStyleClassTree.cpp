@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUI/GUIStyleClassTree.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIStyleClassTree::GUIStyleClassTree()
         : m_root(nullptr), m_removeBySuccessor(false)

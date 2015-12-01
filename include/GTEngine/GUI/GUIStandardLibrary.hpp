@@ -5,7 +5,7 @@
 
 #include "GUIServer.hpp"
 
-namespace GTGUI
+namespace GT
 {
     /// Static class for working with the standard library.
     class GUIStandardLibrary

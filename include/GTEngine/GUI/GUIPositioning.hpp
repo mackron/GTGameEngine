@@ -3,7 +3,7 @@
 #ifndef GT_GUIPositioning
 #define GT_GUIPositioning
 
-namespace GTGUI
+namespace GT
 {
     enum GUIPositioning
     {

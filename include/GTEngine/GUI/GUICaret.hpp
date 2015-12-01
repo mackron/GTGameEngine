@@ -8,7 +8,7 @@
 #include "Rendering/GUIMesh.hpp"
 
 
-namespace GTGUI
+namespace GT
 {
     /**
     *   \brief  Class representing a caret.

@@ -34,7 +34,7 @@ We use the notion of invalidating/validating the mouse. As the layout of element
 layout has changed the elements that are under the mouse. At the beginning of each step, we validate the mouse, which will post the appropriate events.
 */
 
-namespace GTGUI
+namespace GT
 {
     static const int OperationMode_Delayed   = 0;
     static const int OperationMode_Immediate = 1;
@@ -772,7 +772,7 @@ namespace GTGUI
         ///     The increments a counter, whereas EndEventHandling() decrements it. When the counter is at 0, it means events are not currently being handled.
         ///
         /// @see
-        ///     GTGUI::GUIServer::EndEventHandling(), GTGUI::GUIServer::IsHandlingEvent()
+        ///     GUIServer::EndEventHandling(), GUIServer::IsHandlingEvent()
         void BeginEventHandling();
 
         /// Marks the end of event handling.
@@ -781,7 +781,7 @@ namespace GTGUI
         ///     This should be paired with a call to BeginEventHandling().
         ///
         /// @see
-        ///     GTGUI::GUIServer::BeginEventHandling(), GTGUI::GUIServer::IsHandlingEvent()
+        ///     GUIServer::BeginEventHandling(), GUIServer::IsHandlingEvent()
         void EndEventHandling();
 
         /// Determines whether or not an event is being handled.

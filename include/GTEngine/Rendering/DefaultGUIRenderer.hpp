@@ -9,7 +9,7 @@
 namespace GT
 {
     /// The default renderer for GUI's. This calls functions directly from the main Renderer class.
-    class DefaultGUIRenderer : public GTGUI::GUIRenderer
+    class DefaultGUIRenderer : public GUIRenderer
     {
     public:
 
@@ -20,34 +20,34 @@ namespace GT
         virtual ~DefaultGUIRenderer();
 
 
-        /// GTGUI::Renderer::Begin()
-        void Begin(const GTGUI::GUIServer &guiServer);
+        /// Renderer::Begin()
+        void Begin(const GUIServer &guiServer);
 
-        /// GTGUI::Renderer::End()
+        /// Renderer::End()
         void End();
 
-        /// GTGUI::Renderer::BeginElementOnDrawEvent()
-        void BeginElementOnDrawEvent(GTGUI::GUIElement &element);
+        /// Renderer::BeginElementOnDrawEvent()
+        void BeginElementOnDrawEvent(GUIElement &element);
 
         /// GTUI::Renderer::EndElementOnDrawEvent()
-        void EndElementOnDrawEvent(GTGUI::GUIElement &element);
+        void EndElementOnDrawEvent(GUIElement &element);
 
-        /// GTGUI::Renderer::SetScissor()
+        /// Renderer::SetScissor()
         void SetScissor(int x, int y, unsigned int width, unsigned int height);
 
-        /// GTGUI::Renderer::SetOffset()
+        /// Renderer::SetOffset()
         virtual void SetOffset(float offsetX, float offsetY);
 
-        /// GTGUI::Renderer::SetTexture()
-        virtual void SetTexture(GTGUI::GUIImageHandle image);
+        /// Renderer::SetTexture()
+        virtual void SetTexture(GUIImageHandle image);
 
-        /// GTGUI::Renderer::EnableBlending()
+        /// Renderer::EnableBlending()
         virtual void EnableBlending();
 
-        /// GTGUI::Renderer::DisableBlending()
+        /// Renderer::DisableBlending()
         virtual void DisableBlending();
 
-        /// GTGUI::Renderer::Draw()
+        /// Renderer::Draw()
         void Draw(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount);
 
 

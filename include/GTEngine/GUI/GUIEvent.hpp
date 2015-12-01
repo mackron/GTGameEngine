@@ -8,7 +8,7 @@
 #include <GTEngine/Core/Window.hpp>
 #include <cstdint>
 
-namespace GTGUI
+namespace GT
 {
     struct GUIEvent
     {

@@ -222,7 +222,7 @@ namespace GT
         return m_ownerEditor.GetGame().GetScript();
     }
 
-    GTGUI::GUIServer & SubEditor::GetGUI()
+    GUIServer & SubEditor::GetGUI()
     {
         return m_ownerEditor.GetGame().GetGUI();
     }

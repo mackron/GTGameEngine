@@ -2,7 +2,7 @@
 
 #include <GTEngine/GUI/Rendering/GUIMesh.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIMesh::GUIMesh()
         : vertices(), indices(), texture(0)

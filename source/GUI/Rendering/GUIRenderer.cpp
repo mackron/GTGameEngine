@@ -3,7 +3,7 @@
 #include <GTEngine/GUI/Rendering/GUIRenderer.hpp>
 #include <GTEngine/GUI/GUIServer.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIRenderer::GUIRenderer()
         : currentTexture(0), isScissorSetToViewport(false), isBlendingEnabled(false)
@@ -185,7 +185,7 @@ namespace GTGUI
                     
                 if (backgroundImageMesh != nullptr)
                 {
-                    bool textureNeedsBlending = server.GetImageManager()->GetImageFormat(backgroundImageMesh->GetTexture()) == GTGUI::GUIImageFormat_RGBA8;
+                    bool textureNeedsBlending = server.GetImageManager()->GetImageFormat(backgroundImageMesh->GetTexture()) == GUIImageFormat_RGBA8;
 
                     this->_SetTexture(backgroundImageMesh->GetTexture());
                     {
@@ -289,7 +289,7 @@ namespace GTGUI
         this->SetOffset(offsetX, offsetY);
     }
 
-    void GUIRenderer::_SetTexture(GTGUI::GUIImageHandle texture)
+    void GUIRenderer::_SetTexture(GUIImageHandle texture)
     {
         if (texture != this->currentTexture)
         {

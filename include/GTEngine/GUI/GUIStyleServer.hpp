@@ -12,7 +12,7 @@
 #include <GTEngine/Core/BinarySearchTree.hpp>
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTGUI
+namespace GT
 {
     class GUIServer;
     class GUIStyleAttributeHandler;

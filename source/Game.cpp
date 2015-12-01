@@ -115,7 +115,7 @@ namespace GT
 
 
 
-    GTGUI::GUIServer & Game::GetGUI()
+    GUIServer & Game::GetGUI()
     {
         return this->gui;
     }
@@ -891,7 +891,7 @@ namespace GT
 
             // TODO: Remove this little section when the new GUI event handling system is in place.
             // The GUI events can be handled here. If it turns out that they're best handled on the update thread, all we need
-            // to do is remove this line - GTGUI::GUIServer::Step() will also handle any pending events. I like to handle the GUI
+            // to do is remove this line - GUIServer::Step() will also handle any pending events. I like to handle the GUI
             // events from here because it's nice to have GUI events handled at the same time as window events, since they're
             // kind of related.
             //this->gui.HandleEvents();
@@ -1046,7 +1046,7 @@ namespace GT
 
     void Game::HandleEvents()
     {
-        GTGUI::GUIEventContext eventContext = this->gui.BeginPostingEvents();
+        GUIEventContext eventContext = this->gui.BeginPostingEvents();
 
         GameEvent e;
         while (this->eventQueue.Next(e))
@@ -1097,7 +1097,7 @@ namespace GT
         }
     }
 
-    void Game::HandleEvent_OnMouseMove(GameEvent &e, GTGUI::GUIEventContext eventContext)
+    void Game::HandleEvent_OnMouseMove(GameEvent &e, GUIEventContext eventContext)
     {
         this->mousePosX = e.mousemove.x;
         this->mousePosY = e.mousemove.y;
@@ -1126,7 +1126,7 @@ namespace GT
         }
     }
 
-    void Game::HandleEvent_OnMouseWheel(GameEvent &e, GTGUI::GUIEventContext eventContext)
+    void Game::HandleEvent_OnMouseWheel(GameEvent &e, GUIEventContext eventContext)
     {
         this->gui.OnMouseWheel(eventContext, e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
 
@@ -1137,7 +1137,7 @@ namespace GT
         }
     }
 
-    void Game::HandleEvent_OnMouseButtonDown(GameEvent &e, GTGUI::GUIEventContext eventContext)
+    void Game::HandleEvent_OnMouseButtonDown(GameEvent &e, GUIEventContext eventContext)
     {
         this->mouseButtonDownMap.Add(e.mousedown.button, true);
 
@@ -1159,7 +1159,7 @@ namespace GT
         }
     }
 
-    void Game::HandleEvent_OnMouseButtonUp(GameEvent &e, GTGUI::GUIEventContext eventContext)
+    void Game::HandleEvent_OnMouseButtonUp(GameEvent &e, GUIEventContext eventContext)
     {
         auto iButtonDown = this->mouseButtonDownMap.Find(e.mouseup.button);
         if (iButtonDown != nullptr)
@@ -1185,7 +1185,7 @@ namespace GT
         }
     }
 
-    void Game::HandleEvent_OnMouseButtonDoubleClick(GameEvent &e, GTGUI::GUIEventContext eventContext)
+    void Game::HandleEvent_OnMouseButtonDoubleClick(GameEvent &e, GUIEventContext eventContext)
     {
         this->gui.OnMouseButtonDoubleClick(eventContext, static_cast<int>(e.mousedoubleclick.button));
 
@@ -1197,7 +1197,7 @@ namespace GT
         }
     }
 
-    void Game::HandleEvent_OnKeyPressed(GameEvent &e, GTGUI::GUIEventContext eventContext)
+    void Game::HandleEvent_OnKeyPressed(GameEvent &e, GUIEventContext eventContext)
     {
         this->keyDownMap.Add(e.keypressed.key, true);
 
@@ -1244,7 +1244,7 @@ namespace GT
         }
     }
 
-    void Game::HandleEvent_OnKeyReleased(GameEvent &e, GTGUI::GUIEventContext eventContext)
+    void Game::HandleEvent_OnKeyReleased(GameEvent &e, GUIEventContext eventContext)
     {
         (void)eventContext;
 
@@ -1268,7 +1268,7 @@ namespace GT
         }
     }
 
-    void Game::HandleEvent_OnKeyDown(GameEvent &e, GTGUI::GUIEventContext eventContext)
+    void Game::HandleEvent_OnKeyDown(GameEvent &e, GUIEventContext eventContext)
     {
         this->gui.OnKeyDown(eventContext, e.keydown.key);
 
@@ -1280,7 +1280,7 @@ namespace GT
         }
     }
 
-    void Game::HandleEvent_OnKeyUp(GameEvent &e, GTGUI::GUIEventContext eventContext)
+    void Game::HandleEvent_OnKeyUp(GameEvent &e, GUIEventContext eventContext)
     {
         this->gui.OnKeyUp(eventContext, e.keyup.key);
 

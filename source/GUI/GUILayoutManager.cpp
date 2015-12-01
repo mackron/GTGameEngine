@@ -3,7 +3,7 @@
 #include <GTEngine/GUI/GUILayoutManager.hpp>
 #include <GTEngine/GUI/GUIServer.hpp>
 
-namespace GTGUI
+namespace GT
 {
     static const uint32_t WidthInvalidated    = (1 << 0);
     static const uint32_t HeightInvalidated   = (1 << 1);

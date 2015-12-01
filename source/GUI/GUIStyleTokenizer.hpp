@@ -12,7 +12,7 @@
 #define haszero64(v) (((v) - 0x0101010101010101ULL) & ~(v) & 0x8080808080808080ULL)
 #define hasvalue64(x,n) (haszero64((x) ^ (~0ULL/255 * (n))))
 
-namespace GTGUI
+namespace GT
 {
     /// Class for iterating over each token in a style script.
     ///

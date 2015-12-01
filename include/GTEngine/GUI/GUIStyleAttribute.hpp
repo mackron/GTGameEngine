@@ -19,7 +19,7 @@
     #pragma warning(disable:4351)   // new behaviour
 #endif
 
-namespace GTGUI
+namespace GT
 {
     class GUIStyleClass;
 
@@ -410,36 +410,36 @@ namespace GTGUI
         {
             if (GT::Strings::Equal(valueIn, valueSizeInBytes, "relative"))
             {
-                this->value = GTGUI::GUIPositioning_Relative;
+                this->value = GUIPositioning_Relative;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "absolute"))
             {
-                this->value = GTGUI::GUIPositioning_Absolute;
+                this->value = GUIPositioning_Absolute;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "auto"))
             {
-                this->value = GTGUI::GUIPositioning_Auto;
+                this->value = GUIPositioning_Auto;
                 this->isset = true;
                 return true;
             }
             else    // 'auto' by default.
             {
-                this->value = GTGUI::GUIPositioning_Auto;
+                this->value = GUIPositioning_Auto;
                 return false;
             }
         }
 
         const char* GetValueAsString() const
         {
-            if (this->value == GTGUI::GUIPositioning_Relative)
+            if (this->value == GUIPositioning_Relative)
             {
                 return "relative";
             }
-            else if (this->value == GTGUI::GUIPositioning_Absolute)
+            else if (this->value == GUIPositioning_Absolute)
             {
                 return "absolute";
             }

@@ -3,7 +3,7 @@
 #include <GTEngine/GUI/GUIServerEventHandler.hpp>
 #include <GTEngine/Errors.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUIServerEventHandler GUIServerEventHandler::Default;
     

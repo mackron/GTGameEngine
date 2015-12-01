@@ -22,7 +22,7 @@ namespace GT
         /// Sets the viewport element that mouse coordinates should be relative to.
         ///
         /// @param viewport [in] A pointer to the viewport element.
-        void SetViewportElement(GTGUI::GUIElement* viewport);
+        void SetViewportElement(GUIElement* viewport);
         
         
         
@@ -61,7 +61,7 @@ namespace GT
         
         /// A pointer to the viewport element mouse coordintes should be relative to. If this is null, anything depending on the viewport
         /// will be unfiltered. Defaults to null.
-        GTGUI::GUIElement* m_viewport;
+        GUIElement* m_viewport;
     
     
     private:    // No copying.

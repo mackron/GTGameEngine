@@ -3,7 +3,7 @@
 #ifndef GT_GUIGameEventCodes
 #define GT_GUIGameEventCodes
 
-namespace GTGUI
+namespace GT
 {
     enum GUIEventCode
     {

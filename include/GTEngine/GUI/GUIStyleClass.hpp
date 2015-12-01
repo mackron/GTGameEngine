@@ -12,7 +12,7 @@
     #pragma warning(disable:4480)   // nonstandard extension used: specifying underlying type for enum.
 #endif
 
-namespace GTGUI
+namespace GT
 {
     class GUIStyleStack;
     class GUIStyleServer;

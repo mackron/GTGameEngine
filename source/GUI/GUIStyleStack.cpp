@@ -8,7 +8,7 @@
 
 #if defined(_MSC_VER)
     #pragma warning(push)
-    #pragma warning(disable:4351)   // new behavior: elements of array 'GTGUI::GUIStyleStack::modifiers' will be default initialized
+    #pragma warning(disable:4351)   // new behavior: elements of array 'GUIStyleStack::modifiers' will be default initialized
 #endif
 
 #define REFRESH_ATTRIBUTE(attribute) \
@@ -43,7 +43,7 @@
         this->Refresh(); \
     }
 
-namespace GTGUI
+namespace GT
 {
     GUIStyleStack::GUIStyleStack(GUIElement &owner)
         : owner(owner),

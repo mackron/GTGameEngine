@@ -3,7 +3,7 @@
 #include <GTEngine/GUI/GUICaret.hpp>
 #include <GTEngine/GUI/GUIServer.hpp>
 
-namespace GTGUI
+namespace GT
 {
     GUICaret::GUICaret()
         : owner(nullptr), xPos(0), yPos(0), width(1), height(20), blinkInterval(0.5), blinkTime(0.0), isOn(true),

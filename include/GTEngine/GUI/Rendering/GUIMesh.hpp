@@ -7,7 +7,7 @@
 #include <GTEngine/Core/Colour.hpp>
 #include <GTEngine/Core/Vector.hpp>
 
-namespace GTGUI
+namespace GT
 {
     /// Structure representing a vertex in a mesh.
     struct GUIMeshVertex
