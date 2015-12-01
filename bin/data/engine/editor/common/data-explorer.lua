@@ -145,9 +145,9 @@ function GTGUI.Element:DataExplorer()
     
     
     
-    function self:InsertItemFromFileInfo(fileInfo, text)
+    function self:InsertItemFromAbsolutePath(absolutePath, text)
         -- The first step is to find the name of the parent.
-        local parentPath = GT.IO.GetParentDirectoryPath(fileInfo.absolutePath);
+        local parentPath = GT.IO.GetParentDirectoryPath(absolutePath);
         assert(parentPath ~= nil);
         
         -- Now we need to find the treeview item of the parent. Once we have this, we can look at the siblings and determine
@@ -156,7 +156,7 @@ function GTGUI.Element:DataExplorer()
 
         
         if text == nil then
-            text = GT.IO.GetFileNameFromPath(fileInfo.absolutePath);
+            text = GT.IO.GetFileNameFromPath(absolutePath);
             
             if GT.IO.GetExtension(text) == "gtmodel" then
                 text = GT.IO.RemoveExtension(text);
@@ -164,8 +164,8 @@ function GTGUI.Element:DataExplorer()
         end
         
         local item = self.TreeView:AddItem(text, parentItem);
-        item.isDirectory  = fileInfo.isDirectory;
-        item.path         = fileInfo.absolutePath;
+        item.isDirectory  = GT.IO.IsDirectory(absolutePath);
+        item.path         = absolutePath;
         
         if item.isDirectory then
             item:ShowIcon('folder-icon');
@@ -299,10 +299,10 @@ function GTGUI.Element:DataExplorer()
     end
 	
     
-    function self:IsFileIgnored(fileInfo)
+    function self:IsFileIgnored(absolutePath)
         -- Here we'll check the extensions.
-        local filename  = GT.IO.GetFileNameFromPath(fileInfo.absolutePath);
-        local extension = GT.IO.GetExtension(fileInfo.absolutePath);
+        local filename  = GT.IO.GetFileNameFromPath(absolutePath);
+        local extension = GT.IO.GetExtension(absolutePath);
         
         -- Blender will create backup .blend files named as .blend1, .blend2, etc. We want to ignore these.
         if string.sub(extension, 1, 5) == "blend" and string.len(extension) > 5 then
@@ -387,22 +387,22 @@ function GTGUI.Element:DataExplorer()
     
     
     
-    function self:OnFileInsert(fileInfo)
+    function self:OnFileInsert(absolutePath)
         -- Some files should be ignored by the explorer. We're going to filter them
-        if not self:IsFileIgnored(fileInfo) then
+        if not self:IsFileIgnored(absolutePath) then
             -- If the file is a .gtmodel file, we actually want to handle this a little differently. Basically, we don't want to show them. However, there
             -- is a case where the original source file may not be present, in which case we still want to see an item for the file. What we do is remove
             -- the .gtmodel extension, leaving only the base name. Then, we check if a file of that new name already exists. If so, we just ignore everything,
             -- otherwise we add a file with that base name.
-            if GT.IO.GetExtension(fileInfo.absolutePath) == "gtmodel" then
-                local baseFileAbsolutePath = GT.IO.RemoveExtension(fileInfo.absolutePath);
+            if GT.IO.GetExtension(absolutePath) == "gtmodel" then
+                local baseFileAbsolutePath = GT.IO.RemoveExtension(absolutePath);
                 if GT.IO.FileExists(baseFileAbsolutePath) then
-                    fileInfo.absolutePath = baseFileAbsolutePath;
+                    absolutePath = baseFileAbsolutePath;
                     return;
                 end
             end
         
-            self:InsertItemFromFileInfo(fileInfo);
+            self:InsertItemFromAbsolutePath(absolutePath);
         end
     end
     
@@ -435,7 +435,7 @@ function GTGUI.Element:DataExplorer()
         text = text .. ")";
         
         local fileInfo = GT.IO.FileInfo.New(value);
-        self:InsertItemFromFileInfo(fileInfo, text);
+        self:InsertItemFromAbsolutePath(fileInfo.absolutePath, text);
     end
     
     -- Here we will register the explorer with the data files watcher.

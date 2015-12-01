@@ -1089,6 +1089,10 @@ namespace GT
         }
     }
 
+    //void OnFileRename(const char* absolutePathOld, const char* absolutePathNew)
+    //{
+    //}
+
     void Editor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
         auto &script = this->game.GetScript();

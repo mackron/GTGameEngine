@@ -260,6 +260,9 @@ namespace GT
 
             /// Deletes a file at the given path.
             int DeleteFile(Script &script);
+
+            /// Determines if the file with the given path refers to an existing directory.
+            int IsDirectory(Script &script);
         }
 
         namespace TimingFFI

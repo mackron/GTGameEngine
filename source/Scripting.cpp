@@ -691,6 +691,7 @@ namespace GT
                     script.SetTableFunction(-1, "DeleteDirectory",        FFI::IOFFI::DeleteDirectory);
                     script.SetTableFunction(-1, "CreateEmptyFile",        FFI::IOFFI::CreateEmptyFile);
                     script.SetTableFunction(-1, "DeleteFile",             FFI::IOFFI::DeleteFile);
+                    script.SetTableFunction(-1, "IsDirectory",            FFI::IOFFI::IsDirectory);
                 }
                 script.SetTableValue(-3);
 
@@ -2397,6 +2398,12 @@ namespace GT
             {
                 easyvfs_delete_file(g_EngineContext->GetVFS(), script.ToString(1));
                 return 0;
+            }
+
+            int IsDirectory(Script &script)
+            {
+                script.Push(easyvfs_is_existing_directory(g_EngineContext->GetVFS(), script.ToString(1)));
+                return 1;
             }
         }
 

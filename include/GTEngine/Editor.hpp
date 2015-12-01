@@ -245,17 +245,24 @@ namespace GT
         void OnLoseFocus();
 
 
+
         ///////////////////////////////////////////////
-        // Events from Files Watcher.
+        // Events from the file system watcher.
 
         /// Called when a file is added.
         void OnFileInsert(const DataFilesWatcher::Item &item);
+        //void OnFileInsert(const char* absolutePath);
 
         /// Called when a file is removed.
         void OnFileRemove(const DataFilesWatcher::Item &item);
+        //void OnFileRemove(const char* absolutePath);
+
+        /// Called when a file is renamed.
+        //void OnFileRename(const char* absolutePathOld, const char* absolutePathNew);
 
         /// Called when a file is updated.
         void OnFileUpdate(const DataFilesWatcher::Item &item);
+        //void OnFileUpdate(const char* absolutePath);
 
 
     private:

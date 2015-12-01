@@ -13,7 +13,7 @@ end
 
 function Editor.DataFilesWatcher.OnInsert(fileInfo)
     for i,value in ipairs(Editor.DataFilesWatcher.RegisteredExplorers) do
-        value:OnFileInsert(fileInfo);
+        value:OnFileInsert(fileInfo.absolutePath);
     end
 end
 
