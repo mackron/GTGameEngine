@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_StyleServer
-#define GT_GUI_StyleServer
+#ifndef GT_GUIStyleServer
+#define GT_GUIStyleServer
 
 #include "StyleClass.hpp"
 #include "StyleClassTree.hpp"

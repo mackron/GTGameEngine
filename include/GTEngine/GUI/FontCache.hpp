@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_FontCache
-#define GT_GUI_FontCache
+#ifndef GT_GUIFontCache
+#define GT_GUIFontCache
 
 #include <GTEngine/Core/FontServer.hpp>
 #include <GTEngine/Core/Vector.hpp>
@@ -126,4 +126,4 @@ namespace GTGUI
     };
 }
 
-#endif // GT_GUI_FontCache
+#endif

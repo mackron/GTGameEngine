@@ -1,16 +1,16 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUIImageManager.hpp>
+#include <GTEngine/DefaultGUIImageManager.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Core/ImageLoader.hpp>
 
 namespace GT
 {
-    GUIImageManager::GUIImageManager()
+    DefaultGUIImageManager::DefaultGUIImageManager()
     {
     }
     
-    GUIImageManager::~GUIImageManager()
+    DefaultGUIImageManager::~DefaultGUIImageManager()
     {
     }
     
@@ -18,12 +18,12 @@ namespace GT
     ///////////////////////////////////////////
     // Create
     
-    GTGUI::GUIImageHandle GUIImageManager::CreateImage(unsigned int width, unsigned int height, GTGUI::GUIImageFormat format, void* data)
+    GTGUI::GUIImageHandle DefaultGUIImageManager::CreateImage(unsigned int width, unsigned int height, GTGUI::GUIImageFormat format, void* data)
     {
         return this->CreateImage(width, height, format, const_cast<const void*>(data));
     }
     
-    GTGUI::GUIImageHandle GUIImageManager::CreateImage(unsigned int width, unsigned int height, GTGUI::GUIImageFormat format, const void* data)
+    GTGUI::GUIImageHandle DefaultGUIImageManager::CreateImage(unsigned int width, unsigned int height, GTGUI::GUIImageFormat format, const void* data)
     {
         // First, translate the format to a GTLib format. If it's not a supported format, we need to return 0.
         auto translatedFormat = ImageFormat_None;
@@ -59,7 +59,7 @@ namespace GT
         return reinterpret_cast<GTGUI::GUIImageHandle>(texture);
     }
     
-    GTGUI::GUIImageHandle GUIImageManager::LoadImage(const char* filePath)
+    GTGUI::GUIImageHandle DefaultGUIImageManager::LoadImage(const char* filePath)
     {
         auto loader = ImageLoader::Create(filePath);
         if (loader != nullptr)
@@ -107,7 +107,7 @@ namespace GT
     ///////////////////////////////////////////
     // Delete
 
-    void GUIImageManager::DeleteImage(GTGUI::GUIImageHandle imageToDelete)
+    void DefaultGUIImageManager::DeleteImage(GTGUI::GUIImageHandle imageToDelete)
     {
         Renderer::DeleteTexture2D(reinterpret_cast<Texture2D*>(imageToDelete));
     }
@@ -116,7 +116,7 @@ namespace GT
     ///////////////////////////////////////////
     // Update
 
-    void GUIImageManager::SetImageSubData(GTGUI::GUIImageHandle image, unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, void* data)
+    void DefaultGUIImageManager::SetImageSubData(GTGUI::GUIImageHandle image, unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, void* data)
     {
         auto texture = reinterpret_cast<Texture2D*>(image);
         assert(texture != nullptr);
@@ -129,7 +129,7 @@ namespace GT
     ///////////////////////////////////////////
     // Properties
 
-    void GUIImageManager::GetImageDimensions(GTGUI::GUIImageHandle image, unsigned int &widthOut, unsigned int &heightOut) const
+    void DefaultGUIImageManager::GetImageDimensions(GTGUI::GUIImageHandle image, unsigned int &widthOut, unsigned int &heightOut) const
     {
         auto texture = reinterpret_cast<Texture2D*>(image);
         assert(texture != nullptr);
@@ -139,7 +139,7 @@ namespace GT
         }
     }
 
-    GTGUI::GUIImageFormat GUIImageManager::GetImageFormat(GTGUI::GUIImageHandle image) const
+    GTGUI::GUIImageFormat DefaultGUIImageManager::GetImageFormat(GTGUI::GUIImageHandle image) const
     {
         auto texture = reinterpret_cast<Texture2D*>(image);
         assert(texture != nullptr);

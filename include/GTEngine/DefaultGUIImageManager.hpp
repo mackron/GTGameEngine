@@ -1,22 +1,22 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUIImageManager
-#define GT_GUIImageManager
+#ifndef GT_DefaultGUIImageManager
+#define GT_DefaultGUIImageManager
 
 #include <GTEngine/GUI/ImageManager.hpp>
 #include "Rendering/Texture2D.hpp"
 
 namespace GT
 {
-    class GUIImageManager : public GTGUI::GUIImageManager
+    class DefaultGUIImageManager : public GTGUI::GUIImageManager
     {
     public:
 
         /// Constructor.
-        GUIImageManager();
+        DefaultGUIImageManager();
         
         /// Destructor.
-        ~GUIImageManager();
+        ~DefaultGUIImageManager();
         
         
         ///////////////////////////////////////////

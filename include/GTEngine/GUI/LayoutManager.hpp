@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_LayoutManager
-#define GT_GUI_LayoutManager
+#ifndef GT_GUILayoutManager
+#define GT_GUILayoutManager
 
 #include "Element.hpp"
 #include <GTEngine/Core/BinarySearchTree.hpp>

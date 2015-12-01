@@ -12,7 +12,7 @@
 #include "GameUpdateJob.hpp"
 #include "DataFilesWatcher.hpp"
 #include "Profiler.hpp"
-#include "GUIImageManager.hpp"
+#include "DefaultGUIImageManager.hpp"
 #include "Rendering/DefaultGUIRenderer.hpp"
 #include "GameStateManager.hpp"
 #include <GTEngine/Core/Threading.hpp>
@@ -727,7 +727,7 @@ namespace GT
         
 
         /// The GUI image manager.
-        GUIImageManager guiImageManager;
+        DefaultGUIImageManager guiImageManager;
 
         /// The GUI of this game. There is only a single GUI for every game. A game should dynamically show and hide root elements
         /// to show different GUI's for different game states.

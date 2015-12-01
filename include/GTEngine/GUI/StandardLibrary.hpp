@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_StandardLibrary
-#define GT_GUI_StandardLibrary
+#ifndef GT_GUIStandardLibrary
+#define GT_GUIStandardLibrary
 
 #include "Server.hpp"
 

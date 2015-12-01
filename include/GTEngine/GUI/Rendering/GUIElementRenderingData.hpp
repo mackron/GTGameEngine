@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_GUIElementRenderingData
-#define GT_GUI_GUIElementRenderingData
+#ifndef GT_GUIGUIElementRenderingData
+#define GT_GUIGUIElementRenderingData
 
 #include "GUIMesh.hpp"
 #include "../GarbageCollector.hpp"

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_StyleAttribute
-#define GT_GUI_StyleAttribute
+#ifndef GT_GUIStyleAttribute
+#define GT_GUIStyleAttribute
 
 #include "StyleNumber.hpp"
 #include "Positioning.hpp"

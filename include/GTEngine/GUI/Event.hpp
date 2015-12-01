@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_Event
-#define GT_GUI_Event
+#ifndef GT_GUIEvent
+#define GT_GUIEvent
 
 #include "Element.hpp"
 #include "EventCodes.hpp"

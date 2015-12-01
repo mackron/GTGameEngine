@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_StyleNumber
-#define GT_GUI_StyleNumber
+#ifndef GT_GUIStyleNumber
+#define GT_GUIStyleNumber
 
 namespace GTGUI
 {

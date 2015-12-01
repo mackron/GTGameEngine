@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_Renderer
-#define GT_GUI_Renderer
+#ifndef GT_GUIRenderer
+#define GT_GUIRenderer
 
 #include "../ImageManager.hpp"
 

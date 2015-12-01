@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_Positioning
-#define GT_GUI_Positioning
+#ifndef GT_GUIPositioning
+#define GT_GUIPositioning
 
 namespace GTGUI
 {

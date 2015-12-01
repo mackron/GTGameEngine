@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_FontGlyphMapManager
-#define GT_GUI_FontGlyphMapManager
+#ifndef GT_GUIFontGlyphMapManager
+#define GT_GUIFontGlyphMapManager
 
 #include "ImageManager.hpp"             // For GTGUI::GUIImageHandle.
 #include <GTEngine/Core/Vector.hpp>
@@ -56,4 +56,4 @@ namespace GTGUI
     };
 }
 
-#endif // GT_GUI_FontGlyphMapManager
+#endif

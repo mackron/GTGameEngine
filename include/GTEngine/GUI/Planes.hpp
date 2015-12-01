@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_Planes
-#define GT_GUI_Planes
+#ifndef GT_GUIPlanes
+#define GT_GUIPlanes
 
 namespace GTGUI
 {

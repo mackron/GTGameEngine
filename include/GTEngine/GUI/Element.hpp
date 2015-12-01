@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_Element
-#define GT_GUI_Element
+#ifndef GT_GUIElement
+#define GT_GUIElement
 
 #include "StyleStack.hpp"
 #include "ElementEventHandler.hpp"

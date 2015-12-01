@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_StyleClassTree
-#define GT_GUI_StyleClassTree
+#ifndef GT_GUIStyleClassTree
+#define GT_GUIStyleClassTree
 
 #include "StyleClass.hpp"
 

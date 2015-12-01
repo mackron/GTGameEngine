@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_ImageManager
-#define GT_GUI_ImageManager
+#ifndef GT_GUIImageManager
+#define GT_GUIImageManager
 
 #include <cstddef>
 
@@ -116,4 +116,4 @@ namespace GTGUI
     };
 }
 
-#endif // GT_GUI_ImageManager
+#endif

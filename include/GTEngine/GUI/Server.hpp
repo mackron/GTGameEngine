@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_Server
-#define GT_GUI_Server
+#ifndef GT_GUIServer
+#define GT_GUIServer
 
 #include "ScriptServer.hpp"
 #include "StyleServer.hpp"

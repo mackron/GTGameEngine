@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __LICKGUI_STYLETOKENIZER_HPP_
-#define __LICKGUI_STYLETOKENIZER_HPP_
+#ifndef GT_GUIStyleTokenizer
+#define GT_GUIStyleTokenizer
 
 #include <cstddef>
 #include <GTEngine/Core/String.hpp>

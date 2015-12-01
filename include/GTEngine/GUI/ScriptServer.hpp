@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_ScriptServer
-#define GT_GUI_ScriptServer
+#ifndef GT_GUIScriptServer
+#define GT_GUIScriptServer
 
 #include <GTEngine/Script.hpp>
 

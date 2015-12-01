@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_GUI_StyleScriptError
-#define GT_GUI_StyleScriptError
+#ifndef GT_GUIStyleScriptError
+#define GT_GUIStyleScriptError
 
 #include <GTEngine/Core/String.hpp>
 #include <GTEngine/Core/Strings/Tokenizer.hpp>
