@@ -147,7 +147,9 @@ namespace GT
 
 
                 // Here we need to attach our files watcher event handler.
-                this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
+                //this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
+
+                
 
 
                 this->isStarted = true;
@@ -169,14 +171,26 @@ namespace GT
             this->game.ShowCursor();
             this->GUI.EditorMain->Show();
 
+            // TODO: Start the file system watcher thread.
+
             // We always want to watch the data files while in the editor, but the game may or may not want to have watching enabled after the editor is closed. We will need
             // keep track of whether or not we should disable watching when the editor is closed.
-            this->disableFileWatchingAfterClose = !this->game.IsDataFilesWatchingEnabled();
-            this->game.EnableDataFilesWatching();
+            //this->disableFileWatchingAfterClose = !this->game.IsDataFilesWatchingEnabled();
+            //this->game.EnableDataFilesWatching();
 
             // We also want to get an update on the data files immediately.
-            this->game.GetDataFilesWatcher().CheckForChanges(false);
-            this->game.GetDataFilesWatcher().DispatchEvents();
+            //this->game.GetDataFilesWatcher().CheckForChanges(false);
+            //this->game.GetDataFilesWatcher().DispatchEvents();
+
+
+            // We need to iterate over every file and folder in each base directory and make the editor aware of it.
+            for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()); ++iBaseDir)
+            {
+                const char* baseDir = easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBaseDir);
+                assert(baseDir != nullptr);
+
+                this->InsertDirectoryChildren_Recursive(baseDir);
+            }
 
 
             this->isOpen = true;
@@ -193,14 +207,17 @@ namespace GT
             this->SaveAllOpenModifiedFiles();
 
             // We want to update the data files so we can see them in-game.
-            this->game.GetDataFilesWatcher().CheckForChanges(false);
-            this->game.GetDataFilesWatcher().DispatchEvents();
+            //this->game.GetDataFilesWatcher().CheckForChanges(false);
+            //this->game.GetDataFilesWatcher().DispatchEvents();
 
             // We may want to disable file watching.
-            if (this->disableFileWatchingAfterClose)
-            {
-                this->game.DisableDataFilesWatching();
-            }
+            //if (this->disableFileWatchingAfterClose)
+            //{
+            //    this->game.DisableDataFilesWatching();
+            //}
+
+
+            // TODO: Exit the file system watcher thread.
 
 
             this->isOpen = false;
@@ -948,6 +965,31 @@ namespace GT
         for (size_t iSubEditor = 0; iSubEditor < this->openedFiles.count; ++iSubEditor)
         {
             this->openedFiles.buffer[iSubEditor]->value->OnMainWindowLoseFocus();
+        }
+    }
+
+
+    void Editor::InsertDirectoryChildren_Recursive(const char* baseDir)
+    {
+        assert(easyvfs_is_existing_directory(g_EngineContext->GetVFS(), baseDir));
+
+        easyvfs_iterator iFile;
+        if (easyvfs_begin_iteration(g_EngineContext->GetVFS(), baseDir, &iFile))
+        {
+            easyvfs_file_info fi;
+            while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
+            {
+                if (!easyvfs_is_base_directory(g_EngineContext->GetVFS(), fi.absolutePath))
+                {
+                    this->OnFileInsert(fi.absolutePath);
+
+                    // Call this function recursively if the file is a directory and is not another base directory.
+                    if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    {
+                        this->InsertDirectoryChildren_Recursive(fi.absolutePath);
+                    }
+                }
+            }
         }
     }
 

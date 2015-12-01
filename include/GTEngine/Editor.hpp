@@ -249,6 +249,9 @@ namespace GT
         ///////////////////////////////////////////////
         // Events from the file system watcher.
 
+        /// Recursively inserts each file contained within the given base directory.
+        void InsertDirectoryChildren_Recursive(const char* baseDir);
+
         /// Called when a file is added.
         //void OnFileInsert(const DataFilesWatcher::Item &item);
         void OnFileInsert(const char* absolutePath);
