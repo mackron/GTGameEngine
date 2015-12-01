@@ -1,5 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
+#include <GTEngine/Script.hpp>
 #include <GTEngine/Scripting/Scripting_Animation.hpp>
 
 namespace GT

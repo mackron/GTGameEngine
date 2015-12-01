@@ -3,10 +3,11 @@
 #ifndef GT_Scripting_Rendering
 #define GT_Scripting_Rendering
 
-#include "../GameScript.hpp"
-
 namespace GT
 {
+    class Script;
+
+
     /// Loads the rendering library.
     ///
     /// @param script [in] A reference to the script to load the library into.

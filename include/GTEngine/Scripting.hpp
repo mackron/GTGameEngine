@@ -5,6 +5,8 @@
 
 #include <GTEngine/Core/Serializer.hpp>
 #include <GTEngine/Core/Deserializer.hpp>
+#include <GTEngine/Core/Windowing/MouseButtons.hpp>
+#include <GTEngine/Core/Windowing/Keys.hpp>
 #include <GTEngine/Script.hpp>
 #include "Scripting/Scripting_Game.hpp"
 #include "Scripting/Scripting_Math.hpp"

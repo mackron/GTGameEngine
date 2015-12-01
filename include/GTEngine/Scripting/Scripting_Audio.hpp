@@ -3,10 +3,10 @@
 #ifndef GT_Scripting_Audio
 #define GT_Scripting_Audio
 
-#include "../GameScript.hpp"
-
 namespace GT
 {
+    class Script;
+
     /// Loads the audio library.
     ///
     /// @param script [in] A reference to the script to load the library into.

@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Scripting/Scripting_Math.hpp>
+#include <GTEngine/Script.hpp>
 #include <GTEngine/Math.hpp>
 
 namespace GT

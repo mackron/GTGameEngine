@@ -3,10 +3,11 @@
 #ifndef GT_Scripting_Particles
 #define GT_Scripting_Particles
 
-#include "../GameScript.hpp"
-
 namespace GT
 {
+    class Script;
+
+
     /// Loads the particles library.
     ///
     /// @param script [in] A reference to the script to load the library into.

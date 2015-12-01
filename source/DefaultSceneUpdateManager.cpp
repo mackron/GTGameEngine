@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/DefaultSceneUpdateManager.hpp>
+#include <GTEngine/Scene.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Scripting.hpp>
 

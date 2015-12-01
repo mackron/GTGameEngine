@@ -3,10 +3,11 @@
 #ifndef GT_Scripting_Editor
 #define GT_Scripting_Editor
 
-#include "../GameScript.hpp"
-
 namespace GT
 {
+    class Script;
+
+
     /// Loads the editor library.
     ///
     /// @param script [in] A reference to the script to load the library into.

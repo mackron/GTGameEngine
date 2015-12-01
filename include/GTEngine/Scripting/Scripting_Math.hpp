@@ -3,11 +3,13 @@
 #ifndef GT_Scripting_Math
 #define GT_Scripting_Math
 
-#include "../GameScript.hpp"
 #include "../Math.hpp"
 
 namespace GT
 {
+    class Script;
+
+
     /// Loads the extended math library into the given script.
     ///
     /// @param script [in] The script to load the math library into.

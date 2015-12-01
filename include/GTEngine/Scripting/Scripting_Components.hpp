@@ -3,10 +3,11 @@
 #ifndef GT_Scripting_Components
 #define GT_Scripting_Components
 
-#include "../GameScript.hpp"
-
 namespace GT
 {
+    class Script;
+
+
     /// Loads the scene node components library.
     ///
     /// @param script [in] A reference to the script to load the library into.

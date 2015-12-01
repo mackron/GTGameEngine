@@ -3,11 +3,12 @@
 #ifndef GT_Scripting_Scene
 #define GT_Scripting_Scene
 
-#include "../GameScript.hpp"
-#include "../Scene.hpp"
-
 namespace GT
 {
+    class Script;
+    class Scene;
+
+
     /// Loads the scene library.
     ///
     /// @param script [in] A reference to the script to load the library into.

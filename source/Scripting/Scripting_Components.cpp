@@ -3,6 +3,7 @@
 #include <GTEngine/Scripting/Scripting_Components.hpp>
 #include <GTEngine/Scripting/Scripting_Animation.hpp>
 #include <GTEngine/Scripting/Scripting_Math.hpp>
+#include <GTEngine/Script.hpp>
 #include <GTEngine/SceneNode.hpp>
 
 namespace GT

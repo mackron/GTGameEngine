@@ -3,11 +3,15 @@
 #ifndef GT_Scripting_SceneNode
 #define GT_Scripting_SceneNode
 
-#include "../GameScript.hpp"
-#include "../SceneNode.hpp"
-
 namespace GT
 {
+    class Script;
+    class SceneNode;
+    class Component;
+    class Serializer;
+    class Deserializer;
+
+
     /// Loads the scene node library.
     ///
     /// @param script [in] A reference to the script to load the library into.

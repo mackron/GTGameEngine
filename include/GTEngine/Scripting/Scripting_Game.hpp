@@ -3,10 +3,12 @@
 #ifndef GT_Scripting_Game
 #define GT_Scripting_Game
 
-#include "../GameScript.hpp"
-
 namespace GT
 {
+    class Script;
+    class Game;
+
+
     /// Loads the Game script library.
     ///
     /// @param script [in] The script to load the Game library into.

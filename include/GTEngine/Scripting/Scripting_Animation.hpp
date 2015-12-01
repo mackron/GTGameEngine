@@ -3,11 +3,13 @@
 #ifndef GT_Scripting_Animation
 #define GT_Scripting_Animation
 
-#include "../GameScript.hpp"
 #include "../Animation/AnimationSequence.hpp"
 
 namespace GT
 {
+    class Script;
+
+
     /// Loads the animation sequence library.
     ///
     /// @param script [in] A reference to the script to load the library into.

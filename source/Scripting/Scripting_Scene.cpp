@@ -4,6 +4,7 @@
 #include <GTEngine/Scripting/Scripting_SceneNode.hpp>
 #include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/PrefabLibrary.hpp>
+#include <GTEngine/Scene.hpp>
 
 namespace GT
 {
