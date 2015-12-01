@@ -88,7 +88,7 @@ namespace GT
                     script.GetGlobal("GTGUI");
                     assert(script.IsTable(-1));
                     {
-                        script.Push("GUIServer");
+                        script.Push("Server");
                         script.GetTableValue(-2);
                         assert(script.IsTable(-1));
                         {
