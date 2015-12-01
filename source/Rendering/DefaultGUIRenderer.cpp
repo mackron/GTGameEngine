@@ -3,7 +3,7 @@
 #include <GTEngine/Rendering/DefaultGUIRenderer.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
-#include <GTEngine/GUI/Server.hpp>
+#include <GTEngine/GUI/GUIServer.hpp>
 
 
 namespace GT

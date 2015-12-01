@@ -18,7 +18,7 @@
 #include <GTEngine/Core/Threading.hpp>
 #include <GTEngine/Core/Timing.hpp>
 #include <GTEngine/Core/FontServer.hpp>
-#include <GTEngine/GUI/Server.hpp>
+#include <GTEngine/GUI/GUIServer.hpp>
 
 namespace GT
 {

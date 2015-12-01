@@ -4,7 +4,7 @@
 #define GT_GUIGUIElementRenderingData
 
 #include "GUIMesh.hpp"
-#include "../GarbageCollector.hpp"
+#include "../GUIGarbageCollector.hpp"
 #include <GTEngine/Core/Vector.hpp>
 
 namespace GTGUI

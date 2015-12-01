@@ -3,7 +3,7 @@
 #ifndef GT_GUIRenderer
 #define GT_GUIRenderer
 
-#include "../ImageManager.hpp"
+#include "../GUIImageManager.hpp"
 
 namespace GTGUI
 {

@@ -3,7 +3,7 @@
 #ifndef GT_GUIMesh
 #define GT_GUIMesh
 
-#include "../ImageManager.hpp"
+#include "../GUIImageManager.hpp"
 #include <GTEngine/Core/Colour.hpp>
 #include <GTEngine/Core/Vector.hpp>
 

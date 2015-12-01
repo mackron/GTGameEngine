@@ -3,7 +3,7 @@
 #ifndef GT_Editor3DViewportEventHandler
 #define GT_Editor3DViewportEventHandler
 
-#include <GTEngine/GUI/ElementEventHandler.hpp>
+#include <GTEngine/GUI/GUIElementEventHandler.hpp>
 #include "../Rendering/VertexArray.hpp"
 
 namespace GT

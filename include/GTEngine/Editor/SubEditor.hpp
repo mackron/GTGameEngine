@@ -4,7 +4,7 @@
 #define GT_SubEditor
 
 #include <GTEngine/Core/String.hpp>
-#include <GTEngine/GUI/Server.hpp>
+#include <GTEngine/GUI/GUIServer.hpp>
 
 #include "SubEditorTabEventHandler.hpp"
 #include "../GameScript.hpp"
