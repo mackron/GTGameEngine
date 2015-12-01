@@ -5,42 +5,42 @@ function GTGUI.Element:DataExplorer()
     self.TreeView   = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='treeview'  style='height:100%; border:none; transparent-mouse-input:true;' />");
     self.FolderMenu = GTGUI.Server.New("<div                                   styleclass='menu'      style='z-index:100; positioning:absolute; visible:false' />");
     self.FileMenu   = GTGUI.Server.New("<div                                   styleclass='menu'      style='z-index:100; positioning:absolute; visible:false' />");
-    
+
     self.SearchBox:SearchBox();
     self.TreeView:TreeView();
-    
+
     self.FolderMenu:Menu();
     self.FolderMenu:EnableDefaultEvents();
-    
+
     self.FolderMenu:AppendItem("New Folder..."):OnPressed(function()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Folder...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateDirectory(absolutePath);
                     Game.ScanDataFilesForChanges();                 -- This will force the files watcher to update.
-                    
+
                     self:SelectAndExpandItemByPath(absolutePath);
                 end;
             end);
         end
     end);
-    
+
     self.FolderMenu:AppendSeparator();
-    
+
     self.FolderMenu:AppendItem("New Scene..."):OnPressed(function()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Scene...", self.FolderMenu.DestinationDirectory, "gtscene", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
-                    
+
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                     self:SelectAndExpandItemByPath(absolutePath);
                 end
             end);
         end
     end);
-    
+
     self.FolderMenu:AppendItem("New Prefab..."):OnPressed(function()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Prefab...", self.FolderMenu.DestinationDirectory, "gtprefab", function(result, absolutePath)
@@ -51,75 +51,75 @@ function GTGUI.Element:DataExplorer()
             end);
         end
     end);
-    
+
     self.FolderMenu:AppendItem("New Material..."):OnPressed(function()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Material...", self.FolderMenu.DestinationDirectory, "material", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
-                    
+
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                     self:SelectAndExpandItemByPath(absolutePath);
                 end
             end);
         end
     end);
-    
+
     self.FolderMenu:AppendItem("New Particle System..."):OnPressed(function()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Particle System...", self.FolderMenu.DestinationDirectory, "gtparticle", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
-                    
+
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                     self:SelectAndExpandItemByPath(absolutePath);
                 end
             end);
         end
     end);
-    
+
     self.FolderMenu:AppendItem("New Text File..."):OnPressed(function()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Text File...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
-                    
+
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                     self:SelectAndExpandItemByPath(absolutePath);
                 end
             end);
         end
     end);
-    
+
     self.FolderMenu:AppendSeparator();
     self.FolderMenu:AppendItem("Delete..."):OnPressed(function()
         Editor.ShowYesNoDialog("Are you sure you want to delete '" .. self.FolderMenu.DestinationDirectoryShort .. "'?", function(result)
             if result == Editor.YesNoDialogResult.Yes then
                 -- Recursively force close every file in the directory.
                 self:ForceCloseFilesInDirectory(self:FindItemByPath(self.FolderMenu.DestinationDirectory));
-            
+
                 GT.IO.DeleteDirectory(self.FolderMenu.DestinationDirectory);
                 Game.ScanDataFilesForChanges();
             end
         end);
     end);
-    
-    
-    
+
+
+
     self.FileMenu:Menu();
     self.FileMenu:EnableDefaultEvents();
-    
+
     self.FileMenu:AppendItem("Delete..."):OnPressed(function()
         Editor.ShowYesNoDialog("Are you sure you want to delete '" .. self.FileMenu.DestinationRelativePath .. "'?", function(result)
             if result == Editor.YesNoDialogResult.Yes then
                 local absolutePathToDelete = self.FileMenu.DestinationAbsolutePath;
-            
+
                 Editor.ForceCloseFile(absolutePathToDelete);
                 GT.IO.DeleteFile(absolutePathToDelete);
-                
+
                 -- If the file was a model, we need to look for a corresponding .gtmodel file. Also, if the file is a .gtmodel, we need to remove
                 -- the extension and also try deleted the base file.
                 if GTEngine.IsModelFile(absolutePathToDelete) then
@@ -137,44 +137,44 @@ function GTGUI.Element:DataExplorer()
                         end
                     end
                 end
-                
+
                 Game.ScanDataFilesForChanges();
             end
         end);
     end);
-    
-    
-    
-    function self:InsertItemFromAbsolutePath(absolutePath, text)
+
+
+
+    function self:InsertItemFromPath(absolutePath, text)
         -- The first step is to find the name of the parent.
         local parentPath = GT.IO.GetParentDirectoryPath(absolutePath);
         assert(parentPath ~= nil);
-        
+
         -- Now we need to find the treeview item of the parent. Once we have this, we can look at the siblings and determine
         -- where to insert the new item.
         local parentItem = self:FindItemByPath(parentPath);
 
-        
+
         if text == nil then
             text = GT.IO.GetFileNameFromPath(absolutePath);
-            
+
             if GT.IO.GetExtension(text) == "gtmodel" then
                 text = GT.IO.RemoveExtension(text);
             end
         end
-        
+
         local item = self.TreeView:AddItem(text, parentItem);
         item.isDirectory  = GT.IO.IsDirectory(absolutePath);
         item.path         = absolutePath;
-        
+
         if item.isDirectory then
             item:ShowIcon('folder-icon');
         else
             item:ShowIcon('file-icon');
             item.icon:SetStyle('background-image-color', '#aaa');
         end
-        
-        
+
+
         -- Called when an item is right clicked.
         item.titleContainer:OnMouseButtonUp(function(data)
             if data.button == GT.MouseButtons.Right then
@@ -182,8 +182,8 @@ function GTGUI.Element:DataExplorer()
                 item:Select();
                 self:ShowContextMenu(item);
             end
-        end)    
-        
+        end)
+
         -- Called when the item is torn for drag-and-drop.
         item.titleContainer:OnTear(function()
             if not item:GetParent().isRoot then
@@ -197,14 +197,14 @@ function GTGUI.Element:DataExplorer()
                 dragAndDropElement:OnDragAndDropProxyRemoved(function()
                     GTGUI.Server.DeleteElement(dragAndDropElement);
                 end)
-                
+
                 GTGUI.Server.SetDragAndDropProxyElement(dragAndDropElement, 0, 0);
-                
+
                 dragAndDropElement.isAsset = true;
                 dragAndDropElement.path    = item:GetShortPath();
             end
         end);
-        
+
         item.titleContainer:OnDrop(function(data)
             if not item.isDirectory and GTEngine.IsPrefabFile(item.path) then
                 if data.droppedElement.sceneNodePtr then
@@ -217,8 +217,8 @@ function GTGUI.Element:DataExplorer()
                 end
             end
         end);
-        
-        
+
+
         function item:GetShortPath()
             local parent = item:GetParent();
             if parent and not parent:GetParent().isRoot then
@@ -227,11 +227,11 @@ function GTGUI.Element:DataExplorer()
                 return item:GetText();
             end
         end
-        
+
         function item:GetRelativePath()
             return item:GetShortPath();
         end
-        
+
         function item:GetRootPath()
             local parent = item:GetParent();
             if parent then
@@ -245,17 +245,17 @@ function GTGUI.Element:DataExplorer()
             end
         end
     end
-    
+
     function self:RemoveItemByPath(path)
         self.TreeView:RemoveItem(self:FindItemByPath(path));
     end
-    
+
     function self:FindItemByPath(path, root)
         -- Brute force for now, but we should probably use the hierarchial nature of the file system for optimizing later.
-        
+
         -- If the root was nil, we'll root at the tree-views root item.
         if root == nil then root = self.TreeView:GetRootItem(); end
-        
+
         if root.path == path then
             return root;
         else
@@ -267,26 +267,26 @@ function GTGUI.Element:DataExplorer()
                 end
             end
         end
-        
+
         return nil;
     end
-    
-	
-	function self:SelectAndExpandItemByPath(path)
-		local item = self:FindItemByPath(path);
-		if item then
-			local parentItem = item:GetParent();
-			while parentItem do
-				parentItem:Expand();
-				parentItem = parentItem:GetParent();
-			end
-			
-			self.TreeView:DeselectAllItems();
-			item:Select();
-		end
-	end
-    
-    
+
+
+    function self:SelectAndExpandItemByPath(path)
+        local item = self:FindItemByPath(path);
+        if item then
+            local parentItem = item:GetParent();
+            while parentItem do
+                parentItem:Expand();
+                parentItem = parentItem:GetParent();
+            end
+
+            self.TreeView:DeselectAllItems();
+            item:Select();
+        end
+    end
+
+
     function self:ForceCloseFilesInDirectory(directoryItem)
         local children = directoryItem:GetChildren();
         for key,childItem in pairs(children) do
@@ -297,35 +297,35 @@ function GTGUI.Element:DataExplorer()
             end
         end
     end
-	
-    
+
+
     function self:IsFileIgnored(absolutePath)
         -- Here we'll check the extensions.
         local filename  = GT.IO.GetFileNameFromPath(absolutePath);
         local extension = GT.IO.GetExtension(absolutePath);
-        
+
         -- Blender will create backup .blend files named as .blend1, .blend2, etc. We want to ignore these.
         if string.sub(extension, 1, 5) == "blend" and string.len(extension) > 5 then
             return true;
         end
-        
+
         if extension == "html" or extension == "HTML" then
             return true;
         end
-        
-        
+
+
         -- There are a few other files that we want to ignore such as fonts.cache.
         if filename == "fonts.cache" then
             return true;
         end
-        
+
 
         -- If we've made it here, the file is not ignored and will show up.
         return false;
     end
-    
-    
-    
+
+
+
     -- Shows the right-click context menu for the given item.
     function self:ShowContextMenu(item)
         if item.isDirectory then
@@ -336,20 +336,20 @@ function GTGUI.Element:DataExplorer()
             local height         = self.FolderMenu:GetHeight();
             local viewportWidth  = GTGUI.Server.GetViewportWidth();
             local viewportHeight = GTGUI.Server.GetViewportHeight();
-        
+
             if xPos + width > viewportWidth then
                 xPos = xPos - width;
             end
-            
+
             if yPos + height > viewportHeight then
                 yPos = yPos - height;
             end
-        
-        
+
+
             self.FolderMenu:SetPosition(xPos, yPos);
             self.FolderMenu:Show();
             self.FolderMenu.DestinationDirectory = item.path;
-            
+
             if not item:GetParent().isRoot then
                 self.FolderMenu.DestinationDirectoryShort = item:GetRelativePath();
             else
@@ -363,20 +363,20 @@ function GTGUI.Element:DataExplorer()
             local height         = self.FileMenu:GetHeight();
             local viewportWidth  = GTGUI.Server.GetViewportWidth();
             local viewportHeight = GTGUI.Server.GetViewportHeight();
-        
+
             if xPos + width > viewportWidth then
                 xPos = xPos - width;
             end
-            
+
             if yPos + height > viewportHeight then
                 yPos = yPos - height;
             end
-        
-        
+
+
             self.FileMenu:SetPosition(xPos, yPos);
             self.FileMenu:Show();
             self.FileMenu.DestinationAbsolutePath = item.path;
-            
+
             if not item:GetParent().isRoot then
                 self.FileMenu.DestinationRelativePath = item:GetRelativePath();
             else
@@ -384,9 +384,9 @@ function GTGUI.Element:DataExplorer()
             end
         end
     end
-    
-    
-    
+
+
+
     function self:OnFileInsert(absolutePath)
         -- Some files should be ignored by the explorer. We're going to filter them
         if not self:IsFileIgnored(absolutePath) then
@@ -401,30 +401,30 @@ function GTGUI.Element:DataExplorer()
                     return;
                 end
             end
-        
-            self:InsertItemFromAbsolutePath(absolutePath);
+
+            self:InsertItemFromPath(absolutePath);
         end
     end
-    
-    function self:OnFileRemove(fileInfo)
-        self:RemoveItemByPath(fileInfo.absolutePath);
+
+    function self:OnFileRemove(absolutePath)
+        self:RemoveItemByPath(absolutePath);
     end
-    
-    function self:OnFileUpdate(fileInfo)
+
+    function self:OnFileUpdate(absolutePath)
         --print("Update: " .. fileInfo.absolutePath);
     end
-    
 
-    
+
+
     self.TreeView:OnItemPicked(function(data)
         if not data.item.isDirectory then
             Editor.OpenFile(data.item.path, data.item:GetRootPath());
         end
     end)
-    
-    
-    
-    
+
+
+
+
     for i,value in ipairs(Directories.Data) do
         local text = "(";
         if Editor.DirectoryAliases and Editor.DirectoryAliases.Data[i] then
@@ -433,11 +433,11 @@ function GTGUI.Element:DataExplorer()
             text = text .. GT.ToRelativePath(value, GTEngine.GetExecutableDirectory());
         end
         text = text .. ")";
-        
+
         local fileInfo = GT.IO.FileInfo.New(value);
-        self:InsertItemFromAbsolutePath(fileInfo.absolutePath, text);
+        self:InsertItemFromPath(fileInfo.absolutePath, text);
     end
-    
+
     -- Here we will register the explorer with the data files watcher.
     Editor.DataFilesWatcher.RegisterExplorer(self);
 end

@@ -19,12 +19,12 @@ end
 
 function Editor.DataFilesWatcher.OnRemove(fileInfo)
     for i,value in ipairs(Editor.DataFilesWatcher.RegisteredExplorers) do
-        value:OnFileRemove(fileInfo);
+        value:OnFileRemove(fileInfo.absolutePath);
     end
 end
 
 function Editor.DataFilesWatcher.OnUpdate(fileInfo)
     for i,value in ipairs(Editor.DataFilesWatcher.RegisteredExplorers) do
-        value:OnFileUpdate(fileInfo);
+        value:OnFileUpdate(fileInfo.absolutePath);
     end
 end
