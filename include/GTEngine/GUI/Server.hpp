@@ -12,11 +12,11 @@
 #include "EventQueue.hpp"
 #include "GarbageCollector.hpp"
 #include "LayoutManager.hpp"
-#include "Rendering.hpp"
 #include "ImageManager.hpp"
 #include "FontGlyphMapManager.hpp"
 #include "FontCache.hpp"
 #include "ElementTree.hpp"
+#include "Rendering/GUIRenderer.hpp"
 #include <GTEngine/Core/Point.hpp>
 #include <GTEngine/Core/Rect.hpp>
 #include <GTEngine/Core/Dictionary.hpp>
