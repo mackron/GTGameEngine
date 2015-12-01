@@ -338,13 +338,13 @@ namespace GT
         // Events from Files Watcher.
 
         /// Called when a file is added.
-        void OnFileInsert(const DataFilesWatcher::Item &item);
+        void OnFileInsert(const char* absolutePath);
 
         /// Called when a file is removed.
-        void OnFileRemove(const DataFilesWatcher::Item &item);
+        void OnFileRemove(const char* absolutePath);
 
         /// Called when a file is updated.
-        void OnFileUpdate(const DataFilesWatcher::Item &item);
+        void OnFileUpdate(const char* absolutePath);
 
 
        
@@ -949,9 +949,9 @@ namespace GT
             }
 
 
-            void OnInsert(const DataFilesWatcher::Item &item) { this->game.OnFileInsert(item); }
-            void OnRemove(const DataFilesWatcher::Item &item) { this->game.OnFileRemove(item); }
-            void OnUpdate(const DataFilesWatcher::Item &item) { this->game.OnFileUpdate(item); }
+            void OnInsert(const char* absolutePath) { this->game.OnFileInsert(absolutePath); }
+            void OnRemove(const char* absolutePath) { this->game.OnFileRemove(absolutePath); }
+            void OnUpdate(const char* absolutePath) { this->game.OnFileUpdate(absolutePath); }
 
         private:
 

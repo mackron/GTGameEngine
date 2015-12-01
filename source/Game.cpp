@@ -568,52 +568,52 @@ namespace GT
 
 
 
-    void Game::OnFileInsert(const DataFilesWatcher::Item &item)
+    void Game::OnFileInsert(const char* absolutePath)
     {
-        (void)item;
+        (void)absolutePath;
     }
 
-    void Game::OnFileRemove(const DataFilesWatcher::Item &item)
+    void Game::OnFileRemove(const char* absolutePath)
     {
-        (void)item;
+        (void)absolutePath;
     }
 
-    void Game::OnFileUpdate(const DataFilesWatcher::Item &item)
+    void Game::OnFileUpdate(const char* absolutePath)
     {
         // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
-        if ((item.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) == 0)
+        if (!easyvfs_is_existing_directory(g_EngineContext->GetVFS(), absolutePath))
         {
             // It's not a directory.
 
-            auto extension = easypath_extension(item.info.absolutePath);
+            auto extension = easypath_extension(absolutePath);
 
             if (ModelLibrary::IsExtensionSupported(extension))
             {
-                ModelLibrary::Reload(item.info.absolutePath);
+                ModelLibrary::Reload(absolutePath);
             }
             else if (Texture2DLibrary::IsExtensionSupported(extension))
             {
-                Texture2DLibrary::Reload(item.info.absolutePath);
+                Texture2DLibrary::Reload(absolutePath);
             }
-            else if (GT::IsSupportedMaterialExtension(item.info.absolutePath))
+            else if (GT::IsSupportedMaterialExtension(absolutePath))
             {
-                MaterialLibrary::Reload(item.info.absolutePath);
+                MaterialLibrary::Reload(absolutePath);
             }
-            else if (GT::IsSupportedParticleSystemExtension(item.info.absolutePath))
+            else if (GT::IsSupportedParticleSystemExtension(absolutePath))
             {
-                ParticleSystemLibrary::Reload(item.info.absolutePath);
+                ParticleSystemLibrary::Reload(absolutePath);
             }
             else
             {
                 // It might be a script file. We'll try reloading.
-                ScriptLibrary::Reload(item.info.absolutePath);
+                ScriptLibrary::Reload(absolutePath);
 
                 // If we have a script file we will reload it if applicable.
                 if (this->IsScriptAutoReloadEnabled())
                 {
-                    if (this->script.HasFileBeenLoaded(item.info.absolutePath))
+                    if (this->script.HasFileBeenLoaded(absolutePath))
                     {
-                        this->script.ExecuteFile(g_EngineContext->GetVFS(), item.info.absolutePath);
+                        this->script.ExecuteFile(g_EngineContext->GetVFS(), absolutePath);
                     }
                 }
             }

@@ -952,7 +952,8 @@ namespace GT
     }
 
 
-    void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
+    //void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
+    void Editor::OnFileInsert(const char* absolutePath)
     {
         auto &script = this->game.GetScript();
 
@@ -967,40 +968,7 @@ namespace GT
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
-                    // GT.IO.FileInfo.New()
-                    script.GetGlobal("GT");
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("IO");
-                        script.GetTableValue(-2);
-                        assert(script.IsTable(-1));
-                        {
-                            script.Push("FileInfo");
-                            script.GetTableValue(-2);
-                            assert(script.IsTable(-1));
-                            {
-                                script.Push("New");
-                                script.GetTableValue(-2);
-                                assert(script.IsFunction(-1));
-                                {
-                                    script.PushNewTable();
-                                    script.SetTableValue(-1, "path",             item.info.absolutePath);
-                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath);
-                                    script.SetTableValue(-1, "size",             (int)item.info.sizeInBytes);
-                                    script.SetTableValue(-1, "lastModifiedTime", (int)item.info.lastModifiedTime);
-                                    script.SetTableValue(-1, "isDirectory",      (item.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0);
-                                    script.Call(1, 1);
-
-                                    script.InsertIntoStack(-4);
-                                }
-                            }
-                            script.Pop(1);
-                        }
-                        script.Pop(1);
-                    }
-                    script.Pop(1);
-
-                    // The top item in the stack should be the return value from GTLib.IO.FileInfo.New().
+                    script.Push(absolutePath);
                     script.Call(1, 0);
                 }
             }
@@ -1016,12 +984,13 @@ namespace GT
             auto subEditor = this->openedFiles.buffer[i]->value;
             assert(subEditor != nullptr);
             {
-                subEditor->OnFileInsert(item);
+                subEditor->OnFileInsert(absolutePath);
             }
         }
     }
 
-    void Editor::OnFileRemove(const DataFilesWatcher::Item &item)
+    //void Editor::OnFileRemove(const DataFilesWatcher::Item &item)
+    void Editor::OnFileRemove(const char* absolutePath)
     {
         auto &script = this->game.GetScript();
 
@@ -1036,40 +1005,7 @@ namespace GT
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
-                    // GT.IO.FileInfo.New()
-                    script.GetGlobal("GT");
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("IO");
-                        script.GetTableValue(-2);
-                        assert(script.IsTable(-1));
-                        {
-                            script.Push("FileInfo");
-                            script.GetTableValue(-2);
-                            assert(script.IsTable(-1));
-                            {
-                                script.Push("New");
-                                script.GetTableValue(-2);
-                                assert(script.IsFunction(-1));
-                                {
-                                    script.PushNewTable();
-                                    script.SetTableValue(-1, "path",             item.info.absolutePath);
-                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath);
-                                    script.SetTableValue(-1, "size",             (int)item.info.sizeInBytes);
-                                    script.SetTableValue(-1, "lastModifiedTime", (int)item.info.lastModifiedTime);
-                                    script.SetTableValue(-1, "isDirectory",      (item.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0);
-                                    script.Call(1, 1);
-
-                                    script.InsertIntoStack(-4);
-                                }
-                            }
-                            script.Pop(1);
-                        }
-                        script.Pop(1);
-                    }
-                    script.Pop(1);
-
-                    // The top item in the stack should be the return value from GTLib.IO.FileInfo.New().
+                    script.Push(absolutePath);
                     script.Call(1, 0);
                 }
             }
@@ -1084,16 +1020,19 @@ namespace GT
             auto subEditor = this->openedFiles.buffer[i]->value;
             assert(subEditor != nullptr);
             {
-                subEditor->OnFileRemove(item);
+                subEditor->OnFileRemove(absolutePath);
             }
         }
     }
 
-    //void OnFileRename(const char* absolutePathOld, const char* absolutePathNew)
-    //{
-    //}
+    void OnFileRename(const char* absolutePathOld, const char* absolutePathNew)
+    {
+        (void)absolutePathOld;
+        (void)absolutePathNew;
+    }
 
-    void Editor::OnFileUpdate(const DataFilesWatcher::Item &item)
+    //void Editor::OnFileUpdate(const DataFilesWatcher::Item &item)
+    void Editor::OnFileUpdate(const char* absolutePath)
     {
         auto &script = this->game.GetScript();
 
@@ -1108,40 +1047,7 @@ namespace GT
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
-                    // GT.IO.FileInfo.New()
-                    script.GetGlobal("GT");
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("IO");
-                        script.GetTableValue(-2);
-                        assert(script.IsTable(-1));
-                        {
-                            script.Push("FileInfo");
-                            script.GetTableValue(-2);
-                            assert(script.IsTable(-1));
-                            {
-                                script.Push("New");
-                                script.GetTableValue(-2);
-                                assert(script.IsFunction(-1));
-                                {
-                                    script.PushNewTable();
-                                    script.SetTableValue(-1, "path",             item.info.absolutePath);
-                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath);
-                                    script.SetTableValue(-1, "size",             (int)item.info.sizeInBytes);
-                                    script.SetTableValue(-1, "lastModifiedTime", (int)item.info.lastModifiedTime);
-                                    script.SetTableValue(-1, "isDirectory",      (item.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0);
-                                    script.Call(1, 1);
-
-                                    script.InsertIntoStack(-4);
-                                }
-                            }
-                            script.Pop(1);
-                        }
-                        script.Pop(1);
-                    }
-                    script.Pop(1);
-
-                    // The top item in the stack should be the return value from GTLib.IO.FileInfo.New().
+                    script.Push(absolutePath);
                     script.Call(1, 0);
                 }
             }
@@ -1157,7 +1063,7 @@ namespace GT
             auto subEditor = this->openedFiles.buffer[i]->value;
             assert(subEditor != nullptr);
             {
-                subEditor->OnFileUpdate(item);
+                subEditor->OnFileUpdate(absolutePath);
             }
         }
     }

@@ -229,9 +229,9 @@ namespace GT
         }
     }
 
-    void MaterialEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
+    void MaterialEditor::OnFileUpdate(const char* absolutePath)
     {
-        if (Strings::Equal(item.info.absolutePath, this->GetAbsolutePath()))
+        if (Strings::Equal(absolutePath, this->GetAbsolutePath()))
         {
             if (!this->isSaving)
             {

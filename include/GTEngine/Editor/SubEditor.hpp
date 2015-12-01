@@ -135,17 +135,17 @@ namespace GT
         /// Called when a file is added to a data directory.
         ///
         /// @param item [in] The object containing information about the file.
-        virtual void OnFileInsert(const DataFilesWatcher::Item &item);
+        virtual void OnFileInsert(const char* absolutePath);
 
         /// Called when a file is remove from a data directory.
         ///
         /// @param item [in] The object containing information about the file.
-        virtual void OnFileRemove(const DataFilesWatcher::Item &item);
+        virtual void OnFileRemove(const char* absolutePath);
 
         /// Called when a file in a data directory is updated.
         ///
         /// @param item [in] The object containing information about the file.
-        virtual void OnFileUpdate(const DataFilesWatcher::Item &item);
+        virtual void OnFileUpdate(const char* absolutePath);
 
 
     private:

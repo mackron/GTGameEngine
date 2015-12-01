@@ -106,9 +106,9 @@ namespace GT
 
                 switch (e.type)
                 {
-                case 0: handler->OnInsert(*e.item); break;
-                case 1: handler->OnRemove(*e.item); break;
-                case 2: handler->OnUpdate(*e.item); break;
+                case 0: handler->OnInsert(e.item->info.absolutePath); break;
+                case 1: handler->OnRemove(e.item->info.absolutePath); break;
+                case 2: handler->OnUpdate(e.item->info.absolutePath); break;
 
                 default: break;
                 }
@@ -287,7 +287,7 @@ namespace GT
         // We want to ignore root items here.
         if (&rootItem != &m_root && rootItem.parent != &m_root)
         {
-            eventHandler.OnInsert(rootItem);
+            eventHandler.OnInsert(rootItem.info.absolutePath);
         }
 
 

@@ -125,7 +125,7 @@ namespace GT
             /// Called when a file is added/inserted.
             ///
             /// @param item [in] A reference to the item that was inserted.
-            virtual void OnInsert(const Item &) {};
+            virtual void OnInsert(const char*) {};
 
             /// Called when a file is removed.
             ///
@@ -133,12 +133,12 @@ namespace GT
             ///
             /// @remarks
             ///     The attributes in 'item' will be set to those before the removal. Thus, the parent will be still set to the old parent, and not the new parent.
-            virtual void OnRemove(const Item &) {};
+            virtual void OnRemove(const char*) {};
 
             /// Called when a file is updated.
             ///
             /// @param item [in] A reference to the item that was updated.
-            virtual void OnUpdate(const Item &) {};
+            virtual void OnUpdate(const char*) {};
         };
 
 

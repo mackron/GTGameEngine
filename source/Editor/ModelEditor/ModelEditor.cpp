@@ -464,20 +464,20 @@ namespace GT
     }
 
 
-    void ModelEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
+    void ModelEditor::OnFileUpdate(const char* absolutePath)
     {
         if (!this->isSaving)
         {
-            if (item.info.absolutePath == this->GetAbsolutePath())
+            if (absolutePath == this->GetAbsolutePath())
             {
                 this->Reload();
             }
             else
             {
-                if (easypath_extension_equal(item.info.absolutePath, "gtmodel"))
+                if (easypath_extension_equal(absolutePath, "gtmodel"))
                 {
                     char absolutePathNoExt[EASYVFS_MAX_PATH];
-                    easypath_copy_and_remove_extension(absolutePathNoExt, sizeof(absolutePathNoExt), item.info.absolutePath);
+                    easypath_copy_and_remove_extension(absolutePathNoExt, sizeof(absolutePathNoExt), absolutePath);
 
                     if (strcmp(absolutePathNoExt, this->GetAbsolutePath()) == 0) {
                         this->Reload();

@@ -286,15 +286,15 @@ namespace GT
 
 
 
-    void SubEditor::OnFileInsert(const DataFilesWatcher::Item &)
+    void SubEditor::OnFileInsert(const char*)
     {
     }
 
-    void SubEditor::OnFileRemove(const DataFilesWatcher::Item &)
+    void SubEditor::OnFileRemove(const char*)
     {
     }
 
-    void SubEditor::OnFileUpdate(const DataFilesWatcher::Item &)
+    void SubEditor::OnFileUpdate(const char*)
     {
     }
 

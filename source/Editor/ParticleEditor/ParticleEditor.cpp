@@ -293,9 +293,9 @@ namespace GT
         }
     }
 
-    void ParticleEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
+    void ParticleEditor::OnFileUpdate(const char* absolutePath)
     {
-        (void)item;
+        (void)absolutePath;
     }
 
 

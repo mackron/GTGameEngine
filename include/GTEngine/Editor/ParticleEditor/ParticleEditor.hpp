@@ -98,7 +98,7 @@ namespace GT
 
 
         /// SubEditor::OnFileUpdate()
-        void OnFileUpdate(const DataFilesWatcher::Item &item);
+        void OnFileUpdate(const char* absolutePath);
 
 
 

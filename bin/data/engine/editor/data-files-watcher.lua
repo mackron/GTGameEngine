@@ -11,20 +11,20 @@ function Editor.DataFilesWatcher.DeregisterExplorer(explorer)
     table.remove(GT.table.indexof(Editor.DataFilesWatcher.RegisteredExplorers, explorer));
 end
 
-function Editor.DataFilesWatcher.OnInsert(fileInfo)
+function Editor.DataFilesWatcher.OnInsert(absolutePath)
     for i,value in ipairs(Editor.DataFilesWatcher.RegisteredExplorers) do
-        value:OnFileInsert(fileInfo.absolutePath);
+        value:OnFileInsert(absolutePath);
     end
 end
 
-function Editor.DataFilesWatcher.OnRemove(fileInfo)
+function Editor.DataFilesWatcher.OnRemove(absolutePath)
     for i,value in ipairs(Editor.DataFilesWatcher.RegisteredExplorers) do
-        value:OnFileRemove(fileInfo.absolutePath);
+        value:OnFileRemove(absolutePath);
     end
 end
 
-function Editor.DataFilesWatcher.OnUpdate(fileInfo)
+function Editor.DataFilesWatcher.OnUpdate(absolutePath)
     for i,value in ipairs(Editor.DataFilesWatcher.RegisteredExplorers) do
-        value:OnFileUpdate(fileInfo.absolutePath);
+        value:OnFileUpdate(absolutePath);
     end
 end

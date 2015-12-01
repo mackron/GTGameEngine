@@ -250,19 +250,19 @@ namespace GT
         // Events from the file system watcher.
 
         /// Called when a file is added.
-        void OnFileInsert(const DataFilesWatcher::Item &item);
-        //void OnFileInsert(const char* absolutePath);
+        //void OnFileInsert(const DataFilesWatcher::Item &item);
+        void OnFileInsert(const char* absolutePath);
 
         /// Called when a file is removed.
-        void OnFileRemove(const DataFilesWatcher::Item &item);
-        //void OnFileRemove(const char* absolutePath);
+        //void OnFileRemove(const DataFilesWatcher::Item &item);
+        void OnFileRemove(const char* absolutePath);
 
         /// Called when a file is renamed.
-        //void OnFileRename(const char* absolutePathOld, const char* absolutePathNew);
+        void OnFileRename(const char* absolutePathOld, const char* absolutePathNew);
 
         /// Called when a file is updated.
-        void OnFileUpdate(const DataFilesWatcher::Item &item);
-        //void OnFileUpdate(const char* absolutePath);
+        //void OnFileUpdate(const DataFilesWatcher::Item &item);
+        void OnFileUpdate(const char* absolutePath);
 
 
     private:
@@ -361,9 +361,9 @@ namespace GT
             }
 
 
-            void OnInsert(const DataFilesWatcher::Item &item) { this->editor.OnFileInsert(item); }
-            void OnRemove(const DataFilesWatcher::Item &item) { this->editor.OnFileRemove(item); }
-            void OnUpdate(const DataFilesWatcher::Item &item) { this->editor.OnFileUpdate(item); }
+            void OnInsert(const char* absolutePath) { this->editor.OnFileInsert(absolutePath); }
+            void OnRemove(const char* absolutePath) { this->editor.OnFileRemove(absolutePath); }
+            void OnUpdate(const char* absolutePath) { this->editor.OnFileUpdate(absolutePath); }
 
         private:
 

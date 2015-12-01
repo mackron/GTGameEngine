@@ -2772,10 +2772,10 @@ namespace GT
     }
 
 
-    void SceneEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
+    void SceneEditor::OnFileUpdate(const char* absolutePath)
     {
         // We want to go through and notify the editor of a change to the model component of any scene node referencing this file (if it's a model file).
-        if (GT::IsSupportedModelExtension(item.info.absolutePath))
+        if (GT::IsSupportedModelExtension(absolutePath))
         {
             size_t sceneNodeCount = m_scene.GetSceneNodeCount();
 
@@ -2791,9 +2791,9 @@ namespace GT
                         if (model != nullptr)
                         {
                             char absolutePathWithoutExt[EASYVFS_MAX_PATH];
-                            easypath_copy_and_remove_extension(absolutePathWithoutExt, sizeof(absolutePathWithoutExt), item.info.absolutePath);
+                            easypath_copy_and_remove_extension(absolutePathWithoutExt, sizeof(absolutePathWithoutExt), absolutePath);
 
-                            if (model->GetDefinition().absolutePath == item.info.absolutePath || model->GetDefinition().absolutePath == absolutePathWithoutExt)
+                            if (model->GetDefinition().absolutePath == absolutePath || model->GetDefinition().absolutePath == absolutePathWithoutExt)
                             {
                                 modelComponent->OnChanged();
 
@@ -2831,7 +2831,7 @@ namespace GT
             for (unsigned int iBasePath = 0; iBasePath < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()); ++iBasePath)
             {
                 const char* basePath = easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBasePath);
-                if (easypath_is_descendant(item.info.absolutePath, basePath))
+                if (easypath_is_descendant(absolutePath, basePath))
                 {
                     mostLikelyBasePath = basePath;
                     break;
@@ -2841,9 +2841,9 @@ namespace GT
             if (mostLikelyBasePath != nullptr)
             {
                 char relativePath[EASYVFS_MAX_PATH];
-                if (easypath_to_relative(item.info.absolutePath, mostLikelyBasePath, relativePath, sizeof(relativePath)))
+                if (easypath_to_relative(absolutePath, mostLikelyBasePath, relativePath, sizeof(relativePath)))
                 {
-                    if (GT::IsSupportedPrefabExtension(item.info.absolutePath))
+                    if (GT::IsSupportedPrefabExtension(absolutePath))
                     {
                         this->RelinkSceneNodesLinkedToPrefab(relativePath);
                     }
