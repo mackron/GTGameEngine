@@ -26,7 +26,7 @@ namespace GT
     {
     }
 
-    void Component::OnChanged(uint32_t whatChangedFlags)
+    void Component::OnChanged(unsigned int whatChangedFlags)
     {
         auto scene = this->node.GetScene();
         if (scene != nullptr)

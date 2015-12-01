@@ -4,6 +4,8 @@
 #define GT_PrefabComponent
 
 #include "../Component.hpp"
+#include "../Core/String.hpp"
+#include <cstdint>
 
 namespace GT
 {

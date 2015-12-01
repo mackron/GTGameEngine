@@ -2,7 +2,6 @@
 
 #include <GTEngine/Scripting/Scripting_Audio.hpp>
 #include <GTEngine/Scripting/Scripting_Math.hpp>
-#include <GTEngine/Audio.hpp>
 #include <GTEngine/GTEngine.hpp>
 
 namespace GT

@@ -3,16 +3,13 @@
 #ifndef GT_Audio_SoundStreamer
 #define GT_Audio_SoundStreamer
 
-#include <GTEngine/Core/String.hpp>
 #include <easy_audio/easy_audio.h>
 
 namespace GT
 {
     class Asset;
-}
 
-namespace GT
-{
+
     class SoundStreamer
     {
     public:
@@ -63,22 +60,19 @@ namespace GT
         /// @return The number of channels in the sound.
         virtual unsigned int GetNumChannels() const = 0;
 
-        /**
-        *   \brief  Retrieves number of bits per sample. Usually set to 16.
-        *   \return The number of bits per sample.
-        */
+        /// Retrieves number of bits per sample. Usually set to 16.
+        ///
+        /// @return The number of bits per sample.
         virtual unsigned int GetBitsPerSample() const = 0;
 
-	    /**
-        *   \brief  Retrieves the sample rate. 22050, 44100, etc.
-        *   \return The sample rate of the sound.
-        */
+        /// Retrieves the sample rate. 22050, 44100, etc.
+        ///
+        /// @return The sample rate of the sound.
         virtual unsigned int GetSampleRate() const = 0;
 
-        /**
-        *   \brief  Retrieves the format of the audio.
-        *   \return The format of the audio.
-        */
+        /// Retrieves the format of the audio.
+        ///
+        /// @return The format of the audio.
         virtual easyaudio_format GetFormat() const = 0;
 
 

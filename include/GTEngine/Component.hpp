@@ -3,9 +3,6 @@
 #ifndef GT_Component
 #define GT_Component
 
-#include <GTEngine/Serialization.hpp>
-
-
 #define GTENGINE_IMPL_COMPONENT_ATTRIBS(className, name) \
     const char* const className::Name      = name; \
     const char* const className::ClassName = #className; \
@@ -31,6 +28,8 @@
 namespace GT
 {
     class SceneNode;
+    class Serializer;
+    class Deserializer;
 
     /**
     *   \brief  Base class for components.
@@ -84,7 +83,7 @@ namespace GT
         /// Called by inheritted classes when the component has changed so that the scene can be notified and events posted.
         ///
         /// @param flags [in] A set of flags that specify what has actually changed.
-        void OnChanged(uint32_t flags = 0);
+        void OnChanged(unsigned int flags = 0);
 
 
         /// Increments the OnChanged() lock counter by 1.
@@ -109,8 +108,8 @@ namespace GT
         SceneNode &node;
 
         /// A counter that is used to cancel calls to OnChanged(). When this is larger than 0, all calls to OnChanged() should
-        // do nothing. The purpose of this system is to allow components to essentially batch calls to OnChanged() instead of
-        // willy nilly posting it for every tiny change.
+        /// do nothing. The purpose of this system is to allow components to essentially batch calls to OnChanged() instead of
+        /// willy nilly posting it for every tiny change.
         int onChangedLockCounter;
 
 

@@ -190,13 +190,6 @@ namespace GT
         GT::ApplicationConfig m_applicationConfig;
 
 
-        /// The default message handler.
-        //GT::DefaultMessageHandler m_messageHandler;
-
-        /// The message dispatcher.
-        //MessageDispatcher m_messageDispatcher;
-
-
         /// A pointer to the easy_audio context for audio playback.
         easyaudio_context* m_pAudioContext;
 

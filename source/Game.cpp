@@ -4,7 +4,6 @@
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/Audio.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>

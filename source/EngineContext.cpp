@@ -56,7 +56,6 @@ namespace GT
             m_executableDirectoryAbsolutePath(),
             m_pVFS(nullptr),
             m_applicationConfig(),
-            /*m_messageHandler(), m_messageDispatcher(),*/
             m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
             m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
             m_assetLibrary()
@@ -88,12 +87,6 @@ namespace GT
         easypath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
         
         m_logFile.Open(m_pVFS, logpath, "GTGE");  
-
-        //m_messageHandler.OpenLogFile(m_pVFS, logpath);
-
-        // At this point the message handler should be setup, so we'll go ahead and add it to the dispatcher.
-        //m_messageDispatcher.AddMessageHandler(m_messageHandler);
-
 
 
         // After moving into the application directory, we need to load up the config file and move into the data directory. From

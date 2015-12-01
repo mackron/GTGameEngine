@@ -3,10 +3,12 @@
 #ifndef GT_Texture2DLibrary
 #define GT_Texture2DLibrary
 
-#include "Rendering/Texture2D.hpp"
+#include "Rendering/TextureFilters.hpp"
 
 namespace GT
 {
+    class Texture2D;
+
     /// Library class for Texture2Ds.
     ///
     /// Textures are a single-instantiation resource. This means we use an Acquire/Unacquire system. Note that

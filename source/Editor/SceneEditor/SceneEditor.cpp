@@ -2298,8 +2298,10 @@ namespace GT
         }
     }
 
-    void SceneEditor::OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags)
+    void SceneEditor::OnSceneNodeComponentChanged(SceneNode &node, Component &component, unsigned int whatChangedFlags)
     {
+        (void)whatChangedFlags;
+
         // If the component is editor metadata, we need to check the selection state.
         if (Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
         {

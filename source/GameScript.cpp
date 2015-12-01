@@ -2,7 +2,6 @@
 
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTEngine/Audio.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
 

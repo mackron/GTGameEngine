@@ -501,7 +501,7 @@ namespace GT
         void OnSceneNodeComponentRemoved(SceneNode &node, Component &component);
 
         /// SceneEditorSceneEventHandler::OnSceneNodeComponentChanged()
-        void OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags);
+        void OnSceneNodeComponentChanged(SceneNode &node, Component &component, unsigned int whatChangedFlags);
 
         /// SceneEditorSceneEventHandler::OnStateStackFrameCommitted()
         void OnStateStackFrameCommitted();
