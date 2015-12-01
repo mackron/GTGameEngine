@@ -5,17 +5,17 @@
 
 namespace GTGUI
 {
-    EventQueue::EventQueue()
+    GUIEventQueue::GUIEventQueue()
         : buffer(nullptr), bufferSize(0), eventCount(0), nextEventIndex(0)
     {
     }
 
-    EventQueue::~EventQueue()
+    GUIEventQueue::~GUIEventQueue()
     {
         delete [] this->buffer;
     }
 
-    void EventQueue::Push(const Event &e)
+    void GUIEventQueue::Push(const GUIEvent &e)
     {
         assert(this->bufferSize >= this->eventCount);
 
@@ -35,7 +35,7 @@ namespace GTGUI
         ++this->eventCount;
     }
 
-    bool EventQueue::Next(Event &e)
+    bool GUIEventQueue::Next(GUIEvent &e)
     {
         if (eventCount > 0)
         {
@@ -53,12 +53,12 @@ namespace GTGUI
         else
         {
             // There are no events.
-            e.code = EventCode_Unknown;
+            e.code = GUIEventCode_Unknown;
             return false;
         }
     }
 
-    Event* EventQueue::PeekLast()
+    GUIEvent* GUIEventQueue::PeekLast()
     {
         if (this->eventCount > 0)
         {
@@ -68,7 +68,7 @@ namespace GTGUI
         return nullptr;
     }
 
-    Event* EventQueue::PeekNext()
+    GUIEvent* GUIEventQueue::PeekNext()
     {
         if (this->eventCount > 0)
         {
@@ -79,19 +79,19 @@ namespace GTGUI
     }
 
 
-    void EventQueue::NullifyEventsOfElement(Element* element)
+    void GUIEventQueue::NullifyEventsOfElement(GUIElement* element)
     {
         for (size_t i = 0; i < this->eventCount; ++i)
         {
             auto &e = this->buffer[(this->nextEventIndex + i) % this->bufferSize];
             if (e.element == element)
             {
-                e.code = EventCode_Null;
+                e.code = GUIEventCode_Null;
             }
         }
     }
 
-    void EventQueue::RemoveEventsOfElement(Element* element)
+    void GUIEventQueue::RemoveEventsOfElement(GUIElement* element)
     {
         for (size_t i = 0; i < this->eventCount; )
         {
@@ -108,12 +108,12 @@ namespace GTGUI
     }
 
 
-    void EventQueue::ResizeBuffer(size_t newBufferSize)
+    void GUIEventQueue::ResizeBuffer(size_t newBufferSize)
     {
         // First we need to allocate a new buffer, making sure we keep a hold of the old buffer so we can
         // copy the existing events back over to the new buffer.
-        Event *oldBuffer = this->buffer;
-        Event *newBuffer = new Event[newBufferSize];
+        GUIEvent *oldBuffer = this->buffer;
+        GUIEvent *newBuffer = new GUIEvent[newBufferSize];
 
         // If we have items, they need to be copied over. We'll place the next event and index 0.
         if (this->eventCount > 0)
@@ -130,18 +130,18 @@ namespace GTGUI
         this->nextEventIndex = 0;
 
         // It's a bit slower, but I want to ensure the unused slots are set to logical defaults. We don't want to use a default construct
-        // in the Event structure.
+        // in the GUIEvent structure.
         for (size_t i = this->eventCount; i < this->bufferSize; ++i)
         {
             this->buffer[i].element = nullptr;
-            this->buffer[i].code    = EventCode_Unknown;
+            this->buffer[i].code    = GUIEventCode_Unknown;
         }
 
         // Finally, the old buffer needs to be deleted...
         delete [] oldBuffer;
     }
 
-    void EventQueue::Remove(size_t index)
+    void GUIEventQueue::Remove(size_t index)
     {
         // We just move everything down a position.
         for (size_t i = index + 1; i < this->eventCount; ++i)

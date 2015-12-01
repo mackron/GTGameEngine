@@ -11,15 +11,15 @@
 namespace GTGUI
 {
     /// Class representing an attribute inside a style class. This is just a simple key/value string pair.
-    class StyleScriptCompilerClassAttribute
+    class GUIStyleScriptCompilerClassAttribute
     {
     public:
 
         /// Constructor.
-        StyleScriptCompilerClassAttribute();
+        GUIStyleScriptCompilerClassAttribute();
 
         /// Copy constructor.
-        StyleScriptCompilerClassAttribute(const StyleScriptCompilerClassAttribute &other);
+        GUIStyleScriptCompilerClassAttribute(const GUIStyleScriptCompilerClassAttribute &other);
 
         
         /// Sets the name of the attribute.
@@ -37,7 +37,7 @@ namespace GTGUI
 
 
         /// Assignment operator.
-        StyleScriptCompilerClassAttribute & operator=(const StyleScriptCompilerClassAttribute &other);
+        GUIStyleScriptCompilerClassAttribute & operator=(const GUIStyleScriptCompilerClassAttribute &other);
 
 
     private:
@@ -51,18 +51,18 @@ namespace GTGUI
 
 
     /// Class representing a style class for use by the compiler.
-    class StyleScriptCompilerClass
+    class GUIStyleScriptCompilerClass
     {
     public:
 
         /// Constructor.
-        StyleScriptCompilerClass();
+        GUIStyleScriptCompilerClass();
 
         /// Copy constructor.
-        StyleScriptCompilerClass(const StyleScriptCompilerClass &other);
+        GUIStyleScriptCompilerClass(const GUIStyleScriptCompilerClass &other);
 
         /// Destructor.
-        ~StyleScriptCompilerClass();
+        ~GUIStyleScriptCompilerClass();
 
 
         /// Sets the name of the class.
@@ -80,8 +80,8 @@ namespace GTGUI
 
 
         /// Retrieves a reference to the internal list of attributes.
-              GT::Vector<StyleScriptCompilerClassAttribute> & GetAttributes()       { return this->m_attributes; }
-        const GT::Vector<StyleScriptCompilerClassAttribute> & GetAttributes() const { return this->m_attributes; }
+              GT::Vector<GUIStyleScriptCompilerClassAttribute> & GetAttributes()       { return this->m_attributes; }
+        const GT::Vector<GUIStyleScriptCompilerClassAttribute> & GetAttributes() const { return this->m_attributes; }
 
         /// Adds a new attribute.
         ///
@@ -91,7 +91,7 @@ namespace GTGUI
         ///     If an attribute of the same name already exists, it will be replaced.
         ///     @par
         ///     This creates a copy of the input attribute. You can delete the input attribute after returning from this call.
-        void AddAttribute(const StyleScriptCompilerClassAttribute &attribute);
+        void AddAttribute(const GUIStyleScriptCompilerClassAttribute &attribute);
 
         /// Removes an attribute by it's index.
         ///
@@ -112,13 +112,13 @@ namespace GTGUI
         /// Retrieves an attribute by it's index.
         ///
         /// @param index [in] The index of the attribute to retrieve.
-              StyleScriptCompilerClassAttribute & GetAttributeByIndex(size_t index);
-        const StyleScriptCompilerClassAttribute & GetAttributeByIndex(size_t index) const;
+              GUIStyleScriptCompilerClassAttribute & GetAttributeByIndex(size_t index);
+        const GUIStyleScriptCompilerClassAttribute & GetAttributeByIndex(size_t index) const;
 
 
         /// Retrieves a reference to the internal list of sub-classes.
-              GT::Dictionary<StyleScriptCompilerClass> & GetSubClasses()       { return this->m_subclasses; }
-        const GT::Dictionary<StyleScriptCompilerClass> & GetSubClasses() const { return this->m_subclasses; }
+              GT::Dictionary<GUIStyleScriptCompilerClass> & GetSubClasses()       { return this->m_subclasses; }
+        const GT::Dictionary<GUIStyleScriptCompilerClass> & GetSubClasses() const { return this->m_subclasses; }
 
         /// Retrieves a pointer to the sub-class of the given type.
         ///
@@ -126,8 +126,8 @@ namespace GTGUI
         ///
         /// @remarks
         ///     The returned pointer will become invalid when a sub-class is added or removed.
-              StyleScriptCompilerClass* GetSubClass(const char* type, ptrdiff_t sizeInTs = -1);
-        const StyleScriptCompilerClass* GetSubClass(const char* type, ptrdiff_t sizeInTs = -1) const;
+              GUIStyleScriptCompilerClass* GetSubClass(const char* type, ptrdiff_t sizeInTs = -1);
+        const GUIStyleScriptCompilerClass* GetSubClass(const char* type, ptrdiff_t sizeInTs = -1) const;
 
 
         /// Adds a new sub-class.
@@ -138,8 +138,8 @@ namespace GTGUI
         ///
         /// @remarks
         ///     If a sub-class of the given modifier already exists, it new class will be merged. Otherwise a copy will be added.
-        void AddSubClass(const char* modifierName, ptrdiff_t modifierNameSizeInTs, const StyleScriptCompilerClass &subClass);
-        void AddSubClass(const char* modifierName, const StyleScriptCompilerClass &subClass) { this->AddSubClass(modifierName, -1, subClass); }
+        void AddSubClass(const char* modifierName, ptrdiff_t modifierNameSizeInTs, const GUIStyleScriptCompilerClass &subClass);
+        void AddSubClass(const char* modifierName, const GUIStyleScriptCompilerClass &subClass) { this->AddSubClass(modifierName, -1, subClass); }
 
 
         /// Merges the given class into this one.
@@ -152,11 +152,11 @@ namespace GTGUI
         ///     Sub-classes are ignored. They should be merged and handled at a higher level.
         ///     @par
         ///     The name is left unmodified.
-        void Merge(const StyleScriptCompilerClass &other);
+        void Merge(const GUIStyleScriptCompilerClass &other);
 
 
         /// Assignment operator.
-        StyleScriptCompilerClass & operator=(const StyleScriptCompilerClass &other);
+        GUIStyleScriptCompilerClass & operator=(const GUIStyleScriptCompilerClass &other);
 
 
     private:
@@ -169,23 +169,23 @@ namespace GTGUI
 
         /// The list of attributes. We use a vector instead of a map here because we want to keep the order that the
         /// attributes are defined.
-        GT::Vector<StyleScriptCompilerClassAttribute> m_attributes;
+        GT::Vector<GUIStyleScriptCompilerClassAttribute> m_attributes;
 
         /// The list of sub-classes, keyed by the name of the modifier the sub-class.
-        GT::Dictionary<StyleScriptCompilerClass> m_subclasses;
+        GT::Dictionary<GUIStyleScriptCompilerClass> m_subclasses;
     };
 
 
     /// Class representing a variable for use by the compiler. This is just a simple key/value string pair.
-    class StyleScriptCompilerVariable
+    class GUIStyleScriptCompilerVariable
     {
     public:
 
         /// Constructor.
-        StyleScriptCompilerVariable();
+        GUIStyleScriptCompilerVariable();
 
         /// Copy constructor.
-        StyleScriptCompilerVariable(const StyleScriptCompilerVariable &other);
+        GUIStyleScriptCompilerVariable(const GUIStyleScriptCompilerVariable &other);
 
         
         /// Sets the name of the attribute.
@@ -203,7 +203,7 @@ namespace GTGUI
 
 
         /// Assignment operator.
-        StyleScriptCompilerVariable & operator=(const StyleScriptCompilerVariable &other);
+        GUIStyleScriptCompilerVariable & operator=(const GUIStyleScriptCompilerVariable &other);
 
 
     private:
@@ -217,42 +217,42 @@ namespace GTGUI
 
 
     /// Base class for handling compilation errors.
-    class StyleScriptCompilerErrorHandler
+    class GUIStyleScriptCompilerErrorHandler
     {
     public:
 
         /// Constructor.
-        StyleScriptCompilerErrorHandler()
+        GUIStyleScriptCompilerErrorHandler()
         {
         }
 
         /// Destructor.
-        virtual ~StyleScriptCompilerErrorHandler()
+        virtual ~GUIStyleScriptCompilerErrorHandler()
         {
         }
 
 
         /// Called when an error occurs.
-        virtual void OnError(const StyleScriptError &error) = 0;
+        virtual void OnError(const GUIStyleScriptError &error) = 0;
     };
 
 
     /// Class for compiling a style script.
-    class StyleScriptCompiler
+    class GUIStyleScriptCompiler
     {
     public:
 
         /// Constructor.
-        StyleScriptCompiler();
+        GUIStyleScriptCompiler();
 
         /// Constructor.
-        StyleScriptCompiler(const char* identifier);
+        GUIStyleScriptCompiler(const char* identifier);
         
         /// Copy constructor.
-        StyleScriptCompiler(const StyleScriptCompiler &other);
+        GUIStyleScriptCompiler(const GUIStyleScriptCompiler &other);
 
         /// Destructor.
-        ~StyleScriptCompiler();
+        ~GUIStyleScriptCompiler();
 
 
         /// Compiles the given script.
@@ -270,13 +270,13 @@ namespace GTGUI
         size_t GetClassCount() const;
 
         /// Retrieves a variable by it's index.
-              StyleScriptCompilerClass & GetClassByIndex(size_t index);
-        const StyleScriptCompilerClass & GetClassByIndex(size_t index) const;
+              GUIStyleScriptCompilerClass & GetClassByIndex(size_t index);
+        const GUIStyleScriptCompilerClass & GetClassByIndex(size_t index) const;
 
         /// Retrieves a pointer to a class by it's name.
         ///
         /// @param name [in] The class name.
-        StyleScriptCompilerClass* FindClassByName(const char* name, ptrdiff_t nameLengthInTs = -1);
+        GUIStyleScriptCompilerClass* FindClassByName(const char* name, ptrdiff_t nameLengthInTs = -1);
 
         
 
@@ -284,14 +284,14 @@ namespace GTGUI
         size_t GetVariableCount() const;
 
         /// Retrieves a variable by it's index.
-              StyleScriptCompilerVariable & GetVariableByIndex(size_t index);
-        const StyleScriptCompilerVariable & GetVariableByIndex(size_t index) const;
+              GUIStyleScriptCompilerVariable & GetVariableByIndex(size_t index);
+        const GUIStyleScriptCompilerVariable & GetVariableByIndex(size_t index) const;
 
         /// Retrieves a pointer to a variable by it's name.
         ///
         /// @param name           [in] The variable name.
         /// @param nameLengthInTs [in] The length of the name of the variable.
-        StyleScriptCompilerVariable* FindVariableByName(const char* name, ptrdiff_t nameLengthInTs = -1);
+        GUIStyleScriptCompilerVariable* FindVariableByName(const char* name, ptrdiff_t nameLengthInTs = -1);
 
 
 
@@ -300,8 +300,8 @@ namespace GTGUI
         /// @param className         [in] The name of the class.
         /// @param classModifierName [in] The name of the sub-class modifier ("hovered", etc).
         /// @param attributeName     [in] The name of the attribute.
-              StyleScriptCompilerClassAttribute* GetClassAttribute(const char* className, const char* classModifierName, const char* attributeName);
-        const StyleScriptCompilerClassAttribute* GetClassAttribute(const char* className, const char* classModifierName, const char* attributeName) const;
+              GUIStyleScriptCompilerClassAttribute* GetClassAttribute(const char* className, const char* classModifierName, const char* attributeName);
+        const GUIStyleScriptCompilerClassAttribute* GetClassAttribute(const char* className, const char* classModifierName, const char* attributeName) const;
 
         
         /// Sets the error handler.
@@ -310,16 +310,16 @@ namespace GTGUI
         ///
         /// @remarks
         ///     The new error handler can be null.
-        void SetErrorHandler(StyleScriptCompilerErrorHandler* errorHandler);
-        void SetErrorHandler(StyleScriptCompilerErrorHandler &errorHandler) { this->SetErrorHandler(&errorHandler); }
+        void SetErrorHandler(GUIStyleScriptCompilerErrorHandler* errorHandler);
+        void SetErrorHandler(GUIStyleScriptCompilerErrorHandler &errorHandler) { this->SetErrorHandler(&errorHandler); }
 
         /// Retrieves a pointer to the error handler.
-        StyleScriptCompilerErrorHandler* GetErrorHandler();
+        GUIStyleScriptCompilerErrorHandler* GetErrorHandler();
 
 
 
         /// Assignment operator.
-        StyleScriptCompiler & operator=(const StyleScriptCompiler &other);
+        GUIStyleScriptCompiler & operator=(const GUIStyleScriptCompiler &other);
 
 
     private:
@@ -327,7 +327,7 @@ namespace GTGUI
         /// Posts an error to the attached event handler.
         ///
         /// @param error [in] A reference to the structure containing the error information.
-        void PostError(const StyleScriptError &error);
+        void PostError(const GUIStyleScriptError &error);
 
 
     private:
@@ -336,13 +336,13 @@ namespace GTGUI
         GT::String m_identifier;
 
         /// The list of classes.
-        GT::Vector<StyleScriptCompilerClass*> m_classes;
+        GT::Vector<GUIStyleScriptCompilerClass*> m_classes;
         
         /// The list of variables.
-        GT::Vector<StyleScriptCompilerVariable*> m_variables;
+        GT::Vector<GUIStyleScriptCompilerVariable*> m_variables;
 
         /// A pointer to the error handler. Can be null.
-        StyleScriptCompilerErrorHandler* m_errorHandler;
+        GUIStyleScriptCompilerErrorHandler* m_errorHandler;
         
         
         

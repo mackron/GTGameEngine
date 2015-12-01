@@ -2,31 +2,31 @@
 
 namespace GTGUI
 {
-    enum FontWeight
+    enum GUIFontWeight
     {
-        FontWeight_Default = 0,
-        FontWeight_Thin,
-        FontWeight_ExtraLight,
-        FontWeight_Light,
-        FontWeight_Medium,
-        FontWeight_SemiBold,
-        FontWeight_Bold,
-        FontWeight_ExtraBold,
-        FontWeight_Heavy,
+        GUIFontWeight_Default = 0,
+        GUIFontWeight_Thin,
+        GUIFontWeight_ExtraLight,
+        GUIFontWeight_Light,
+        GUIFontWeight_Medium,
+        GUIFontWeight_SemiBold,
+        GUIFontWeight_Bold,
+        GUIFontWeight_ExtraBold,
+        GUIFontWeight_Heavy,
         
         
         // Alias'
-        FontWeight_Regular    = FontWeight_Default,
-        FontWeight_Normal     = FontWeight_Default,
-        FontWeight_UltraLight = FontWeight_ExtraLight,
-        FontWeight_DemiBold   = FontWeight_SemiBold,
-        FontWeight_UltraBold  = FontWeight_ExtraBold,
-        FontWeight_Black      = FontWeight_Heavy,
+        GUIFontWeight_Regular    = GUIFontWeight_Default,
+        GUIFontWeight_Normal     = GUIFontWeight_Default,
+        GUIFontWeight_UltraLight = GUIFontWeight_ExtraLight,
+        GUIFontWeight_DemiBold   = GUIFontWeight_SemiBold,
+        GUIFontWeight_UltraBold  = GUIFontWeight_ExtraBold,
+        GUIFontWeight_Black      = GUIFontWeight_Heavy,
     };
     
-    enum FontSlant
+    enum GUIFontSlant
     {
-        FontSlant_Default = 0,
-        FontSlant_Italic,
+        GUIFontSlant_Default = 0,
+        GUIFontSlant_Italic,
     };
 }

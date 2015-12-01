@@ -38,8 +38,8 @@ namespace GT
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()        { return m_viewportElement; }
-        const GTGUI::Element* GetMainElement( ) const { return m_viewportElement; }
+              GTGUI::GUIElement* GetMainElement()        { return m_viewportElement; }
+        const GTGUI::GUIElement* GetMainElement( ) const { return m_viewportElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -54,11 +54,11 @@ namespace GT
     private:
 
         /// The viewport the image will be drawn to.
-        GTGUI::Element* m_viewportElement;
+        GTGUI::GUIElement* m_viewportElement;
 
         /// The event handler for the viewport. We need this for the mouse wheel and drawing.
         /// Event handler for the viewport. Mainly needed for drawing the image at draw time.
-        struct ViewportEventHandler : public GTGUI::ElementEventHandler
+        struct ViewportEventHandler : public GTGUI::GUIElementEventHandler
         {
             /// Constructor.
             ViewportEventHandler(ImageEditor &ownerEditorIn)
@@ -67,14 +67,14 @@ namespace GT
             }
 
 
-            /// GTGUI::ElementEventHandler::OnDraw()
-            void OnDraw(GTGUI::Element &element);
+            /// GTGUI::GUIElementEventHandler::OnDraw()
+            void OnDraw(GTGUI::GUIElement &element);
 
-            /// GTGUI::ElementEventHandler::ImplementsOnDraw()
+            /// GTGUI::GUIElementEventHandler::ImplementsOnDraw()
             bool ImplementsOnDraw() const { return true; }
 
-            /// GTGUI::ElementEventHandler::OnMouseWheel()
-            void OnMouseWheel(GTGUI::Element &element, int delta, int x, int y);
+            /// GTGUI::GUIElementEventHandler::OnMouseWheel()
+            void OnMouseWheel(GTGUI::GUIElement &element, int delta, int x, int y);
 
 
         private:

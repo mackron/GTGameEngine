@@ -10,7 +10,7 @@ namespace GT
     class SubEditor;
 
     /// Class representing the event handler to attack to the tab of a sub-editor.
-    class SubEditorTabEventHandler : public GTGUI::ElementEventHandler
+    class SubEditorTabEventHandler : public GTGUI::GUIElementEventHandler
     {
     public:
 
@@ -21,8 +21,8 @@ namespace GT
         ~SubEditorTabEventHandler();
 
 
-        /// GTGUI::ElementEventHandler::OnMouseButtonDown().
-        void OnMouseButtonDown(GTGUI::Element &element, int button, int x, int y);
+        /// GTGUI::GUIElementEventHandler::OnMouseButtonDown().
+        void OnMouseButtonDown(GTGUI::GUIElement &element, int button, int x, int y);
 
 
     private:

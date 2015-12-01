@@ -7,18 +7,18 @@
 
 namespace GTGUI
 {
-    typedef size_t ImageHandle;
+    typedef size_t GUIImageHandle;
     
     
     /// Enumerator for the different supported image formats.
-    enum ImageFormat
+    enum GUIImageFormat
     {
-        ImageFormat_None,
-        ImageFormat_Unknown = ImageFormat_None,
+        GUIImageFormat_None,
+        GUIImageFormat_Unknown = GUIImageFormat_None,
         
-        ImageFormat_RGB8,
-        ImageFormat_RGBA8,
-        ImageFormat_A8,
+        GUIImageFormat_RGB8,
+        GUIImageFormat_RGBA8,
+        GUIImageFormat_A8,
     };
     
     
@@ -26,15 +26,15 @@ namespace GTGUI
     ///
     /// GTGUI does not load image data itself. Instead, it lets the owner library or application decide how it wants
     /// to handle loading. This system offers greater flexibility at the expense of a little bit more complexity.
-    class ImageManager
+    class GUIImageManager
     {
     public:
     
         /// Constructor.
-        ImageManager();
+        GUIImageManager();
         
         /// Destructor.
-        virtual ~ImageManager();
+        virtual ~GUIImageManager();
         
         
         ///////////////////////////////////////////
@@ -56,8 +56,8 @@ namespace GTGUI
         ///     @par
         ///     Implementations of this method are free to mutate the provided data. This is mainly to allow implementations to
         ///     flip the image data (such as for use with OpenGL) without needing to do a full memory allocation.
-        virtual ImageHandle CreateImage(unsigned int width, unsigned int height, ImageFormat format, void* data) = 0;
-        virtual ImageHandle CreateImage(unsigned int width, unsigned int height, ImageFormat format, const void* data) = 0;
+        virtual GUIImageHandle CreateImage(unsigned int width, unsigned int height, GUIImageFormat format, void* data) = 0;
+        virtual GUIImageHandle CreateImage(unsigned int width, unsigned int height, GUIImageFormat format, const void* data) = 0;
         
         /// Loads an image form a file.
         ///
@@ -67,7 +67,7 @@ namespace GTGUI
         ///     If an error occurs, return null.
         ///     @par
         ///     The returned handle will be deleted with DeleteImage().
-        virtual ImageHandle LoadImage(const char* filePath) = 0;
+        virtual GUIImageHandle LoadImage(const char* filePath) = 0;
         
         
         ///////////////////////////////////////////
@@ -76,7 +76,7 @@ namespace GTGUI
         /// Deletes an image that was created with CreateImage() or LoadImage().
         ///
         /// @param imageToDelete [in] A handle to the image to delete.
-        virtual void DeleteImage(ImageHandle imageToDelete) = 0;
+        virtual void DeleteImage(GUIImageHandle imageToDelete) = 0;
         
         
         ///////////////////////////////////////////
@@ -94,7 +94,7 @@ namespace GTGUI
         /// @remarks
         ///     Implementations of this method are free to mutate the provided data. This is mainly to allow implementations to
         ///     flip the image data (such as for use with OpenGL) without needing to do a full memory allocation.
-        virtual void SetImageSubData(ImageHandle image, unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, void* data) = 0;
+        virtual void SetImageSubData(GUIImageHandle image, unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, void* data) = 0;
         
         
         ///////////////////////////////////////////
@@ -105,14 +105,14 @@ namespace GTGUI
         /// @param image     [in]  A handle to the image whose size is being retrieved.
         /// @param widthOut  [out] A reference to the variable that will receive the width.
         /// @param heightOut [out] A reference to the variable that will receive the height.
-        virtual void GetImageDimensions(ImageHandle image, unsigned int &widthOut, unsigned int &heightOut) const = 0;
-        void GetImageDimensions(ImageHandle image, float  &widthOut, float  &heightOut) const;
-        void GetImageDimensions(ImageHandle image, double &widthOut, double &heightOut) const;
+        virtual void GetImageDimensions(GUIImageHandle image, unsigned int &widthOut, unsigned int &heightOut) const = 0;
+        void GetImageDimensions(GUIImageHandle image, float  &widthOut, float  &heightOut) const;
+        void GetImageDimensions(GUIImageHandle image, double &widthOut, double &heightOut) const;
         
         /// Retrieves the format of the given image.
         ///
         /// @param image [in] A handle to the image whose format is being retrieved.
-        virtual ImageFormat GetImageFormat(ImageHandle image) const = 0;
+        virtual GUIImageFormat GetImageFormat(GUIImageHandle image) const = 0;
     };
 }
 

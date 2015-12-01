@@ -7,8 +7,8 @@
 
 namespace GTGUI
 {
-    class Server;
-    class Element;
+    class GUIServer;
+    class GUIElement;
     class GUIMesh;
 
     /// Virtual class acting as the base class for GUI renderers.
@@ -40,7 +40,7 @@ namespace GTGUI
         // Look at the document of each method to know what to do.
 
         /// Called at the beginning of a step render.
-        virtual void Begin(const Server &server);
+        virtual void Begin(const GUIServer &server);
 
         /// Called at the end of a step render.
         virtual void End();
@@ -48,7 +48,7 @@ namespace GTGUI
         /// Called just before the OnDraw events are called.
         ///
         /// @param element [in] A reference to the element whose OnDraw events are about to be called.
-        virtual void BeginElementOnDrawEvent(Element &element);
+        virtual void BeginElementOnDrawEvent(GUIElement &element);
 
         /// Called just after the OnDraw events have been called.
         ///
@@ -57,7 +57,7 @@ namespace GTGUI
         /// @remarks
         ///     Because OnDraw event handlers can change rendering state, derived classes may need to restore certain state afterwards. They
         ///     can do this within this method.
-        virtual void EndElementOnDrawEvent(Element &element);
+        virtual void EndElementOnDrawEvent(GUIElement &element);
 
         /// Called when the scissor rectangle needs to be set for clipping.
         ///
@@ -79,7 +79,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     'texture' can be 0, in which case no texturing should be used.
-        virtual void SetTexture(ImageHandle texture);
+        virtual void SetTexture(GUIImageHandle texture);
 
         /// Enables blending.
         ///
@@ -120,7 +120,7 @@ namespace GTGUI
         /// @remarks
         ///     This will render the element regardless of whether or not it is visible. Visibility checks should be done at a higher level. Child elements
         ///     will not be drawn if they are invisible.
-        void RenderElement(Server &server, Element &element);
+        void RenderElement(GUIServer &server, GUIElement &element);
 
 
 
@@ -133,7 +133,7 @@ namespace GTGUI
         void _SetOffset(float offsetX, float offsetY);
 
         /// Private implementation for setting the texture.
-        void _SetTexture(ImageHandle texture);
+        void _SetTexture(GUIImageHandle texture);
 
         /// Private implementation for enabling blending.
         void _EnableBlending();
@@ -149,7 +149,7 @@ namespace GTGUI
         
 
         /// The current texture.
-        ImageHandle currentTexture;
+        GUIImageHandle currentTexture;
         
 
         /// Whether or not the scissor rectangle is set to the whole viewport.

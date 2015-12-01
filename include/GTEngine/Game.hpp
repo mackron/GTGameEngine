@@ -124,7 +124,7 @@ namespace GT
 
 
         /// Retrieves a reference to the internal GUI server.
-        GTGUI::Server & GetGUI();
+        GTGUI::GUIServer & GetGUI();
 
         /// Steps the GUI by the given delta.
         void StepGUI();
@@ -132,7 +132,7 @@ namespace GT
 
 
         /// Retrieves the GUI element of the main game window.
-        GTGUI::Element* GetGameWindowGUIElement() { return this->gameWindowGUIElement; }
+        GTGUI::GUIElement* GetGameWindowGUIElement() { return this->gameWindowGUIElement; }
 
         /// Retrieves a pointer to the main game window.
         Window* GetWindow() { return this->window; }
@@ -640,15 +640,15 @@ namespace GT
         void HandleEvents();
 
         void HandleEvent_OnSize(GameEvent &e);
-        void HandleEvent_OnMouseMove(GameEvent &e, GTGUI::EventContext eventContext);
-        void HandleEvent_OnMouseWheel(GameEvent &e, GTGUI::EventContext eventContext);
-        void HandleEvent_OnMouseButtonDown(GameEvent &e, GTGUI::EventContext eventContext);
-        void HandleEvent_OnMouseButtonUp(GameEvent &e, GTGUI::EventContext eventContext);
-        void HandleEvent_OnMouseButtonDoubleClick(GameEvent &e, GTGUI::EventContext eventContext);
-        void HandleEvent_OnKeyPressed(GameEvent &e, GTGUI::EventContext eventContext);
-        void HandleEvent_OnKeyReleased(GameEvent &e, GTGUI::EventContext eventContext);
-        void HandleEvent_OnKeyDown(GameEvent &e, GTGUI::EventContext eventContext);
-        void HandleEvent_OnKeyUp(GameEvent &e, GTGUI::EventContext eventContext);
+        void HandleEvent_OnMouseMove(GameEvent &e, GTGUI::GUIEventContext eventContext);
+        void HandleEvent_OnMouseWheel(GameEvent &e, GTGUI::GUIEventContext eventContext);
+        void HandleEvent_OnMouseButtonDown(GameEvent &e, GTGUI::GUIEventContext eventContext);
+        void HandleEvent_OnMouseButtonUp(GameEvent &e, GTGUI::GUIEventContext eventContext);
+        void HandleEvent_OnMouseButtonDoubleClick(GameEvent &e, GTGUI::GUIEventContext eventContext);
+        void HandleEvent_OnKeyPressed(GameEvent &e, GTGUI::GUIEventContext eventContext);
+        void HandleEvent_OnKeyReleased(GameEvent &e, GTGUI::GUIEventContext eventContext);
+        void HandleEvent_OnKeyDown(GameEvent &e, GTGUI::GUIEventContext eventContext);
+        void HandleEvent_OnKeyUp(GameEvent &e, GTGUI::GUIEventContext eventContext);
         void HandleEvent_OnReceiveFocus(GameEvent &e);
         void HandleEvent_OnLoseFocus(GameEvent &e);
 
@@ -731,7 +731,7 @@ namespace GT
 
         /// The GUI of this game. There is only a single GUI for every game. A game should dynamically show and hide root elements
         /// to show different GUI's for different game states.
-        GTGUI::Server gui;
+        GTGUI::GUIServer gui;
 
         /// The event handler for the GUI.
         GUIEventHandler guiEventHandler;
@@ -740,7 +740,7 @@ namespace GT
         DefaultGUIRenderer guiRenderer;
 
         /// The GUI element for the main game window.
-        GTGUI::Element* gameWindowGUIElement;
+        GTGUI::GUIElement* gameWindowGUIElement;
 
 
         /// Whether or not the game is paused. A paused game will continue to render, but scene nodes and animations will not tick.
@@ -784,7 +784,7 @@ namespace GT
             {
             }
 
-            bool Initialise(GTGUI::Server &guiIn)
+            bool Initialise(GTGUI::GUIServer &guiIn)
             {
                 if (!this->isInitialised)
                 {
@@ -866,19 +866,19 @@ namespace GT
 
 
             /// A pointer to the main GUI server this debugging GUI is part of. This is set in Initialise().
-            GTGUI::Server* gui;
+            GTGUI::GUIServer* gui;
 
             /// The main editor element. Every single element used by the editor is a child of this element.
-            GTGUI::Element* DebuggingMain;
+            GTGUI::GUIElement* DebuggingMain;
 
             /// The FPSValue element.
-            GTGUI::Element* FPSValue;
+            GTGUI::GUIElement* FPSValue;
 
             /// The update time element.
-            GTGUI::Element* UpdateTime;
+            GTGUI::GUIElement* UpdateTime;
 
             /// The render time element.
-            GTGUI::Element* RenderTime;
+            GTGUI::GUIElement* RenderTime;
 
 
             /// The amount of time to wait to update the debug information, in seconds.

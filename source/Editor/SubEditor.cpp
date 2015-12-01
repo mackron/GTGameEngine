@@ -88,7 +88,7 @@ namespace GT
                     script.GetGlobal("GTGUI");
                     assert(script.IsTable(-1));
                     {
-                        script.Push("Server");
+                        script.Push("GUIServer");
                         script.GetTableValue(-2);
                         assert(script.IsTable(-1));
                         {
@@ -222,7 +222,7 @@ namespace GT
         return m_ownerEditor.GetGame().GetScript();
     }
 
-    GTGUI::Server & SubEditor::GetGUI()
+    GTGUI::GUIServer & SubEditor::GetGUI()
     {
         return m_ownerEditor.GetGame().GetGUI();
     }

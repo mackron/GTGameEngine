@@ -10,7 +10,7 @@
 
 namespace GTGUI
 {
-    Element::Element(const char* id, Server &server)
+    GUIElement::GUIElement(const char* id, GUIServer &server)
         : id(GT::Strings::Create(id)), server(server), parent(nullptr), firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
           style(*this), m_primaryStyleClass(nullptr),
           eventHandlers(),
@@ -30,7 +30,7 @@ namespace GTGUI
         this->bst.hashedID = GT::Hash(id);
     }
     
-    Element::~Element()
+    GUIElement::~GUIElement()
     {
         // Since no other elements will be using this element's primary style class, it can be deleted.
         this->DeletePrimaryStyleClass();
@@ -44,7 +44,7 @@ namespace GTGUI
         GT::Strings::Delete(this->id);
     }
     
-    void Element::AppendChild(Element &child)
+    void GUIElement::AppendChild(GUIElement &child)
     {
         // A child can only have one parent - it needs to be orphaned from it's existing parent, if it has one.
         if (child.parent)
@@ -86,7 +86,7 @@ namespace GTGUI
         this->server.OnChildAttached(*this);
     }
 
-    void Element::PrependChild(Element &child)
+    void GUIElement::PrependChild(GUIElement &child)
     {
         // A child can only have one parent - it needs to be orphaned from it's existing parent, if it has one.
         if (child.parent != nullptr)
@@ -129,7 +129,7 @@ namespace GTGUI
     }
 
     
-    void Element::RemoveChild(Element &child, bool invalidateParentLayout, bool updateScript)
+    void GUIElement::RemoveChild(GUIElement &child, bool invalidateParentLayout, bool updateScript)
     {
         if (child.parent == this)       // Don't do anything if this element is not the child's parent.
         {
@@ -187,7 +187,7 @@ namespace GTGUI
         }
     }
 
-    void Element::RemoveAllChildren()
+    void GUIElement::RemoveAllChildren()
     {
         while (this->firstChild != nullptr)
         {
@@ -198,7 +198,7 @@ namespace GTGUI
         this->server.GetScriptServer().RemoveAllChildren(*this);
     }
 
-    void Element::DeleteAllChildren()
+    void GUIElement::DeleteAllChildren()
     {
         while (this->firstChild != nullptr)
         {
@@ -208,7 +208,7 @@ namespace GTGUI
         this->server.OnChildDetached(*this);
     }
 
-    bool Element::IsAncestor(Element &ancestor)
+    bool GUIElement::IsAncestor(GUIElement &ancestor)
     {
         if (this->parent != nullptr)
         {
@@ -224,7 +224,7 @@ namespace GTGUI
         return false;
     }
 
-    bool Element::IsChild(Element &child)
+    bool GUIElement::IsChild(GUIElement &child)
     {
         for (auto i = this->firstChild; i != nullptr; i = i->nextSibling)
         {
@@ -242,34 +242,34 @@ namespace GTGUI
         return false;
     }
     
-    void Element::AttachStyleClass(StyleClass &styleClass, bool refresh)
+    void GUIElement::AttachStyleClass(GUIStyleClass &styleClass, bool refresh)
     {
         // This method is actually just a helper/convenience method. In order to avoid cyclic includes, we need to keep track
         // of every include that has already been included.
-        GT::Vector<StyleClass*> alreadyAttached;
+        GT::Vector<GUIStyleClass*> alreadyAttached;
         this->AttachStyleClass(styleClass, alreadyAttached, refresh);
     }
 
-    void Element::AttachStyleClass(const char* styleClassName, bool refresh)
+    void GUIElement::AttachStyleClass(const char* styleClassName, bool refresh)
     {
         this->AttachStyleClass(this->server.GetStyleServer().GetStyleClass(styleClassName), refresh);
     }
 
     
-    void Element::DetachStyleClass(StyleClass &styleClass, bool refresh)
+    void GUIElement::DetachStyleClass(GUIStyleClass &styleClass, bool refresh)
     {
         // This method works just like AttachStyleClass(), only we detach instead of attach.
-        GT::Vector<StyleClass*> alreadyDetached;
+        GT::Vector<GUIStyleClass*> alreadyDetached;
         this->DetachStyleClass(styleClass, alreadyDetached, refresh);
     }
 
-    void Element::DetachStyleClass(const char* styleClassName, bool refresh)
+    void GUIElement::DetachStyleClass(const char* styleClassName, bool refresh)
     {
         this->DetachStyleClass(this->server.GetStyleServer().GetStyleClass(styleClassName), refresh);
     }
 
 
-    StyleClass* Element::GetPrimaryStyleClass() const
+    GUIStyleClass* GUIElement::GetPrimaryStyleClass() const
     {
         if (m_primaryStyleClass == nullptr)
         {
@@ -283,7 +283,7 @@ namespace GTGUI
         return m_primaryStyleClass;
     }
 
-    void Element::DeletePrimaryStyleClass()
+    void GUIElement::DeletePrimaryStyleClass()
     {
         auto primaryStyleClass = this->GetPrimaryStyleClass();
         if (primaryStyleClass != nullptr)
@@ -293,7 +293,7 @@ namespace GTGUI
         }
     }
 
-    void Element::SetStyleAttribute(const char* name, const char* value)
+    void GUIElement::SetGUIStyleAttribute(const char* name, const char* value)
     {
         auto sc = this->GetPrimaryStyleClass();
         if (sc != nullptr)
@@ -302,7 +302,7 @@ namespace GTGUI
         }
     }
 
-    void Element::AttachEventHandler(ElementEventHandler &eventHandler)
+    void GUIElement::AttachEventHandler(GUIElementEventHandler &eventHandler)
     {
         if (this->eventHandlers.Find(&eventHandler) == nullptr)
         {
@@ -315,7 +315,7 @@ namespace GTGUI
         }
     }
 
-    void Element::DetachEventHandler(ElementEventHandler &eventHandler)
+    void GUIElement::DetachEventHandler(GUIElementEventHandler &eventHandler)
     {
         this->eventHandlers.Remove(this->eventHandlers.Find(&eventHandler));
 
@@ -333,13 +333,13 @@ namespace GTGUI
         }
     }
 
-    void Element::DetachAllEventHandlers()
+    void GUIElement::DetachAllEventHandlers()
     {
         this->eventHandlers.Clear();
         this->isHandlingOnDraw = false;
     }
 
-    bool Element::IsVisible() const
+    bool GUIElement::IsVisible() const
     {
         if (!this->style.visible->value)
         {
@@ -355,7 +355,7 @@ namespace GTGUI
         return true;
     }
 
-    bool Element::DoesSizeAffectParent() const
+    bool GUIElement::DoesSizeAffectParent() const
     {
         // Size won't affect the parent if this element is marked as invisible. Do NOT use IsVisible() here because
         // that will do a hierarchial traversal, which we don't want.
@@ -363,58 +363,58 @@ namespace GTGUI
         if (this->style.visible->value)
         {
             // Relative and absolute elements do not affect the parent. We may add a style to control this, but we don't need it yet.
-            return this->style.positioning->value == Positioning_Auto;
+            return this->style.positioning->value == GUIPositioning_Auto;
         }
 
         return false;
     }
     
     
-    int Element::GetRelativePosX() const
+    int GUIElement::GetRelativePosX() const
     {
         return this->x;
     }
     
-    int Element::GetRelativePosY() const
+    int GUIElement::GetRelativePosY() const
     {
         return this->y;
     }
     
-    void Element::GetRelativePosition(int &relativePosXOut, int &relativePosYOut) const
+    void GUIElement::GetRelativePosition(int &relativePosXOut, int &relativePosYOut) const
     {
         relativePosXOut = this->x;
         relativePosYOut = this->y;
     }
     
     
-    int Element::GetAbsolutePosX() const
+    int GUIElement::GetAbsolutePosX() const
     {
         return this->layout.absoluteX;
     }
     
-    int Element::GetAbsolutePosY() const
+    int GUIElement::GetAbsolutePosY() const
     {
         return this->layout.absoluteY;
     }
     
-    void Element::GetAbsolutePosition(int &absolutePosXOut, int &absolutePosYOut) const
+    void GUIElement::GetAbsolutePosition(int &absolutePosXOut, int &absolutePosYOut) const
     {
         absolutePosXOut = this->layout.absoluteX;
         absolutePosYOut = this->layout.absoluteY;
     }
     
 
-    int Element::GetWidth() const
+    int GUIElement::GetWidth() const
     {
         return this->width;
     }
 
-    int Element::GetHeight() const
+    int GUIElement::GetHeight() const
     {
         return this->height;
     }
     
-    int Element::GetInnerWidth() const
+    int GUIElement::GetInnerWidth() const
     {
         int padding = this->GetHorizontalPadding();
         if (this->width > padding)
@@ -424,7 +424,7 @@ namespace GTGUI
         
         return 0;
     }
-    int Element::GetInnerHeight() const
+    int GUIElement::GetInnerHeight() const
     {
         int padding = this->GetVerticalPadding();
         if (this->height > padding)
@@ -435,23 +435,23 @@ namespace GTGUI
         return 0;
     }
 
-    int Element::GetOuterWidth() const
+    int GUIElement::GetOuterWidth() const
     {
         return this->width + this->GetHorizontalMargin();
     }
-    int Element::GetOuterHeight() const
+    int GUIElement::GetOuterHeight() const
     {
         return this->height + this->GetVerticalMargin();
     }
 
 
-    int Element::GetChildrenWidth() const
+    int GUIElement::GetChildrenWidth() const
     {
         int result = 0;
 
-        if (this->style.childPlane->value == Plane_Horizontal)
+        if (this->style.childPlane->value == GUIPlane_Horizontal)
         {
-            for (Element *i = this->firstChild; i != nullptr; i = i->nextSibling)
+            for (GUIElement *i = this->firstChild; i != nullptr; i = i->nextSibling)
             {
                 if (i->DoesSizeAffectParent())
                 {
@@ -461,7 +461,7 @@ namespace GTGUI
         }
         else // vertical
         {
-            for (Element *i = this->firstChild; i != nullptr; i = i->nextSibling)
+            for (GUIElement *i = this->firstChild; i != nullptr; i = i->nextSibling)
             {
                 if (i->DoesSizeAffectParent())
                 {
@@ -473,13 +473,13 @@ namespace GTGUI
         return result;
     }
 
-    int Element::GetChildrenHeight() const
+    int GUIElement::GetChildrenHeight() const
     {
         int result = 0;
 
-        if (this->style.childPlane->value == Plane_Vertical)
+        if (this->style.childPlane->value == GUIPlane_Vertical)
         {
-            for (Element *i = this->firstChild; i != nullptr; i = i->nextSibling)
+            for (GUIElement *i = this->firstChild; i != nullptr; i = i->nextSibling)
             {
                 if (i->DoesSizeAffectParent())
                 {
@@ -489,7 +489,7 @@ namespace GTGUI
         }
         else // horizontal
         {
-            for (Element *i = this->firstChild; i != nullptr; i = i->nextSibling)
+            for (GUIElement *i = this->firstChild; i != nullptr; i = i->nextSibling)
             {
                 if (i->DoesSizeAffectParent())
                 {
@@ -502,88 +502,88 @@ namespace GTGUI
     }
 
 
-    int Element::GetLeftMargin() const
+    int GUIElement::GetLeftMargin() const
     {
         return static_cast<int>(this->layout.marginLeft);
     }
-    int Element::GetRightMargin() const
+    int GUIElement::GetRightMargin() const
     {
         return static_cast<int>(this->layout.marginRight);
     }
-    int Element::GetTopMargin() const
+    int GUIElement::GetTopMargin() const
     {
         return static_cast<int>(this->layout.marginTop);
     }
-    int Element::GetBottomMargin() const
+    int GUIElement::GetBottomMargin() const
     {
         return static_cast<int>(this->layout.marginBottom);
     }
 
-    int Element::GetHorizontalMargin() const
+    int GUIElement::GetHorizontalMargin() const
     {
         return this->GetLeftMargin() + this->GetRightMargin();
     }
-    int Element::GetVerticalMargin() const
+    int GUIElement::GetVerticalMargin() const
     {
         return this->GetTopMargin() + this->GetBottomMargin();
     }
 
 
-    int Element::GetLeftPadding() const
+    int GUIElement::GetLeftPadding() const
     {
         return static_cast<int>(this->layout.paddingLeft);
     }
-    int Element::GetRightPadding() const
+    int GUIElement::GetRightPadding() const
     {
         return static_cast<int>(this->layout.paddingRight);
     }
-    int Element::GetTopPadding() const
+    int GUIElement::GetTopPadding() const
     {
         return static_cast<int>(this->layout.paddingTop);
     }
-    int Element::GetBottomPadding() const
+    int GUIElement::GetBottomPadding() const
     {
         return static_cast<int>(this->layout.paddingBottom);
     }
 
-    int Element::GetHorizontalPadding() const
+    int GUIElement::GetHorizontalPadding() const
     {
         return this->GetLeftPadding() + this->GetRightPadding();
     }
-    int Element::GetVerticalPadding() const
+    int GUIElement::GetVerticalPadding() const
     {
         return this->GetTopPadding() + this->GetBottomPadding();
     }
 
-    int Element::GetInnerLeftEdge() const
+    int GUIElement::GetInnerLeftEdge() const
     {
         return static_cast<int>(this->style.paddingLeft->value + this->style.borderLeftWidth->value);
     }
-    int Element::GetInnerRightEdge() const
+    int GUIElement::GetInnerRightEdge() const
     {
         return this->width - static_cast<int>(this->style.paddingRight->value + this->style.borderRightWidth->value);
     }
-    int Element::GetInnerTopEdge() const
+    int GUIElement::GetInnerTopEdge() const
     {
         return static_cast<int>(this->style.paddingTop->value + this->style.borderTopWidth->value);
     }
-    int Element::GetInnerBottomEdge() const
+    int GUIElement::GetInnerBottomEdge() const
     {
         return this->height - static_cast<int>(this->style.paddingBottom->value + this->style.borderBottomWidth->value);
     }
 
-    int Element::GetCenterX() const
+    int GUIElement::GetCenterX() const
     {
         return this->GetLeftPadding() + (this->GetInnerWidth() / 2);
     }
-    int Element::GetCenterY() const
+    int GUIElement::GetCenterY() const
     {
         return this->GetTopPadding() + (this->GetInnerHeight() / 2);
     }
 
 
 
-    void Element::GetAbsoluteRect(GT::Rect<int> &rect) const
+    void GUIElement::GetAbsoluteRect(GT::Rect<int> &rect) const
     {
         GT::Rect<int> parentRect;
         if (this->parent != nullptr)
@@ -597,7 +597,7 @@ namespace GTGUI
         rect.bottom = rect.top  + this->height;
     }
 
-    void Element::GetAbsoluteInnerRect(GT::Rect<int> &rect) const
+    void GUIElement::GetAbsoluteInnerRect(GT::Rect<int> &rect) const
     {
         this->GetAbsoluteRect(rect);
 
@@ -611,21 +611,21 @@ namespace GTGUI
     }
 
 
-    int Element::GetInnerXOffset() const
+    int GUIElement::GetInnerXOffset() const
     {
         return static_cast<int>(this->style.innerOffsetX->value);
     }
 
-    int Element::GetInnerYOffset() const
+    int GUIElement::GetInnerYOffset() const
     {
         return static_cast<int>(this->style.innerOffsetY->value);
     }
 
 
-    int Element::GetZIndex() const
+    int GUIElement::GetZIndex() const
     {
         // If the z-index is 'auto', it depends on the parent.
-        if (this->style.zIndex->format == StyleNumberFormat_Automatic)
+        if (this->style.zIndex->format == GUIStyleNumberFormat_Automatic)
         {
             if (this->parent != nullptr)
             {
@@ -638,12 +638,12 @@ namespace GTGUI
         return static_cast<int>(this->style.zIndex->value);
     }
 
-    bool Element::UsesZIndex() const
+    bool GUIElement::UsesZIndex() const
     {
-        return this->style.positioning->value != Positioning_Auto;
+        return this->style.positioning->value != GUIPositioning_Auto;
     }
 
-    const char * Element::GetText() const
+    const char * GUIElement::GetText() const
     {
         if (this->HasText())
         {
@@ -653,7 +653,7 @@ namespace GTGUI
         return nullptr;
     }
 
-    void Element::SetText(const char* text, bool blockEvent)
+    void GUIElement::SetText(const char* text, bool blockEvent)
     {
         if (this->GetFont() == nullptr)
         {
@@ -676,13 +676,13 @@ namespace GTGUI
         }
     }
     
-    void Element::SetFont(GT::Font* font)
+    void GUIElement::SetFont(GT::Font* font)
     {
         this->textManager.SetDefaultFont(font);
     }
     
     
-    void Element::UpdateFontFromStyle(bool blockOnTextChangedEvent)
+    void GUIElement::UpdateFontFromStyle(bool blockOnTextChangedEvent)
     {
         GT::FontInfo fi;
         this->server.GetFontInfoFromElement(*this, fi);
@@ -716,7 +716,7 @@ namespace GTGUI
     }
 
 
-    void Element::GetTextRect(GT::Rect<int> &rect) const
+    void GUIElement::GetTextRect(GT::Rect<int> &rect) const
     {
         // We retrieve the text rectangle based on the text rect from the text manager. After retrieving, we just offset by the top/left padding.
         GT::Rect<int> textRect;
@@ -731,7 +731,7 @@ namespace GTGUI
         rect.bottom = textRect.bottom + paddingTop;
     }
 
-    void Element::SelectAllText()
+    void GUIElement::SelectAllText()
     {
         this->textManager.SelectAll();
 
@@ -744,16 +744,16 @@ namespace GTGUI
         this->InvalidateTextRenderingData();
     }
 
-    void Element::GoToLine(unsigned int lineNumber)
+    void GUIElement::GoToLine(unsigned int lineNumber)
     {
         this->textManager.MoveCursorToLine(lineNumber - 1, 0);
         this->server.PositionCaret(false, true);
     }
 
 
-    void Element::FilterChildrenByPositioning(GT::List<Element *> &automatic, GT::List<Element *> &relative, GT::List<Element *> &absolute, bool ignoreHidden)
+    void GUIElement::FilterChildrenByPositioning(GT::List<GUIElement *> &automatic, GT::List<GUIElement *> &relative, GT::List<GUIElement *> &absolute, bool ignoreHidden)
     {
-        for (Element *i = this->firstChild; i != nullptr; i = i->nextSibling)
+        for (GUIElement *i = this->firstChild; i != nullptr; i = i->nextSibling)
         {
             // Ignore hidden, if applicable.
             if (ignoreHidden && !i->IsVisible())
@@ -761,11 +761,11 @@ namespace GTGUI
                 continue;
             }
 
-            if (i->style.positioning->value == Positioning_Relative)
+            if (i->style.positioning->value == GUIPositioning_Relative)
             {
                 relative.Append(i);
             }
-            else if (i->style.positioning->value == Positioning_Absolute)
+            else if (i->style.positioning->value == GUIPositioning_Absolute)
             {
                 absolute.Append(i);
             }
@@ -777,7 +777,7 @@ namespace GTGUI
     }
 
 
-    void Element::GetAncestors(GT::List<Element *> &ancestors)
+    void GUIElement::GetAncestors(GT::List<GUIElement *> &ancestors)
     {
         if (this->parent != nullptr)
         {
@@ -786,9 +786,9 @@ namespace GTGUI
         }
     }
 
-    void Element::GetRects(const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, GT::Rect<int> &rect, GT::Rect<int> &scissorRect, GT::Rect<int> &childrenScissorRect) const
+    void GUIElement::GetRects(const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, GT::Rect<int> &rect, GT::Rect<int> &scissorRect, GT::Rect<int> &childrenScissorRect) const
     {
-        if (this->style.positioning->value == Positioning_Auto)
+        if (this->style.positioning->value == GUIPositioning_Auto)
         {
             // The position is relative to the parent.
             rect.left   = parentRect.left + this->x;
@@ -799,7 +799,7 @@ namespace GTGUI
             scissorRect = rect;
             scissorRect.Clamp(parentScissorRect);
         }
-        else if (this->style.positioning->value == Positioning_Relative)
+        else if (this->style.positioning->value == GUIPositioning_Relative)
         {
             // The position is relative to the parent.
             rect.left   = parentRect.left + this->x;
@@ -832,7 +832,7 @@ namespace GTGUI
         childrenScissorRect.Clamp(scissorRect);
     }
 
-    void Element::AbsoluteToRelative(int &xInOut, int &yInOut)
+    void GUIElement::AbsoluteToRelative(int &xInOut, int &yInOut)
     {
         GT::Rect<int> absRect;
         this->GetAbsoluteRect(absRect);
@@ -841,26 +841,26 @@ namespace GTGUI
         yInOut -= absRect.top;
     }
 
-    void Element::UpdateTextManagerContainerSize()
+    void GUIElement::UpdateTextManagerContainerSize()
     {
         this->textManager.SetContainerSize(this->GetInnerWidth(), this->GetInnerHeight());
     }
 
-    void Element::UpdateTextManagerContainerOffset()
+    void GUIElement::UpdateTextManagerContainerOffset()
     {
         this->textManager.SetContainerOffset(static_cast<int>(this->style.innerOffsetX->value), static_cast<int>(this->style.innerOffsetY->value));
     }
 
-    void Element::UpdateTextManagerAlignment()
+    void GUIElement::UpdateTextManagerAlignment()
     {
         GT::Alignment horizontalAlign;
         GT::Alignment verticalAlign;
 
-        if (this->style.horizontalAlign->value == Align_Right)
+        if (this->style.horizontalAlign->value == GUIAlign_Right)
         {
             horizontalAlign = GT::Alignment_Right;
         }
-        else if (this->style.horizontalAlign->value == Align_Center)
+        else if (this->style.horizontalAlign->value == GUIAlign_Center)
         {
             horizontalAlign = GT::Alignment_Center;
         }
@@ -869,11 +869,11 @@ namespace GTGUI
             horizontalAlign = GT::Alignment_Left;
         }
 
-        if (this->style.verticalAlign->value == Align_Bottom)
+        if (this->style.verticalAlign->value == GUIAlign_Bottom)
         {
             verticalAlign = GT::Alignment_Bottom;
         }
-        else if (this->style.verticalAlign->value == Align_Center)
+        else if (this->style.verticalAlign->value == GUIAlign_Center)
         {
             verticalAlign = GT::Alignment_Center;
         }
@@ -886,7 +886,7 @@ namespace GTGUI
         this->textManager.SetVerticalAlign(verticalAlign);
     }
 
-    void Element::UpdateTextManagerLayout()
+    void GUIElement::UpdateTextManagerLayout()
     {
         this->UpdateTextManagerContainerSize();
         this->UpdateTextManagerContainerOffset();
@@ -898,18 +898,18 @@ namespace GTGUI
         }
     }
 
-    bool Element::HasText() const
+    bool GUIElement::HasText() const
     {
         return this->textManager.HasText();
     }
 
-    bool Element::HasEditableText() const
+    bool GUIElement::HasEditableText() const
     {
         return this->style.editableText->value;
     }
 
 
-    void Element::ValidateTextRenderingData()
+    void GUIElement::ValidateTextRenderingData()
     {
         if (!this->isTextRenderingDataValid)
         {
@@ -925,14 +925,14 @@ namespace GTGUI
         }
     }
 
-    void Element::InvalidateTextRenderingData()
+    void GUIElement::InvalidateTextRenderingData()
     {
         this->isTextRenderingDataValid = false;
     }
 
 
 
-    void Element::ValidateShadowRenderingData()
+    void GUIElement::ValidateShadowRenderingData()
     {
         if (!this->isShadowRenderingDataValid)
         {
@@ -941,14 +941,14 @@ namespace GTGUI
         }
     }
 
-    void Element::InvalidateShadowRenderingData()
+    void GUIElement::InvalidateShadowRenderingData()
     {
         this->isShadowRenderingDataValid = false;
     }
 
 
 
-    void Element::ValidateBorderRenderingData()
+    void GUIElement::ValidateBorderRenderingData()
     {
         if (!this->isBorderRenderingDataValid)
         {
@@ -957,13 +957,13 @@ namespace GTGUI
         }
     }
 
-    void Element::InvalidateBorderRenderingData()
+    void GUIElement::InvalidateBorderRenderingData()
     {
         this->isBorderRenderingDataValid = false;
     }
 
 
-    void Element::ValidateBackgroundRenderingData()
+    void GUIElement::ValidateBackgroundRenderingData()
     {
         if (!this->isBackgroundRenderingDataValid)
         {
@@ -972,14 +972,14 @@ namespace GTGUI
         }
     }
 
-    void Element::InvalidateBackgroundRenderingData()
+    void GUIElement::InvalidateBackgroundRenderingData()
     {
         this->isBackgroundRenderingDataValid = false;
     }
 
 
 
-    void Element::Show()
+    void GUIElement::Show()
     {
         if (!this->style.visible->value)    // Do not use this->IsVisible() here.
         {
@@ -992,7 +992,7 @@ namespace GTGUI
         }
     }
 
-    void Element::Hide()
+    void GUIElement::Hide()
     {
         if (this->style.visible->value)     // Do not use this->IsVisible() here.
         {
@@ -1006,13 +1006,13 @@ namespace GTGUI
     }
 
 
-    void Element::SetPosition(int xIn, int yIn)
+    void GUIElement::SetPosition(int xIn, int yIn)
     {
         auto styleClass = this->GetPrimaryStyleClass();
         if (styleClass != nullptr)
         {
             // First we need to make sure we are positioned relatively.
-            if (this->style.positioning->value == Positioning_Auto)
+            if (this->style.positioning->value == GUIPositioning_Auto)
             {
                 styleClass->SetAttribute("positioning", "relative");
             }
@@ -1023,7 +1023,7 @@ namespace GTGUI
         }
     }
 
-    void Element::SetSize(unsigned int widthIn, unsigned int heightIn)
+    void GUIElement::SetSize(unsigned int widthIn, unsigned int heightIn)
     {
         auto styleClass = this->GetPrimaryStyleClass();
         if (styleClass != nullptr)
@@ -1034,7 +1034,7 @@ namespace GTGUI
     }
 
 
-    float Element::GetLocalOpacity() const
+    float GUIElement::GetLocalOpacity() const
     {
         if (this->style.opacity->InPercent())               // <-- Allow for opacity values such as '50%'.
         {
@@ -1046,7 +1046,7 @@ namespace GTGUI
         }
     }
 
-    void Element::SetLocalOpacity(float newOpacity)
+    void GUIElement::SetLocalOpacity(float newOpacity)
     {
         auto styleClass = this->GetPrimaryStyleClass();
         if (styleClass != nullptr)
@@ -1055,12 +1055,12 @@ namespace GTGUI
         }
     }
 
-    float Element::GetAbsoluteOpacity() const
+    float GUIElement::GetAbsoluteOpacity() const
     {
         return this->renderingData.GetAbsoluteOpacity();
     }
 
-    float Element::CalculateAbsoluteOpacity() const
+    float GUIElement::CalculateAbsoluteOpacity() const
     {
         // The absolute opacity is based on the parent.
         if (this->parent != nullptr && this->style.compoundOpacity->value == true)
@@ -1071,7 +1071,7 @@ namespace GTGUI
         return GT::Clamp(this->GetLocalOpacity(), 0.0f, 1.0f);
     }
 
-    void Element::UpdateAbsoluteOpacity()
+    void GUIElement::UpdateAbsoluteOpacity()
     {
         this->InvalidateBackgroundRenderingData();
         this->InvalidateBorderRenderingData();
@@ -1090,7 +1090,7 @@ namespace GTGUI
     }
 
 
-    void Element::Enable()
+    void GUIElement::Enable()
     {
         auto styleClass = this->GetPrimaryStyleClass();
         if (styleClass != nullptr)
@@ -1102,7 +1102,7 @@ namespace GTGUI
         }
     }
 
-    void Element::Disable()
+    void GUIElement::Disable()
     {
         auto styleClass = this->GetPrimaryStyleClass();
         if (styleClass != nullptr)
@@ -1114,7 +1114,7 @@ namespace GTGUI
         }
     }
 
-    bool Element::IsEnabled() const
+    bool GUIElement::IsEnabled() const
     {
         if (this->parent != nullptr)
         {
@@ -1128,7 +1128,7 @@ namespace GTGUI
     }
 
 
-    float Element::GetAbsoluteShadowOpacity() const
+    float GUIElement::GetAbsoluteShadowOpacity() const
     {
         float opacity = this->GetAbsoluteOpacity();
 
@@ -1142,7 +1142,7 @@ namespace GTGUI
         }
     }
 
-    void Element::SetBackgroundImage(const char* imageURL)
+    void GUIElement::SetBackgroundImage(const char* imageURL)
     {
         auto sc = this->GetPrimaryStyleClass();
         assert(sc != nullptr);
@@ -1157,14 +1157,14 @@ namespace GTGUI
     }
 
 
-    bool Element::IsFocused() const
+    bool GUIElement::IsFocused() const
     {
         return this->server.GetFocusedElement() == this;
     }
     
 
 
-    int Element::GetParentRelativeWidth() const
+    int GUIElement::GetParentRelativeWidth() const
     {
         assert(this->parent != nullptr);
 
@@ -1182,7 +1182,7 @@ namespace GTGUI
         }
     }
 
-    int Element::GetParentRelativeHeight() const
+    int GUIElement::GetParentRelativeHeight() const
     {
         assert(this->parent != nullptr);
 
@@ -1201,11 +1201,11 @@ namespace GTGUI
     }
 
 
-    Element* Element::GetNextVisibleAutoSibling()
+    GUIElement* GUIElement::GetNextVisibleAutoSibling()
     {
         for (auto i = this->nextSibling; i != nullptr; i = i->nextSibling)
         {
-            if (i->style.positioning->value == Positioning_Auto && i->IsVisible())
+            if (i->style.positioning->value == GUIPositioning_Auto && i->IsVisible())
             {
                 return i;
             }
@@ -1214,11 +1214,11 @@ namespace GTGUI
         return nullptr;
     }
 
-    Element* Element::GetPrevVisibleAutoSibling()
+    GUIElement* GUIElement::GetPrevVisibleAutoSibling()
     {
         for (auto i = this->prevSibling; i != nullptr; i = i->prevSibling)
         {
-            if (i->style.positioning->value == Positioning_Auto && i->IsVisible())
+            if (i->style.positioning->value == GUIPositioning_Auto && i->IsVisible())
             {
                 return i;
             }
@@ -1227,11 +1227,11 @@ namespace GTGUI
         return nullptr;
     }
 
-    Element* Element::GetFirstVisibleAutoChild()
+    GUIElement* GUIElement::GetFirstVisibleAutoChild()
     {
         for (auto i = this->firstChild; i != nullptr; i = i->nextSibling)
         {
-            if (i->style.positioning->value == Positioning_Auto && i->IsVisible())
+            if (i->style.positioning->value == GUIPositioning_Auto && i->IsVisible())
             {
                 return i;
             }
@@ -1241,9 +1241,9 @@ namespace GTGUI
     }
 
 
-    void Element::OnMouseEnter()
+    void GUIElement::OnMouseEnter()
     {
-        this->style.ActivateModifierClasses(StyleClassType_Hovered);
+        this->style.ActivateModifierClasses(GUIStyleClassType_Hovered);
 
         for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
         {
@@ -1251,9 +1251,9 @@ namespace GTGUI
         }
     }
 
-    void Element::OnMouseLeave()
+    void GUIElement::OnMouseLeave()
     {
-        this->style.DeactivateModifierClasses(StyleClassType_Hovered);
+        this->style.DeactivateModifierClasses(GUIStyleClassType_Hovered);
 
         for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
         {
@@ -1261,9 +1261,9 @@ namespace GTGUI
         }
     }
 
-    void Element::OnPush()
+    void GUIElement::OnPush()
     {
-        this->style.ActivateModifierClasses(StyleClassType_Pushed);
+        this->style.ActivateModifierClasses(GUIStyleClassType_Pushed);
 
         for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
         {
@@ -1271,9 +1271,9 @@ namespace GTGUI
         }
     }
 
-    void Element::OnRelease()
+    void GUIElement::OnRelease()
     {
-        this->style.DeactivateModifierClasses(StyleClassType_Pushed);
+        this->style.DeactivateModifierClasses(GUIStyleClassType_Pushed);
 
         for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
         {
@@ -1281,9 +1281,9 @@ namespace GTGUI
         }
     }
 
-    void Element::OnPressed()
+    void GUIElement::OnPressed()
     {
-        this->style.DeactivateModifierClasses(StyleClassType_Pushed);
+        this->style.DeactivateModifierClasses(GUIStyleClassType_Pushed);
 
         for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
         {
@@ -1295,7 +1295,7 @@ namespace GTGUI
 // --- Private ---
 namespace GTGUI
 {
-    void Element::AttachStyleClass(StyleClass &styleClass, GT::Vector<StyleClass*> &alreadyAttached, bool refresh)
+    void GUIElement::AttachStyleClass(GUIStyleClass &styleClass, GT::Vector<GUIStyleClass*> &alreadyAttached, bool refresh)
     {
         assert(alreadyAttached.Exists(&styleClass) == false);
         {
@@ -1319,7 +1319,7 @@ namespace GTGUI
         }
     }
 
-    void Element::DetachStyleClass(StyleClass &styleClass, GT::Vector<StyleClass*> &alreadyDetached, bool refresh)
+    void GUIElement::DetachStyleClass(GUIStyleClass &styleClass, GT::Vector<GUIStyleClass*> &alreadyDetached, bool refresh)
     {
         assert(alreadyDetached.Exists(&styleClass) == false);
         {
@@ -1350,7 +1350,7 @@ namespace GTGUI
 
 namespace GTGUI
 {
-    void Element::TextEventHandler::OnTextChanged(const char*)
+    void GUIElement::TextEventHandler::OnTextChanged(const char*)
     {
         // If we don't yet have a font, we'll want one.
         if (element.GetFont() == nullptr)

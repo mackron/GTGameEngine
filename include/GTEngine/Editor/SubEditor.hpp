@@ -43,8 +43,8 @@ namespace GT
 
 
         /// Retrieves the tab GUI element associated with this editor.
-              GTGUI::Element* GetTabElement()       { return m_tabElement; }
-        const GTGUI::Element* GetTabElement() const { return m_tabElement; }
+              GTGUI::GUIElement* GetTabElement()       { return m_tabElement; }
+        const GTGUI::GUIElement* GetTabElement() const { return m_tabElement; }
 
 
         /// Marks the file as modified.
@@ -82,7 +82,7 @@ namespace GT
         const GameScript & GetScript() const;
 
         /// A helper function for retreiving the game GUI object.
-        GTGUI::Server & GetGUI();
+        GTGUI::GUIServer & GetGUI();
         
         
         
@@ -96,8 +96,8 @@ namespace GT
         // Virtual Methods.
 
         /// Retrieves the main GUI element of the editor.
-        virtual       GTGUI::Element* GetMainElement()       { return nullptr; }
-        virtual const GTGUI::Element* GetMainElement() const { return nullptr; }
+        virtual       GTGUI::GUIElement* GetMainElement()       { return nullptr; }
+        virtual const GTGUI::GUIElement* GetMainElement() const { return nullptr; }
 
         /// Called when the editor needs to be shown.
         virtual void Show();
@@ -168,7 +168,7 @@ namespace GT
         String m_relativePath;
 
         /// A pointer to the tab element associated with this editor.
-        GTGUI::Element* m_tabElement;
+        GTGUI::GUIElement* m_tabElement;
 
         /// The event handler to attack to the tab.
         SubEditorTabEventHandler m_tabEventHandler;

@@ -11,16 +11,16 @@ namespace GTGUI
     static const uint32_t TextInvalidated     = (1 << 3);
     
     
-    LayoutManager::LayoutManager()
+    GUILayoutManager::GUILayoutManager()
         : invalidElements(), validatedElements(), topLevelValidatedElements()
     {
     }
 
-    LayoutManager::~LayoutManager()
+    GUILayoutManager::~GUILayoutManager()
     {
     }
 
-    void LayoutManager::InvalidateWidth(Element &element)
+    void GUILayoutManager::InvalidateWidth(GUIElement &element)
     {
         if (!(element.layout.flags & WidthInvalidated))
         {
@@ -33,7 +33,7 @@ namespace GTGUI
         }
     }
 
-    void LayoutManager::InvalidateHeight(Element &element)
+    void GUILayoutManager::InvalidateHeight(GUIElement &element)
     {
         if (!(element.layout.flags & HeightInvalidated))
         {
@@ -46,7 +46,7 @@ namespace GTGUI
         }
     }
 
-    void LayoutManager::InvalidatePosition(Element &element)
+    void GUILayoutManager::InvalidatePosition(GUIElement &element)
     {
         if (!(element.layout.flags & PositionInvalidated))
         {
@@ -59,7 +59,7 @@ namespace GTGUI
         }
     }
 
-    void LayoutManager::InvalidateText(Element &element)
+    void GUILayoutManager::InvalidateText(GUIElement &element)
     {
         if (!(element.layout.flags & TextInvalidated))
         {
@@ -73,7 +73,7 @@ namespace GTGUI
     }
 
 
-    void LayoutManager::Validate()
+    void GUILayoutManager::Validate()
     {
         while (this->invalidElements.root != nullptr)
         {
@@ -110,7 +110,7 @@ namespace GTGUI
     }
 
 
-    void LayoutManager::RemoveElement(Element &element)
+    void GUILayoutManager::RemoveElement(GUIElement &element)
     {
         if (element.layout.layoutManagerListItem != nullptr)
         {
@@ -131,10 +131,10 @@ namespace GTGUI
     }
 
 
-    void LayoutManager::ValidateWidth(Element &element)
+    void GUILayoutManager::ValidateWidth(GUIElement &element)
     {
         auto oldWidth = element.GetOuterWidth();
-        auto newWidth = LayoutManager::UpdateWidth(element);
+        auto newWidth = GUILayoutManager::UpdateWidth(element);
 
         if (oldWidth != newWidth)
         {
@@ -156,7 +156,7 @@ namespace GTGUI
             }
 
             // Flexed siblings will need to have their width's updated.
-            if (element.parent != nullptr && element.parent->style.flexChildWidth->value && element.parent->style.childPlane->value == Plane_Horizontal && !element.style.width->InPercent())
+            if (element.parent != nullptr && element.parent->style.flexChildWidth->value && element.parent->style.childPlane->value == GUIPlane_Horizontal && !element.style.width->InPercent())
             {
                 for (auto iSibling = element.parent->firstChild; iSibling != nullptr; iSibling = iSibling->nextSibling)
                 {
@@ -184,13 +184,13 @@ namespace GTGUI
             // Positions
             //
             // The position of this element will have changed if we're not aligned left.
-            if ((element.parent != nullptr && element.parent->style.horizontalAlign->value != Align_Left) || (element.style.positioning->value == Positioning_Relative && element.style.rightHasPriority))
+            if ((element.parent != nullptr && element.parent->style.horizontalAlign->value != GUIAlign_Left) || (element.style.positioning->value == GUIPositioning_Relative && element.style.rightHasPriority))
             {
                 this->InvalidatePosition(element);
             }
 
             // Children might have positions changed depending on alignment.
-            if (element.style.horizontalAlign->value != Align_Left)
+            if (element.style.horizontalAlign->value != GUIAlign_Left)
             {
                 for (auto iChild = element.firstChild; iChild != nullptr; iChild = iChild->nextSibling)
                 {
@@ -202,7 +202,7 @@ namespace GTGUI
                 // Relative elements need to be repositioned in this case.
                 for (auto iChild = element.firstChild; iChild != nullptr; iChild = iChild->nextSibling)
                 {
-                    if (iChild->style.positioning->value != Positioning_Auto)
+                    if (iChild->style.positioning->value != GUIPositioning_Auto)
                     {
                         this->InvalidatePosition(*iChild);
                     }
@@ -212,31 +212,31 @@ namespace GTGUI
             // Siblings might have positions changed depending on the parent's alignment.
             if (element.parent != nullptr)
             {
-                if (element.parent->style.horizontalAlign->value == Align_Left)
+                if (element.parent->style.horizontalAlign->value == GUIAlign_Left)
                 {
                     for (auto iSibling = &element; iSibling != nullptr; iSibling = iSibling->nextSibling)
                     {
-                        if (iSibling->style.positioning->value == Positioning_Auto)
+                        if (iSibling->style.positioning->value == GUIPositioning_Auto)
                         {
                             this->InvalidatePosition(*iSibling);
                         }
                     }
                 }
-                else if (element.parent->style.horizontalAlign->value == Align_Center)
+                else if (element.parent->style.horizontalAlign->value == GUIAlign_Center)
                 {
                     for (auto iSibling = element.parent->firstChild; iSibling != nullptr; iSibling = iSibling->nextSibling)
                     {
-                        if (iSibling->style.positioning->value == Positioning_Auto)
+                        if (iSibling->style.positioning->value == GUIPositioning_Auto)
                         {
                             this->InvalidatePosition(*iSibling);
                         }
                     }
                 }
-                else if (element.parent->style.horizontalAlign->value == Align_Right)
+                else if (element.parent->style.horizontalAlign->value == GUIAlign_Right)
                 {
                     for (auto iSibling = element.parent->firstChild; iSibling != &element; iSibling = iSibling->nextSibling)
                     {
-                        if (iSibling->style.positioning->value == Positioning_Auto)
+                        if (iSibling->style.positioning->value == GUIPositioning_Auto)
                         {
                             this->InvalidatePosition(*iSibling);
                         }
@@ -267,10 +267,10 @@ namespace GTGUI
         }
     }
 
-    void LayoutManager::ValidateHeight(Element &element)
+    void GUILayoutManager::ValidateHeight(GUIElement &element)
     {
         auto oldHeight = element.GetOuterHeight();
-        auto newHeight = LayoutManager::UpdateHeight(element);
+        auto newHeight = GUILayoutManager::UpdateHeight(element);
 
         if (oldHeight != newHeight)
         {
@@ -290,7 +290,7 @@ namespace GTGUI
             }
 
             // Flexed siblings will need to have their heights's updated.
-            if (element.parent != nullptr && element.parent->style.flexChildHeight->value && element.parent->style.childPlane->value == Plane_Vertical && !element.style.height->InPercent())
+            if (element.parent != nullptr && element.parent->style.flexChildHeight->value && element.parent->style.childPlane->value == GUIPlane_Vertical && !element.style.height->InPercent())
             {
                 for (auto iSibling = element.parent->firstChild; iSibling != nullptr; iSibling = iSibling->nextSibling)
                 {
@@ -317,13 +317,13 @@ namespace GTGUI
             // Positions
             //
             // The position of this element will have changed if we're not aligned top.
-            if ((element.parent != nullptr && element.parent->style.verticalAlign->value != Align_Top) || (element.style.positioning->value == Positioning_Relative && element.style.bottomHasPriority))
+            if ((element.parent != nullptr && element.parent->style.verticalAlign->value != GUIAlign_Top) || (element.style.positioning->value == GUIPositioning_Relative && element.style.bottomHasPriority))
             {
                 this->InvalidatePosition(element);
             }
 
             // Children might have positions changed depending on alignment.
-            if (element.style.verticalAlign->value != Align_Top)
+            if (element.style.verticalAlign->value != GUIAlign_Top)
             {
                 for (auto iChild = element.firstChild; iChild != nullptr; iChild = iChild->nextSibling)
                 {
@@ -335,7 +335,7 @@ namespace GTGUI
                 // Relative elements need to be repositioned in this case.
                 for (auto iChild = element.firstChild; iChild != nullptr; iChild = iChild->nextSibling)
                 {
-                    if (iChild->style.positioning->value != Positioning_Auto)
+                    if (iChild->style.positioning->value != GUIPositioning_Auto)
                     {
                         this->InvalidatePosition(*iChild);
                     }
@@ -345,31 +345,31 @@ namespace GTGUI
             // Siblings might have positions changed depending on the parent's alignment.
             if (element.parent != nullptr)
             {
-                if (element.parent->style.verticalAlign->value == Align_Top)
+                if (element.parent->style.verticalAlign->value == GUIAlign_Top)
                 {
                     for (auto iSibling = &element; iSibling != nullptr; iSibling = iSibling->nextSibling)
                     {
-                        if (iSibling->style.positioning->value == Positioning_Auto)
+                        if (iSibling->style.positioning->value == GUIPositioning_Auto)
                         {
                             this->InvalidatePosition(*iSibling);
                         }
                     }
                 }
-                else if (element.parent->style.verticalAlign->value == Align_Center)
+                else if (element.parent->style.verticalAlign->value == GUIAlign_Center)
                 {
                     for (auto iSibling = element.parent->firstChild; iSibling != nullptr; iSibling = iSibling->nextSibling)
                     {
-                        if (iSibling->style.positioning->value == Positioning_Auto)
+                        if (iSibling->style.positioning->value == GUIPositioning_Auto)
                         {
                             this->InvalidatePosition(*iSibling);
                         }
                     }
                 }
-                else if (element.parent->style.verticalAlign->value == Align_Bottom)
+                else if (element.parent->style.verticalAlign->value == GUIAlign_Bottom)
                 {
                     for (auto iSibling = element.parent->firstChild; iSibling != &element; iSibling = iSibling->nextSibling)
                     {
-                        if (iSibling->style.positioning->value == Positioning_Auto)
+                        if (iSibling->style.positioning->value == GUIPositioning_Auto)
                         {
                             this->InvalidatePosition(*iSibling);
                         }
@@ -410,21 +410,21 @@ namespace GTGUI
     }
 
 
-    void LayoutManager::ValidatePosition(Element &element, bool invalidateSiblings)
+    void GUILayoutManager::ValidatePosition(GUIElement &element, bool invalidateSiblings)
     {
         // We validate the position differently depending on it's positioning type (auto, relative or absolute).
         auto oldX = element.x;
         auto oldY = element.y;
 
-        if (element.style.positioning->value == Positioning_Auto)
+        if (element.style.positioning->value == GUIPositioning_Auto)
         {
             this->ValidatePosition_Auto(element, invalidateSiblings);
         }
-        else if (element.style.positioning->value == Positioning_Relative)
+        else if (element.style.positioning->value == GUIPositioning_Relative)
         {
             this->ValidatePosition_Relative(element);
         }
-        else if (element.style.positioning->value == Positioning_Absolute)
+        else if (element.style.positioning->value == GUIPositioning_Absolute)
         {
             this->ValidatePosition_Absolute(element);
         }
@@ -445,7 +445,7 @@ namespace GTGUI
         }
     }
 
-    void LayoutManager::ValidatePosition_Auto(Element &element, bool validateSiblings)
+    void GUILayoutManager::ValidatePosition_Auto(GUIElement &element, bool validateSiblings)
     {
         // In order for the position of this element to be correct, we need to validate the previous siblings. If we don't do this, it means the element
         // will not be positioned correctly.
@@ -455,7 +455,7 @@ namespace GTGUI
             {
                 for (auto iSibling = element.parent->firstChild; iSibling != nullptr; iSibling = iSibling->nextSibling)
                 {
-                    if (iSibling->style.positioning->value == Positioning_Auto && this->IsPositionInvalid(*iSibling))
+                    if (iSibling->style.positioning->value == GUIPositioning_Auto && this->IsPositionInvalid(*iSibling))
                     {
                         this->ValidatePosition(*iSibling, false);      // <-- 'false' means to not invalidate siblings. Important!
                     }
@@ -476,7 +476,7 @@ namespace GTGUI
         // a conditional branch to filter this.
         if (element.parent != nullptr)
         {
-            if (element.parent->style.childPlane->value == Plane_Horizontal) // Horizontal Plane
+            if (element.parent->style.childPlane->value == GUIPlane_Horizontal) // Horizontal Plane
             {
                 // X
                 if (provokingSibling != nullptr)
@@ -487,11 +487,11 @@ namespace GTGUI
                 {
                     // If we don't have a provoking sibling, it means this is the first one. In this case, we need to ensure the initial position is correct. This depends
                     // on the alignment. If we don't get this initial positioning correct, all other siblings will be incorrectly positioned.
-                    if (element.parent->style.horizontalAlign->value == Align_Right)
+                    if (element.parent->style.horizontalAlign->value == GUIAlign_Right)
                     {
                         element.x = element.parent->width - element.parent->GetRightPadding() - element.parent->GetChildrenWidth();
                     }
-                    else if (element.parent->style.horizontalAlign->value == Align_Center)
+                    else if (element.parent->style.horizontalAlign->value == GUIAlign_Center)
                     {
                         element.x = (element.parent->width - element.parent->GetChildrenWidth()) / 2;
                     }
@@ -505,11 +505,11 @@ namespace GTGUI
 
 
                 // Y
-                if (element.parent->style.verticalAlign->value == Align_Bottom)
+                if (element.parent->style.verticalAlign->value == GUIAlign_Bottom)
                 {
                     element.y = element.parent->height - element.parent->GetBottomPadding() - element.height - element.GetBottomMargin();
                 }
-                else if (element.parent->style.verticalAlign->value == Align_Center)
+                else if (element.parent->style.verticalAlign->value == GUIAlign_Center)
                 {
                     element.y = (element.parent->height - element.GetOuterHeight()) / 2;
                 }
@@ -521,11 +521,11 @@ namespace GTGUI
             else    // Vertical Plane
             {
                 // X
-                if (element.parent->style.horizontalAlign->value == Align_Right)
+                if (element.parent->style.horizontalAlign->value == GUIAlign_Right)
                 {
                     element.x = element.parent->width - element.parent->GetRightPadding() - element.width - element.GetRightMargin();
                 }
-                else if (element.parent->style.horizontalAlign->value == Align_Center)
+                else if (element.parent->style.horizontalAlign->value == GUIAlign_Center)
                 {
                     element.x = (element.parent->width - element.GetOuterWidth()) / 2;
                 }
@@ -543,11 +543,11 @@ namespace GTGUI
                 {
                     // If we don't have a provoking sibling, it means this is the first one. In this case, we need to ensure the initial position is correct. This depends
                     // on the alignment. If we don't get this initial positioning correct, all other siblings will not be positioned correctly.
-                    if (element.parent->style.verticalAlign->value == Align_Bottom)
+                    if (element.parent->style.verticalAlign->value == GUIAlign_Bottom)
                     {
                         element.y = element.parent->height - element.parent->GetBottomPadding() - element.parent->GetChildrenHeight();
                     }
-                    else if (element.parent->style.verticalAlign->value == Align_Center)
+                    else if (element.parent->style.verticalAlign->value == GUIAlign_Center)
                     {
                         element.y = (element.parent->height - element.parent->GetChildrenHeight()) / 2;
                     }
@@ -569,7 +569,7 @@ namespace GTGUI
         }
     }
 
-    void LayoutManager::ValidatePosition_Relative(Element &element)
+    void GUILayoutManager::ValidatePosition_Relative(GUIElement &element)
     {
         // The position is based on the parent without any consideration for siblings. Sometimes there will be cases where the element may have been orphaned, but
         // the layout command is still active. In this case the parent will be set to null. We simply use a conditional branch to filter this.
@@ -699,7 +699,7 @@ namespace GTGUI
         }
     }
 
-    void LayoutManager::ValidatePosition_Absolute(Element &element)
+    void GUILayoutManager::ValidatePosition_Absolute(GUIElement &element)
     {
         // X
         if (element.style.rightHasPriority)          // right
@@ -755,7 +755,7 @@ namespace GTGUI
     }
 
 
-    void LayoutManager::ValidateText(Element &element, bool validateDependants)
+    void GUILayoutManager::ValidateText(GUIElement &element, bool validateDependants)
     {
         element.UpdateTextManagerLayout();
         element.InvalidateTextRenderingData();
@@ -783,7 +783,7 @@ namespace GTGUI
     }
 
 
-    void LayoutManager::MarkSizeAsChanged(Element &element)
+    void GUILayoutManager::MarkSizeAsChanged(GUIElement &element)
     {
         uint32_t flags = ValidatedElement::SizeChanged;
 
@@ -801,7 +801,7 @@ namespace GTGUI
         this->TryMarkAsTopLevelElement(element);
     }
 
-    void LayoutManager::MarkPositionAsChanged(Element &element)
+    void GUILayoutManager::MarkPositionAsChanged(GUIElement &element)
     {
         uint32_t flags = ValidatedElement::PositionChanged;
 
@@ -819,7 +819,7 @@ namespace GTGUI
         this->TryMarkAsTopLevelElement(element);
     }
 
-    void LayoutManager::TryMarkAsTopLevelElement(Element &element)
+    void GUILayoutManager::TryMarkAsTopLevelElement(GUIElement &element)
     {
         // If an ancestor is already in the list, don't do anything.
         bool doesAncestorExist = false;
@@ -836,7 +836,7 @@ namespace GTGUI
             }
         }
 
-        if (!doesAncestorExist || element.style.positioning->value == Positioning_Absolute)
+        if (!doesAncestorExist || element.style.positioning->value == GUIPositioning_Absolute)
         {
             // We need to add the element to the list. Before we do, though, we want to make sure anything that's already in the list that
             // is a descendant of the element is removed.
@@ -863,27 +863,27 @@ namespace GTGUI
     }
 
 
-    bool LayoutManager::IsWidthInvalid(Element &element) const
+    bool GUILayoutManager::IsWidthInvalid(GUIElement &element) const
     {
         return (element.layout.flags & WidthInvalidated) != 0;
     }
 
-    bool LayoutManager::IsHeightInvalid(Element &element) const
+    bool GUILayoutManager::IsHeightInvalid(GUIElement &element) const
     {
         return (element.layout.flags & HeightInvalidated) != 0;
     }
 
-    bool LayoutManager::IsPositionInvalid(Element &element) const
+    bool GUILayoutManager::IsPositionInvalid(GUIElement &element) const
     {
         return (element.layout.flags & PositionInvalidated) != 0;
     }
 
 
-    const Element* LayoutManager::GetProvokingSibling(Element &element) const
+    const GUIElement* GUILayoutManager::GetProvokingSibling(GUIElement &element) const
     {
         for (auto i = element.prevSibling; i != nullptr; i = i->prevSibling)
         {
-            if (i->style.positioning->value == Positioning_Auto && i->IsVisible())
+            if (i->style.positioning->value == GUIPositioning_Auto && i->IsVisible())
             {
                 return i;
             }
@@ -893,7 +893,7 @@ namespace GTGUI
     }
 
 
-    void LayoutManager::MarkElementAsUnclipped(Element &element) const
+    void GUILayoutManager::MarkElementAsUnclipped(GUIElement &element) const
     {
         if (element.isClippedByParent)
         {
@@ -906,7 +906,7 @@ namespace GTGUI
         }
     }
 
-    void LayoutManager::MarkElementAsClipped(Element &element) const
+    void GUILayoutManager::MarkElementAsClipped(GUIElement &element) const
     {
         if (element.parent != nullptr)
         {
@@ -918,16 +918,16 @@ namespace GTGUI
         }
     }
 
-    void LayoutManager::CheckAndMarkElementAsClipped(Element &element) const
+    void GUILayoutManager::CheckAndMarkElementAsClipped(GUIElement &element) const
     {
         if (element.parent != nullptr)
         {
             // We only need to clip if the element is not fully contained by the parent.
             bool isClipped = false;
 
-            if (element.style.positioning->value != Positioning_Absolute)       // <-- Absolutely positioned elements are never clipped.
+            if (element.style.positioning->value != GUIPositioning_Absolute)       // <-- Absolutely positioned elements are never clipped.
             {
-                if (element.style.positioning->value != Positioning_Relative)   // <-- Currently, relatively positioned elements are never clipped.
+                if (element.style.positioning->value != GUIPositioning_Relative)   // <-- Currently, relatively positioned elements are never clipped.
                 {
                     if (element.layout.absoluteX < element.parent->layout.clippingRectInner.left || element.layout.absoluteX + element.width  > element.parent->layout.clippingRectInner.right  ||
                         element.layout.absoluteY < element.parent->layout.clippingRectInner.top  || element.layout.absoluteY + element.height > element.parent->layout.clippingRectInner.bottom ||
@@ -951,11 +951,11 @@ namespace GTGUI
     }
 
 
-    void LayoutManager::UpdateAbsoluteLayoutProperties(Element &element) const
+    void GUILayoutManager::UpdateAbsoluteLayoutProperties(GUIElement &element) const
     {
         if (element.parent != nullptr)
         {
-            if (element.style.positioning->value != Positioning_Absolute)
+            if (element.style.positioning->value != GUIPositioning_Absolute)
             {
                 element.layout.absoluteX = element.parent->layout.absoluteX + element.x;
                 element.layout.absoluteY = element.parent->layout.absoluteY + element.y;
@@ -979,7 +979,7 @@ namespace GTGUI
 
         if (element.parent != nullptr)
         {
-            if (element.style.positioning->value != Positioning_Absolute && element.style.positioning->value != Positioning_Relative)
+            if (element.style.positioning->value != GUIPositioning_Absolute && element.style.positioning->value != GUIPositioning_Relative)
             {
                 element.layout.clippingRect.Clamp(element.parent->layout.clippingRectInner);
                 element.layout.clippingRectInner.Clamp(element.layout.clippingRect);
@@ -992,7 +992,7 @@ namespace GTGUI
         // Now we need to iterate over children.
         for (auto child = element.firstChild; child != nullptr; child = child->nextSibling)
         {
-            if (child->style.positioning->value != Positioning_Absolute)
+            if (child->style.positioning->value != GUIPositioning_Absolute)
             {
                 this->UpdateAbsoluteLayoutProperties(*child);
             }
@@ -1000,7 +1000,7 @@ namespace GTGUI
     }
 
 
-    void LayoutManager::PostProcess()
+    void GUILayoutManager::PostProcess()
     {
         // We need to iterate over each top level element and recursively update the absolute layout properties of them and their children.
         for (size_t i = 0; i < this->topLevelValidatedElements.count; ++i)
@@ -1054,22 +1054,22 @@ namespace GTGUI
     #pragma GCC diagnostic ignored "-Wunreachable-code"
 #endif
 
-    int LayoutManager::EvaluateWidth(const Element &element, const StyleAttribute_Number &width, bool calculateFlexed)
+    int GUILayoutManager::EvaluateWidth(const GUIElement &element, const GUIStyleAttribute_Number &width, bool calculateFlexed)
     {
         int result = 0;
 
         switch (width.format)
         {
         // Treat pixels and points the same in the case of the width (and height).
-        case StyleNumberFormat_Pixels:
-        case StyleNumberFormat_Points:
+        case GUIStyleNumberFormat_Pixels:
+        case GUIStyleNumberFormat_Points:
             {
                 // We just set directly.
                 result = static_cast<int>(width.value);
                 break;
             }
             
-        case StyleNumberFormat_Percent:     // Depends on the parent and non-% siblings.
+        case GUIStyleNumberFormat_Percent:     // Depends on the parent and non-% siblings.
             {
                 // Based on the size of the parent. This will also depend on the relative-width-mode style attribute.
                 if (element.parent)
@@ -1077,9 +1077,9 @@ namespace GTGUI
                     float relativeWidth = static_cast<float>(element.GetParentRelativeWidth());
                     float relativeRatio = width.value / 100.0f;
 
-                    if (calculateFlexed && element.parent->style.flexChildWidth->value && element.style.positioning->value == Positioning_Auto)
+                    if (calculateFlexed && element.parent->style.flexChildWidth->value && element.style.positioning->value == GUIPositioning_Auto)
                     {
-                        if (element.parent->style.childPlane->value == Plane_Horizontal)
+                        if (element.parent->style.childPlane->value == GUIPlane_Horizontal)
                         {
                             float totalPercent            = 0.0f;
                             float fixedSiblingsTotalWidth = 0.0f;
@@ -1087,7 +1087,7 @@ namespace GTGUI
                             // This loop will include this element, which actually works nicely.
                             for (auto i = element.parent->firstChild; i != nullptr; i = i->nextSibling)
                             {
-                                if (i->style.positioning->value == Positioning_Auto && i->style.visible->value)
+                                if (i->style.positioning->value == GUIPositioning_Auto && i->style.visible->value)
                                 {
                                     if (i->style.width->InPercent())
                                     {
@@ -1129,14 +1129,14 @@ namespace GTGUI
             }
             
 
-        case StyleNumberFormat_Automatic:   // Depends on the children.
+        case GUIStyleNumberFormat_Automatic:   // Depends on the children.
             {
                 result = element.GetHorizontalPadding();
 
                 // The width will be the width of the children plus padding.
                 if (element.firstChild != nullptr)
                 {
-                    result += LayoutManager::GetChildrenWidth(element);
+                    result += GUILayoutManager::GetChildrenWidth(element);
                 }
                 else if (element.HasText())
                 {
@@ -1154,22 +1154,22 @@ namespace GTGUI
         return result;
     }
 
-    int LayoutManager::EvaluateHeight(const Element &element, const StyleAttribute_Number &height, bool calculateFlexed)
+    int GUILayoutManager::EvaluateHeight(const GUIElement &element, const GUIStyleAttribute_Number &height, bool calculateFlexed)
     {
         int result = 0;
 
         switch (height.format)
         {
         // Treat pixels and points the same in the case of the height (and height).
-        case StyleNumberFormat_Pixels:
-        case StyleNumberFormat_Points:
+        case GUIStyleNumberFormat_Pixels:
+        case GUIStyleNumberFormat_Points:
             {
                 // We just set directly.
                 result = static_cast<int>(height.value);
                 break;
             }
             
-        case StyleNumberFormat_Percent:     // Depends on the parent.
+        case GUIStyleNumberFormat_Percent:     // Depends on the parent.
             {
                 // Based on the size of the parent. This will also depend on the relative-height-mode style attribute.
                 if (element.parent)
@@ -1177,9 +1177,9 @@ namespace GTGUI
                     float relativeHeight = static_cast<float>(element.GetParentRelativeHeight());
                     float relativeRatio  = height.value / 100.0f;
 
-                    if (calculateFlexed && element.parent->style.flexChildHeight->value && element.style.positioning->value == Positioning_Auto)
+                    if (calculateFlexed && element.parent->style.flexChildHeight->value && element.style.positioning->value == GUIPositioning_Auto)
                     {
-                        if (element.parent->style.childPlane->value == Plane_Vertical)
+                        if (element.parent->style.childPlane->value == GUIPlane_Vertical)
                         {
                             float totalPercent             = 0;
                             float fixedSiblingsTotalHeight = 0;
@@ -1187,7 +1187,7 @@ namespace GTGUI
                             // This loop will include this element, which actually works nicely.
                             for (auto i = element.parent->firstChild; i != nullptr; i = i->nextSibling)
                             {
-                                if (i->style.positioning->value == Positioning_Auto && i->style.visible->value)
+                                if (i->style.positioning->value == GUIPositioning_Auto && i->style.visible->value)
                                 {
                                     if (i->style.height->InPercent())
                                     {
@@ -1229,14 +1229,14 @@ namespace GTGUI
             }
             
 
-        case StyleNumberFormat_Automatic:   // Depends on the children.
+        case GUIStyleNumberFormat_Automatic:   // Depends on the children.
             {
                 result = element.GetVerticalPadding();
 
                 // The height will be the height of the children plus padding.
                 if (element.firstChild != nullptr)
                 {
-                    result += LayoutManager::GetChildrenHeight(element);
+                    result += GUILayoutManager::GetChildrenHeight(element);
                 }
                 else if (element.HasText() || element.style.editableText->value == true)
                 {
@@ -1258,7 +1258,7 @@ namespace GTGUI
 #endif
 
 
-    int LayoutManager::UpdateWidth(Element &element)
+    int GUILayoutManager::UpdateWidth(GUIElement &element)
     {
         // Start with margin and padding before the width because these are prerequisites for width evaluation.
         element.layout.marginLeft   = static_cast<unsigned short>(element.style.marginLeft->value);
@@ -1267,18 +1267,18 @@ namespace GTGUI
         element.layout.paddingRight = static_cast<unsigned short>(element.style.paddingRight->value + element.style.borderRightWidth->value);
 
 
-        auto newWidth = LayoutManager::EvaluateWidth(element, *element.style.width);
+        auto newWidth = GUILayoutManager::EvaluateWidth(element, *element.style.width);
 
         int minWidth = 0;
         int maxWidth = newWidth;
         
         if (!element.style.minWidth->Automatic())
         {
-            minWidth = LayoutManager::EvaluateWidth(element, *element.style.minWidth, false);
+            minWidth = GUILayoutManager::EvaluateWidth(element, *element.style.minWidth, false);
         }
         if (!element.style.maxWidth->Automatic())
         {
-            maxWidth = LayoutManager::EvaluateWidth(element, *element.style.maxWidth, false);
+            maxWidth = GUILayoutManager::EvaluateWidth(element, *element.style.maxWidth, false);
         }
 
         
@@ -1288,7 +1288,7 @@ namespace GTGUI
         return element.GetOuterWidth();
     }
 
-    int LayoutManager::UpdateHeight(Element &element)
+    int GUILayoutManager::UpdateHeight(GUIElement &element)
     {
         // Start with margin and padding before the height because these are prerequisites for height evaluation.
         element.layout.marginTop     = static_cast<unsigned short>(element.style.marginTop->value);
@@ -1297,18 +1297,18 @@ namespace GTGUI
         element.layout.paddingBottom = static_cast<unsigned short>(element.style.paddingBottom->value + element.style.borderBottomWidth->value);
 
 
-        auto newHeight = LayoutManager::EvaluateHeight(element, *element.style.height);
+        auto newHeight = GUILayoutManager::EvaluateHeight(element, *element.style.height);
 
         int minHeight = 0;
         int maxHeight = newHeight;
         
         if (!element.style.minHeight->Automatic())
         {
-            minHeight = LayoutManager::EvaluateHeight(element, *element.style.minHeight, false);
+            minHeight = GUILayoutManager::EvaluateHeight(element, *element.style.minHeight, false);
         }
         if (!element.style.maxHeight->Automatic())
         {
-            maxHeight = LayoutManager::EvaluateHeight(element, *element.style.maxHeight, false);
+            maxHeight = GUILayoutManager::EvaluateHeight(element, *element.style.maxHeight, false);
         }
 
         
@@ -1318,11 +1318,11 @@ namespace GTGUI
         return element.GetOuterHeight();
     }
 
-    int LayoutManager::GetChildrenWidth(const Element &element)
+    int GUILayoutManager::GetChildrenWidth(const GUIElement &element)
     {
         int result = 0;
 
-        if (element.style.childPlane->value == Plane_Horizontal)
+        if (element.style.childPlane->value == GUIPlane_Horizontal)
         {
             for (auto i = element.firstChild; i != nullptr; i = i->nextSibling)
             {
@@ -1363,11 +1363,11 @@ namespace GTGUI
         return result;
     }
 
-    int LayoutManager::GetChildrenHeight(const Element &element)
+    int GUILayoutManager::GetChildrenHeight(const GUIElement &element)
     {
         int result = 0;
 
-        if (element.style.childPlane->value == Plane_Vertical)
+        if (element.style.childPlane->value == GUIPlane_Vertical)
         {
             for (auto i = element.firstChild; i != nullptr; i = i->nextSibling)
             {

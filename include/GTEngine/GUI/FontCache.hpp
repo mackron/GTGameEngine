@@ -16,15 +16,15 @@ namespace GTGUI
     ///
     /// Each loaded font has a reference counter. When the last reference has been unacquired, the font will be
     /// deleted completely.
-    class FontCache
+    class GUIFontCache
     {
     public:
     
         /// Constructor.
-        FontCache(GT::FontServer &fontServer);
+        GUIFontCache(GT::FontServer &fontServer);
         
         /// Destructor.
-        ~FontCache();
+        ~GUIFontCache();
         
         
         /// Acquires the closest matching font based on the given font information.
@@ -121,8 +121,8 @@ namespace GTGUI
 
 
 	private:	// No copying
-		FontCache(const FontCache &);
-		FontCache & operator=(const FontCache &);
+		GUIFontCache(const GUIFontCache &);
+		GUIFontCache & operator=(const GUIFontCache &);
     };
 }
 

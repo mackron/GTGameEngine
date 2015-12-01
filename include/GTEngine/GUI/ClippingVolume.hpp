@@ -10,13 +10,13 @@ namespace GTGUI
     /// Structure that will be used to clip elements against.
     ///
     /// The clipping volume always starts out in the shape of a rectangle.
-    struct ClippingVolume
+    struct GUIClippingVolume
     {
         /// Constructor.
-        ClippingVolume(float left, float top, float right, float bottom);
+        GUIClippingVolume(float left, float top, float right, float bottom);
 
         /// Destructor.
-        ~ClippingVolume();
+        ~GUIClippingVolume();
 
 
         float left;

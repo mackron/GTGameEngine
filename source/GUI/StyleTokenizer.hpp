@@ -18,7 +18,7 @@ namespace GTGUI
     ///
     /// The style tokenizer does not make copies of string. Instead is simple returns pointers to the start and end
     /// of the current token. This way we don't waste time doing memory allocations and copying.
-    class StyleTokenizer
+    class GUIStyleTokenizer
     {
     public:
     
@@ -28,7 +28,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     The null terminator is used as the indicator for the end of the script.
-        StyleTokenizer(const char *script);
+        GUIStyleTokenizer(const char *script);
         
         /// Retrieves the size of the token, including the null terminator.
         ///
@@ -71,8 +71,8 @@ namespace GTGUI
         /// Operator for moving to the next token.
         ///
         /// return *this;
-        StyleTokenizer & operator++();
-        StyleTokenizer   operator++(int) { StyleTokenizer temp(*this); ++(*this); return temp; }
+        GUIStyleTokenizer & operator++();
+        GUIStyleTokenizer   operator++(int) { GUIStyleTokenizer temp(*this); ++(*this); return temp; }
 
         /// Cast operator for checking if there is any other tokens waiting.
         operator bool() const;

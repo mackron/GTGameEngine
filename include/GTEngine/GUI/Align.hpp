@@ -5,13 +5,13 @@
 
 namespace GTGUI
 {
-    enum Align
+    enum GUIAlign
     {
-        Align_Left   = 0,
-        Align_Right  = 1,
-        Align_Top    = 2,
-        Align_Bottom = 3,
-        Align_Center = 4,
+        GUIAlign_Left   = 0,
+        GUIAlign_Right  = 1,
+        GUIAlign_Top    = 2,
+        GUIAlign_Bottom = 3,
+        GUIAlign_Center = 4,
     };
 }
 

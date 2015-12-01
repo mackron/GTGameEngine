@@ -15,7 +15,7 @@ namespace GT
     }
 
 
-    void SubEditorTabEventHandler::OnMouseButtonDown(GTGUI::Element &, int button, int, int)
+    void SubEditorTabEventHandler::OnMouseButtonDown(GTGUI::GUIElement &, int button, int, int)
     {
         if (button == MouseButton_Middle)
         {

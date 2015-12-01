@@ -40,17 +40,17 @@ namespace GTGUI
     static const int OperationMode_Immediate = 1;
     
 
-    struct EventContext
+    struct GUIEventContext
     {
         /// The element to post keyboard events to.
-        Element* keyEventsTarget;
+        GUIElement* keyEventsTarget;
     };
 
     
     /**
     *   \brief  Class representing a server.
     *
-    *   GTGUI follows a Client/Server model. The native application code is the client. The server manages the GUI scripts, styles
+    *   GTGUI follows a Client/GUIServer model. The native application code is the client. The server manages the GUI scripts, styles
     *   and element markup.
     *
     *   An application must create a server before it can start using or building a GUI. The application (client) communicates with the
@@ -64,12 +64,12 @@ namespace GTGUI
     *   application-specific font management.
     *
     *   An application can attach event handlers to the server. Methods on any attached event handler will be called in different
-    *   situations. For example, errors and warnings will be sent through the event handlers. Event handlers are created from the
-    *   ServerEventHandler class.
+    *   situations. For example, errors and warnings will be sent through the event handlers. GUIEvent handlers are created from the
+    *   GUIServerEventHandler class.
     *
     *   Do not inherit from this class. The destructor is non-virtual to promote this.
     */
-    class Server
+    class GUIServer
     {
     public:
     
@@ -77,12 +77,12 @@ namespace GTGUI
         *   \brief  Constructor.
         *   \param  script     [in] A pointer to the script to use for scripting. Can be null, in which case GTGUI will create it's own script object.
         */
-        Server(GT::Script* script, ImageManager* imageManagerIn = nullptr);
+        GUIServer(GT::Script* script, GUIImageManager* imageManagerIn = nullptr);
     
         /**
         *   \brief  Destructor.
         */
-        ~Server();
+        ~GUIServer();
     
         /**
         *   \brief  Determines if the server is initialised.
@@ -111,22 +111,22 @@ namespace GTGUI
         /**
         *   \brief  Sets the event handler.
         */
-        void SetEventHandler(ServerEventHandler &eventHandler);
+        void SetEventHandler(GUIServerEventHandler &eventHandler);
         
         /**
         *   \brief  Retrieves a reference to the event handler.
         */
-        ServerEventHandler & GetEventHandler();
+        GUIServerEventHandler & GetEventHandler();
         
         /**
         *   \brief  Retrieves a reference to the script server.
         */
-        ScriptServer & GetScriptServer();
+        GUIScriptServer & GetScriptServer();
         
         /**
         *   \brief  Retrieves a reference to the style server.
         */
-        StyleServer & GetStyleServer();
+        GUIStyleServer & GetStyleServer();
         
         
         /**
@@ -140,7 +140,7 @@ namespace GTGUI
         *       This function is thread-safe through the use of a global mutex. The mutex is used even across
         *       multiple instantiations. This is because we use a global error handler function for XML (due
         *       to how we handle errors in rapidxml). Without the mutex, thread safety could not be achieved,
-        *       even across seperate instantiations. Typically there will only be a single Server instantiation
+        *       even across seperate instantiations. Typically there will only be a single GUIServer instantiation
         *       for an entire application, so it shouldn't too much of an issue.
         *       \par
         *       If <absDirectory> is null, the current path and additional search directories defined in GTLib will be used
@@ -185,12 +185,12 @@ namespace GTGUI
         ///
         /// @remarks
         ///     Only a single image manager can be attached to a server at a time.
-        void SetImageManager(ImageManager* imageManager);
-        void SetImageManager(ImageManager &imageManager) { this->SetImageManager(&imageManager); }
+        void SetImageManager(GUIImageManager* imageManager);
+        void SetImageManager(GUIImageManager &imageManager) { this->SetImageManager(&imageManager); }
         
         /// Retrieves a pointer to the current image manager.
-              ImageManager* GetImageManager()       { return m_imageManager; }
-        const ImageManager* GetImageManager() const { return m_imageManager; }
+              GUIImageManager* GetImageManager()       { return m_imageManager; }
+        const GUIImageManager* GetImageManager() const { return m_imageManager; }
 
 
         /// Sets the renderer that will receive the rendering operations.
@@ -214,7 +214,7 @@ namespace GTGUI
         /// @param absDirectory [in] The absolute directory to use when resolving URLs and file paths.
         ///
         /// @return The top-most element in the given XML script.
-        Element* CreateElement(const char* xml, const char* absDirectory = nullptr);
+        GUIElement* CreateElement(const char* xml, const char* absDirectory = nullptr);
 
         /// Creates an empty element.
         ///
@@ -222,10 +222,10 @@ namespace GTGUI
         /// @param parentElement [in] A reference to the parent element.
         ///
         /// @return A pointer to the new element.
-        Element* CreateElement(const char* id, Element* parentElement);
-        Element* CreateElement(const char* id, Element &parentElement) { return CreateElement(id, &parentElement); }
-        Element* CreateElement(Element* parentElement);
-        Element* CreateElement(Element &parentElement) { return CreateElement(&parentElement); }
+        GUIElement* CreateElement(const char* id, GUIElement* parentElement);
+        GUIElement* CreateElement(const char* id, GUIElement &parentElement) { return CreateElement(id, &parentElement); }
+        GUIElement* CreateElement(GUIElement* parentElement);
+        GUIElement* CreateElement(GUIElement &parentElement) { return CreateElement(&parentElement); }
 
         /// Deletes an element. This will also remove any references in the scripting environment.
         ///
@@ -235,7 +235,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     This will detach all event handlers.
-        void DeleteElement(Element* elementToDelete, bool deleteChildren = true, bool invalidateParentLayout = true);
+        void DeleteElement(GUIElement* elementToDelete, bool deleteChildren = true, bool invalidateParentLayout = true);
 
 
         /// Retrieves a string that can be used for an anonymous element.
@@ -279,12 +279,12 @@ namespace GTGUI
         *   \remarks
         *       Use idSizeInBytes when \c id can not easily be null terminated, or if you happen to know the length before hand.
         */
-        Element* GetElementByID(const char *id, ptrdiff_t idSizeInBytes = -1) const;
+        GUIElement* GetElementByID(const char *id, ptrdiff_t idSizeInBytes = -1) const;
 
         /// Helper method for retrieving the root element.
         ///
         /// @return A pointer to the root element.
-        Element* GetRootElement() { return this->GetElementByID("_Root"); }
+        GUIElement* GetRootElement() { return this->GetElementByID("_Root"); }
         
 
         /// Steps the GUI by the given delta time, in seconds.
@@ -316,7 +316,7 @@ namespace GTGUI
         ///
         /// @param element [in]  The element whose style will be used to retrieve th font information.
         /// @param fi      [out] A reference to the FontInfo object that will receive the data.
-        void GetFontInfoFromElement(const Element &element, GT::FontInfo &fi) const;
+        void GetFontInfoFromElement(const GUIElement &element, GT::FontInfo &fi) const;
         
         
         /// Acquires a font from the given font info.
@@ -344,7 +344,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     If <absURLOrID> is a path and the image has not yet been loaded, it will be loaded.
-        ImageHandle AcquireImage(const char* absURLOrID);
+        GUIImageHandle AcquireImage(const char* absURLOrID);
 
 
 
@@ -354,96 +354,96 @@ namespace GTGUI
         ///
         /// @remarks
         ///     The returned object must be passed to EndPostingEvents() when the batch of events have been posted.
-        EventContext BeginPostingEvents();
+        GUIEventContext BeginPostingEvents();
 
         /// Marks the end of a bunch of event postings.
         ///
         /// @param eventContext [in] The return value from the corresponding BeginPostingEvents() call.
-        void EndPostingEvents(EventContext eventContext);
+        void EndPostingEvents(GUIEventContext eventContext);
 
 
         /// Applications should call this when the mouse has moved. This will allow GTGUI to send and handle mouse events.
         ///
         /// @param x [in] The x position of the mouse.
         /// @param y [in] The y position of the mouse.
-        void OnMouseMove(EventContext eventContext, int x, int y);
+        void OnMouseMove(GUIEventContext eventContext, int x, int y);
         
         /// Called by applications when the mouse wheel is turned.
         ///
         /// @param delta [in] The mouse wheel delta (how the wheel was turned).
         /// @param x     [in] The x position of the mouse.
         /// @param y     [in] The y position of the mouse.
-        void OnMouseWheel(EventContext eventContext, int delta, int x, int y);
+        void OnMouseWheel(GUIEventContext eventContext, int delta, int x, int y);
         
         /// Called by applications when a mouse button is pressed.
         ///
         /// @param button [in] The index of the button that was pressed.
-        void OnMouseButtonDown(EventContext eventContext, int button);
+        void OnMouseButtonDown(GUIEventContext eventContext, int button);
         
         /// Called by applications when a mouse button is released.
         ///
         /// @param button [in] The index of the button that was released.
-        void OnMouseButtonUp(EventContext eventContext, int button);
+        void OnMouseButtonUp(GUIEventContext eventContext, int button);
         
         /// Called by applications when a mouse button is double-clicked.
         ///
         /// @param button [in] The index of the button that was double-clicked.
-        void OnMouseButtonDoubleClick(EventContext eventContext, int button);
+        void OnMouseButtonDoubleClick(GUIEventContext eventContext, int button);
         
         /// Called by applications when a key is pressed initially pressed.
         ///
         /// @param key [in] The key that was pressed.
-        void OnKeyPressed(EventContext eventContext, GT::Key key);
+        void OnKeyPressed(GUIEventContext eventContext, GT::Key key);
         
         /// Called by applications when a key is down, taking auto-repeat into account.
         ///
         /// @param key [in] The key that was pressed.
-        void OnKeyDown(EventContext eventContext, GT::Key key);
+        void OnKeyDown(GUIEventContext eventContext, GT::Key key);
         
         /// Called when a key is raised.
         ///
         /// @param key [in] The key that was raised.
-        void OnKeyUp(EventContext eventContext, GT::Key key);
+        void OnKeyUp(GUIEventContext eventContext, GT::Key key);
 
 
 
 
         /// Called by the layout manager when an element has changed size.
-        void OnSize(Element* element);
+        void OnSize(GUIElement* element);
 
         /// Called when an element has moved.
-        void OnMove(Element* element);
+        void OnMove(GUIElement* element);
         
         /// Called by GTGUI when an element is shown.
-        void OnShow(Element* element);
-        void OnShow(Element &element) { this->OnShow(&element); }
+        void OnShow(GUIElement* element);
+        void OnShow(GUIElement &element) { this->OnShow(&element); }
         
         /// Called by GTGUI when an element is hidden.
-        void OnHide(Element* element);
-        void OnHide(Element &element) { this->OnHide(&element); }
+        void OnHide(GUIElement* element);
+        void OnHide(GUIElement &element) { this->OnHide(&element); }
 
 
 
         /// Adds an event to the event queue.
         ///
         /// @param e [in] A reference to the event to add to the end of the event queue.
-        void QueueEvent(Event &e);
+        void QueueEvent(GUIEvent &e);
 
 
         /// Gives the given element focus.
-        void FocusElement(Element *element);
+        void FocusElement(GUIElement *element);
 
         /// Causes the element that currently has focus to lose it's focus.
         void BlurFocusedElement();
 
         /// Retrieves a pointer to the element that has the keyboard focus. Returns null if no element has the keyboard focus.
-        Element* GetFocusedElement();
+        GUIElement* GetFocusedElement();
         
         /// Determines whether or not the element can receive focus from a mouse down event.
         ///
         /// @param element [in] A reference to the element to check.
-        bool CanElementReceiveFocusFromMouse(const Element &element) const;
-        bool CanElementReceiveFocusFromMouse(const Element* element) const { if (element != nullptr) return this->CanElementReceiveFocusFromMouse(*element); return false; }
+        bool CanElementReceiveFocusFromMouse(const GUIElement &element) const;
+        bool CanElementReceiveFocusFromMouse(const GUIElement* element) const { if (element != nullptr) return this->CanElementReceiveFocusFromMouse(*element); return false; }
 
 
         /// Brings the given element to the top.
@@ -452,7 +452,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     This will only work on absolute and relative positioned elements.
-        void BringToTop(Element &element);
+        void BringToTop(GUIElement &element);
 
         /// Pushes the given element to the back.
         ///
@@ -460,7 +460,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     This will only work on absolute and relative positioned elements.
-        void PushToBack(Element &element);
+        void PushToBack(GUIElement &element);
 
 
         /**
@@ -493,13 +493,13 @@ namespace GTGUI
         *   \remarks
         *       The <fromMouseInput> argument is required in order to honour the 'transparent-mouse-input' style attribute.
         */
-        Element* GetElementUnderPoint(int x, int y, bool fromMouseInput = false, bool ignoreDragAndDropProxy = false);
+        GUIElement* GetElementUnderPoint(int x, int y, bool fromMouseInput = false, bool ignoreDragAndDropProxy = false);
 
 
 
         /// Retrieves a reference to the caret.
-              Caret & GetCaret()       { return this->caret; }
-        const Caret & GetCaret() const { return this->caret; }
+              GUICaret & GetCaret()       { return this->caret; }
+        const GUICaret & GetCaret() const { return this->caret; }
 
         /**
         *   \brief  Handles every event currently in the event queue, and empties it.
@@ -508,7 +508,7 @@ namespace GTGUI
 
 
         /// Retrieves a reference to the server's garbage collector.
-        GarbageCollector & GetGarbageCollector() { return this->garbageCollector; }
+        GUIGarbageCollector & GetGarbageCollector() { return this->garbageCollector; }
 
 
         /// Invalidates the mouse. This will cause the next call to Step() to validate the mouse, posting the appropriate events.
@@ -539,7 +539,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     Images can be dynamically changed, so it is best not to store the returned pointers.
-        ImageHandle GetRegisteredImage(const char* id);
+        GUIImageHandle GetRegisteredImage(const char* id);
 
 
 
@@ -588,10 +588,10 @@ namespace GTGUI
         ///
         /// @remarks
         ///     If another element is already acting as the proxy, it will be removed as if RemoveCurrentDragAndDropProxyElement() was called.
-        void SetDragAndDropProxyElement(Element &newDragAndDropProxyElement);
+        void SetDragAndDropProxyElement(GUIElement &newDragAndDropProxyElement);
 
         /// Retrieves a pointer to the drag-and-drop proxy element.
-        Element* GetDragAndDropProxyElement();
+        GUIElement* GetDragAndDropProxyElement();
 
         /// Removes the current drag-and-drop proxy element.
         ///
@@ -643,17 +643,17 @@ namespace GTGUI
         /**
         *   \brief  Called when the z-index of the given element has changed.
         */
-        void OnZIndexChanged(Element &element);
+        void OnZIndexChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the width of the given element has changed.
         */
-        void OnWidthChanged(Element &element);
+        void OnWidthChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the height of the given element has changed.
         */
-        void OnHeightChanged(Element &element);
+        void OnHeightChanged(GUIElement &element);
 
         /**
         *   \brief               Called when the padding of the given element has changed.
@@ -662,106 +662,106 @@ namespace GTGUI
         *   \remarks
         *       Padding includes borders.
         */
-        void OnPaddingXChanged(Element &element);
-        void OnPaddingYChanged(Element &element);
+        void OnPaddingXChanged(GUIElement &element);
+        void OnPaddingYChanged(GUIElement &element);
 
         /**
         *   \brief               Called when the margins of the given element has changed.
         *   \param  element [in] A pointer to the element whose margin has changed.
         */
-        void OnMarginsXChanged(Element &element);
-        void OnMarginsYChanged(Element &element);
+        void OnMarginsXChanged(GUIElement &element);
+        void OnMarginsYChanged(GUIElement &element);
 
         /**
         *   \brief               Called when the visibility of the given element has changed.
         *   \param  element [in] A reference to the element whose visibility has just changed
         */
-        void OnVisibilityChanged(Element &element);
+        void OnVisibilityChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the child plane of the given element has changed.
         */
-        void OnChildPlaneChanged(Element &element);
+        void OnChildPlaneChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the horizontal align of the given element has changed.
         */
-        void OnHorizontalAlignChanged(Element &element);
+        void OnHorizontalAlignChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the vertical align of the given element has changed.
         */
-        void OnVerticalAlignChanged(Element &element);
+        void OnVerticalAlignChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the 'positioning' style has changed. This does not refer to the X,Y positioning of the element.
         */
-        void OnPositioningChanged(Element &element);
+        void OnPositioningChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the 'left' style has changed.
         */
-        void OnLeftChanged(Element &element);
+        void OnLeftChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the 'right' style has changed.
         */
-        void OnRightChanged(Element &element);
+        void OnRightChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the 'top' style has changed.
         */
-        void OnTopChanged(Element &element);
+        void OnTopChanged(GUIElement &element);
 
         /**
         *   \brief  Called when the 'bottom' style has changed.
         */
-        void OnBottomChanged(Element &element);
+        void OnBottomChanged(GUIElement &element);
 
         /// Called when the 'inner-offset-x' style attribute has changed.
-        void OnInnerOffsetXChanged(Element &element);
+        void OnInnerOffsetXChanged(GUIElement &element);
 
         /// Called when the 'inner-offset-y' style attribute has changed.
-        void OnInnerOffsetYChanged(Element &element);
+        void OnInnerOffsetYChanged(GUIElement &element);
 
         
         /// Called when the text of an element changes.
         ///
         /// @remarks
         ///     This will not modify the position of the text cursor.
-        void OnTextChanged(Element &element, bool dontPostEvent = false);
+        void OnTextChanged(GUIElement &element, bool dontPostEvent = false);
 
 
         /// Called when a child is attached to the given element.
-        void OnChildAttached(Element &element);
+        void OnChildAttached(GUIElement &element);
 
         /// Called when a child is detached from the given element.
-        void OnChildDetached(Element &element);
+        void OnChildDetached(GUIElement &element);
 
 
         /// Called when the flex-child-width style has changed.
-        void OnFlexWidthChanged(Element &element);
+        void OnFlexWidthChanged(GUIElement &element);
 
         /// Called when the flex-child-height style has changed.
-        void OnFlexHeightChanged(Element &element);
+        void OnFlexHeightChanged(GUIElement &element);
 
 
 
     // Methods below are event handlers.
     private:
 
-        void HandleEvent_OnSize(Event &e);
-        void HandleEvent_OnMove(Event &e);
-        void HandleEvent_OnMouseMove(Event &e);
-        void HandleEvent_OnMouseWheel(Event &e);
-        void HandleEvent_OnMouseButtonDown(Event &e);
-        void HandleEvent_OnMouseButtonUp(Event &e);
-        void HandleEvent_OnMouseButtonDoubleClick(Event &e);
-        void HandleEvent_OnLMBDown(Event &e);
-        void HandleEvent_OnLMBUp(Event &e);
-        void HandleEvent_OnKeyPressed(Event &e);
-        void HandleEvent_OnKeyDown(Event &e);
-        void HandleEvent_OnKeyUp(Event &e);
+        void HandleEvent_OnSize(GUIEvent &e);
+        void HandleEvent_OnMove(GUIEvent &e);
+        void HandleEvent_OnMouseMove(GUIEvent &e);
+        void HandleEvent_OnMouseWheel(GUIEvent &e);
+        void HandleEvent_OnMouseButtonDown(GUIEvent &e);
+        void HandleEvent_OnMouseButtonUp(GUIEvent &e);
+        void HandleEvent_OnMouseButtonDoubleClick(GUIEvent &e);
+        void HandleEvent_OnLMBDown(GUIEvent &e);
+        void HandleEvent_OnLMBUp(GUIEvent &e);
+        void HandleEvent_OnKeyPressed(GUIEvent &e);
+        void HandleEvent_OnKeyDown(GUIEvent &e);
+        void HandleEvent_OnKeyUp(GUIEvent &e);
 
 
         /// Marks the beginning of event handling.
@@ -772,7 +772,7 @@ namespace GTGUI
         ///     The increments a counter, whereas EndEventHandling() decrements it. When the counter is at 0, it means events are not currently being handled.
         ///
         /// @see
-        ///     GTGUI::Server::EndEventHandling(), GTGUI::Server::IsHandlingEvent()
+        ///     GTGUI::GUIServer::EndEventHandling(), GTGUI::GUIServer::IsHandlingEvent()
         void BeginEventHandling();
 
         /// Marks the end of event handling.
@@ -781,7 +781,7 @@ namespace GTGUI
         ///     This should be paired with a call to BeginEventHandling().
         ///
         /// @see
-        ///     GTGUI::Server::BeginEventHandling(), GTGUI::Server::IsHandlingEvent()
+        ///     GTGUI::GUIServer::BeginEventHandling(), GTGUI::GUIServer::IsHandlingEvent()
         void EndEventHandling();
 
         /// Determines whether or not an event is being handled.
@@ -809,10 +809,10 @@ namespace GTGUI
         *   \remarks
         *       The ID must be a valid string. If an element with the same ID already exists, null is returned.
         *       \par
-        *       The element is NOT added to the script in this function. It only adds the new C++ Element object to the internal
+        *       The element is NOT added to the script in this function. It only adds the new C++ GUIElement object to the internal
         *       container.
         */
-        Element* CreateNewElement(const char* elementID);
+        GUIElement* CreateNewElement(const char* elementID);
         
         
 
@@ -833,22 +833,22 @@ namespace GTGUI
         /// @remarks
         ///     This method will also append any appropraite children to the end of the z-index list. This needs to be done
         ///     to ensure decendants using the same z-index are always shown above.
-        void AddToZIndexList(Element &element);
+        void AddToZIndexList(GUIElement &element);
 
         /// Removes an element from the internal z-index list.
-        void RemoveFromZIndexList(Element &element);
+        void RemoveFromZIndexList(GUIElement &element);
 
         /// Retrieves a pointer to the list of elements for the given z-index.
-        GT::List<Element*>* GetElementListByZIndex(int zIndex);
+        GT::List<GUIElement*>* GetElementListByZIndex(int zIndex);
 
         /// Retrieves a pointer to the list of elements that the given element is currently in.
-        GT::List<Element*>* FindListContainingElement(Element &element);
+        GT::List<GUIElement*>* FindListContainingElement(GUIElement &element);
 
         /// Helper function for finding the element under the given point. This will run through each element recursively.
         ///
         /// @remarks
         ///     This does not check relative or absolute elements, since that will be done during a different stage.
-        void GetElementUnderPoint(int x, int y, bool fromMouseInput, Element &base, const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, Element * &result);
+        void GetElementUnderPoint(int x, int y, bool fromMouseInput, GUIElement &base, const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, GUIElement * &result);
 
 
         /// Sets the cursor.
@@ -867,10 +867,10 @@ namespace GTGUI
         void PostVisibilityEvents();
 
         /// Marks the given element as needing the OnShow event posted.
-        void MarkElementAsNeedingOnShow(Element &element);
+        void MarkElementAsNeedingOnShow(GUIElement &element);
 
         /// Marks the given element as needing the OnHide event posted.
-        void MarkElementAsNeedingOnHide(Element &element);
+        void MarkElementAsNeedingOnHide(GUIElement &element);
 
 
         /// Posts the OnShowTooltip events.
@@ -888,24 +888,24 @@ namespace GTGUI
         int operationMode;
     
         /// A pointer to the event handler. This will never be null because it will be initialised to the default event handler.
-        ServerEventHandler* eventHandler;
+        GUIServerEventHandler* eventHandler;
     
         /// The script server.
-        ScriptServer scripting;
+        GUIScriptServer scripting;
         
         /// The style server.
-        StyleServer styling;
+        GUIStyleServer styling;
         
         
         /// The markup loader for creating elements from markup scripts.
-        MarkupLoader markupLoader;
+        GUIMarkupLoader markupLoader;
 
 
         /// A pointer to the image manager. This can be null, in which case images and fonts/text will not be supported.
-        ImageManager* m_imageManager;
+        GUIImageManager* m_imageManager;
 
         /// The glyph map manager for use by the font server.
-        FontGlyphMapManager glyphMapManager;
+        GUIFontGlyphMapManager glyphMapManager;
 
 
 
@@ -915,20 +915,20 @@ namespace GTGUI
         
         
         /// A binary search tree containing all of the loaded elements. This is index by the element's ID.
-        ElementTree elements;
+        GUIElementTree elements;
 
         /// The list of absolute positioned elements. These are also in the main 'elements' list.
-        GT::List<Element*> absoluteElements;
+        GT::List<GUIElement*> absoluteElements;
 
 
         /// We need to keep track of all the elements that use the z-index property. We use a map whose key is
         /// the z-index, and value is a pointer to a list of all the elements that are using that z-index. The
         /// only elements that will use the z-index are relative and absolute elements.
-        GT::Map<int, GT::List<Element*>*> elementsUsingZIndex;
+        GT::Map<int, GT::List<GUIElement*>*> elementsUsingZIndex;
 
 
         /// The layout manager.
-        LayoutManager layoutManager;
+        GUILayoutManager layoutManager;
 
 
         /// The timer that will keep track of the time between each step. This is required for the parameterless version of Step(), which
@@ -937,7 +937,7 @@ namespace GTGUI
 
         /// The event queue. Access to this queue is thread-safe. Use PostEvent() to add an event to the queue. This will be emptied at
         /// the beginning of each call to Step().
-        EventQueue eventQueue;
+        GUIEventQueue eventQueue;
 
         /// The lock we'll use to keep access to 'eventQueue' thread-safe.
         GT::Mutex eventLock;
@@ -950,11 +950,11 @@ namespace GTGUI
         GT::FontServer fontServer;
         
         /// The font cache.
-        FontCache fontCache;
+        GUIFontCache fontCache;
 
 
         /// The list of elements that have the mouse over them.
-        GT::List<Element*> hoveredElements;
+        GT::List<GUIElement*> hoveredElements;
 
 
         /// Structure containing proeprties for tooltips.
@@ -974,19 +974,19 @@ namespace GTGUI
         };
 
         /// A map of hover times for elements that are currently hovered.
-        GT::Map<Element*, ElementTooltipProperties> elementTooltipProperties;
+        GT::Map<GUIElement*, ElementTooltipProperties> elementTooltipProperties;
 
         /// The tooltip delay.
         float tooltipDelay;
 
 
         /// The element that is being pushed. Only ever one of these at a time.
-        Element* pushedElement;
+        GUIElement* pushedElement;
         int pushedElementMousePosX;         // Relative to <pushedElement>
         int pushedElementMousePosY;         // Relative to <pushedElement>
 
         /// The element that currently has the keyboard focus (and owns the caret).
-        Element* focusedElement;
+        GUIElement* focusedElement;
         
         /// Whether or not we are dragging the pushed element.
         bool draggingPushedElement;
@@ -1009,10 +1009,10 @@ namespace GTGUI
 
 
         /// The garbage collector.
-        GarbageCollector garbageCollector;
+        GUIGarbageCollector garbageCollector;
 
         /// The caret for this server. There is only ever one of these, and it will be shared across elements.
-        mutable Caret caret;
+        mutable GUICaret caret;
 
         /// Keeps track of whether or not the server is in the middle of stepping. We use this in determining whether or not elements should be deleted immediately
         /// or via the garbage collector. If the server is in the middle of stepping we don't want to deallocate immediately because the element may be used later
@@ -1056,10 +1056,10 @@ namespace GTGUI
 
 
         /// The list of images currently loaded by the server. These are keyed by the file name.
-        GT::Dictionary<ImageHandle> loadedImages;
+        GT::Dictionary<GUIImageHandle> loadedImages;
 
         /// The map of registered images. The key is the ID of the image that is used by styles.
-        GT::Dictionary<ImageHandle> registeredImages;
+        GT::Dictionary<GUIImageHandle> registeredImages;
 
 
         /// An integer representing the detail of the error messages.
@@ -1081,17 +1081,17 @@ namespace GTGUI
 
 
         /// A pointer to the element acting as the drag-and-drop proxy.
-        Element* dragAndDropProxyElement;
+        GUIElement* dragAndDropProxyElement;
 
         /// The offset to apply to the drag-and-drop proxy element when positioning it against the mouse.
         GT::Point<int> dragAndDropProxyElementOffset;
 
 
         /// The list of elements that need to have OnShow events posted.
-        GT::SortedVector<Element*> elementsNeedingOnShow;
+        GT::SortedVector<GUIElement*> elementsNeedingOnShow;
 
         /// The list of elements that need to have OnHide events posted.
-        GT::SortedVector<Element*> elementsNeedingOnHide;
+        GT::SortedVector<GUIElement*> elementsNeedingOnHide;
         
         
         /// A counter for creating unique ID's for anonymous elements.
@@ -1099,12 +1099,12 @@ namespace GTGUI
 
     
     private:    // No copying.
-        Server(const Server &);
-        Server & operator=(const Server &);
+        GUIServer(const GUIServer &);
+        GUIServer & operator=(const GUIServer &);
         
 
     // The script and style servers are closely related, so we will make them friendly.
-    friend class ScriptServer;
+    friend class GUIScriptServer;
     };
 }
 

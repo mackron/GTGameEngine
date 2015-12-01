@@ -10,28 +10,28 @@ namespace GTGUI
     /// Class representing a tree data structure for storing elements.
     ///
     /// The requirements for this structure is fast searching by a string.
-    class ElementTree
+    class GUIElementTree
     {
     public:
     
         /// Constructor.
-        ElementTree();
+        GUIElementTree();
         
         /// Destructor.
-        ~ElementTree();
+        ~GUIElementTree();
         
         
         /// Inserts a style class into the tree.
         ///
         /// @param item [in] A reference to the item to add to the list.
-        void Insert(Element &item);
-        void Insert(Element* item) { assert(item != nullptr); this->Insert(*item); }
+        void Insert(GUIElement &item);
+        void Insert(GUIElement* item) { assert(item != nullptr); this->Insert(*item); }
         
         /// Removes a style class from the tree.
         ///
         /// @param item [in] A reference to the item to remove from the list.
-        void Remove(Element &item);
-        void Remove(Element* item) { assert(item != nullptr); this->Remove(*item); }
+        void Remove(GUIElement &item);
+        void Remove(GUIElement* item) { assert(item != nullptr); this->Remove(*item); }
         
         
         /// Finds the style class by id.
@@ -40,11 +40,11 @@ namespace GTGUI
         /// @param idLengthInTs [in] The length of the id, or -1 if the id is null terminated.
         ///
         /// @return A pointer to the item with the given id, or null if the item does not exist.
-        Element* FindByID(const char* id, ptrdiff_t idLengthInTs = -1) const;
+        GUIElement* FindByID(const char* id, ptrdiff_t idLengthInTs = -1) const;
     
     
         /// Retrieves a pointer to the root item.
-        Element* GetRoot();
+        GUIElement* GetRoot();
         
         
         /// Retrieves the number of items in the tree.
@@ -62,7 +62,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     This method asserts that the left and right children are not null.
-        void RemoveByInOrderSuccessor(Element &item);
+        void RemoveByInOrderSuccessor(GUIElement &item);
 
         /// Performs an in-order predecessor removal of the given node.
         ///
@@ -70,7 +70,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     This method asserts that the left and right children are not null.
-        void RemoveByInOrderPredecessor(Element &item);
+        void RemoveByInOrderPredecessor(GUIElement &item);
         
         /// Replaces the left or right node of the parent of the given node with a new value.
         ///
@@ -79,31 +79,31 @@ namespace GTGUI
         ///
         /// @remarks
         ///     This is used by Remove(). 'item' will be the node being removed.
-        void ReplaceItemInParent(Element &item, Element* replacementItem);
+        void ReplaceItemInParent(GUIElement &item, GUIElement* replacementItem);
 
         /// Finds the in-order predecessor of the given node.
         ///
         /// @param item [in] The style class who's predecessor is being retrieved.
-        Element* FindInOrderPredecessor(Element &item);
+        GUIElement* FindInOrderPredecessor(GUIElement &item);
         
         /// Finds the in-order successor of the given node.
         ///
         /// @param item [in] The style class who's successor is being retrieved.
-        Element* FindInOrderSuccessor(Element &item);
+        GUIElement* FindInOrderSuccessor(GUIElement &item);
     
         
         /// Recursive function for counting the number of items in the tree.
-        size_t GetCount(Element* root) const;
+        size_t GetCount(GUIElement* root) const;
     
 
         /// Verifies the tree for correctness. This is only used for debugging and testing.
         bool Verify() const;
-        bool Verify(Element* root) const;
+        bool Verify(GUIElement* root) const;
     
     private:
         
         /// A pointer to the root item. Starts out as null.
-        Element* m_root;
+        GUIElement* m_root;
 
         /// Whether or not the next removal should be an in-order successor or predecessor type. This is toggled with each removal. The
         /// idea with this system is to try and keep the tree a bit more balanced when removing items. Not sure how well it'll work, though.
@@ -111,8 +111,8 @@ namespace GTGUI
         
         
     private:    // No copying.
-        ElementTree(const ElementTree &);
-        ElementTree & operator=(const ElementTree &);
+        GUIElementTree(const GUIElementTree &);
+        GUIElementTree & operator=(const GUIElementTree &);
     };
 }
 

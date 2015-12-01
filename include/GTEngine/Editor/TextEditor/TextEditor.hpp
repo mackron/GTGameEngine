@@ -39,8 +39,8 @@ namespace GT
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()       { return this->mainElement; }
-        const GTGUI::Element* GetMainElement() const { return this->mainElement; }
+              GTGUI::GUIElement* GetMainElement()       { return this->mainElement; }
+        const GTGUI::GUIElement* GetMainElement() const { return this->mainElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -68,26 +68,26 @@ namespace GT
     private:
 
         /// The main text box element.
-        GTGUI::Element* mainElement;
+        GTGUI::GUIElement* mainElement;
 
         /// The text area element. This is a child of textBox.
-        GTGUI::Element* textArea;
+        GTGUI::GUIElement* textArea;
 
         /// The panel element.
-        GTGUI::Element* panelElement;
+        GTGUI::GUIElement* panelElement;
 
         /// The error list element.
-        GTGUI::Element* errorListElement;
+        GTGUI::GUIElement* errorListElement;
 
 
         /// The event handler attached to the text area.
-        struct TextAreaEventHandler : public GTGUI::ElementEventHandler
+        struct TextAreaEventHandler : public GTGUI::GUIElementEventHandler
         {
             /// Constructor.
             TextAreaEventHandler(TextEditor* ownerTextEditor);
 
-            /// GTGUI::ElementEventHandler::OnTextChanged().
-            void OnTextChanged(GTGUI::Element &element);
+            /// GTGUI::GUIElementEventHandler::OnTextChanged().
+            void OnTextChanged(GTGUI::GUIElement &element);
 
 
             /// A pointer to the text editor that owns the text area.

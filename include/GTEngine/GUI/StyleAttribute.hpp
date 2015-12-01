@@ -21,28 +21,28 @@
 
 namespace GTGUI
 {
-    class StyleClass;
+    class GUIStyleClass;
 
     /// Base class for style attributes.
     template <typename T>
-    struct StyleAttribute
+    struct GUIStyleAttribute
     {
     public:
 
         /// Default constructor.
-        StyleAttribute()
+        GUIStyleAttribute()
             : value(), inherit(false), isset(false)
         {
         }
 
         /// Constructor.
-        StyleAttribute(const T &defaultValue)
+        GUIStyleAttribute(const T &defaultValue)
             : value(defaultValue), inherit(false), isset(false)
         {
         }
 
         /// Destructor.
-        virtual ~StyleAttribute()
+        virtual ~GUIStyleAttribute()
         {
         }
 
@@ -63,17 +63,17 @@ namespace GTGUI
 
 
     // Number
-    struct StyleAttribute_Number : public StyleAttribute<float>
+    struct GUIStyleAttribute_Number : public GUIStyleAttribute<float>
     {
-        StyleAttribute_Number()
-            : StyleAttribute(0.0f), hasSuffix(false), setFromInteger(false), format(StyleNumberFormat_Pixels)
+        GUIStyleAttribute_Number()
+            : GUIStyleAttribute(0.0f), hasSuffix(false), setFromInteger(false), format(GUIStyleNumberFormat_Pixels)
         {
         }
 
-        inline bool Automatic() const { return this->format == StyleNumberFormat_Automatic; }
-        inline bool InPixels()  const { return this->format == StyleNumberFormat_Pixels; }
-        inline bool InPercent() const { return this->format == StyleNumberFormat_Percent; }
-        inline bool InPoints()  const { return this->format == StyleNumberFormat_Points; }
+        inline bool Automatic() const { return this->format == GUIStyleNumberFormat_Automatic; }
+        inline bool InPixels()  const { return this->format == GUIStyleNumberFormat_Pixels; }
+        inline bool InPercent() const { return this->format == GUIStyleNumberFormat_Percent; }
+        inline bool InPoints()  const { return this->format == GUIStyleNumberFormat_Points; }
 
         bool SetFromInteger(int valueIn)
         {
@@ -86,7 +86,7 @@ namespace GTGUI
             this->inherit   = false;
             this->isset     = true;
             this->hasSuffix = false;
-            this->format    = StyleNumberFormat_Pixels;
+            this->format    = GUIStyleNumberFormat_Pixels;
 
             return true;
         }
@@ -95,7 +95,7 @@ namespace GTGUI
         {
             // In the event of an error, we will always set a default value.
             this->value  = 0;
-            this->format = StyleNumberFormat_Pixels;
+            this->format = GUIStyleNumberFormat_Pixels;
 
             // We use this to keep track of whether or not the suffix should be appended to the end of the stringified value.
             this->hasSuffix = true;
@@ -105,7 +105,7 @@ namespace GTGUI
 
             if (GT::Strings::Equal(valueIn, valueSizeInBytes, "auto"))
             {
-                this->format = StyleNumberFormat_Automatic;
+                this->format = GUIStyleNumberFormat_Automatic;
             }
             else
             {
@@ -118,12 +118,12 @@ namespace GTGUI
                 this->value = static_cast<float>(std::strtod(valueStr.c_str(), &end));
                 if (end[0] == '\0')
                 {
-                    this->format = StyleNumberFormat_Pixels;
+                    this->format = GUIStyleNumberFormat_Pixels;
                     this->hasSuffix = false;
                 }
                 else if (end[0] == '%')
                 {
-                    this->format = StyleNumberFormat_Percent;
+                    this->format = GUIStyleNumberFormat_Percent;
                 }
                 else if (end[0] == 'p')
                 {
@@ -133,11 +133,11 @@ namespace GTGUI
                     {
                         if (end[0] == 'x')
                         {
-                            this->format = StyleNumberFormat_Pixels;
+                            this->format = GUIStyleNumberFormat_Pixels;
                         }
                         else if (end[0] == 't')
                         {
-                            this->format = StyleNumberFormat_Points;
+                            this->format = GUIStyleNumberFormat_Points;
                         }
                         else
                         {
@@ -175,7 +175,7 @@ namespace GTGUI
         {
             char valueStr[16];
 
-            if (this->format == StyleNumberFormat_Automatic)
+            if (this->format == GUIStyleNumberFormat_Automatic)
             {
                 return "auto";
             }
@@ -187,25 +187,25 @@ namespace GTGUI
                     {
                         switch (this->format)
                         {
-                        case StyleNumberFormat_Pixels:
+                        case GUIStyleNumberFormat_Pixels:
                             {
                                 GT::IO::snprintf(valueStr, 16, "%dpx", static_cast<int>(this->value));
                                 break;
                             }
 
-                        case StyleNumberFormat_Points:
+                        case GUIStyleNumberFormat_Points:
                             {
                                 GT::IO::snprintf(valueStr, 16, "%dpt", static_cast<int>(this->value));
                                 break;
                             }
 
-                        case StyleNumberFormat_Percent:
+                        case GUIStyleNumberFormat_Percent:
                             {
                                 GT::IO::snprintf(valueStr, 16, "%d%%", static_cast<int>(this->value));
                                 break;
                             }
 
-                        case StyleNumberFormat_Automatic:
+                        case GUIStyleNumberFormat_Automatic:
                         default: break;
                         }
                     }
@@ -220,25 +220,25 @@ namespace GTGUI
                     {
                         switch (this->format)
                         {
-                        case StyleNumberFormat_Pixels:
+                        case GUIStyleNumberFormat_Pixels:
                             {
                                 GT::IO::snprintf(valueStr, 16, "%fpx", this->value);
                                 break;
                             }
 
-                        case StyleNumberFormat_Points:
+                        case GUIStyleNumberFormat_Points:
                             {
                                 GT::IO::snprintf(valueStr, 16, "%fpt", this->value);
                                 break;
                             }
 
-                        case StyleNumberFormat_Percent:
+                        case GUIStyleNumberFormat_Percent:
                             {
                                 GT::IO::snprintf(valueStr, 16, "%f%%", this->value);
                                 break;
                             }
 
-                        case StyleNumberFormat_Automatic:
+                        case GUIStyleNumberFormat_Automatic:
                         default: break;
                         }
                     }
@@ -253,13 +253,13 @@ namespace GTGUI
         }
 
 
-        StyleAttribute_Number & operator= (const char* valueIn)
+        GUIStyleAttribute_Number & operator= (const char* valueIn)
         {
             this->SetFromString(valueIn);
             return *this;
         }
 
-        StyleAttribute_Number & operator= (int valueIn)
+        GUIStyleAttribute_Number & operator= (int valueIn)
         {
             this->SetFromInteger(valueIn);
             return *this;
@@ -276,15 +276,15 @@ namespace GTGUI
         bool setFromInteger;
 
         /// The format of the number - pixels, percent, etc.
-        StyleNumberFormat format;
+        GUIStyleNumberFormat format;
     };
 
 
     // GT::String
-    struct StyleAttribute_String : public StyleAttribute<GT::String>
+    struct GUIStyleAttribute_String : public GUIStyleAttribute<GT::String>
     {
-        StyleAttribute_String()
-            : StyleAttribute()
+        GUIStyleAttribute_String()
+            : GUIStyleAttribute()
         {
         }
 
@@ -310,10 +310,10 @@ namespace GTGUI
 
 
     // Boolean
-    struct StyleAttribute_Boolean : public StyleAttribute<bool>
+    struct GUIStyleAttribute_Boolean : public GUIStyleAttribute<bool>
     {
-        StyleAttribute_Boolean()
-            : StyleAttribute(false)
+        GUIStyleAttribute_Boolean()
+            : GUIStyleAttribute(false)
         {
         }
 
@@ -348,10 +348,10 @@ namespace GTGUI
 
 
     // Color
-    struct StyleAttribute_Colour : public StyleAttribute<GT::Colour>
+    struct GUIStyleAttribute_Colour : public GUIStyleAttribute<GT::Colour>
     {
-        StyleAttribute_Colour()
-            : StyleAttribute(GT::Colour::TransparentBlack), isnone(true)
+        GUIStyleAttribute_Colour()
+            : GUIStyleAttribute(GT::Colour::TransparentBlack), isnone(true)
         {
         }
 
@@ -383,7 +383,7 @@ namespace GTGUI
             return valueStr;
         }
 
-        StyleAttribute_Colour & operator= (const GT::Colour &valueIn)
+        GUIStyleAttribute_Colour & operator= (const GT::Colour &valueIn)
         {
             this->value = valueIn;
             this->isset = true;
@@ -399,10 +399,10 @@ namespace GTGUI
 
 
     // Positioning
-    struct StyleAttribute_Positioning : public StyleAttribute<Positioning>
+    struct GUIStyleAttribute_Positioning : public GUIStyleAttribute<GUIPositioning>
     {
-        StyleAttribute_Positioning()
-            : StyleAttribute(Positioning_Auto)
+        GUIStyleAttribute_Positioning()
+            : GUIStyleAttribute(GUIPositioning_Auto)
         {
         }
 
@@ -410,36 +410,36 @@ namespace GTGUI
         {
             if (GT::Strings::Equal(valueIn, valueSizeInBytes, "relative"))
             {
-                this->value = GTGUI::Positioning_Relative;
+                this->value = GTGUI::GUIPositioning_Relative;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "absolute"))
             {
-                this->value = GTGUI::Positioning_Absolute;
+                this->value = GTGUI::GUIPositioning_Absolute;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "auto"))
             {
-                this->value = GTGUI::Positioning_Auto;
+                this->value = GTGUI::GUIPositioning_Auto;
                 this->isset = true;
                 return true;
             }
             else    // 'auto' by default.
             {
-                this->value = GTGUI::Positioning_Auto;
+                this->value = GTGUI::GUIPositioning_Auto;
                 return false;
             }
         }
 
         const char* GetValueAsString() const
         {
-            if (this->value == GTGUI::Positioning_Relative)
+            if (this->value == GTGUI::GUIPositioning_Relative)
             {
                 return "relative";
             }
-            else if (this->value == GTGUI::Positioning_Absolute)
+            else if (this->value == GTGUI::GUIPositioning_Absolute)
             {
                 return "absolute";
             }
@@ -452,10 +452,10 @@ namespace GTGUI
 
 
     // Plane
-    struct StyleAttribute_Plane : public StyleAttribute<Plane>
+    struct GUIStyleAttribute_Plane : public GUIStyleAttribute<GUIPlane>
     {
-        StyleAttribute_Plane()
-            : StyleAttribute(Plane_Vertical)
+        GUIStyleAttribute_Plane()
+            : GUIStyleAttribute(GUIPlane_Vertical)
         {
         }
 
@@ -463,26 +463,26 @@ namespace GTGUI
         {
             if (GT::Strings::Equal(valueIn, valueSizeInBytes, "horizontal"))
             {
-                this->value = Plane_Horizontal;
+                this->value = GUIPlane_Horizontal;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "vertical"))
             {
-                this->value = Plane_Vertical;
+                this->value = GUIPlane_Vertical;
                 this->isset = true;
                 return true;
             }
             else    // 'vertical' by default.
             {
-                this->value = Plane_Vertical;
+                this->value = GUIPlane_Vertical;
                 return false;
             }
         }
 
         const char* GetValueAsString() const
         {
-            if (this->value == Plane_Horizontal)
+            if (this->value == GUIPlane_Horizontal)
             {
                 return "horizontal";
             }
@@ -495,10 +495,10 @@ namespace GTGUI
 
 
     // Align
-    struct StyleAttribute_Align : public StyleAttribute<Align>
+    struct GUIStyleAttribute_Align : public GUIStyleAttribute<GUIAlign>
     {
-        StyleAttribute_Align()
-            : StyleAttribute(Align_Center)  // <-- 'center' is used here since it can be used both horizontally and vertically.
+        GUIStyleAttribute_Align()
+            : GUIStyleAttribute(GUIAlign_Center)  // <-- 'center' is used here since it can be used both horizontally and vertically.
         {
         }
 
@@ -506,60 +506,60 @@ namespace GTGUI
         {
             if (GT::Strings::Equal(valueIn, valueSizeInBytes, "left"))
             {
-                this->value = Align_Left;
+                this->value = GUIAlign_Left;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "right"))
             {
-                this->value = Align_Right;
+                this->value = GUIAlign_Right;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "center"))
             {
-                this->value = Align_Center;
+                this->value = GUIAlign_Center;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "top"))
             {
-                this->value = Align_Top;
+                this->value = GUIAlign_Top;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "bottom"))
             {
-                this->value = Align_Bottom;
+                this->value = GUIAlign_Bottom;
                 this->isset = true;
                 return true;
             }
             else
             {
-                this->value = Align_Center;
+                this->value = GUIAlign_Center;
                 return false;
             }
         }
 
         const char* GetValueAsString() const
         {
-            if (this->value == Align_Left)
+            if (this->value == GUIAlign_Left)
             {
                 return "left";
             }
-            else if (this->value == Align_Right)
+            else if (this->value == GUIAlign_Right)
             {
                 return "right";
             }
-            else if (this->value == Align_Center)
+            else if (this->value == GUIAlign_Center)
             {
                 return "center";
             }
-            else if (this->value == Align_Top)
+            else if (this->value == GUIAlign_Top)
             {
                 return "top";
             }
-            else if (this->value == Align_Bottom)
+            else if (this->value == GUIAlign_Bottom)
             {
                 return "bottom";
             }
@@ -581,10 +581,10 @@ namespace GTGUI
     };
 
     // PositionOrigin
-    struct StyleAttribute_PositionOrigin : public StyleAttribute<PositionOrigin>
+    struct GUIStyleAttribute_PositionOrigin : public GUIStyleAttribute<PositionOrigin>
     {
-        StyleAttribute_PositionOrigin()
-            : StyleAttribute(PositionOrigin_Inner)
+        GUIStyleAttribute_PositionOrigin()
+            : GUIStyleAttribute(PositionOrigin_Inner)
         {
         }
 
@@ -633,11 +633,11 @@ namespace GTGUI
     };
     
     
-    // FontWeight
-    struct StyleAttribute_FontWeight : public StyleAttribute<FontWeight>
+    // GUIFontWeight
+    struct GUIStyleAttribute_FontWeight : public GUIStyleAttribute<GUIFontWeight>
     {
-        StyleAttribute_FontWeight()
-            : StyleAttribute(FontWeight_Default)
+        GUIStyleAttribute_FontWeight()
+            : GUIStyleAttribute(GUIFontWeight_Default)
         {
         }
 
@@ -646,13 +646,13 @@ namespace GTGUI
             // We want to order this by most common in an attempt to avoid as many false string comparisons as we can.
             if (GT::Strings::Equal(valueIn, valueSizeInBytes, "default"))
             {
-                this->value = FontWeight_Default;
+                this->value = GUIFontWeight_Default;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "bold"))
             {
-                this->value = FontWeight_Bold;
+                this->value = GUIFontWeight_Bold;
                 this->isset = true;
                 return true;
             }
@@ -661,49 +661,49 @@ namespace GTGUI
                 // These are the not-as-common styles. We'll just organize these by weight.
                 if (GT::Strings::Equal(valueIn, valueSizeInBytes, "thin"))
                 {
-                    this->value = FontWeight_Thin;
+                    this->value = GUIFontWeight_Thin;
                     this->isset = true;
                     return true;
                 }
                 else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "extra-light"))
                 {
-                    this->value = FontWeight_ExtraLight;
+                    this->value = GUIFontWeight_ExtraLight;
                     this->isset = true;
                     return true;
                 }
                 else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "light"))
                 {
-                    this->value = FontWeight_Light;
+                    this->value = GUIFontWeight_Light;
                     this->isset = true;
                     return true;
                 }
                 else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "medium"))
                 {
-                    this->value = FontWeight_Medium;
+                    this->value = GUIFontWeight_Medium;
                     this->isset = true;
                     return true;
                 }
                 else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "semi-bold"))
                 {
-                    this->value = FontWeight_SemiBold;
+                    this->value = GUIFontWeight_SemiBold;
                     this->isset = true;
                     return true;
                 }
                 else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "extra-bold"))
                 {
-                    this->value = FontWeight_ExtraBold;
+                    this->value = GUIFontWeight_ExtraBold;
                     this->isset = true;
                     return true;
                 }
                 else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "heavy"))
                 {
-                    this->value = FontWeight_Heavy;
+                    this->value = GUIFontWeight_Heavy;
                     this->isset = true;
                     return true;
                 }
                 else    // 'default' by default.
                 {
-                    this->value = FontWeight_Default;
+                    this->value = GUIFontWeight_Default;
                     return false;
                 }
             }
@@ -713,47 +713,47 @@ namespace GTGUI
         {
             switch (this->value)
             {
-            case FontWeight_Thin:
+            case GUIFontWeight_Thin:
                 {
                     return "thin";
                 }
                 
-            case FontWeight_ExtraLight:
+            case GUIFontWeight_ExtraLight:
                 {
                     return "extra-light";
                 }
                 
-            case FontWeight_Light:
+            case GUIFontWeight_Light:
                 {
                     return "light";
                 }
                 
-            case FontWeight_Default:
+            case GUIFontWeight_Default:
                 {
                     return "default";
                 }
                 
-            case FontWeight_Medium:
+            case GUIFontWeight_Medium:
                 {
                     return "medium";
                 }
                 
-            case FontWeight_SemiBold:
+            case GUIFontWeight_SemiBold:
                 {
                     return "semi-bold";
                 }
                 
-            case FontWeight_Bold:
+            case GUIFontWeight_Bold:
                 {
                     return "bold";
                 }
                 
-            case FontWeight_ExtraBold:
+            case GUIFontWeight_ExtraBold:
                 {
                     return "extra-bold";
                 }
                 
-            case FontWeight_Heavy:
+            case GUIFontWeight_Heavy:
                 {
                     return "heavy";
                 }
@@ -768,11 +768,11 @@ namespace GTGUI
     };
     
     
-    // FontSlant
-    struct StyleAttribute_FontSlant : public StyleAttribute<FontSlant>
+    // GUIFontSlant
+    struct GUIStyleAttribute_FontSlant : public GUIStyleAttribute<GUIFontSlant>
     {
-        StyleAttribute_FontSlant()
-            : StyleAttribute(FontSlant_Default)
+        GUIStyleAttribute_FontSlant()
+            : GUIStyleAttribute(GUIFontSlant_Default)
         {
         }
 
@@ -780,26 +780,26 @@ namespace GTGUI
         {
             if (GT::Strings::Equal(valueIn, valueSizeInBytes, "default"))
             {
-                this->value = FontSlant_Default;
+                this->value = GUIFontSlant_Default;
                 this->isset = true;
                 return true;
             }
             else if (GT::Strings::Equal(valueIn, valueSizeInBytes, "italic"))
             {
-                this->value = FontSlant_Italic;
+                this->value = GUIFontSlant_Italic;
                 this->isset = true;
                 return true;
             }
             else    // 'default' by default.
             {
-                this->value = FontSlant_Default;
+                this->value = GUIFontSlant_Default;
                 return false;
             }
         }
 
         const char* GetValueAsString() const
         {
-            if (this->value == FontSlant_Italic)
+            if (this->value == GUIFontSlant_Italic)
             {
                 return "italic";
             }
@@ -812,14 +812,14 @@ namespace GTGUI
 
 
     // This is a special style attribute type for modifier classes (pushed, hovered, etc).
-    struct StyleAttribute_StyleClass
+    struct GUIStyleAttribute_StyleClass
     {
-        StyleAttribute_StyleClass()
+        GUIStyleAttribute_StyleClass()
             : isset(false), value(nullptr)
         {
         }
 
-        StyleAttribute_StyleClass & operator=(StyleClass* valueIn)
+        GUIStyleAttribute_StyleClass & operator=(GUIStyleClass* valueIn)
         {
             this->value = valueIn;
             this->isset = true;
@@ -830,7 +830,7 @@ namespace GTGUI
     public:
 
         bool        isset;
-        StyleClass* value;
+        GUIStyleClass* value;
     };
 }
 

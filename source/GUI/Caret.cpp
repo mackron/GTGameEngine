@@ -5,18 +5,18 @@
 
 namespace GTGUI
 {
-    Caret::Caret()
+    GUICaret::GUICaret()
         : owner(nullptr), xPos(0), yPos(0), width(1), height(20), blinkInterval(0.5), blinkTime(0.0), isOn(true),
           isRenderingDataValid(false), mesh(nullptr)
     {
     }
 
-    Caret::~Caret()
+    GUICaret::~GUICaret()
     {
         delete this->mesh;
     }
 
-    void Caret::Show(Element *ownerIn)
+    void GUICaret::Show(GUIElement *ownerIn)
     {
         if (this->owner != ownerIn)
         {
@@ -25,7 +25,7 @@ namespace GTGUI
         }
     }
     
-    void Caret::Hide()
+    void GUICaret::Hide()
     {
         if (this->owner != nullptr)
         {
@@ -34,7 +34,7 @@ namespace GTGUI
         }
     }
 
-    void Caret::GetPosition(int &x, int &y)
+    void GUICaret::GetPosition(int &x, int &y)
     {
         if (this->owner != nullptr)
         {
@@ -43,7 +43,7 @@ namespace GTGUI
         }
     }
     
-    void Caret::SetPosition(int x, int y)
+    void GUICaret::SetPosition(int x, int y)
     {
         if (this->owner != nullptr)
         {
@@ -58,7 +58,7 @@ namespace GTGUI
         }
     }
 
-    void Caret::GetSize(unsigned int &widthOut, unsigned int &heightOut)
+    void GUICaret::GetSize(unsigned int &widthOut, unsigned int &heightOut)
     {
         if (this->owner != nullptr)
         {
@@ -67,7 +67,7 @@ namespace GTGUI
         }
     }
 
-    void Caret::SetSize(unsigned int widthIn, unsigned int heightIn)
+    void GUICaret::SetSize(unsigned int widthIn, unsigned int heightIn)
     {
         if (this->owner != nullptr)
         {
@@ -78,7 +78,7 @@ namespace GTGUI
         }
     }
     
-    void Caret::SetBlinkInterval(double blinkIntervalSeconds)
+    void GUICaret::SetBlinkInterval(double blinkIntervalSeconds)
     {
         if (this->owner != nullptr)
         {
@@ -86,13 +86,13 @@ namespace GTGUI
         }
     }
 
-    bool Caret::IsVisible() const
+    bool GUICaret::IsVisible() const
     {
         return this->owner != nullptr && this->isOn;
     }
 
 
-    void Caret::ValidateRenderingData()
+    void GUICaret::ValidateRenderingData()
     {
         if (!this->isRenderingDataValid && this->owner != nullptr)
         {
@@ -148,13 +148,13 @@ namespace GTGUI
         }
     }
 
-    void Caret::InvalidateRenderingData()
+    void GUICaret::InvalidateRenderingData()
     {
         this->isRenderingDataValid = false;
     }
     
 
-    void Caret::Update(double dt)
+    void GUICaret::Update(double dt)
     {
         if (this->owner != nullptr)
         {

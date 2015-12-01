@@ -4,12 +4,12 @@
 
 namespace GTGUI
 {
-    ElementTree::ElementTree()
+    GUIElementTree::GUIElementTree()
         : m_root(nullptr), m_removeBySuccessor(false)
     {
     }
     
-    ElementTree::~ElementTree()
+    GUIElementTree::~GUIElementTree()
     {
         while (m_root != nullptr)
         {
@@ -18,7 +18,7 @@ namespace GTGUI
     }
     
     
-    void ElementTree::Insert(Element &item)
+    void GUIElementTree::Insert(GUIElement &item)
     {
         // The style class should not already be in the list. If it exists, it's a higher level error.
         assert(item.bst.left   == nullptr);
@@ -73,7 +73,7 @@ namespace GTGUI
     }
     
     
-    void ElementTree::Remove(Element &item)
+    void GUIElementTree::Remove(GUIElement &item)
     {
         if (item.bst.left != nullptr && item.bst.right != nullptr)
         {
@@ -108,7 +108,7 @@ namespace GTGUI
     }
     
     
-    Element* ElementTree::FindByID(const char* id, ptrdiff_t idLengthInTs) const
+    GUIElement* GUIElementTree::FindByID(const char* id, ptrdiff_t idLengthInTs) const
     {
         uint32_t hashedID = GT::Hash(id, idLengthInTs);
         
@@ -135,13 +135,13 @@ namespace GTGUI
     }
     
     
-    Element* ElementTree::GetRoot()
+    GUIElement* GUIElementTree::GetRoot()
     {
         return m_root;
     }
     
     
-    size_t ElementTree::GetCount() const
+    size_t GUIElementTree::GetCount() const
     {
         return this->GetCount(m_root);
     }
@@ -151,7 +151,7 @@ namespace GTGUI
     /////////////////////////////////////////////////
     // Private
 
-    void ElementTree::RemoveByInOrderSuccessor(Element &item)
+    void GUIElementTree::RemoveByInOrderSuccessor(GUIElement &item)
     {
         assert(item.bst.left != nullptr && item.bst.right != nullptr);
 
@@ -245,7 +245,7 @@ namespace GTGUI
         }
     }
 
-    void ElementTree::RemoveByInOrderPredecessor(Element &item)
+    void GUIElementTree::RemoveByInOrderPredecessor(GUIElement &item)
     {
         assert(item.bst.left != nullptr && item.bst.right != nullptr);
 
@@ -340,7 +340,7 @@ namespace GTGUI
     }
 
     
-    void ElementTree::ReplaceItemInParent(Element &item, Element* replacementElement)
+    void GUIElementTree::ReplaceItemInParent(GUIElement &item, GUIElement* replacementElement)
     {
         if (item.bst.parent != nullptr)
         {
@@ -368,7 +368,7 @@ namespace GTGUI
     }
 
     
-    Element* ElementTree::FindInOrderPredecessor(Element &item)
+    GUIElement* GUIElementTree::FindInOrderPredecessor(GUIElement &item)
     {
         auto result = &item;
         while (result->bst.right != nullptr)
@@ -379,7 +379,7 @@ namespace GTGUI
         return result;
     }
 
-    Element* ElementTree::FindInOrderSuccessor(Element &item)
+    GUIElement* GUIElementTree::FindInOrderSuccessor(GUIElement &item)
     {
         auto result = &item;
         while (result->bst.left != nullptr)
@@ -391,7 +391,7 @@ namespace GTGUI
     }
     
     
-    size_t ElementTree::GetCount(Element* root) const
+    size_t GUIElementTree::GetCount(GUIElement* root) const
     {
         if (root != nullptr)
         {
@@ -402,12 +402,12 @@ namespace GTGUI
     }
 
 
-    bool ElementTree::Verify() const
+    bool GUIElementTree::Verify() const
     {
         return this->Verify(m_root);
     }
 
-    bool ElementTree::Verify(Element* root) const
+    bool GUIElementTree::Verify(GUIElement* root) const
     {
         if (root != nullptr)
         {

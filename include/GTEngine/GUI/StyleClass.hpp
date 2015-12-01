@@ -14,46 +14,46 @@
 
 namespace GTGUI
 {
-    class StyleStack;
-    class StyleServer;
+    class GUIStyleStack;
+    class GUIStyleServer;
 
-    // !!! Be careful here. These values are used as indices into arrays (except StyleClassType_Normal). !!!
-    enum StyleClassType : int
+    // !!! Be careful here. These values are used as indices into arrays (except GUIStyleClassType_Normal). !!!
+    enum GUIStyleClassType : int
     {
-        StyleClassType_None   = -2,
-        StyleClassType_Normal = -1,
+        GUIStyleClassType_None   = -2,
+        GUIStyleClassType_Normal = -1,
 
-        StyleClassType_Hovered = 0,
-        StyleClassType_Pushed,
-        StyleClassType_Focused,
-        StyleClassType_Disabled,
+        GUIStyleClassType_Hovered = 0,
+        GUIStyleClassType_Pushed,
+        GUIStyleClassType_Focused,
+        GUIStyleClassType_Disabled,
 
-        StyleClassType_End,
+        GUIStyleClassType_End,
     };
 
     /// The number of modifier class types.
-    static const int StyleClassTypeCount = static_cast<int>(StyleClassType_End);
+    static const int StyleClassTypeCount = static_cast<int>(GUIStyleClassType_End);
 
     
-    /// Converts a string to a style class type. Returns StyleClassType_None if the string can not be converted.
-    StyleClassType ToStyleClassType(const char *name, ptrdiff_t nameSizeInBytes = -1);
+    /// Converts a string to a style class type. Returns GUIStyleClassType_None if the string can not be converted.
+    GUIStyleClassType ToStyleClassType(const char *name, ptrdiff_t nameSizeInBytes = -1);
 
 
     
     // Class representing a style class attached to an element.
-    class StyleClass
+    class GUIStyleClass
     {
     public:
     
         /**
         *   \brief  Constructor.
         */
-        StyleClass(StyleServer &server, const char* name, ptrdiff_t nameSizeInTs = -1);
+        GUIStyleClass(GUIStyleServer &server, const char* name, ptrdiff_t nameSizeInTs = -1);
         
         /**
         *   \brief  Destructor for deallocating style attribute values.
         */
-        ~StyleClass();
+        ~GUIStyleClass();
         
 
         /**
@@ -88,35 +88,35 @@ namespace GTGUI
         /**
         *   \brief  Sets the value of a modifier style class.
         */
-        void SetModifierClass(StyleClass &modifier);
+        void SetModifierClass(GUIStyleClass &modifier);
 
         /**
         *   \brief  Unsets a modifier style class attribute.
         */
-        void UnsetModifierClass(StyleClassType modifierType);
+        void UnsetModifierClass(GUIStyleClassType modifierType);
 
         /**
         *   \brief  Retrieves the modifier style class.
         */
-        StyleClass* GetModifierClass(StyleClassType type);
+        GUIStyleClass* GetModifierClass(GUIStyleClassType type);
 
 
         /**
         *   \brief  Retrieves the array of modifier classes.
         */
-        StyleAttribute_StyleClass* GetModifierClassAttributes() { return this->modifiers; }
+        GUIStyleAttribute_StyleClass* GetModifierClassAttributes() { return this->modifiers; }
 
         
     public:
 
         /// The style server that owns this style class.
-        StyleServer &server;
+        GUIStyleServer &server;
     
         // The name of the class.
         char* name;
         
         // The type of this style class.
-        StyleClassType type;
+        GUIStyleClassType type;
 
         // The includes. This is just a string. The classes in this string will be added/removed from an elements style stack when
         // this class is added/removed.
@@ -124,116 +124,116 @@ namespace GTGUI
         
         // We need to store a list of style stacks that have this class in them. This is because
         // we need to notify the stacks when a change is made to the style class.
-        GT::List<StyleStack*> hosts;
+        GT::List<GUIStyleStack*> hosts;
         
         // Size.
-        StyleAttribute_Number  width;
-        StyleAttribute_Number  height;
-        StyleAttribute_Number  minWidth;
-        StyleAttribute_Number  maxWidth;
-        StyleAttribute_Number  minHeight;
-        StyleAttribute_Number  maxHeight;
-        StyleAttribute_String  relativeWidthMode;
-        StyleAttribute_String  relativeHeightMode;
-        StyleAttribute_Boolean flexChildWidth;
-        StyleAttribute_Boolean flexChildHeight;
+        GUIStyleAttribute_Number  width;
+        GUIStyleAttribute_Number  height;
+        GUIStyleAttribute_Number  minWidth;
+        GUIStyleAttribute_Number  maxWidth;
+        GUIStyleAttribute_Number  minHeight;
+        GUIStyleAttribute_Number  maxHeight;
+        GUIStyleAttribute_String  relativeWidthMode;
+        GUIStyleAttribute_String  relativeHeightMode;
+        GUIStyleAttribute_Boolean flexChildWidth;
+        GUIStyleAttribute_Boolean flexChildHeight;
         
         // Background.
-        StyleAttribute_Colour backgroundColour;
-        StyleAttribute_String backgroundImage;
-        StyleAttribute_Colour backgroundImageColour;
-        StyleAttribute_String backgroundAlignX;     // left/center/right
-        StyleAttribute_String backgroundAlignY;     // top/center/bottom
-        StyleAttribute_String backgroundRepeatX;    // none/repeat/stretch
-        StyleAttribute_String backgroundRepeatY;    // none/repeat/stretch
+        GUIStyleAttribute_Colour backgroundColour;
+        GUIStyleAttribute_String backgroundImage;
+        GUIStyleAttribute_Colour backgroundImageColour;
+        GUIStyleAttribute_String backgroundAlignX;     // left/center/right
+        GUIStyleAttribute_String backgroundAlignY;     // top/center/bottom
+        GUIStyleAttribute_String backgroundRepeatX;    // none/repeat/stretch
+        GUIStyleAttribute_String backgroundRepeatY;    // none/repeat/stretch
         
         // Borders.
-        StyleAttribute_Number borderLeftWidth;
-        StyleAttribute_Colour borderLeftColour;
-        StyleAttribute_Number borderRightWidth;
-        StyleAttribute_Colour borderRightColour;
-        StyleAttribute_Number borderTopWidth;
-        StyleAttribute_Colour borderTopColour;
-        StyleAttribute_Number borderBottomWidth;
-        StyleAttribute_Colour borderBottomColour;
+        GUIStyleAttribute_Number borderLeftWidth;
+        GUIStyleAttribute_Colour borderLeftColour;
+        GUIStyleAttribute_Number borderRightWidth;
+        GUIStyleAttribute_Colour borderRightColour;
+        GUIStyleAttribute_Number borderTopWidth;
+        GUIStyleAttribute_Colour borderTopColour;
+        GUIStyleAttribute_Number borderBottomWidth;
+        GUIStyleAttribute_Colour borderBottomColour;
         
         // Padding.
-        StyleAttribute_Number paddingLeft;
-        StyleAttribute_Number paddingRight;
-        StyleAttribute_Number paddingTop;
-        StyleAttribute_Number paddingBottom;
+        GUIStyleAttribute_Number paddingLeft;
+        GUIStyleAttribute_Number paddingRight;
+        GUIStyleAttribute_Number paddingTop;
+        GUIStyleAttribute_Number paddingBottom;
         
         // Margin.
-        StyleAttribute_Number marginLeft;
-        StyleAttribute_Number marginRight;
-        StyleAttribute_Number marginTop;
-        StyleAttribute_Number marginBottom;
+        GUIStyleAttribute_Number marginLeft;
+        GUIStyleAttribute_Number marginRight;
+        GUIStyleAttribute_Number marginTop;
+        GUIStyleAttribute_Number marginBottom;
         
         // Other stuff.
-        StyleAttribute_Plane   childPlane;
-        StyleAttribute_Align   horizontalAlign;
-        StyleAttribute_Align   verticalAlign;
-        StyleAttribute_String  cursor;
-        StyleAttribute_Boolean visible;
-        StyleAttribute_Number  zIndex;
-        StyleAttribute_Boolean transparentMouseInput;
-        StyleAttribute_Boolean enabled;
-        StyleAttribute_Colour  textCursorColour;
-        StyleAttribute_Boolean canReceiveFocusFromMouse;
+        GUIStyleAttribute_Plane   childPlane;
+        GUIStyleAttribute_Align   horizontalAlign;
+        GUIStyleAttribute_Align   verticalAlign;
+        GUIStyleAttribute_String  cursor;
+        GUIStyleAttribute_Boolean visible;
+        GUIStyleAttribute_Number  zIndex;
+        GUIStyleAttribute_Boolean transparentMouseInput;
+        GUIStyleAttribute_Boolean enabled;
+        GUIStyleAttribute_Colour  textCursorColour;
+        GUIStyleAttribute_Boolean canReceiveFocusFromMouse;
         
         // Positioning.
-        StyleAttribute_Positioning    positioning;
-        StyleAttribute_Number         left;
-        StyleAttribute_Number         right;
-        StyleAttribute_Number         top;
-        StyleAttribute_Number         bottom;
-        StyleAttribute_PositionOrigin positionOrigin;
-        StyleAttribute_Number         innerOffsetX;
-        StyleAttribute_Number         innerOffsetY;
+        GUIStyleAttribute_Positioning    positioning;
+        GUIStyleAttribute_Number         left;
+        GUIStyleAttribute_Number         right;
+        GUIStyleAttribute_Number         top;
+        GUIStyleAttribute_Number         bottom;
+        GUIStyleAttribute_PositionOrigin positionOrigin;
+        GUIStyleAttribute_Number         innerOffsetX;
+        GUIStyleAttribute_Number         innerOffsetY;
         
         // Fonts/Text.
-        StyleAttribute_String     fontFamily;
-        StyleAttribute_Number     fontSize;
-        StyleAttribute_FontWeight fontWeight;
-        StyleAttribute_FontSlant  fontSlant;
-        StyleAttribute_Colour     textColour;
-        StyleAttribute_Colour     textSelectionColour;
-        StyleAttribute_Colour     textSelectionBackgroundColour;
-        StyleAttribute_Colour     textSelectionBackgroundColourBlurred;
+        GUIStyleAttribute_String     fontFamily;
+        GUIStyleAttribute_Number     fontSize;
+        GUIStyleAttribute_FontWeight fontWeight;
+        GUIStyleAttribute_FontSlant  fontSlant;
+        GUIStyleAttribute_Colour     textColour;
+        GUIStyleAttribute_Colour     textSelectionColour;
+        GUIStyleAttribute_Colour     textSelectionBackgroundColour;
+        GUIStyleAttribute_Colour     textSelectionBackgroundColourBlurred;
 
         // Text editing.
-        StyleAttribute_Boolean editableText;
-        StyleAttribute_Boolean singleLineText;
+        GUIStyleAttribute_Boolean editableText;
+        GUIStyleAttribute_Boolean singleLineText;
 
         // Opacity/Transparency.
-        StyleAttribute_Number  opacity;
-        StyleAttribute_Boolean compoundOpacity;
+        GUIStyleAttribute_Number  opacity;
+        GUIStyleAttribute_Boolean compoundOpacity;
 
         // Shadows.
-        StyleAttribute_Boolean enableShadow;
-        StyleAttribute_Colour  shadowColour;
-        StyleAttribute_Number  shadowBlurRadius;
-        StyleAttribute_Number  shadowOffsetX;
-        StyleAttribute_Number  shadowOffsetY;
-        StyleAttribute_Number  shadowExtrusionX;
-        StyleAttribute_Number  shadowExtrusionY;
-        StyleAttribute_Number  shadowOpacity;
+        GUIStyleAttribute_Boolean enableShadow;
+        GUIStyleAttribute_Colour  shadowColour;
+        GUIStyleAttribute_Number  shadowBlurRadius;
+        GUIStyleAttribute_Number  shadowOffsetX;
+        GUIStyleAttribute_Number  shadowOffsetY;
+        GUIStyleAttribute_Number  shadowExtrusionX;
+        GUIStyleAttribute_Number  shadowExtrusionY;
+        GUIStyleAttribute_Number  shadowOpacity;
 
         // Dragging/Moving/Resizing.
-        StyleAttribute_Boolean allowMouseDrag;
-        StyleAttribute_Boolean constrainMouseDragX;
-        StyleAttribute_Boolean constrainMouseDragY;
-        StyleAttribute_String  mouseDragClampModeX;
-        StyleAttribute_String  mouseDragClampModeY;
-        StyleAttribute_Boolean allowMouseResize;
-        StyleAttribute_Number  leftGripperWidth;
-        StyleAttribute_Number  rightGripperWidth;
-        StyleAttribute_Number  topGripperWidth;
-        StyleAttribute_Number  bottomGripperWidth;
+        GUIStyleAttribute_Boolean allowMouseDrag;
+        GUIStyleAttribute_Boolean constrainMouseDragX;
+        GUIStyleAttribute_Boolean constrainMouseDragY;
+        GUIStyleAttribute_String  mouseDragClampModeX;
+        GUIStyleAttribute_String  mouseDragClampModeY;
+        GUIStyleAttribute_Boolean allowMouseResize;
+        GUIStyleAttribute_Number  leftGripperWidth;
+        GUIStyleAttribute_Number  rightGripperWidth;
+        GUIStyleAttribute_Number  topGripperWidth;
+        GUIStyleAttribute_Number  bottomGripperWidth;
 
 
-        // Modifier classes. These are indexed by StyleClassType.
-        StyleAttribute_StyleClass modifiers[StyleClassTypeCount];
+        // Modifier classes. These are indexed by GUIStyleClassType.
+        GUIStyleAttribute_StyleClass modifiers[StyleClassTypeCount];
     
         
         // Whether or not 'right' has priority over 'left'.
@@ -244,7 +244,7 @@ namespace GTGUI
         
         
         
-        /// Properties in this structure are used for efficiently storing the style class in a StyleClassTree object.
+        /// Properties in this structure are used for efficiently storing the style class in a GUIStyleClassTree object.
         struct BST
         {
             /// Default constructor.
@@ -258,19 +258,19 @@ namespace GTGUI
             uint32_t hashedName;
             
             /// The left side child in the BST.
-            StyleClass* left;
+            GUIStyleClass* left;
             
             /// The right side child in the BST.
-            StyleClass* right;
+            GUIStyleClass* right;
             
             /// The parent in the BST.
-            StyleClass* parent;
+            GUIStyleClass* parent;
             
         }bst;
         
     private:    // No copying.
-        StyleClass(const StyleClass &);
-        StyleClass & operator=(const StyleClass &);
+        GUIStyleClass(const GUIStyleClass &);
+        GUIStyleClass & operator=(const GUIStyleClass &);
     };
 }
 

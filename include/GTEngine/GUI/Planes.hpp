@@ -5,10 +5,10 @@
 
 namespace GTGUI
 {
-    enum Plane
+    enum GUIPlane
     {
-        Plane_Vertical   = 0,
-        Plane_Horizontal = 1
+        GUIPlane_Vertical   = 0,
+        GUIPlane_Horizontal = 1
     };
 }
 

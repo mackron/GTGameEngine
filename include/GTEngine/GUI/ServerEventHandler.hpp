@@ -12,11 +12,11 @@ namespace GTGUI
     *   \brief  Base class for handling events from the server.
     *
     *   An application will typically inherit from this class and then attach an object of that class
-    *   to a server via the Server::SetEventHandler() method.
+    *   to a server via the GUIServer::SetEventHandler() method.
     *
     *   By default, the event handler will use PostError() for both OnError() and OnWarning().
     */
-    class ServerEventHandler
+    class GUIServerEventHandler
     {
     public:
     
@@ -58,12 +58,12 @@ namespace GTGUI
     public: // Static stuff.
     
         /// The default event handler.
-        static ServerEventHandler Default;
+        static GUIServerEventHandler Default;
         
         
     public:
     
-        virtual ~ServerEventHandler() {}
+        virtual ~GUIServerEventHandler() {}
     };
 }
 

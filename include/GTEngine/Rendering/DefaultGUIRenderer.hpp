@@ -21,16 +21,16 @@ namespace GT
 
 
         /// GTGUI::Renderer::Begin()
-        void Begin(const GTGUI::Server &guiServer);
+        void Begin(const GTGUI::GUIServer &guiServer);
 
         /// GTGUI::Renderer::End()
         void End();
 
         /// GTGUI::Renderer::BeginElementOnDrawEvent()
-        void BeginElementOnDrawEvent(GTGUI::Element &element);
+        void BeginElementOnDrawEvent(GTGUI::GUIElement &element);
 
         /// GTUI::Renderer::EndElementOnDrawEvent()
-        void EndElementOnDrawEvent(GTGUI::Element &element);
+        void EndElementOnDrawEvent(GTGUI::GUIElement &element);
 
         /// GTGUI::Renderer::SetScissor()
         void SetScissor(int x, int y, unsigned int width, unsigned int height);
@@ -39,7 +39,7 @@ namespace GT
         virtual void SetOffset(float offsetX, float offsetY);
 
         /// GTGUI::Renderer::SetTexture()
-        virtual void SetTexture(GTGUI::ImageHandle image);
+        virtual void SetTexture(GTGUI::GUIImageHandle image);
 
         /// GTGUI::Renderer::EnableBlending()
         virtual void EnableBlending();

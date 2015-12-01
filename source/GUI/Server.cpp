@@ -10,12 +10,12 @@
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
-// Server
+// GUIServer
 namespace GTGUI
 {
-    Server::Server(GT::Script* script, ImageManager* imageManagerIn)
+    GUIServer::GUIServer(GT::Script* script, GUIImageManager* imageManagerIn)
         : operationMode(OperationMode_Delayed),
-          eventHandler(&ServerEventHandler::Default), scripting(*this, script), styling(*this),
+          eventHandler(&GUIServerEventHandler::Default), scripting(*this, script), styling(*this),
           markupLoader(*this),
           m_imageManager(imageManagerIn), glyphMapManager(*this),
           m_renderer(nullptr),
@@ -60,7 +60,7 @@ namespace GTGUI
         this->LoadStandardLibrary();
     }
 
-    Server::~Server()
+    GUIServer::~GUIServer()
     {
         // We will collect garbage early on.
         this->garbageCollector.Collect(true);
@@ -96,68 +96,68 @@ namespace GTGUI
         }
     }
 
-    bool Server::IsInitialised() const
+    bool GUIServer::IsInitialised() const
     {
         return true;
     }
 
 
-    void Server::SetOperationMode(int mode)
+    void GUIServer::SetOperationMode(int mode)
     {
         assert(mode == OperationMode_Delayed || mode == OperationMode_Immediate);
 
         this->operationMode = mode;
     }
 
-    int Server::GetOperationMode() const
+    int GUIServer::GetOperationMode() const
     {
         return this->operationMode;
     }
 
 
-    void Server::SetEventHandler(ServerEventHandler &eventHandlerIn)
+    void GUIServer::SetEventHandler(GUIServerEventHandler &eventHandlerIn)
     {
         this->eventHandler = &eventHandlerIn;
     }
 
-    ServerEventHandler & Server::GetEventHandler()
+    GUIServerEventHandler & GUIServer::GetEventHandler()
     {
         return *this->eventHandler;
     }
 
-    ScriptServer & Server::GetScriptServer()
+    GUIScriptServer & GUIServer::GetScriptServer()
     {
         return this->scripting;
     }
 
-    StyleServer & Server::GetStyleServer()
+    GUIStyleServer & GUIServer::GetStyleServer()
     {
         return this->styling;
     }
 
-    bool Server::Load(const char* xml, const char* absDirectory, GT::String &topID)
+    bool GUIServer::Load(const char* xml, const char* absDirectory, GT::String &topID)
     {
         return this->markupLoader.Load(xml, absDirectory, topID);
     }
 
-    bool Server::Load(const char* xml, const char* absDirectory)
+    bool GUIServer::Load(const char* xml, const char* absDirectory)
     {
         GT::String devnull;
         return this->Load(xml, absDirectory, devnull);
     }
 
-    bool Server::Load(const char* xml, GT::String &topID)
+    bool GUIServer::Load(const char* xml, GT::String &topID)
     {
         return this->Load(xml, nullptr, topID);
     }
 
 
-    bool Server::LoadFromFile(const char* filename)
+    bool GUIServer::LoadFromFile(const char* filename)
     {
         return this->markupLoader.LoadFile(filename);
     }
 
-    bool Server::IsFileLoaded(const char* filename)
+    bool GUIServer::IsFileLoaded(const char* filename)
     {
         // We need to check with the absolute path.
         char absolutePath[EASYVFS_MAX_PATH];
@@ -170,31 +170,31 @@ namespace GTGUI
     }
 
 
-    bool Server::ExecuteScript(const char* script, int returnValueCount)
+    bool GUIServer::ExecuteScript(const char* script, int returnValueCount)
     {
         return this->scripting.Execute(script, returnValueCount);
     }
 
-    bool Server::ExecuteStyleScript(const char* script, const char* baseURLPath)
+    bool GUIServer::ExecuteStyleScript(const char* script, const char* baseURLPath)
     {
         return this->styling.Load(script, baseURLPath);
     }
 
 
-    void Server::SetImageManager(ImageManager* newImageManager)
+    void GUIServer::SetImageManager(GUIImageManager* newImageManager)
     {
         // TODO: Need to unload all currently loaded images and reload with the new image manager.
         m_imageManager = newImageManager;
     }
 
-    void Server::SetRenderer(GUIRenderer* newRenderer)
+    void GUIServer::SetRenderer(GUIRenderer* newRenderer)
     {
         m_renderer = newRenderer;
     }
 
 
 
-    Element* Server::CreateElement(const char* xml, const char* absDirectory)
+    GUIElement* GUIServer::CreateElement(const char* xml, const char* absDirectory)
     {
         // We just load like normal, and then retrieve the element based on it's ID.
         GT::String topID;
@@ -206,7 +206,7 @@ namespace GTGUI
         return nullptr;
     }
 
-    Element* Server::CreateElement(const char* id, Element* parentElement)
+    GUIElement* GUIServer::CreateElement(const char* id, GUIElement* parentElement)
     {
         // We're going to need an ID.
         char autoID[64];
@@ -219,7 +219,7 @@ namespace GTGUI
 
         auto &script = this->scripting.GetScript();
         {
-            // local newelement = GTGUI.Element.Create('id');
+            // local newelement = GTGUI.GUIElement.Create('id');
             script.GetGlobal("GTGUI");
             assert(script.IsTable(-1));
             {
@@ -289,14 +289,14 @@ namespace GTGUI
         return this->GetElementByID(id);
     }
 
-    Element* Server::CreateElement(Element* parentElement)
+    GUIElement* GUIServer::CreateElement(GUIElement* parentElement)
     {
         return this->CreateElement(nullptr, parentElement);
     }
 
 
 
-    void Server::DeleteElement(Element* element, bool deleteChildren, bool invalidateParentLayout)
+    void GUIServer::DeleteElement(GUIElement* element, bool deleteChildren, bool invalidateParentLayout)
     {
         // When deleting an element, we don't delete the object straight away. Instead we mark for collection and perform the cleanup
         // during the next step. The reason we do this is because a rendering thread may still need the element.
@@ -384,7 +384,7 @@ namespace GTGUI
     }
 
 
-    void Server::NextAnonymousID(char* destBuffer, size_t destBufferSizeInBytes)
+    void GUIServer::NextAnonymousID(char* destBuffer, size_t destBufferSizeInBytes)
     {
         // TODO: Handle this a little better. We're currently willy-nilly subtracting 3 from destBufferSizeInBytes. Might go below zero, in which
         //       case we'll up with with an overflow.
@@ -407,7 +407,7 @@ namespace GTGUI
 
 
 
-    void Server::SetViewportSize(unsigned int width, unsigned int height)
+    void GUIServer::SetViewportSize(unsigned int width, unsigned int height)
     {
         this->viewportWidth  = width;
         this->viewportHeight = height;
@@ -455,13 +455,13 @@ namespace GTGUI
         }
     }
 
-    void Server::GetViewportSize(unsigned int &width, unsigned int &height) const
+    void GUIServer::GetViewportSize(unsigned int &width, unsigned int &height) const
     {
         width  = this->viewportWidth;
         height = this->viewportHeight;
     }
 
-    Element* Server::GetElementByID(const char *id, ptrdiff_t idSizeInBytes) const
+    GUIElement* GUIServer::GetElementByID(const char *id, ptrdiff_t idSizeInBytes) const
     {
         if (id != nullptr)
         {
@@ -472,12 +472,12 @@ namespace GTGUI
     }
 
 
-    void Server::Step()
+    void GUIServer::Step()
     {
         this->Step(this->stepTimer.GetTimeSinceLastUpdate());
     }
 
-    void Server::Step(double deltaInSeconds)
+    void GUIServer::Step(double deltaInSeconds)
     {
         this->isStepping = true;
         {
@@ -524,7 +524,7 @@ namespace GTGUI
     }
 
 
-    void Server::Paint(int left, int top, int right, int bottom)
+    void GUIServer::Paint(int left, int top, int right, int bottom)
     {
         assert(left <= right);
         assert(top  <= bottom);
@@ -532,19 +532,19 @@ namespace GTGUI
         this->Render();
     }
 
-    void Server::Paint()
+    void GUIServer::Paint()
     {
         this->Paint(0, 0, this->viewportWidth, this->viewportHeight);
     }
 
 
-    void Server::UpdateLayout()
+    void GUIServer::UpdateLayout()
     {
         this->layoutManager.Validate();
     }
 
 
-    void Server::GetFontInfoFromElement(const Element &element, GT::FontInfo &fi) const
+    void GUIServer::GetFontInfoFromElement(const GUIElement &element, GT::FontInfo &fi) const
     {
         fi.family = element.style.fontFamily->value.c_str();
         //fi.family.ToLower_ASCII();        // <-- Important. If not specified, strings such as "arial" and "Arial" will be considered separate.
@@ -553,55 +553,55 @@ namespace GTGUI
         // Weights.
         switch (element.style.fontWeight->value)
         {
-        case FontWeight_Thin:
+        case GUIFontWeight_Thin:
             {
                 fi.styleFlags |= GT::FontStyle_Thin;
                 break;
             }
 
-        case FontWeight_ExtraLight:
+        case GUIFontWeight_ExtraLight:
             {
                 fi.styleFlags |= GT::FontStyle_ExtraLight;
                 break;
             }
 
-        case FontWeight_Light:
+        case GUIFontWeight_Light:
             {
                 fi.styleFlags |= GT::FontStyle_Light;
                 break;
             }
 
-        case FontWeight_Medium:
+        case GUIFontWeight_Medium:
             {
                 fi.styleFlags |= GT::FontStyle_Medium;
                 break;
             }
 
-        case FontWeight_SemiBold:
+        case GUIFontWeight_SemiBold:
             {
                 fi.styleFlags |= GT::FontStyle_SemiBold;
                 break;
             }
 
-        case FontWeight_Bold:
+        case GUIFontWeight_Bold:
             {
                 fi.styleFlags |= GT::FontStyle_Bold;
                 break;
             }
 
-        case FontWeight_ExtraBold:
+        case GUIFontWeight_ExtraBold:
             {
                 fi.styleFlags |= GT::FontStyle_ExtraBold;
                 break;
             }
 
-        case FontWeight_Heavy:
+        case GUIFontWeight_Heavy:
             {
                 fi.styleFlags |= GT::FontStyle_Heavy;
                 break;
             }
 
-        case FontWeight_Default:
+        case GUIFontWeight_Default:
         default: break;
         }
 
@@ -609,13 +609,13 @@ namespace GTGUI
         // Slants.
         switch (element.style.fontSlant->value)
         {
-        case FontSlant_Italic:
+        case GUIFontSlant_Italic:
             {
                 fi.styleFlags |= GT::FontStyle_Italic;
                 break;
             }
 
-        case FontSlant_Default:
+        case GUIFontSlant_Default:
         default: break;
         }
 
@@ -639,18 +639,18 @@ namespace GTGUI
     }
 
 
-    GT::Font* Server::AcquireFont(const GT::FontInfo &fi)
+    GT::Font* GUIServer::AcquireFont(const GT::FontInfo &fi)
     {
         return this->fontCache.AcquireFont(fi);
     }
 
-    void Server::UnacquireFont(const GT::Font* font)
+    void GUIServer::UnacquireFont(const GT::Font* font)
     {
         this->fontCache.UnacquireFont(font);
     }
 
 
-    ImageHandle Server::AcquireImage(const char* absURLOrID)
+    GUIImageHandle GUIServer::AcquireImage(const char* absURLOrID)
     {
         if (m_imageManager != nullptr)
         {
@@ -694,26 +694,26 @@ namespace GTGUI
     }
 
 
-    EventContext Server::BeginPostingEvents()
+    GUIEventContext GUIServer::BeginPostingEvents()
     {
-        EventContext context;
+        GUIEventContext context;
         context.keyEventsTarget = this->focusedElement;
 
         return context;
     }
 
-    void Server::EndPostingEvents(EventContext context)
+    void GUIServer::EndPostingEvents(GUIEventContext context)
     {
         (void)context;
     }
 
 
-    void Server::OnMouseMove(EventContext eventContext, int x, int y)
+    void GUIServer::OnMouseMove(GUIEventContext eventContext, int x, int y)
     {
         (void)eventContext;
 
-        Event e;
-        e.code        = EventCode_OnMouseMove;
+        GUIEvent e;
+        e.code        = GUIEventCode_OnMouseMove;
         e.element     = nullptr;
         e.mousemove.x = x;
         e.mousemove.y = y;
@@ -722,8 +722,8 @@ namespace GTGUI
 
 #if 0
         // We intentionally dont have a receiver element here. Instead we post mouse-move events to elements when the mouse is validated.
-        Event e;
-        e.code        = EventCode_OnMouseMove;
+        GUIEvent e;
+        e.code        = GUIEventCode_OnMouseMove;
         e.element     = nullptr;
         e.mousemove.x = x;
         e.mousemove.y = y;
@@ -739,12 +739,12 @@ namespace GTGUI
 #endif
     }
 
-    void Server::OnMouseWheel(EventContext eventContext, int delta, int x, int y)
+    void GUIServer::OnMouseWheel(GUIEventContext eventContext, int delta, int x, int y)
     {
         (void)eventContext;
 
-        Event e;
-        e.code             = EventCode_OnMouseWheel;
+        GUIEvent e;
+        e.code             = GUIEventCode_OnMouseWheel;
         e.element          = nullptr;
         e.mousewheel.delta = delta;
         e.mousewheel.x     = x;
@@ -765,12 +765,12 @@ namespace GTGUI
     }
 
 
-    void Server::OnMouseButtonDown(EventContext eventContext, int button)
+    void GUIServer::OnMouseButtonDown(GUIEventContext eventContext, int button)
     {
         (void)eventContext;
 
-        Event e;
-        e.code             = EventCode_OnMouseButtonDown;
+        GUIEvent e;
+        e.code             = GUIEventCode_OnMouseButtonDown;
         e.element          = nullptr;
         e.mousedown.button = static_cast<GT::MouseButton>(button);
         e.mousedown.x      = this->mousePosX;
@@ -790,12 +790,12 @@ namespace GTGUI
 #endif
     }
 
-    void Server::OnMouseButtonUp(EventContext eventContext, int button)
+    void GUIServer::OnMouseButtonUp(GUIEventContext eventContext, int button)
     {
         (void)eventContext;
 
-        Event e;
-        e.code           = EventCode_OnMouseButtonUp;
+        GUIEvent e;
+        e.code           = GUIEventCode_OnMouseButtonUp;
         e.element        = nullptr;
         e.mouseup.button = static_cast<GT::MouseButton>(button);
         e.mouseup.x      = this->mousePosX;
@@ -815,12 +815,12 @@ namespace GTGUI
 #endif
     }
 
-    void Server::OnMouseButtonDoubleClick(EventContext eventContext, int button)
+    void GUIServer::OnMouseButtonDoubleClick(GUIEventContext eventContext, int button)
     {
         (void)eventContext;
 
-        Event e;
-        e.code             = EventCode_OnMouseButtonDoubleClick;
+        GUIEvent e;
+        e.code             = GUIEventCode_OnMouseButtonDoubleClick;
         e.element          = nullptr;
         e.mousedown.button = static_cast<GT::MouseButton>(button);
         e.mousedown.x      = this->mousePosX;
@@ -841,10 +841,10 @@ namespace GTGUI
     }
 
 
-    void Server::OnKeyPressed(EventContext eventContext, GT::Key key)
+    void GUIServer::OnKeyPressed(GUIEventContext eventContext, GT::Key key)
     {
-        Event e;
-        e.code        = EventCode_OnKeyPressed;
+        GUIEvent e;
+        e.code        = GUIEventCode_OnKeyPressed;
         e.element     = eventContext.keyEventsTarget;
         e.keydown.key = key;
 
@@ -862,10 +862,10 @@ namespace GTGUI
 #endif
     }
 
-    void Server::OnKeyDown(EventContext eventContext, GT::Key key)
+    void GUIServer::OnKeyDown(GUIEventContext eventContext, GT::Key key)
     {
-        Event e;
-        e.code        = EventCode_OnKeyDown;
+        GUIEvent e;
+        e.code        = GUIEventCode_OnKeyDown;
         e.element     = eventContext.keyEventsTarget;
         e.keydown.key = key;
 
@@ -883,10 +883,10 @@ namespace GTGUI
 #endif
     }
 
-    void Server::OnKeyUp(EventContext eventContext, GT::Key key)
+    void GUIServer::OnKeyUp(GUIEventContext eventContext, GT::Key key)
     {
-        Event e;
-        e.code      = EventCode_OnKeyUp;
+        GUIEvent e;
+        e.code      = GUIEventCode_OnKeyUp;
         e.element   = eventContext.keyEventsTarget;
         e.keyup.key = key;
 
@@ -904,12 +904,12 @@ namespace GTGUI
 #endif
     }
 
-    void Server::OnSize(Element *element)
+    void GUIServer::OnSize(GUIElement *element)
     {
         // We don't neccessarilly want to use QueueEvent() here. If we're currently inside HandleEvents(), we just want to call the event handler
         // directly.
-        Event e;
-        e.code        = EventCode_OnSize;
+        GUIEvent e;
+        e.code        = GUIEventCode_OnSize;
         e.element     = element;
         e.size.width  = element->GetWidth();
         e.size.height = element->GetHeight();
@@ -928,12 +928,12 @@ namespace GTGUI
 #endif
     }
 
-    void Server::OnMove(Element *element)
+    void GUIServer::OnMove(GUIElement *element)
     {
         // We don't neccessarilly want to use QueueEvent() here. If we're currently inside HandleEvents(), we just want to call the event handler
         // directly.
-        Event e;
-        e.code    = EventCode_OnMove;
+        GUIEvent e;
+        e.code    = GUIEventCode_OnMove;
         e.element = element;
         e.move.x  = element->x;
         e.move.y  = element->y;
@@ -953,7 +953,7 @@ namespace GTGUI
     }
 
 
-    void Server::OnShow(Element* element)
+    void GUIServer::OnShow(GUIElement* element)
     {
         this->BeginEventHandling();
         {
@@ -963,7 +963,7 @@ namespace GTGUI
         this->EndEventHandling();
     }
 
-    void Server::OnHide(Element* element)
+    void GUIServer::OnHide(GUIElement* element)
     {
         this->BeginEventHandling();
         {
@@ -975,7 +975,7 @@ namespace GTGUI
 
 
 
-    void Server::QueueEvent(Event &e)
+    void GUIServer::QueueEvent(GUIEvent &e)
     {
         this->eventLock.Lock();
         {
@@ -984,14 +984,14 @@ namespace GTGUI
         this->eventLock.Unlock();
     }
 
-    void Server::FocusElement(Element *element)
+    void GUIServer::FocusElement(GUIElement *element)
     {
         this->BlurFocusedElement();
 
         if (element != nullptr)
         {
             this->focusedElement = element;
-            this->focusedElement->style.ActivateModifierClasses(StyleClassType_Focused);
+            this->focusedElement->style.ActivateModifierClasses(GUIStyleClassType_Focused);
 
 
             // If the element has editable text, we need to show the text cursor. The height of the cursor will be the height of a line with it's current font.
@@ -1019,7 +1019,7 @@ namespace GTGUI
         }
     }
 
-    void Server::BlurFocusedElement()
+    void GUIServer::BlurFocusedElement()
     {
         if (this->focusedElement != nullptr)
         {
@@ -1027,7 +1027,7 @@ namespace GTGUI
             this->caret.Hide();
 
             // We deactivate the styles before posting events.
-            this->focusedElement->style.DeactivateModifierClasses(StyleClassType_Focused);
+            this->focusedElement->style.DeactivateModifierClasses(GUIStyleClassType_Focused);
 
             // Now we post events.
             this->scripting.PostEvent_OnBlur(*this->focusedElement);
@@ -1043,41 +1043,41 @@ namespace GTGUI
         }
     }
 
-    Element* Server::GetFocusedElement()
+    GUIElement* GUIServer::GetFocusedElement()
     {
         return this->focusedElement;
     }
 
-    bool Server::CanElementReceiveFocusFromMouse(const Element &element) const
+    bool GUIServer::CanElementReceiveFocusFromMouse(const GUIElement &element) const
     {
         return element.IsEnabled() && (element.style.canReceiveFocusFromMouse->value || element.style.editableText->value);
     }
 
 
-    void Server::BringToTop(Element &element)
+    void GUIServer::BringToTop(GUIElement &element)
     {
         // All we do is change the z-index to 1 higher than the highest that's currently showing.
         if (this->elementsUsingZIndex.count > 0)    // <-- should actually be able to assert this.
         {
             auto highZIndex = this->elementsUsingZIndex.buffer[this->elementsUsingZIndex.count - 1]->key;
 
-            element.SetStyleAttribute("z-index", GT::ToString(highZIndex + 1).c_str());
+            element.SetGUIStyleAttribute("z-index", GT::ToString(highZIndex + 1).c_str());
         }
     }
 
-    void Server::PushToBack(Element &element)
+    void GUIServer::PushToBack(GUIElement &element)
     {
         // All we do is change the z-index to 1 lower than the highest that's currently showing.
         if (this->elementsUsingZIndex.count > 0)    // <-- should actually be able to assert this.
         {
             auto highZIndex = this->elementsUsingZIndex.buffer[0]->key;
 
-            element.SetStyleAttribute("z-index", GT::ToString(highZIndex - 1).c_str());
+            element.SetGUIStyleAttribute("z-index", GT::ToString(highZIndex - 1).c_str());
         }
     }
 
 
-    void Server::PositionCaret(int clickPosX, int clickPosY, bool extendSelection, bool autoScroll)
+    void GUIServer::PositionCaret(int clickPosX, int clickPosY, bool extendSelection, bool autoScroll)
     {
         (void)clickPosY;        // <-- this will be used when we support multi-line text.
 
@@ -1110,7 +1110,7 @@ namespace GTGUI
         }
     }
 
-    void Server::PositionCaret(bool extendSelection, bool autoScroll)
+    void GUIServer::PositionCaret(bool extendSelection, bool autoScroll)
     {
         auto owner = this->caret.GetOwner();
         if (owner != nullptr)
@@ -1137,7 +1137,7 @@ namespace GTGUI
     }
 
 
-    void Server::ScrollTextCursorIntoVisibility()
+    void GUIServer::ScrollTextCursorIntoVisibility()
     {
         auto owner = this->caret.GetOwner();
         if (owner != nullptr)
@@ -1155,11 +1155,11 @@ namespace GTGUI
 
 
             // How do we do this for center alignment? Ignore that case for now.
-            if (owner->style.horizontalAlign->value != Align_Center)
+            if (owner->style.horizontalAlign->value != GUIAlign_Center)
             {
                 if (caretPosX > owner->GetInnerRightEdge())
                 {
-                    if (owner->style.horizontalAlign->value == Align_Left)
+                    if (owner->style.horizontalAlign->value == GUIAlign_Left)
                     {
                         newXOffset = currentXOffset - (caretPosX - owner->GetInnerRightEdge());
                         if (!owner->style.singleLineText->value)
@@ -1167,18 +1167,18 @@ namespace GTGUI
                             newXOffset -= 32;
                         }
                     }
-                    else if (owner->style.horizontalAlign->value == Align_Right)
+                    else if (owner->style.horizontalAlign->value == GUIAlign_Right)
                     {
                         newXOffset = GT::Max(0, currentXOffset - (caretPosX - owner->GetInnerRightEdge()) - 16);
                     }
                 }
                 else if (caretPosX < owner->GetInnerLeftEdge())
                 {
-                    if (owner->style.horizontalAlign->value == Align_Left)
+                    if (owner->style.horizontalAlign->value == GUIAlign_Left)
                     {
                         newXOffset = GT::Min(0, currentXOffset - caretPosX + 16 + owner->GetInnerLeftEdge());
                     }
-                    else if (owner->style.horizontalAlign->value == Align_Right)
+                    else if (owner->style.horizontalAlign->value == GUIAlign_Right)
                     {
                         newXOffset = currentXOffset - caretPosX + owner->GetInnerLeftEdge();
                     }
@@ -1187,7 +1187,7 @@ namespace GTGUI
                 {
                     if (owner->style.singleLineText->value)
                     {
-                        if (owner->style.horizontalAlign->value == Align_Left)
+                        if (owner->style.horizontalAlign->value == GUIAlign_Left)
                         {
                             int textRightEdge = owner->GetInnerLeftEdge() + textWidth + currentXOffset;
 
@@ -1196,7 +1196,7 @@ namespace GTGUI
                                 newXOffset = GT::Min(0, owner->GetInnerWidth() - textWidth);
                             }
                         }
-                        else if (owner->style.horizontalAlign->value == Align_Right)
+                        else if (owner->style.horizontalAlign->value == GUIAlign_Right)
                         {
                             int textLeftEdge = owner->GetInnerRightEdge() - owner->textManager.GetTextWidth() + currentXOffset;
 
@@ -1210,7 +1210,7 @@ namespace GTGUI
             }
 
             // Vertical. As with horizontal, we're going to ignore center alignment for now.
-            if (owner->style.verticalAlign->value != Align_Center)
+            if (owner->style.verticalAlign->value != GUIAlign_Center)
             {
                 int cursorPosX;
                 int cursorPosY;
@@ -1223,11 +1223,11 @@ namespace GTGUI
                 {
                     int lineIndex = static_cast<int>(owner->textManager.GetCursorLineIndex());
 
-                    if (owner->style.verticalAlign->value == Align_Top)
+                    if (owner->style.verticalAlign->value == GUIAlign_Top)
                     {
                         newYOffset = (pageLineCount - lineIndex - 1) * lineHeight;
                     }
-                    else if (owner->style.verticalAlign->value == Align_Bottom)
+                    else if (owner->style.verticalAlign->value == GUIAlign_Bottom)
                     {
                     }
                 }
@@ -1235,11 +1235,11 @@ namespace GTGUI
                 {
                     int lineIndex = static_cast<int>(owner->textManager.GetCursorLineIndex());
 
-                    if (owner->style.verticalAlign->value == Align_Top)
+                    if (owner->style.verticalAlign->value == GUIAlign_Top)
                     {
                         newYOffset = -lineIndex * lineHeight;
                     }
-                    else if (owner->style.verticalAlign->value == Align_Bottom)
+                    else if (owner->style.verticalAlign->value == GUIAlign_Bottom)
                     {
                     }
                 }
@@ -1252,12 +1252,12 @@ namespace GTGUI
             {
                 if (newXOffset != currentXOffset)
                 {
-                    owner->SetStyleAttribute("inner-offset-x", GT::ToString(newXOffset).c_str());
+                    owner->SetGUIStyleAttribute("inner-offset-x", GT::ToString(newXOffset).c_str());
                 }
 
                 if (newYOffset != currentYOffset)
                 {
-                    owner->SetStyleAttribute("inner-offset-y", GT::ToString(newYOffset).c_str());
+                    owner->SetGUIStyleAttribute("inner-offset-y", GT::ToString(newYOffset).c_str());
                 }
 
 
@@ -1271,7 +1271,7 @@ namespace GTGUI
         }
     }
 
-    void Server::HandleTextSelection(bool extendSelection)
+    void GUIServer::HandleTextSelection(bool extendSelection)
     {
         auto owner = this->caret.GetOwner();
         if (owner != nullptr)
@@ -1296,9 +1296,9 @@ namespace GTGUI
     }
 
 
-    Element * Server::GetElementUnderPoint(int x, int y, bool fromMouseInput, bool ignoreDragAndDropProxy)
+    GUIElement * GUIServer::GetElementUnderPoint(int x, int y, bool fromMouseInput, bool ignoreDragAndDropProxy)
     {
-        Element* result = nullptr;
+        GUIElement* result = nullptr;
 
         // Elements with a higher z-index have priority...
         for (size_t i = this->elementsUsingZIndex.count; i > 0; --i)
@@ -1347,7 +1347,7 @@ namespace GTGUI
     }
 
 /*
-    const GT::Font & Server::GetDefaultFont() const
+    const GT::Font & GUIServer::GetDefaultFont() const
     {
         assert(this->defaultFont != nullptr);
 
@@ -1356,7 +1356,7 @@ namespace GTGUI
 */
 
 
-    void Server::OnZIndexChanged(Element &element)
+    void GUIServer::OnZIndexChanged(GUIElement &element)
     {
         // We need to find the list that the element is currently sitting in. It will need to be removed from here before adding it
         // to the new list.
@@ -1373,47 +1373,47 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnWidthChanged(Element &element)
+    void GUIServer::OnWidthChanged(GUIElement &element)
     {
         this->layoutManager.InvalidateWidth(element);
 
         this->InvalidateMouse();
     }
 
-    void Server::OnHeightChanged(Element &element)
+    void GUIServer::OnHeightChanged(GUIElement &element)
     {
         this->layoutManager.InvalidateHeight(element);
 
         this->InvalidateMouse();
     }
 
-    void Server::OnPaddingXChanged(Element &element)
+    void GUIServer::OnPaddingXChanged(GUIElement &element)
     {
         this->layoutManager.InvalidateWidth(element);
 
         this->InvalidateMouse();
     }
-    void Server::OnPaddingYChanged(Element &element)
+    void GUIServer::OnPaddingYChanged(GUIElement &element)
     {
         this->layoutManager.InvalidateHeight(element);
 
         this->InvalidateMouse();
     }
 
-    void Server::OnMarginsXChanged(Element &element)
+    void GUIServer::OnMarginsXChanged(GUIElement &element)
     {
         this->layoutManager.InvalidateWidth(element);
 
         this->InvalidateMouse();
     }
-    void Server::OnMarginsYChanged(Element &element)
+    void GUIServer::OnMarginsYChanged(GUIElement &element)
     {
         this->layoutManager.InvalidateHeight(element);
 
         this->InvalidateMouse();
     }
 
-    void Server::OnVisibilityChanged(Element &element)
+    void GUIServer::OnVisibilityChanged(GUIElement &element)
     {
         // If the element has been made invisible, and it was also the focused element, it needs to lose focus.
         if (!element.IsVisible() && this->focusedElement == &element)
@@ -1467,7 +1467,7 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnChildPlaneChanged(Element &element)
+    void GUIServer::OnChildPlaneChanged(GUIElement &element)
     {
         // We update all 'auto' children here.
         auto firstChild = element.GetFirstVisibleAutoChild();
@@ -1479,7 +1479,7 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnHorizontalAlignChanged(Element &element)
+    void GUIServer::OnHorizontalAlignChanged(GUIElement &element)
     {
         // Update all 'auto' children.
         auto firstChild = element.GetFirstVisibleAutoChild();
@@ -1491,7 +1491,7 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnVerticalAlignChanged(Element &element)
+    void GUIServer::OnVerticalAlignChanged(GUIElement &element)
     {
         // Update all 'auto' children.
         auto firstChild = element.GetFirstVisibleAutoChild();
@@ -1503,11 +1503,11 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnPositioningChanged(Element &element)
+    void GUIServer::OnPositioningChanged(GUIElement &element)
     {
         // When the positioning mode of an element has changed, it's possible that it has gone from 'auto' to 'relative' or 'absolute'. In this case,
         // we need to ensure it's auto-positioned siblings have their positions updated.
-        if (element.style.positioning->value != Positioning_Auto)
+        if (element.style.positioning->value != GUIPositioning_Auto)
         {
             if (element.parent != nullptr)
             {
@@ -1525,7 +1525,7 @@ namespace GTGUI
         this->InvalidateMouse();
 
         // We need to ensure the element is in the z-index list (or not).
-        if (element.style.positioning->value == Positioning_Auto)
+        if (element.style.positioning->value == GUIPositioning_Auto)
         {
             this->RemoveFromZIndexList(element);
         }
@@ -1536,7 +1536,7 @@ namespace GTGUI
 
 
         // We need to keep track of absolute elements so that when the main viewport is resized, we can handle absolute's correctly.
-        if (element.style.positioning->value == Positioning_Absolute)
+        if (element.style.positioning->value == GUIPositioning_Absolute)
         {
             // With everything factored correctly, it should be impossible for <element> to be in this->absoluteElements. Thus, we're going
             // to use an assert here instead of a run-time check.
@@ -1550,35 +1550,35 @@ namespace GTGUI
         }
     }
 
-    void Server::OnLeftChanged(Element &element)
+    void GUIServer::OnLeftChanged(GUIElement &element)
     {
         this->layoutManager.InvalidatePosition(element);
 
         this->InvalidateMouse();
     }
 
-    void Server::OnRightChanged(Element &element)
+    void GUIServer::OnRightChanged(GUIElement &element)
     {
         this->layoutManager.InvalidatePosition(element);
 
         this->InvalidateMouse();
     }
 
-    void Server::OnTopChanged(Element &element)
+    void GUIServer::OnTopChanged(GUIElement &element)
     {
         this->layoutManager.InvalidatePosition(element);
 
         this->InvalidateMouse();
     }
 
-    void Server::OnBottomChanged(Element &element)
+    void GUIServer::OnBottomChanged(GUIElement &element)
     {
         this->layoutManager.InvalidatePosition(element);
 
         this->InvalidateMouse();
     }
 
-    void Server::OnInnerOffsetXChanged(Element &element)
+    void GUIServer::OnInnerOffsetXChanged(GUIElement &element)
     {
         // The positions of all 'auto' children have just changed.
         for (auto child = element.firstChild; child != nullptr; child = child->nextSibling)
@@ -1595,7 +1595,7 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnInnerOffsetYChanged(Element &element)
+    void GUIServer::OnInnerOffsetYChanged(GUIElement &element)
     {
         // The positions of all 'auto' children have just changed.
         for (auto child = element.firstChild; child != nullptr; child = child->nextSibling)
@@ -1612,7 +1612,7 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnTextChanged(Element &element, bool blockEvent)
+    void GUIServer::OnTextChanged(GUIElement &element, bool blockEvent)
     {
         element.UpdateTextManagerLayout();
 
@@ -1627,7 +1627,7 @@ namespace GTGUI
     }
 
 
-    void Server::OnChildAttached(Element &element)
+    void GUIServer::OnChildAttached(GUIElement &element)
     {
         for (auto iChild = element.firstChild; iChild != nullptr; iChild = iChild->nextSibling)
         {
@@ -1648,7 +1648,7 @@ namespace GTGUI
 
 
         // We need to keep track of absolute elements so that when the main viewport is resized, we can handle absolute's correctly.
-        if (element.style.positioning->value == Positioning_Absolute)
+        if (element.style.positioning->value == GUIPositioning_Absolute)
         {
             if (!this->absoluteElements.Exists(&element))
             {
@@ -1664,7 +1664,7 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnChildDetached(Element &element)
+    void GUIServer::OnChildDetached(GUIElement &element)
     {
         for (auto iChild = element.firstChild; iChild != nullptr; iChild = iChild->nextSibling)
         {
@@ -1686,7 +1686,7 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnFlexWidthChanged(Element &element)
+    void GUIServer::OnFlexWidthChanged(GUIElement &element)
     {
         // Only affects children with % widths.
         for (auto iChild = element.firstChild; iChild != nullptr; iChild = iChild->nextSibling)
@@ -1700,7 +1700,7 @@ namespace GTGUI
         this->InvalidateMouse();
     }
 
-    void Server::OnFlexHeightChanged(Element &element)
+    void GUIServer::OnFlexHeightChanged(GUIElement &element)
     {
         // Only affects children with % height.
         for (auto iChild = element.firstChild; iChild != nullptr; iChild = iChild->nextSibling)
@@ -1716,28 +1716,28 @@ namespace GTGUI
 
 
 #if 0
-    void Server::HandleEvents()
+    void GUIServer::HandleEvents()
     {
         this->eventLock.Lock();
         this->handlingEvents = true;
 
-        Event e;
+        GUIEvent e;
         while (this->eventQueue.Next(e))
         {
             switch (e.code)
             {
-            case EventCode_OnSize:                   this->HandleEvent_OnSize(e);                   break;
-            case EventCode_OnMove:                   this->HandleEvent_OnMove(e);                   break;
-            case EventCode_OnKeyPressed:             this->HandleEvent_OnKeyPressed(e);             break;
-            case EventCode_OnKeyDown:                this->HandleEvent_OnKeyDown(e);                break;
-            case EventCode_OnKeyUp:                  this->HandleEvent_OnKeyUp(e);                  break;
-            case EventCode_OnMouseMove:              this->HandleEvent_OnMouseMove(e);              break;
-            case EventCode_OnMouseWheel:             this->HandleEvent_OnMouseWheel(e);             break;
-            case EventCode_OnMouseButtonDown:        this->HandleEvent_OnMouseButtonDown(e);        break;
-            case EventCode_OnMouseButtonUp:          this->HandleEvent_OnMouseButtonUp(e);          break;
-            case EventCode_OnMouseButtonDoubleClick: this->HandleEvent_OnMouseButtonDoubleClick(e); break;
+            case GUIEventCode_OnSize:                   this->HandleEvent_OnSize(e);                   break;
+            case GUIEventCode_OnMove:                   this->HandleEvent_OnMove(e);                   break;
+            case GUIEventCode_OnKeyPressed:             this->HandleEvent_OnKeyPressed(e);             break;
+            case GUIEventCode_OnKeyDown:                this->HandleEvent_OnKeyDown(e);                break;
+            case GUIEventCode_OnKeyUp:                  this->HandleEvent_OnKeyUp(e);                  break;
+            case GUIEventCode_OnMouseMove:              this->HandleEvent_OnMouseMove(e);              break;
+            case GUIEventCode_OnMouseWheel:             this->HandleEvent_OnMouseWheel(e);             break;
+            case GUIEventCode_OnMouseButtonDown:        this->HandleEvent_OnMouseButtonDown(e);        break;
+            case GUIEventCode_OnMouseButtonUp:          this->HandleEvent_OnMouseButtonUp(e);          break;
+            case GUIEventCode_OnMouseButtonDoubleClick: this->HandleEvent_OnMouseButtonDoubleClick(e); break;
 
-            case EventCode_Unknown:
+            case GUIEventCode_Unknown:
             default: break;
             }
         }
@@ -1747,7 +1747,7 @@ namespace GTGUI
     }
 #endif
 
-    void Server::HandleEvent_OnSize(Event &e)
+    void GUIServer::HandleEvent_OnSize(GUIEvent &e)
     {
         assert(e.element != nullptr);
 
@@ -1761,7 +1761,7 @@ namespace GTGUI
         this->EndEventHandling();
     }
 
-    void Server::HandleEvent_OnMove(Event &e)
+    void GUIServer::HandleEvent_OnMove(GUIEvent &e)
     {
         assert(e.element != nullptr);
 
@@ -1773,7 +1773,7 @@ namespace GTGUI
         this->EndEventHandling();
     }
 
-    void Server::HandleEvent_OnMouseMove(Event &e)
+    void GUIServer::HandleEvent_OnMouseMove(GUIEvent &e)
     {
         this->BeginEventHandling();
         {
@@ -1787,7 +1787,7 @@ namespace GTGUI
         this->EndEventHandling();
     }
 
-    void Server::HandleEvent_OnMouseWheel(Event &e)
+    void GUIServer::HandleEvent_OnMouseWheel(GUIEvent &e)
     {
         this->BeginEventHandling();
         {
@@ -1809,7 +1809,7 @@ namespace GTGUI
     }
 
 
-    void Server::HandleEvent_OnMouseButtonDown(Event &e)
+    void GUIServer::HandleEvent_OnMouseButtonDown(GUIEvent &e)
     {
         this->BeginEventHandling();
         {
@@ -1834,7 +1834,7 @@ namespace GTGUI
         this->EndEventHandling();
     }
 
-    void Server::HandleEvent_OnMouseButtonUp(Event &e)
+    void GUIServer::HandleEvent_OnMouseButtonUp(GUIEvent &e)
     {
         this->BeginEventHandling();
         {
@@ -1858,7 +1858,7 @@ namespace GTGUI
         this->EndEventHandling();
     }
 
-    void Server::HandleEvent_OnMouseButtonDoubleClick(Event &e)
+    void GUIServer::HandleEvent_OnMouseButtonDoubleClick(GUIEvent &e)
     {
         this->BeginEventHandling();
         {
@@ -1875,7 +1875,7 @@ namespace GTGUI
     }
 
 
-    void Server::HandleEvent_OnLMBDown(Event &e)
+    void GUIServer::HandleEvent_OnLMBDown(GUIEvent &e)
     {
         // NOTE: Don't need a BeginEventHandling()/EndEventHandling() pair here. Done at a higher level.
 
@@ -1943,7 +1943,7 @@ namespace GTGUI
 
 
         // Now we'll check if the element is draggable.
-        if (receiver->style.allowMouseDrag->value && receiver->style.positioning->value != Positioning_Auto)
+        if (receiver->style.allowMouseDrag->value && receiver->style.positioning->value != GUIPositioning_Auto)
         {
             this->draggingPushedElement = true;
 
@@ -1994,7 +1994,7 @@ namespace GTGUI
         this->pushedElement->AbsoluteToRelative(this->pushedElementMousePosX, this->pushedElementMousePosY);
     }
 
-    void Server::HandleEvent_OnLMBUp(Event &e)
+    void GUIServer::HandleEvent_OnLMBUp(GUIEvent &e)
     {
         // NOTE: Don't need a BeginEventHandling()/EndEventHandling() pair here. Done at a higher level.
 
@@ -2036,7 +2036,7 @@ namespace GTGUI
     }
 
 
-    void Server::HandleEvent_OnKeyPressed(Event &e)
+    void GUIServer::HandleEvent_OnKeyPressed(GUIEvent &e)
     {
         this->BeginEventHandling();
         {
@@ -2063,9 +2063,9 @@ namespace GTGUI
                 auto nextEvent = this->eventQueue.PeekNext();
                 if (nextEvent != nullptr)
                 {
-                    if (nextEvent->code == EventCode_OnKeyDown)
+                    if (nextEvent->code == GUIEventCode_OnKeyDown)
                     {
-                        nextEvent->code = EventCode_Null;
+                        nextEvent->code = GUIEventCode_Null;
                     }
                 }
             }
@@ -2073,7 +2073,7 @@ namespace GTGUI
         this->EndEventHandling();
     }
 
-    void Server::HandleEvent_OnKeyDown(Event &e)
+    void GUIServer::HandleEvent_OnKeyDown(GUIEvent &e)
     {
         this->BeginEventHandling();
         {
@@ -2300,7 +2300,7 @@ namespace GTGUI
         this->EndEventHandling();
     }
 
-    void Server::HandleEvent_OnKeyUp(Event &e)
+    void GUIServer::HandleEvent_OnKeyUp(GUIEvent &e)
     {
         this->BeginEventHandling();
         {
@@ -2328,12 +2328,12 @@ namespace GTGUI
     }
 
 
-    void Server::BeginEventHandling()
+    void GUIServer::BeginEventHandling()
     {
         this->eventHandlingCounter += 1;
     }
 
-    void Server::EndEventHandling()
+    void GUIServer::EndEventHandling()
     {
         assert(this->eventHandlingCounter > 0);
         {
@@ -2341,14 +2341,14 @@ namespace GTGUI
         }
     }
 
-    bool Server::IsHandlingEvent() const
+    bool GUIServer::IsHandlingEvent() const
     {
         return this->eventHandlingCounter > 0;
     }
 
 
 
-    void Server::Render()
+    void GUIServer::Render()
     {
         // Don't do anything if we don't have a renderer attached.
         if (m_renderer != nullptr)
@@ -2387,7 +2387,7 @@ namespace GTGUI
 
 
 
-    bool Server::LoadDefaults()
+    bool GUIServer::LoadDefaults()
     {
         bool success = true;
 
@@ -2396,15 +2396,15 @@ namespace GTGUI
         return success;
     }
 
-    bool Server::LoadStandardLibrary()
+    bool GUIServer::LoadStandardLibrary()
     {
-        return StandardLibrary::Load(*this);
+        return GUIStandardLibrary::Load(*this);
     }
 
 
-    Element* Server::CreateNewElement(const char* id)
+    GUIElement* GUIServer::CreateNewElement(const char* id)
     {
-        auto element = new Element(id, *this);
+        auto element = new GUIElement(id, *this);
         this->elements.Insert(element);
 
         // Default to needing an OnShow event posted.
@@ -2414,20 +2414,20 @@ namespace GTGUI
     }
 
 
-    void Server::CollectGarbage()
+    void GUIServer::CollectGarbage()
     {
         // All we need to do is call our garbage collector's Collect() method...
         this->garbageCollector.Collect();
     }
 
 
-    void Server::InvalidateMouse()
+    void GUIServer::InvalidateMouse()
     {
         this->isMouseValid = false;
     }
 
 
-    void Server::RegisterImage(const char* id, unsigned int width, unsigned int height, unsigned int bpp, const void* data)
+    void GUIServer::RegisterImage(const char* id, unsigned int width, unsigned int height, unsigned int bpp, const void* data)
     {
         if (m_imageManager != nullptr)
         {
@@ -2439,11 +2439,11 @@ namespace GTGUI
                 this->registeredImages.Remove(id);
             }
 
-            this->registeredImages.Add(id, m_imageManager->CreateImage(width, height, (bpp == 3) ? GTGUI::ImageFormat_RGB8 : GTGUI::ImageFormat_RGBA8, data));
+            this->registeredImages.Add(id, m_imageManager->CreateImage(width, height, (bpp == 3) ? GTGUI::GUIImageFormat_RGB8 : GTGUI::GUIImageFormat_RGBA8, data));
         }
     }
 
-    ImageHandle Server::GetRegisteredImage(const char* id)
+    GUIImageHandle GUIServer::GetRegisteredImage(const char* id)
     {
         auto iImage = this->registeredImages.Find(id);
         if (iImage != nullptr)
@@ -2455,7 +2455,7 @@ namespace GTGUI
     }
 
 
-    void Server::PostError(const char* message)
+    void GUIServer::PostError(const char* message)
     {
         if (this->eventHandler != nullptr)
         {
@@ -2463,7 +2463,7 @@ namespace GTGUI
         }
     }
 
-    void Server::PostWarning(const char* message)
+    void GUIServer::PostWarning(const char* message)
     {
         if (this->eventHandler != nullptr)
         {
@@ -2471,7 +2471,7 @@ namespace GTGUI
         }
     }
 
-    void Server::PostLogMessage(const char* message)
+    void GUIServer::PostLogMessage(const char* message)
     {
         if (this->eventHandler != nullptr)
         {
@@ -2480,7 +2480,7 @@ namespace GTGUI
     }
 
 
-    void Server::SetDragAndDropProxyElement(Element &newDragAndDropProxyElement)
+    void GUIServer::SetDragAndDropProxyElement(GUIElement &newDragAndDropProxyElement)
     {
         if (this->dragAndDropProxyElement != nullptr)
         {
@@ -2490,12 +2490,12 @@ namespace GTGUI
         this->dragAndDropProxyElement = &newDragAndDropProxyElement;
     }
 
-    Element* Server::GetDragAndDropProxyElement()
+    GUIElement* GUIServer::GetDragAndDropProxyElement()
     {
         return this->dragAndDropProxyElement;
     }
 
-    void Server::RemoveCurrentDragAndDropProxyElement(bool postRemoveEvent)
+    void GUIServer::RemoveCurrentDragAndDropProxyElement(bool postRemoveEvent)
     {
         if (this->dragAndDropProxyElement != nullptr)
         {
@@ -2510,61 +2510,61 @@ namespace GTGUI
         }
     }
 
-    void Server::SetDragAndDropProxyElementOffset(int offsetX, int offsetY)
+    void GUIServer::SetDragAndDropProxyElementOffset(int offsetX, int offsetY)
     {
         this->dragAndDropProxyElementOffset = GT::Point<int>(offsetX, offsetY);
     }
 
 
-    void Server::GetMousePosition(int &xOut, int &yOut) const
+    void GUIServer::GetMousePosition(int &xOut, int &yOut) const
     {
         xOut = this->mousePosX;
         yOut = this->mousePosY;
     }
 
-    void Server::SetMousePosition(int x, int y)
+    void GUIServer::SetMousePosition(int x, int y)
     {
         this->mousePosX = x;
         this->mousePosY = y;
     }
 
 
-    void Server::MarkMouseAsCaptured()
+    void GUIServer::MarkMouseAsCaptured()
     {
         this->isMouseCaptured = true;
         this->InvalidateMouse();
     }
 
-    void Server::UnmarkMouseAsCaptured()
+    void GUIServer::UnmarkMouseAsCaptured()
     {
         this->isMouseCaptured = false;
         this->InvalidateMouse();
     }
 
-    bool Server::IsMouseCaptured() const
+    bool GUIServer::IsMouseCaptured() const
     {
         return this->isMouseCaptured;
     }
 
 
-    bool Server::IsLMBDown() const
+    bool GUIServer::IsLMBDown() const
     {
         return this->isLeftMouseButtonDown;
     }
 
-    bool Server::IsRMBDown() const
+    bool GUIServer::IsRMBDown() const
     {
         return this->isRightMouseButtonDown;
     }
 
-    bool Server::IsMMBDown() const
+    bool GUIServer::IsMMBDown() const
     {
         return this->isMiddleMouseButtonDown;
     }
 
 
 
-    void Server::ValidateMouse()
+    void GUIServer::ValidateMouse()
     {
         // We don't need to do anything if the mouse is already valid.
         if (!this->isMouseValid)
@@ -2592,8 +2592,8 @@ namespace GTGUI
 
             // This list will contain pointers to the elements that have the mouse over them. The first item in this list will be hoveredElement if it was
             // non-null. The next will be ancestors of hoveredElement.
-            GT::List<Element*>  newHoveredElements;
-            GT::List<Element*> &oldHoveredElements = this->hoveredElements;
+            GT::List<GUIElement*>  newHoveredElements;
+            GT::List<GUIElement*> &oldHoveredElements = this->hoveredElements;
 
             if (hoveredElement != nullptr)
             {
@@ -2723,7 +2723,7 @@ namespace GTGUI
             {
                 if (this->pushedElement != hoveredElement)
                 {
-                    this->pushedElement->style.DeactivateModifierClasses(StyleClassType_Pushed);
+                    this->pushedElement->style.DeactivateModifierClasses(GUIStyleClassType_Pushed);
                 }
 
                 this->pushedElementMousePosX = this->mousePosX;
@@ -2763,24 +2763,24 @@ namespace GTGUI
                     hoveredElement->AbsoluteToRelative(relativePosX, relativePosY);
 
                     // Now we're going to see which grippers the mouse is over.
-                    if ((hoveredElement->parent->style.horizontalAlign->value == Align_Left || hoveredElement->style.positioning->value != Positioning_Auto) &&
+                    if ((hoveredElement->parent->style.horizontalAlign->value == GUIAlign_Left || hoveredElement->style.positioning->value != GUIPositioning_Auto) &&
                         (relativePosX >= hoveredElement->width - hoveredElement->style.rightGripperWidth->value))
                     {
                         this->overRightSizingGripper = true;
                     }
-                    else if ((hoveredElement->parent->style.horizontalAlign->value == Align_Right || hoveredElement->style.positioning->value != Positioning_Auto) &&
+                    else if ((hoveredElement->parent->style.horizontalAlign->value == GUIAlign_Right || hoveredElement->style.positioning->value != GUIPositioning_Auto) &&
                              (relativePosX <= hoveredElement->style.leftGripperWidth->value))
                     {
                         this->overLeftSizingGripper = true;
                     }
 
-                    if ((hoveredElement->parent->style.verticalAlign->value == Align_Top || hoveredElement->style.positioning->value != Positioning_Auto) &&
+                    if ((hoveredElement->parent->style.verticalAlign->value == GUIAlign_Top || hoveredElement->style.positioning->value != GUIPositioning_Auto) &&
                         (relativePosY >= hoveredElement->height - hoveredElement->style.bottomGripperWidth->value))
                     {
                         this->overBottomSizingGripper = true;
                     }
 
-                    else if ((hoveredElement->parent->style.verticalAlign->value == Align_Bottom || hoveredElement->style.positioning->value != Positioning_Auto) &&
+                    else if ((hoveredElement->parent->style.verticalAlign->value == GUIAlign_Bottom || hoveredElement->style.positioning->value != GUIPositioning_Auto) &&
                              (relativePosY <= hoveredElement->style.topGripperWidth->value))
                     {
                         this->overTopSizingGripper = true;
@@ -2849,7 +2849,7 @@ namespace GTGUI
                     int newTopPos  = this->pushedElement->y + mouseOffsetY;
 
                     // We may need to do some clamping here.
-                    if (this->pushedElement->style.positioning->value == Positioning_Relative && this->pushedElement->parent != nullptr)
+                    if (this->pushedElement->style.positioning->value == GUIPositioning_Relative && this->pushedElement->parent != nullptr)
                     {
                         newLeftPos -= this->pushedElement->parent->GetLeftPadding();
                         newTopPos  -= this->pushedElement->parent->GetTopPadding();
@@ -3002,7 +3002,7 @@ namespace GTGUI
     }
 
 
-    void Server::AddToZIndexList(Element &element)
+    void GUIServer::AddToZIndexList(GUIElement &element)
     {
         // Only if the element actually uses the z-index do we need to store it.
         if (element.UsesZIndex())
@@ -3013,7 +3013,7 @@ namespace GTGUI
             // If we don't have a list, we need to create it and add it to our map.
             if (elementList == nullptr)
             {
-                elementList = new GT::List<Element*>;
+                elementList = new GT::List<GUIElement*>;
                 this->elementsUsingZIndex.Add(zIndex, elementList);
             }
 
@@ -3036,7 +3036,7 @@ namespace GTGUI
         }
     }
 
-    void Server::RemoveFromZIndexList(Element &element)
+    void GUIServer::RemoveFromZIndexList(GUIElement &element)
     {
         auto elementList = this->FindListContainingElement(element);
         if (elementList != nullptr)
@@ -3045,7 +3045,7 @@ namespace GTGUI
         }
     }
 
-    GT::List<Element*>* Server::GetElementListByZIndex(int zIndex)
+    GT::List<GUIElement*>* GUIServer::GetElementListByZIndex(int zIndex)
     {
         auto item = this->elementsUsingZIndex.Find(zIndex);
         if (item != nullptr)
@@ -3056,7 +3056,7 @@ namespace GTGUI
         return nullptr;
     }
 
-    GT::List<Element*>* Server::FindListContainingElement(Element &element)
+    GT::List<GUIElement*>* GUIServer::FindListContainingElement(GUIElement &element)
     {
         for (size_t i = 0; i < this->elementsUsingZIndex.count; ++i)
         {
@@ -3071,7 +3071,7 @@ namespace GTGUI
         return nullptr;
     }
 
-    void Server::GetElementUnderPoint(int x, int y, bool fromMouseInput, Element &base, const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, Element* &result)
+    void GUIServer::GetElementUnderPoint(int x, int y, bool fromMouseInput, GUIElement &base, const GT::Rect<int> &parentRect, const GT::Rect<int> &parentScissorRect, GUIElement* &result)
     {
         if (base.IsVisible())
         {
@@ -3091,7 +3091,7 @@ namespace GTGUI
             // it'd be over any children.
             if (isOverBaseElement)
             {
-                Element* hoveredChild = nullptr;
+                GUIElement* hoveredChild = nullptr;
 
                 // What we need to do now is check if the point is in the resizing segment. If so, we don't actually want to check the
                 // children. This is only done if we are doing this check from mouse input.
@@ -3133,7 +3133,7 @@ namespace GTGUI
         }
     }
 
-    void Server::SetCursor(GT::Cursor cursor)
+    void GUIServer::SetCursor(GT::Cursor cursor)
     {
         if (cursor != this->currentCursor)
         {
@@ -3143,7 +3143,7 @@ namespace GTGUI
     }
 
 
-    void Server::ReleasePushedElement(bool blockEvent)
+    void GUIServer::ReleasePushedElement(bool blockEvent)
     {
         // If we have a pushed element, that will need to be released. It will still have the hovered state applied to it, though.
         if (this->pushedElement != nullptr)
@@ -3189,7 +3189,7 @@ namespace GTGUI
     }
 
 
-    void Server::PostVisibilityEvents()
+    void GUIServer::PostVisibilityEvents()
     {
         // OnShow
         for (size_t iElement = 0; iElement < this->elementsNeedingOnShow.count; ++iElement)
@@ -3220,7 +3220,7 @@ namespace GTGUI
         this->elementsNeedingOnHide.Clear();
     }
 
-    void Server::MarkElementAsNeedingOnShow(Element &element)
+    void GUIServer::MarkElementAsNeedingOnShow(GUIElement &element)
     {
         this->elementsNeedingOnHide.RemoveFirstOccuranceOf(&element);
 
@@ -3230,7 +3230,7 @@ namespace GTGUI
         }
     }
 
-    void Server::MarkElementAsNeedingOnHide(Element &element)
+    void GUIServer::MarkElementAsNeedingOnHide(GUIElement &element)
     {
         this->elementsNeedingOnShow.RemoveFirstOccuranceOf(&element);
 
@@ -3240,7 +3240,7 @@ namespace GTGUI
         }
     }
 
-    void Server::PostShowTooltipEvents(double deltaTimeInSeconds)
+    void GUIServer::PostShowTooltipEvents(double deltaTimeInSeconds)
     {
         float deltaTimeInSecondsF = static_cast<float>(deltaTimeInSeconds);
 

@@ -8,7 +8,7 @@
 namespace GTGUI
 {
     /// Static class for working with the standard library.
-    class StandardLibrary
+    class GUIStandardLibrary
     {
     public:
 
@@ -17,39 +17,39 @@ namespace GTGUI
         /// @param server [in] A reference to the server to load the standard library into.
         ///
         /// @return True if the standard library is loaded successfully.
-        static bool Load(Server &server);
+        static bool Load(GUIServer &server);
 
 
 
     private:
 
         /// Loads the miscellaneous styles and scripts, such as the default background colours.
-        static bool LoadMisc(Server &server);
+        static bool LoadMisc(GUIServer &server);
 
         /// Loads the button control.
-        static bool LoadButton(Server &server);
+        static bool LoadButton(GUIServer &server);
 
         /// Loads the text box control.
-        static bool LoadTextBox(Server &server);
+        static bool LoadTextBox(GUIServer &server);
 
         /// Loads the check box control.
-        static bool LoadCheckBox(Server &server);
+        static bool LoadCheckBox(GUIServer &server);
 
         /// Loads the labeled spinner control.
-        static bool LoadLabeledSpinner(Server &server);
+        static bool LoadLabeledSpinner(GUIServer &server);
 
         /// Loads the tree-view control.
-        static bool LoadTreeView(Server &server);
+        static bool LoadTreeView(GUIServer &server);
 
         /// Loads the scrollbar controls.
-        static bool LoadScrollbars(Server &server);
+        static bool LoadScrollbars(GUIServer &server);
 
         /// Loads the tooltips controls.
-        static bool LoadTooltips(Server &server);
+        static bool LoadTooltips(GUIServer &server);
 
 
         /// Loads and registers the standard images onto the server.
-        static bool LoadImages(Server &server);
+        static bool LoadImages(GUIServer &server);
     };
 }
 

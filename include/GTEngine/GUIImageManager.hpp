@@ -8,7 +8,7 @@
 
 namespace GT
 {
-    class GUIImageManager : public GTGUI::ImageManager
+    class GUIImageManager : public GTGUI::GUIImageManager
     {
     public:
 
@@ -22,36 +22,36 @@ namespace GT
         ///////////////////////////////////////////
         // Create
         
-        /// GTGUI::ImageManager::CreateImage().
-        GTGUI::ImageHandle CreateImage(unsigned int width, unsigned int height, GTGUI::ImageFormat format, void* data);
-        GTGUI::ImageHandle CreateImage(unsigned int width, unsigned int height, GTGUI::ImageFormat format, const void* data);
+        /// GTGUI::GUIImageManager::CreateImage().
+        GTGUI::GUIImageHandle CreateImage(unsigned int width, unsigned int height, GTGUI::GUIImageFormat format, void* data);
+        GTGUI::GUIImageHandle CreateImage(unsigned int width, unsigned int height, GTGUI::GUIImageFormat format, const void* data);
         
-        /// GTGUI::ImageManager::LoadImage().
-        GTGUI::ImageHandle LoadImage(const char* filePath);
+        /// GTGUI::GUIImageManager::LoadImage().
+        GTGUI::GUIImageHandle LoadImage(const char* filePath);
         
         
         ///////////////////////////////////////////
         // Delete
         
-        /// GTGUI::ImageManager::DeleteImage().
-        void DeleteImage(GTGUI::ImageHandle imageToDelete);
+        /// GTGUI::GUIImageManager::DeleteImage().
+        void DeleteImage(GTGUI::GUIImageHandle imageToDelete);
         
         
         ///////////////////////////////////////////
         // Update
         
-        /// GTGUI::ImageManager::SetImageSubData().
-        void SetImageSubData(GTGUI::ImageHandle image, unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, void* data);
+        /// GTGUI::GUIImageManager::SetImageSubData().
+        void SetImageSubData(GTGUI::GUIImageHandle image, unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, void* data);
         
         
         ///////////////////////////////////////////
         // Properties
         
-        /// GTGUI::ImageManager::GetImageDimensions().
-        void GetImageDimensions(GTGUI::ImageHandle image, unsigned int &widthOut, unsigned int &heightOut) const;
+        /// GTGUI::GUIImageManager::GetImageDimensions().
+        void GetImageDimensions(GTGUI::GUIImageHandle image, unsigned int &widthOut, unsigned int &heightOut) const;
         
-        /// GTGUI::ImageManager::GetImageFormat().
-        GTGUI::ImageFormat GetImageFormat(GTGUI::ImageHandle image) const;
+        /// GTGUI::GUIImageManager::GetImageFormat().
+        GTGUI::GUIImageFormat GetImageFormat(GTGUI::GUIImageHandle image) const;
 
 
 

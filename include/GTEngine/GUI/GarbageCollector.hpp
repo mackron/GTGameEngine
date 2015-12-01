@@ -7,7 +7,7 @@
 
 namespace GTGUI
 {
-    class Element;
+    class GUIElement;
     class GUIMesh;
 
     /// Structure representing an item in the garbage collector that's waiting to be collected.
@@ -25,7 +25,7 @@ namespace GTGUI
 
     /// Class representing a simple garbage collector.
     ///
-    /// Every Server object has it's own garbage collector. It's main use it to make it easier to manage dynamics resources
+    /// Every GUIServer object has it's own garbage collector. It's main use it to make it easier to manage dynamics resources
     /// between the stepping and rendering threads. For example, elements can not be deleted straight away. Instead they have
     /// to be marked for collection and then deleted once they have finished rendering.
     ///
@@ -34,18 +34,18 @@ namespace GTGUI
     /// means it will be collected after the SECOND call to Collect(). 
     ///
     /// Objects are delete with 'delete'.
-    class GarbageCollector
+    class GUIGarbageCollector
     {
     public:
         
         /// Constructor.
-        GarbageCollector();
+        GUIGarbageCollector();
 
         /// Destructor.
         ///
         /// @remarks
         ///     Anything marked for collection will the deleted regardless of their current counter value.
-        ~GarbageCollector();
+        ~GUIGarbageCollector();
 
 
     public:
@@ -63,7 +63,7 @@ namespace GTGUI
         /// Marks an element for collection.
         ///
         /// @param element [in] A reference to the element being collected.
-        void MarkForCollection(Element &elementm, int counter = 1);
+        void MarkForCollection(GUIElement &elementm, int counter = 1);
 
         /// Marks a mesh for collection.
         ///
@@ -75,7 +75,7 @@ namespace GTGUI
     private:
 
         /// The list of garbage elements.
-        GT::List<GCItem<Element>> garbageElements;
+        GT::List<GCItem<GUIElement>> garbageElements;
 
         /// The list of garbage meshes.
         GT::List<GCItem<GUIMesh>> garbageMeshes;

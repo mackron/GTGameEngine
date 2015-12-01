@@ -15,27 +15,27 @@ namespace GTGUI
     /// previously queued OnSize events for that element. Thus, only one OnSize event will be present for any given element at
     /// a given time. The main reason for this is so that individual width and height OnSize events can be combined into a
     /// single event.
-    class EventQueue
+    class GUIEventQueue
     {
     public:
 
         /// Constructor.
-        EventQueue();
+        GUIEventQueue();
 
         /// Destructor.
-        ~EventQueue();
+        ~GUIEventQueue();
 
         /// \brief         Pushes an event onto the queue.
         /// \param  e [in] The event to copy into the queue.
         ///
         /// \remarks
         ///     The a copy of the event is created when pushed onto the queue. Therefore, it is safe to delete \e after calling this method.
-        void Push(const Event &e);
+        void Push(const GUIEvent &e);
 
         /// \brief          Retrieves the next event and removes it from the queue.
         /// \param  e [out] A reference to the event that will receive the next event.
         /// \return         True if there are more events waiting to be handled; false otherwise.
-        bool Next(Event &e);
+        bool Next(GUIEvent &e);
 
         /**
         *   \brief  Retrieves a pointer to the last event in the queue, but does not remove it.
@@ -45,7 +45,7 @@ namespace GTGUI
         *       \par
         *       The caller is free to modify the returned event if required.
         */
-        Event* PeekLast();
+        GUIEvent* PeekLast();
 
         /// Retrieves a pointer to the next event in the queue, but does not remove it.
         ///
@@ -53,18 +53,18 @@ namespace GTGUI
         ///     This function will return null if there are no events in the queue.
         ///     @par
         ///     The caller is free to modify the returned event if required.
-        Event* PeekNext();
+        GUIEvent* PeekNext();
 
 
         /// Nullifies every event that uses the given element.
         ///
         /// @param element [in] The element whose events are being nullified.
-        void NullifyEventsOfElement(Element* element);
+        void NullifyEventsOfElement(GUIElement* element);
 
         /// Removes every event that uses the given element.
         ///
         /// @param element [in] The element whose events are being deleted.
-        void RemoveEventsOfElement(Element* element);
+        void RemoveEventsOfElement(GUIElement* element);
 
 
     private:
@@ -79,7 +79,7 @@ namespace GTGUI
     private:
 
         /// The buffer containing the events.
-        Event* buffer;
+        GUIEvent* buffer;
 
         /// The size of the buffer, in GameEvents.
         size_t bufferSize;
@@ -92,8 +92,8 @@ namespace GTGUI
 
 
     private:    // No copying.
-        EventQueue(const EventQueue &);
-        EventQueue & operator=(const EventQueue &);
+        GUIEventQueue(const GUIEventQueue &);
+        GUIEventQueue & operator=(const GUIEventQueue &);
     };
 }
 

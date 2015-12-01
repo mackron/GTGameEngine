@@ -7,12 +7,12 @@
 
 namespace GTGUI
 {
-    GarbageCollector::GarbageCollector()
+    GUIGarbageCollector::GUIGarbageCollector()
         : garbageElements(), garbageMeshes()
     {
     }
     
-    GarbageCollector::~GarbageCollector()
+    GUIGarbageCollector::~GUIGarbageCollector()
     {
         while (this->garbageElements.root != nullptr)
         {
@@ -27,7 +27,7 @@ namespace GTGUI
         }
     }
 
-    void GarbageCollector::Collect(bool force)
+    void GUIGarbageCollector::Collect(bool force)
     {
         for (auto i = this->garbageElements.root; i != nullptr; )
         {
@@ -68,14 +68,14 @@ namespace GTGUI
         }
     }
 
-    void GarbageCollector::MarkForCollection(Element &element, int counter)
+    void GUIGarbageCollector::MarkForCollection(GUIElement &element, int counter)
     {
         // The primary style class should be deleted immediately so that it is never referenced while the element is in the garbage.
         element.DeletePrimaryStyleClass();
-        this->garbageElements.Append(GCItem<Element>(element, counter));
+        this->garbageElements.Append(GCItem<GUIElement>(element, counter));
     }
 
-    void GarbageCollector::MarkForCollection(GUIMesh &mesh, int counter)
+    void GUIGarbageCollector::MarkForCollection(GUIMesh &mesh, int counter)
     {
         this->garbageMeshes.Append(GCItem<GUIMesh>(mesh, counter));
     }

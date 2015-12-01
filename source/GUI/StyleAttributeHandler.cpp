@@ -6,7 +6,7 @@
 #include <GTEngine/GUI/Server.hpp>
 #include <GTEngine/Core/Strings/Tokenizer.hpp>
 
-/* !!! Don't forget to add new attribute handlers to StyleServer::LoadStyleAttributeHandlers(). It's at the end of StyleServer.cpp. !!! */
+/* !!! Don't forget to add new attribute handlers to GUIStyleServer::LoadGUIStyleAttributeHandlers(). It's at the end of GUIStyleServer.cpp. !!! */
 
 namespace GTGUI
 {
@@ -14,7 +14,7 @@ namespace GTGUI
     namespace AttributeHandlers
     {
         // width
-        bool width::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool width::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.width.SetFromString(value, valueSize))
             {
@@ -30,17 +30,17 @@ namespace GTGUI
         
             return false;
         }
-        GT::String width::Get(StyleClass &sc) const
+        GT::String width::Get(GUIStyleClass &sc) const
         {
             return sc.width.GetValueAsString();
         }
-        void width::OnChanged(Element &element)
+        void width::OnChanged(GUIElement &element)
         {
             element.server.OnWidthChanged(element);
         }
 
         // height
-        bool height::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool height::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.height.SetFromString(value, valueSize))
             {
@@ -56,18 +56,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String height::Get(StyleClass &sc) const
+        GT::String height::Get(GUIStyleClass &sc) const
         {
             return sc.height.GetValueAsString();
         }
-        void height::OnChanged(Element &element)
+        void height::OnChanged(GUIElement &element)
         {
             element.server.OnHeightChanged(element);
         }
 
 
         // min-width
-        bool minWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool minWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.minWidth.SetFromString(value, valueSize))
             {
@@ -83,17 +83,17 @@ namespace GTGUI
         
             return false;
         }
-        GT::String minWidth::Get(StyleClass &sc) const
+        GT::String minWidth::Get(GUIStyleClass &sc) const
         {
             return sc.minWidth.GetValueAsString();
         }
-        void minWidth::OnChanged(Element &element)
+        void minWidth::OnChanged(GUIElement &element)
         {
             element.server.OnWidthChanged(element);
         }
 
         // max-width
-        bool maxWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool maxWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.maxWidth.SetFromString(value, valueSize))
             {
@@ -109,18 +109,18 @@ namespace GTGUI
         
             return false;
         }
-        GT::String maxWidth::Get(StyleClass &sc) const
+        GT::String maxWidth::Get(GUIStyleClass &sc) const
         {
             return sc.maxWidth.GetValueAsString();
         }
-        void maxWidth::OnChanged(Element &element)
+        void maxWidth::OnChanged(GUIElement &element)
         {
             element.server.OnWidthChanged(element);
         }
 
 
         // min-height
-        bool minHeight::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool minHeight::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.minHeight.SetFromString(value, valueSize))
             {
@@ -136,17 +136,17 @@ namespace GTGUI
         
             return false;
         }
-        GT::String minHeight::Get(StyleClass &sc) const
+        GT::String minHeight::Get(GUIStyleClass &sc) const
         {
             return sc.minHeight.GetValueAsString();
         }
-        void minHeight::OnChanged(Element &element)
+        void minHeight::OnChanged(GUIElement &element)
         {
             element.server.OnHeightChanged(element);
         }
 
         // max-height
-        bool maxHeight::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool maxHeight::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.maxHeight.SetFromString(value, valueSize))
             {
@@ -162,18 +162,18 @@ namespace GTGUI
         
             return false;
         }
-        GT::String maxHeight::Get(StyleClass &sc) const
+        GT::String maxHeight::Get(GUIStyleClass &sc) const
         {
             return sc.maxHeight.GetValueAsString();
         }
-        void maxHeight::OnChanged(Element &element)
+        void maxHeight::OnChanged(GUIElement &element)
         {
             element.server.OnHeightChanged(element);
         }
 
 
         // relative-width-mode
-        bool relativeWidthMode::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool relativeWidthMode::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.relativeWidthMode.SetFromString(value, valueSize))
             {
@@ -183,17 +183,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String relativeWidthMode::Get(StyleClass &sc) const
+        GT::String relativeWidthMode::Get(GUIStyleClass &sc) const
         {
             return sc.relativeWidthMode.GetValueAsString();
         }
-        void relativeWidthMode::OnChanged(Element &)
+        void relativeWidthMode::OnChanged(GUIElement &)
         {
         }
 
 
         // relative-height-mode
-        bool relativeHeightMode::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool relativeHeightMode::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.relativeHeightMode.SetFromString(value, valueSize))
             {
@@ -203,17 +203,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String relativeHeightMode::Get(StyleClass &sc) const
+        GT::String relativeHeightMode::Get(GUIStyleClass &sc) const
         {
             return sc.relativeHeightMode.GetValueAsString();
         }
-        void relativeHeightMode::OnChanged(Element &)
+        void relativeHeightMode::OnChanged(GUIElement &)
         {
         }
 
 
         // flex-child-width
-        bool flexChildWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool flexChildWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.flexChildWidth.SetFromString(value, valueSize))
             {
@@ -223,18 +223,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String flexChildWidth::Get(StyleClass &sc) const
+        GT::String flexChildWidth::Get(GUIStyleClass &sc) const
         {
             return sc.flexChildWidth.GetValueAsString();
         }
-        void flexChildWidth::OnChanged(Element &element)
+        void flexChildWidth::OnChanged(GUIElement &element)
         {
             element.server.OnFlexWidthChanged(element);
         }
 
 
         // flex-child-height
-        bool flexChildHeight::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool flexChildHeight::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.flexChildHeight.SetFromString(value, valueSize))
             {
@@ -244,18 +244,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String flexChildHeight::Get(StyleClass &sc) const
+        GT::String flexChildHeight::Get(GUIStyleClass &sc) const
         {
             return sc.flexChildHeight.GetValueAsString();
         }
-        void flexChildHeight::OnChanged(Element &element)
+        void flexChildHeight::OnChanged(GUIElement &element)
         {
             element.server.OnFlexHeightChanged(element);
         }
 
     
         // background-color
-        bool backgroundColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool backgroundColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.backgroundColour.SetFromString(value, valueSize))
             {
@@ -265,18 +265,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String backgroundColour::Get(StyleClass &sc) const
+        GT::String backgroundColour::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundColour.GetValueAsString();
         }
-        void backgroundColour::OnChanged(Element &element)
+        void backgroundColour::OnChanged(GUIElement &element)
         {
             element.InvalidateBackgroundRenderingData();
         }
 
 
         // background-image
-        bool backgroundImage::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool backgroundImage::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.backgroundImage.SetFromString(value, valueSize))
             {
@@ -286,18 +286,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String backgroundImage::Get(StyleClass &sc) const
+        GT::String backgroundImage::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundImage.GetValueAsString();
         }
-        void backgroundImage::OnChanged(Element &element)
+        void backgroundImage::OnChanged(GUIElement &element)
         {
             element.InvalidateBackgroundRenderingData();
         }
 
 
         // background-image-color
-        bool backgroundImageColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool backgroundImageColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.backgroundImageColour.SetFromString(value, valueSize))
             {
@@ -307,18 +307,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String backgroundImageColour::Get(StyleClass &sc) const
+        GT::String backgroundImageColour::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundImageColour.GetValueAsString();
         }
-        void backgroundImageColour::OnChanged(Element &element)
+        void backgroundImageColour::OnChanged(GUIElement &element)
         {
             element.InvalidateBackgroundRenderingData();
         }
 
 
         // background-align-x
-        bool backgroundAlignX::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool backgroundAlignX::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.backgroundAlignX.SetFromString(value, valueSize))
             {
@@ -328,18 +328,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String backgroundAlignX::Get(StyleClass &sc) const
+        GT::String backgroundAlignX::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundAlignX.GetValueAsString();
         }
-        void backgroundAlignX::OnChanged(Element &element)
+        void backgroundAlignX::OnChanged(GUIElement &element)
         {
             element.InvalidateBackgroundRenderingData();
         }
 
 
         // background-align-x
-        bool backgroundAlignY::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool backgroundAlignY::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.backgroundAlignY.SetFromString(value, valueSize))
             {
@@ -349,18 +349,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String backgroundAlignY::Get(StyleClass &sc) const
+        GT::String backgroundAlignY::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundAlignY.GetValueAsString();
         }
-        void backgroundAlignY::OnChanged(Element &element)
+        void backgroundAlignY::OnChanged(GUIElement &element)
         {
             element.InvalidateBackgroundRenderingData();
         }
 
 
         // background-repeat-x
-        bool backgroundRepeatX::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool backgroundRepeatX::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.backgroundRepeatX.SetFromString(value, valueSize))
             {
@@ -370,18 +370,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String backgroundRepeatX::Get(StyleClass &sc) const
+        GT::String backgroundRepeatX::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundRepeatX.GetValueAsString();
         }
-        void backgroundRepeatX::OnChanged(Element &element)
+        void backgroundRepeatX::OnChanged(GUIElement &element)
         {
             element.InvalidateBackgroundRenderingData();
         }
 
 
         // background-repeat-y
-        bool backgroundRepeatY::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool backgroundRepeatY::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.backgroundRepeatY.SetFromString(value, valueSize))
             {
@@ -391,18 +391,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String backgroundRepeatY::Get(StyleClass &sc) const
+        GT::String backgroundRepeatY::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundRepeatY.GetValueAsString();
         }
-        void backgroundRepeatY::OnChanged(Element &element)
+        void backgroundRepeatY::OnChanged(GUIElement &element)
         {
             element.InvalidateBackgroundRenderingData();
         }
 
 
         // border-left-width
-        bool borderLeftWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderLeftWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.borderLeftWidth.SetFromString(value, valueSize))
             {
@@ -412,11 +412,11 @@ namespace GTGUI
 
             return false;
         }
-        GT::String borderLeftWidth::Get(StyleClass &sc) const
+        GT::String borderLeftWidth::Get(GUIStyleClass &sc) const
         {
             return sc.borderLeftWidth.GetValueAsString();
         }
-        void borderLeftWidth::OnChanged(Element &element)
+        void borderLeftWidth::OnChanged(GUIElement &element)
         {
             element.server.OnPaddingXChanged(element);
             element.InvalidateBorderRenderingData();
@@ -424,7 +424,7 @@ namespace GTGUI
 
     
         // border-right-width
-        bool borderRightWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderRightWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.borderRightWidth.SetFromString(value, valueSize))
             {
@@ -434,11 +434,11 @@ namespace GTGUI
 
             return false;
         }
-        GT::String borderRightWidth::Get(StyleClass &sc) const
+        GT::String borderRightWidth::Get(GUIStyleClass &sc) const
         {
             return sc.borderRightWidth.GetValueAsString();
         }
-        void borderRightWidth::OnChanged(Element &element)
+        void borderRightWidth::OnChanged(GUIElement &element)
         {
             element.server.OnPaddingXChanged(element);
             element.InvalidateBorderRenderingData();
@@ -446,7 +446,7 @@ namespace GTGUI
 
     
         // border-top-width
-        bool borderTopWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderTopWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.borderTopWidth.SetFromString(value, valueSize))
             {
@@ -456,11 +456,11 @@ namespace GTGUI
 
             return false;
         }
-        GT::String borderTopWidth::Get(StyleClass &sc) const
+        GT::String borderTopWidth::Get(GUIStyleClass &sc) const
         {
             return sc.borderTopWidth.GetValueAsString();
         }
-        void borderTopWidth::OnChanged(Element &element)
+        void borderTopWidth::OnChanged(GUIElement &element)
         {
             element.server.OnPaddingYChanged(element);
             element.InvalidateBorderRenderingData();
@@ -468,7 +468,7 @@ namespace GTGUI
 
     
         // border-bottom-width
-        bool borderBottomWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderBottomWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.borderBottomWidth.SetFromString(value, valueSize))
             {
@@ -478,11 +478,11 @@ namespace GTGUI
 
             return false;
         }
-        GT::String borderBottomWidth::Get(StyleClass &sc) const
+        GT::String borderBottomWidth::Get(GUIStyleClass &sc) const
         {
             return sc.borderBottomWidth.GetValueAsString();
         }
-        void borderBottomWidth::OnChanged(Element &element)
+        void borderBottomWidth::OnChanged(GUIElement &element)
         {
             element.server.OnPaddingYChanged(element);
             element.InvalidateBorderRenderingData();
@@ -490,7 +490,7 @@ namespace GTGUI
 
 
         // border-left-color
-        bool borderLeftColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderLeftColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.borderLeftColour.SetFromString(value, valueSize))
             {
@@ -500,18 +500,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String borderLeftColour::Get(StyleClass &sc) const
+        GT::String borderLeftColour::Get(GUIStyleClass &sc) const
         {
             return sc.borderLeftColour.GetValueAsString();
         }
-        void borderLeftColour::OnChanged(Element &element)
+        void borderLeftColour::OnChanged(GUIElement &element)
         {
             element.InvalidateBorderRenderingData();
         }
 
     
         // border-right-color
-        bool borderRightColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderRightColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.borderRightColour.SetFromString(value, valueSize))
             {
@@ -521,18 +521,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String borderRightColour::Get(StyleClass &sc) const
+        GT::String borderRightColour::Get(GUIStyleClass &sc) const
         {
             return sc.borderRightColour.GetValueAsString();
         }
-        void borderRightColour::OnChanged(Element &element)
+        void borderRightColour::OnChanged(GUIElement &element)
         {
             element.InvalidateBorderRenderingData();
         }
 
     
         // border-top-color
-        bool borderTopColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderTopColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.borderTopColour.SetFromString(value, valueSize))
             {
@@ -542,18 +542,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String borderTopColour::Get(StyleClass &sc) const
+        GT::String borderTopColour::Get(GUIStyleClass &sc) const
         {
             return sc.borderTopColour.GetValueAsString();
         }
-        void borderTopColour::OnChanged(Element &element)
+        void borderTopColour::OnChanged(GUIElement &element)
         {
             element.InvalidateBorderRenderingData();
         }
 
     
         // border-bottom-color
-        bool borderBottomColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderBottomColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.borderBottomColour.SetFromString(value, valueSize))
             {
@@ -563,18 +563,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String borderBottomColour::Get(StyleClass &sc) const
+        GT::String borderBottomColour::Get(GUIStyleClass &sc) const
         {
             return sc.borderBottomColour.GetValueAsString();
         }
-        void borderBottomColour::OnChanged(Element &element)
+        void borderBottomColour::OnChanged(GUIElement &element)
         {
             element.InvalidateBorderRenderingData();
         }
 
 
         // padding-left
-        bool paddingLeft::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool paddingLeft::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.paddingLeft.SetFromString(value, valueSize))
             {
@@ -584,18 +584,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String paddingLeft::Get(StyleClass &sc) const
+        GT::String paddingLeft::Get(GUIStyleClass &sc) const
         {
             return sc.paddingLeft.GetValueAsString();
         }
-        void paddingLeft::OnChanged(Element &element)
+        void paddingLeft::OnChanged(GUIElement &element)
         {
             element.server.OnPaddingXChanged(element);
         }
 
 
         // padding-right
-        bool paddingRight::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool paddingRight::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.paddingRight.SetFromString(value, valueSize))
             {
@@ -605,18 +605,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String paddingRight::Get(StyleClass &sc) const
+        GT::String paddingRight::Get(GUIStyleClass &sc) const
         {
             return sc.paddingRight.GetValueAsString();
         }
-        void paddingRight::OnChanged(Element &element)
+        void paddingRight::OnChanged(GUIElement &element)
         {
             element.server.OnPaddingXChanged(element);
         }
 
     
         // padding-top
-        bool paddingTop::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool paddingTop::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.paddingTop.SetFromString(value, valueSize))
             {
@@ -626,18 +626,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String paddingTop::Get(StyleClass &sc) const
+        GT::String paddingTop::Get(GUIStyleClass &sc) const
         {
             return sc.paddingTop.GetValueAsString();
         }
-        void paddingTop::OnChanged(Element &element)
+        void paddingTop::OnChanged(GUIElement &element)
         {
             element.server.OnPaddingYChanged(element);
         }
 
 
         // padding-bottom
-        bool paddingBottom::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool paddingBottom::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.paddingBottom.SetFromString(value, valueSize))
             {
@@ -647,18 +647,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String paddingBottom::Get(StyleClass &sc) const
+        GT::String paddingBottom::Get(GUIStyleClass &sc) const
         {
             return sc.paddingBottom.GetValueAsString();
         }
-        void paddingBottom::OnChanged(Element &element)
+        void paddingBottom::OnChanged(GUIElement &element)
         {
             element.server.OnPaddingYChanged(element);
         }
 
 
         // margin-left
-        bool marginLeft::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool marginLeft::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.marginLeft.SetFromString(value, valueSize))
             {
@@ -668,18 +668,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String marginLeft::Get(StyleClass &sc) const
+        GT::String marginLeft::Get(GUIStyleClass &sc) const
         {
             return sc.marginLeft.GetValueAsString();
         }
-        void marginLeft::OnChanged(Element &element)
+        void marginLeft::OnChanged(GUIElement &element)
         {
             element.server.OnMarginsXChanged(element);
         }
 
     
         // margin-right
-        bool marginRight::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool marginRight::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.marginRight.SetFromString(value, valueSize))
             {
@@ -689,18 +689,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String marginRight::Get(StyleClass &sc) const
+        GT::String marginRight::Get(GUIStyleClass &sc) const
         {
             return sc.marginRight.GetValueAsString();
         }
-        void marginRight::OnChanged(Element &element)
+        void marginRight::OnChanged(GUIElement &element)
         {
             element.server.OnMarginsXChanged(element);
         }
 
     
         // margin-top
-        bool marginTop::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool marginTop::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.marginTop.SetFromString(value, valueSize))
             {
@@ -710,18 +710,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String marginTop::Get(StyleClass &sc) const
+        GT::String marginTop::Get(GUIStyleClass &sc) const
         {
             return sc.marginTop.GetValueAsString();
         }
-        void marginTop::OnChanged(Element &element)
+        void marginTop::OnChanged(GUIElement &element)
         {
             element.server.OnMarginsYChanged(element);
         }
 
     
         // margin-bottom
-        bool marginBottom::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool marginBottom::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.marginBottom.SetFromString(value, valueSize))
             {
@@ -731,18 +731,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String marginBottom::Get(StyleClass &sc) const
+        GT::String marginBottom::Get(GUIStyleClass &sc) const
         {
             return sc.marginBottom.GetValueAsString();
         }
-        void marginBottom::OnChanged(Element &element)
+        void marginBottom::OnChanged(GUIElement &element)
         {
             element.server.OnMarginsYChanged(element);
         }
 
 
         // child-plane
-        bool childPlane::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool childPlane::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (GT::Strings::Equal(value, valueSize, "horizontal") ||
                 GT::Strings::Equal(value, valueSize, "vertical"))
@@ -756,18 +756,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String childPlane::Get(StyleClass &sc) const
+        GT::String childPlane::Get(GUIStyleClass &sc) const
         {
             return sc.childPlane.GetValueAsString();
         }
-        void childPlane::OnChanged(Element &element)
+        void childPlane::OnChanged(GUIElement &element)
         {
             element.server.OnChildPlaneChanged(element);
         }
 
     
         // horizontal-align
-        bool horizontalAlign::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool horizontalAlign::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (GT::Strings::Equal(value, valueSize, "left")  ||
                 GT::Strings::Equal(value, valueSize, "right") ||
@@ -782,18 +782,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String horizontalAlign::Get(StyleClass &sc) const
+        GT::String horizontalAlign::Get(GUIStyleClass &sc) const
         {
             return sc.horizontalAlign.GetValueAsString();
         }
-        void horizontalAlign::OnChanged(Element &element)
+        void horizontalAlign::OnChanged(GUIElement &element)
         {
             element.server.OnHorizontalAlignChanged(element);
         }
 
 
         // vertical-align
-        bool verticalAlign::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool verticalAlign::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (GT::Strings::Equal(value, valueSize, "top")    ||
                 GT::Strings::Equal(value, valueSize, "bottom") ||
@@ -808,18 +808,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String verticalAlign::Get(StyleClass &sc) const
+        GT::String verticalAlign::Get(GUIStyleClass &sc) const
         {
             return sc.verticalAlign.GetValueAsString();
         }
-        void verticalAlign::OnChanged(Element &element)
+        void verticalAlign::OnChanged(GUIElement &element)
         {
             element.server.OnVerticalAlignChanged(element);
         }
 
 
         // cursor
-        bool cursor::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool cursor::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (GT::Strings::Equal(value, valueSize, "arrow") ||
                 GT::Strings::Equal(value, valueSize, "beam")  ||
@@ -834,17 +834,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String cursor::Get(StyleClass &sc) const
+        GT::String cursor::Get(GUIStyleClass &sc) const
         {
             return sc.cursor.GetValueAsString();
         }
-        void cursor::OnChanged(Element &)
+        void cursor::OnChanged(GUIElement &)
         {
         }
 
 
         // visible
-        bool visible::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool visible::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.visible.SetFromString(value, valueSize))
             {
@@ -854,18 +854,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String visible::Get(StyleClass &sc) const
+        GT::String visible::Get(GUIStyleClass &sc) const
         {
             return sc.visible.GetValueAsString();
         }
-        void visible::OnChanged(Element &element)
+        void visible::OnChanged(GUIElement &element)
         {
             element.server.OnVisibilityChanged(element);
         }
 
 
         // z-index
-        bool zIndex::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool zIndex::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.zIndex.SetFromString(value, valueSize))
             {
@@ -881,18 +881,18 @@ namespace GTGUI
         
             return false;
         }
-        GT::String zIndex::Get(StyleClass &sc) const
+        GT::String zIndex::Get(GUIStyleClass &sc) const
         {
             return sc.zIndex.GetValueAsString();
         }
-        void zIndex::OnChanged(Element &element)
+        void zIndex::OnChanged(GUIElement &element)
         {
             element.server.OnZIndexChanged(element);
         }
 
 
         // transparent-mouse-input
-        bool transparentMouseInput::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool transparentMouseInput::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.transparentMouseInput.SetFromString(value, valueSize))
             {
@@ -902,20 +902,20 @@ namespace GTGUI
 
             return false;
         }
-        GT::String transparentMouseInput::Get(StyleClass &sc) const
+        GT::String transparentMouseInput::Get(GUIStyleClass &sc) const
         {
             return sc.transparentMouseInput.GetValueAsString();
         }
-        void transparentMouseInput::OnChanged(Element &)
+        void transparentMouseInput::OnChanged(GUIElement &)
         {
         }
 
 
         // enabled
-        void RecursivelyActivateDisabledModifierClass(Element &element)
+        void RecursivelyActivateDisabledModifierClass(GUIElement &element)
         {
             element.style.DeactivateAllModifierClasses();
-            element.style.ActivateModifierClasses(StyleClassType_Disabled);
+            element.style.ActivateModifierClasses(GUIStyleClassType_Disabled);
 
             // If the focused element has just been disabled, it needs to lose focus.
             if (element.server.GetFocusedElement() == &element)
@@ -931,11 +931,11 @@ namespace GTGUI
             }
         }
 
-        void RecursivelyDeactivateDisabledModifierClass(Element &element)
+        void RecursivelyDeactivateDisabledModifierClass(GUIElement &element)
         {
             if (element.style.enabled->value)
             {
-                element.style.DeactivateModifierClasses(StyleClassType_Disabled);
+                element.style.DeactivateModifierClasses(GUIStyleClassType_Disabled);
 
 
                 // Children.
@@ -946,7 +946,7 @@ namespace GTGUI
             }
         }
 
-        bool enabled::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool enabled::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.enabled.SetFromString(value, valueSize))
             {
@@ -956,11 +956,11 @@ namespace GTGUI
 
             return false;
         }
-        GT::String enabled::Get(StyleClass &sc) const
+        GT::String enabled::Get(GUIStyleClass &sc) const
         {
             return sc.enabled.GetValueAsString();
         }
-        void enabled::OnChanged(Element &element)
+        void enabled::OnChanged(GUIElement &element)
         {
             if (!element.style.enabled->value)
             {
@@ -978,7 +978,7 @@ namespace GTGUI
 
 
         // text-cursor-color
-        bool textCursorColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool textCursorColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.textCursorColour.SetFromString(value, valueSize))
             {
@@ -988,17 +988,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String textCursorColour::Get(StyleClass &sc) const
+        GT::String textCursorColour::Get(GUIStyleClass &sc) const
         {
             return sc.textCursorColour.GetValueAsString();
         }
-        void textCursorColour::OnChanged(Element &)
+        void textCursorColour::OnChanged(GUIElement &)
         {
         }
         
         
         // can-receive-focus-from-mouse
-        bool canReceiveFocusFromMouse::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool canReceiveFocusFromMouse::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.canReceiveFocusFromMouse.SetFromString(value, valueSize))
             {
@@ -1008,17 +1008,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String canReceiveFocusFromMouse::Get(StyleClass &sc) const
+        GT::String canReceiveFocusFromMouse::Get(GUIStyleClass &sc) const
         {
             return sc.canReceiveFocusFromMouse.GetValueAsString();
         }
-        void canReceiveFocusFromMouse::OnChanged(Element &)
+        void canReceiveFocusFromMouse::OnChanged(GUIElement &)
         {
         }
 
 
         // positioning
-        bool positioning::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool positioning::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (GT::Strings::Equal(value, valueSize, "auto")     ||
                 GT::Strings::Equal(value, valueSize, "relative") ||
@@ -1033,18 +1033,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String positioning::Get(StyleClass &sc) const
+        GT::String positioning::Get(GUIStyleClass &sc) const
         {
             return sc.positioning.GetValueAsString();
         }
-        void positioning::OnChanged(Element &element)
+        void positioning::OnChanged(GUIElement &element)
         {
             element.server.OnPositioningChanged(element);
         }
 
 
         // left
-        bool left::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool left::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.left.SetFromString(value, valueSize))
             {
@@ -1056,18 +1056,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String left::Get(StyleClass &sc) const
+        GT::String left::Get(GUIStyleClass &sc) const
         {
             return sc.left.GetValueAsString();
         }
-        void left::OnChanged(Element &element)
+        void left::OnChanged(GUIElement &element)
         {
             element.server.OnLeftChanged(element);
         }
 
 
         // right
-        bool right::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool right::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.right.SetFromString(value, valueSize))
             {
@@ -1079,18 +1079,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String right::Get(StyleClass &sc) const
+        GT::String right::Get(GUIStyleClass &sc) const
         {
             return sc.right.GetValueAsString();
         }
-        void right::OnChanged(Element &element)
+        void right::OnChanged(GUIElement &element)
         {
             element.server.OnRightChanged(element);
         }
 
 
         // top
-        bool top::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool top::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.top.SetFromString(value, valueSize))
             {
@@ -1102,18 +1102,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String top::Get(StyleClass &sc) const
+        GT::String top::Get(GUIStyleClass &sc) const
         {
             return sc.top.GetValueAsString();
         }
-        void top::OnChanged(Element &element)
+        void top::OnChanged(GUIElement &element)
         {
             element.server.OnTopChanged(element);
         }
 
 
         // bottom
-        bool bottom::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool bottom::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.bottom.SetFromString(value, valueSize))
             {
@@ -1125,18 +1125,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String bottom::Get(StyleClass &sc) const
+        GT::String bottom::Get(GUIStyleClass &sc) const
         {
             return sc.bottom.GetValueAsString();
         }
-        void bottom::OnChanged(Element &element)
+        void bottom::OnChanged(GUIElement &element)
         {
             element.server.OnBottomChanged(element);
         }
 
 
         // position-origin
-        bool positionOrigin::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool positionOrigin::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.positionOrigin.SetFromString(value, valueSize))
             {
@@ -1146,11 +1146,11 @@ namespace GTGUI
 
             return false;
         }
-        GT::String positionOrigin::Get(StyleClass &sc) const
+        GT::String positionOrigin::Get(GUIStyleClass &sc) const
         {
             return sc.positionOrigin.GetValueAsString();
         }
-        void positionOrigin::OnChanged(Element &element)
+        void positionOrigin::OnChanged(GUIElement &element)
         {
             if (element.style.rightHasPriority)
             {
@@ -1173,7 +1173,7 @@ namespace GTGUI
 
 
         // inner-offset-x
-        bool innerOffsetX::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool innerOffsetX::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.innerOffsetX.SetFromString(value, valueSize))
             {
@@ -1183,18 +1183,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String innerOffsetX::Get(StyleClass &sc) const
+        GT::String innerOffsetX::Get(GUIStyleClass &sc) const
         {
             return sc.innerOffsetX.GetValueAsString();
         }
-        void innerOffsetX::OnChanged(Element &element)
+        void innerOffsetX::OnChanged(GUIElement &element)
         {
             element.server.OnInnerOffsetXChanged(element);
         }
 
 
         // inner-offset-y
-        bool innerOffsetY::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool innerOffsetY::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.innerOffsetY.SetFromString(value, valueSize))
             {
@@ -1204,18 +1204,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String innerOffsetY::Get(StyleClass &sc) const
+        GT::String innerOffsetY::Get(GUIStyleClass &sc) const
         {
             return sc.innerOffsetY.GetValueAsString();
         }
-        void innerOffsetY::OnChanged(Element &element)
+        void innerOffsetY::OnChanged(GUIElement &element)
         {
             element.server.OnInnerOffsetYChanged(element);
         }
 
 
         // font-family
-        bool fontFamily::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool fontFamily::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.fontFamily.SetFromString(value, valueSize))
             {
@@ -1225,18 +1225,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String fontFamily::Get(StyleClass &sc) const
+        GT::String fontFamily::Get(GUIStyleClass &sc) const
         {
             return sc.fontFamily.GetValueAsString();
         }
-        void fontFamily::OnChanged(Element &element)
+        void fontFamily::OnChanged(GUIElement &element)
         {
             element.UpdateFontFromStyle();
         }
 
     
         // font-size
-        bool fontSize::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool fontSize::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.fontSize.SetFromString(value, valueSize))
             {
@@ -1246,18 +1246,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String fontSize::Get(StyleClass &sc) const
+        GT::String fontSize::Get(GUIStyleClass &sc) const
         {
             return sc.fontSize.GetValueAsString();
         }
-        void fontSize::OnChanged(Element &element)
+        void fontSize::OnChanged(GUIElement &element)
         {
             element.UpdateFontFromStyle();
         }
 
 
         // font-weight
-        bool fontWeight::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool fontWeight::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.fontWeight.SetFromString(value, valueSize))
             {
@@ -1267,18 +1267,18 @@ namespace GTGUI
             
             return false;
         }
-        GT::String fontWeight::Get(StyleClass &sc) const
+        GT::String fontWeight::Get(GUIStyleClass &sc) const
         {
             return sc.fontWeight.GetValueAsString();
         }
-        void fontWeight::OnChanged(Element &element)
+        void fontWeight::OnChanged(GUIElement &element)
         {
             element.UpdateFontFromStyle();
         }
         
         
         // font-slant
-        bool fontSlant::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool fontSlant::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.fontSlant.SetFromString(value, valueSize))
             {
@@ -1288,18 +1288,18 @@ namespace GTGUI
             
             return false;
         }
-        GT::String fontSlant::Get(StyleClass &sc) const
+        GT::String fontSlant::Get(GUIStyleClass &sc) const
         {
             return sc.fontSlant.GetValueAsString();
         }
-        void fontSlant::OnChanged(Element &element)
+        void fontSlant::OnChanged(GUIElement &element)
         {
             element.UpdateFontFromStyle();
         }
 
 
         // text-color
-        bool textColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool textColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.textColour.SetFromString(value, valueSize))
             {
@@ -1309,17 +1309,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String textColour::Get(StyleClass &sc) const
+        GT::String textColour::Get(GUIStyleClass &sc) const
         {
             return sc.textColour.GetValueAsString();
         }
-        void textColour::OnChanged(Element &element)
+        void textColour::OnChanged(GUIElement &element)
         {
             element.InvalidateTextRenderingData();
         }
 
         // text-selection-color
-        bool textSelectionColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool textSelectionColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.textSelectionColour.SetFromString(value, valueSize))
             {
@@ -1329,17 +1329,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String textSelectionColour::Get(StyleClass &sc) const
+        GT::String textSelectionColour::Get(GUIStyleClass &sc) const
         {
             return sc.textSelectionColour.GetValueAsString();
         }
-        void textSelectionColour::OnChanged(Element &element)
+        void textSelectionColour::OnChanged(GUIElement &element)
         {
             element.InvalidateTextRenderingData();
         }
 
         // text-selection-background-color
-        bool textSelectionBackgroundColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool textSelectionBackgroundColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.textSelectionBackgroundColour.SetFromString(value, valueSize))
             {
@@ -1349,17 +1349,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String textSelectionBackgroundColour::Get(StyleClass &sc) const
+        GT::String textSelectionBackgroundColour::Get(GUIStyleClass &sc) const
         {
             return sc.textSelectionBackgroundColour.GetValueAsString();
         }
-        void textSelectionBackgroundColour::OnChanged(Element &element)
+        void textSelectionBackgroundColour::OnChanged(GUIElement &element)
         {
             element.InvalidateTextRenderingData();
         }
 
         // text-selection-background-color-blurred
-        bool textSelectionBackgroundColourBlurred::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool textSelectionBackgroundColourBlurred::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.textSelectionBackgroundColourBlurred.SetFromString(value, valueSize))
             {
@@ -1369,11 +1369,11 @@ namespace GTGUI
 
             return false;
         }
-        GT::String textSelectionBackgroundColourBlurred::Get(StyleClass &sc) const
+        GT::String textSelectionBackgroundColourBlurred::Get(GUIStyleClass &sc) const
         {
             return sc.textSelectionBackgroundColourBlurred.GetValueAsString();
         }
-        void textSelectionBackgroundColourBlurred::OnChanged(Element &element)
+        void textSelectionBackgroundColourBlurred::OnChanged(GUIElement &element)
         {
             element.InvalidateTextRenderingData();
         }
@@ -1382,7 +1382,7 @@ namespace GTGUI
 
 
         // editable-text
-        bool editableText::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool editableText::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.editableText.SetFromString(value, valueSize))
             {
@@ -1392,17 +1392,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String editableText::Get(StyleClass &sc) const
+        GT::String editableText::Get(GUIStyleClass &sc) const
         {
             return sc.editableText.GetValueAsString();
         }
-        void editableText::OnChanged(Element &)
+        void editableText::OnChanged(GUIElement &)
         {
         }
 
 
         // single-line-text
-        bool singleLineText::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool singleLineText::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.singleLineText.SetFromString(value, valueSize))
             {
@@ -1412,11 +1412,11 @@ namespace GTGUI
 
             return false;
         }
-        GT::String singleLineText::Get(StyleClass &sc) const
+        GT::String singleLineText::Get(GUIStyleClass &sc) const
         {
             return sc.singleLineText.GetValueAsString();
         }
-        void singleLineText::OnChanged(Element &)
+        void singleLineText::OnChanged(GUIElement &)
         {
             // TODO: Update the text manager.
         }
@@ -1424,7 +1424,7 @@ namespace GTGUI
         
 
         // opacity
-        bool opacity::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool opacity::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.opacity.SetFromString(value, valueSize))
             {
@@ -1434,18 +1434,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String opacity::Get(StyleClass &sc) const
+        GT::String opacity::Get(GUIStyleClass &sc) const
         {
             return sc.opacity.GetValueAsString();
         }
-        void opacity::OnChanged(Element &element)
+        void opacity::OnChanged(GUIElement &element)
         {
             element.UpdateAbsoluteOpacity();    // <-- Recursive on children.
         }
 
 
         // compound-opacity
-        bool compoundOpacity::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool compoundOpacity::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.compoundOpacity.SetFromString(value, valueSize))
             {
@@ -1455,18 +1455,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String compoundOpacity::Get(StyleClass &sc) const
+        GT::String compoundOpacity::Get(GUIStyleClass &sc) const
         {
             return sc.compoundOpacity.GetValueAsString();
         }
-        void compoundOpacity::OnChanged(Element &element)
+        void compoundOpacity::OnChanged(GUIElement &element)
         {
             element.UpdateAbsoluteOpacity();    // <-- Recursive on children.
         }
 
 
         // enable-shadow
-        bool enableShadow::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool enableShadow::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.enableShadow.SetFromString(value, valueSize))
             {
@@ -1476,18 +1476,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String enableShadow::Get(StyleClass &sc) const
+        GT::String enableShadow::Get(GUIStyleClass &sc) const
         {
             return sc.enableShadow.GetValueAsString();
         }
-        void enableShadow::OnChanged(Element &element)
+        void enableShadow::OnChanged(GUIElement &element)
         {
             element.InvalidateShadowRenderingData();
         }
 
 
         // shadow-color
-        bool shadowColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool shadowColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.shadowColour.SetFromString(value, valueSize))
             {
@@ -1497,18 +1497,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String shadowColour::Get(StyleClass &sc) const
+        GT::String shadowColour::Get(GUIStyleClass &sc) const
         {
             return sc.shadowColour.GetValueAsString();
         }
-        void shadowColour::OnChanged(Element &element)
+        void shadowColour::OnChanged(GUIElement &element)
         {
             element.InvalidateShadowRenderingData();
         }
 
 
         // shadow-blur-radius
-        bool shadowBlurRadius::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool shadowBlurRadius::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.shadowBlurRadius.SetFromString(value, valueSize))
             {
@@ -1518,18 +1518,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String shadowBlurRadius::Get(StyleClass &sc) const
+        GT::String shadowBlurRadius::Get(GUIStyleClass &sc) const
         {
             return sc.shadowBlurRadius.GetValueAsString();
         }
-        void shadowBlurRadius::OnChanged(Element &element)
+        void shadowBlurRadius::OnChanged(GUIElement &element)
         {
             element.InvalidateShadowRenderingData();
         }
 
 
         // shadow-offset-x
-        bool shadowOffsetX::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool shadowOffsetX::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.shadowOffsetX.SetFromString(value, valueSize))
             {
@@ -1539,18 +1539,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String shadowOffsetX::Get(StyleClass &sc) const
+        GT::String shadowOffsetX::Get(GUIStyleClass &sc) const
         {
             return sc.shadowOffsetX.GetValueAsString();
         }
-        void shadowOffsetX::OnChanged(Element &element)
+        void shadowOffsetX::OnChanged(GUIElement &element)
         {
             element.InvalidateShadowRenderingData();
         }
 
 
         // shadow-offset-y
-        bool shadowOffsetY::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool shadowOffsetY::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.shadowOffsetY.SetFromString(value, valueSize))
             {
@@ -1560,18 +1560,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String shadowOffsetY::Get(StyleClass &sc) const
+        GT::String shadowOffsetY::Get(GUIStyleClass &sc) const
         {
             return sc.shadowOffsetY.GetValueAsString();
         }
-        void shadowOffsetY::OnChanged(Element &element)
+        void shadowOffsetY::OnChanged(GUIElement &element)
         {
             element.InvalidateShadowRenderingData();
         }
 
 
         // shadow-extrusion-x
-        bool shadowExtrusionX::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool shadowExtrusionX::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.shadowExtrusionX.SetFromString(value, valueSize))
             {
@@ -1581,18 +1581,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String shadowExtrusionX::Get(StyleClass &sc) const
+        GT::String shadowExtrusionX::Get(GUIStyleClass &sc) const
         {
             return sc.shadowExtrusionX.GetValueAsString();
         }
-        void shadowExtrusionX::OnChanged(Element &element)
+        void shadowExtrusionX::OnChanged(GUIElement &element)
         {
             element.InvalidateShadowRenderingData();
         }
 
 
         // shadow-extrusion-y
-        bool shadowExtrusionY::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool shadowExtrusionY::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.shadowExtrusionY.SetFromString(value, valueSize))
             {
@@ -1602,18 +1602,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String shadowExtrusionY::Get(StyleClass &sc) const
+        GT::String shadowExtrusionY::Get(GUIStyleClass &sc) const
         {
             return sc.shadowExtrusionY.GetValueAsString();
         }
-        void shadowExtrusionY::OnChanged(Element &element)
+        void shadowExtrusionY::OnChanged(GUIElement &element)
         {
             element.InvalidateShadowRenderingData();
         }
 
 
         // shadow-opacity
-        bool shadowOpacity::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool shadowOpacity::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.shadowOpacity.SetFromString(value, valueSize))
             {
@@ -1623,18 +1623,18 @@ namespace GTGUI
 
             return false;
         }
-        GT::String shadowOpacity::Get(StyleClass &sc) const
+        GT::String shadowOpacity::Get(GUIStyleClass &sc) const
         {
             return sc.shadowOpacity.GetValueAsString();
         }
-        void shadowOpacity::OnChanged(Element &element)
+        void shadowOpacity::OnChanged(GUIElement &element)
         {
             element.InvalidateShadowRenderingData();
         }
 
 
         // allow-mouse-drag
-        bool allowMouseDrag::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool allowMouseDrag::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.allowMouseDrag.SetFromString(value, valueSize))
             {
@@ -1644,17 +1644,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String allowMouseDrag::Get(StyleClass &sc) const
+        GT::String allowMouseDrag::Get(GUIStyleClass &sc) const
         {
             return sc.allowMouseDrag.GetValueAsString();
         }
-        void allowMouseDrag::OnChanged(Element &)
+        void allowMouseDrag::OnChanged(GUIElement &)
         {
         }
 
 
         // constrain-mouse-drag-x
-        bool constrainMouseDragX::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool constrainMouseDragX::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.constrainMouseDragX.SetFromString(value, valueSize))
             {
@@ -1664,16 +1664,16 @@ namespace GTGUI
 
             return false;
         }
-        GT::String constrainMouseDragX::Get(StyleClass &sc) const
+        GT::String constrainMouseDragX::Get(GUIStyleClass &sc) const
         {
             return sc.constrainMouseDragX.GetValueAsString();
         }
-        void constrainMouseDragX::OnChanged(Element &)
+        void constrainMouseDragX::OnChanged(GUIElement &)
         {
         }
 
         // constrain-mouse-drag-y
-        bool constrainMouseDragY::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool constrainMouseDragY::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.constrainMouseDragY.SetFromString(value, valueSize))
             {
@@ -1683,17 +1683,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String constrainMouseDragY::Get(StyleClass &sc) const
+        GT::String constrainMouseDragY::Get(GUIStyleClass &sc) const
         {
             return sc.constrainMouseDragY.GetValueAsString();
         }
-        void constrainMouseDragY::OnChanged(Element &)
+        void constrainMouseDragY::OnChanged(GUIElement &)
         {
         }
 
 
         // mouse-drag-clamp-mode-x
-        bool mouseDragClampModeX::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool mouseDragClampModeX::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.mouseDragClampModeX.SetFromString(value, valueSize))
             {
@@ -1703,16 +1703,16 @@ namespace GTGUI
 
             return false;
         }
-        GT::String mouseDragClampModeX::Get(StyleClass &sc) const
+        GT::String mouseDragClampModeX::Get(GUIStyleClass &sc) const
         {
             return sc.mouseDragClampModeX.GetValueAsString();
         }
-        void mouseDragClampModeX::OnChanged(Element &)
+        void mouseDragClampModeX::OnChanged(GUIElement &)
         {
         }
 
         // mouse-drag-clamp-mode-y
-        bool mouseDragClampModeY::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool mouseDragClampModeY::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.mouseDragClampModeY.SetFromString(value, valueSize))
             {
@@ -1722,17 +1722,17 @@ namespace GTGUI
 
             return false;
         }
-        GT::String mouseDragClampModeY::Get(StyleClass &sc) const
+        GT::String mouseDragClampModeY::Get(GUIStyleClass &sc) const
         {
             return sc.mouseDragClampModeY.GetValueAsString();
         }
-        void mouseDragClampModeY::OnChanged(Element &)
+        void mouseDragClampModeY::OnChanged(GUIElement &)
         {
         }
 
 
         // allow-mouse-resize
-        bool allowMouseResize::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool allowMouseResize::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.allowMouseResize.SetFromString(value, valueSize))
             {
@@ -1742,16 +1742,16 @@ namespace GTGUI
 
             return false;
         }
-        GT::String allowMouseResize::Get(StyleClass &sc) const
+        GT::String allowMouseResize::Get(GUIStyleClass &sc) const
         {
             return sc.allowMouseResize.GetValueAsString();
         }
-        void allowMouseResize::OnChanged(Element &)
+        void allowMouseResize::OnChanged(GUIElement &)
         {
         }
 
         // left-gripper-width
-        bool leftGripperWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool leftGripperWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.leftGripperWidth.SetFromString(value, valueSize))
             {
@@ -1761,16 +1761,16 @@ namespace GTGUI
 
             return false;
         }
-        GT::String leftGripperWidth::Get(StyleClass &sc) const
+        GT::String leftGripperWidth::Get(GUIStyleClass &sc) const
         {
             return sc.leftGripperWidth.GetValueAsString();
         }
-        void leftGripperWidth::OnChanged(Element &)
+        void leftGripperWidth::OnChanged(GUIElement &)
         {
         }
 
         // right-gripper-width
-        bool rightGripperWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool rightGripperWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.rightGripperWidth.SetFromString(value, valueSize))
             {
@@ -1780,16 +1780,16 @@ namespace GTGUI
 
             return false;
         }
-        GT::String rightGripperWidth::Get(StyleClass &sc) const
+        GT::String rightGripperWidth::Get(GUIStyleClass &sc) const
         {
             return sc.rightGripperWidth.GetValueAsString();
         }
-        void rightGripperWidth::OnChanged(Element &)
+        void rightGripperWidth::OnChanged(GUIElement &)
         {
         }
 
         // top-gripper-width
-        bool topGripperWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool topGripperWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.topGripperWidth.SetFromString(value, valueSize))
             {
@@ -1799,16 +1799,16 @@ namespace GTGUI
 
             return false;
         }
-        GT::String topGripperWidth::Get(StyleClass &sc) const
+        GT::String topGripperWidth::Get(GUIStyleClass &sc) const
         {
             return sc.topGripperWidth.GetValueAsString();
         }
-        void topGripperWidth::OnChanged(Element &)
+        void topGripperWidth::OnChanged(GUIElement &)
         {
         }
 
         // bottom-gripper-width
-        bool bottomGripperWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool bottomGripperWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (sc.bottomGripperWidth.SetFromString(value, valueSize))
             {
@@ -1818,11 +1818,11 @@ namespace GTGUI
 
             return false;
         }
-        GT::String bottomGripperWidth::Get(StyleClass &sc) const
+        GT::String bottomGripperWidth::Get(GUIStyleClass &sc) const
         {
             return sc.bottomGripperWidth.GetValueAsString();
         }
-        void bottomGripperWidth::OnChanged(Element &)
+        void bottomGripperWidth::OnChanged(GUIElement &)
         {
         }
     }
@@ -1835,7 +1835,7 @@ namespace GTGUI
     namespace AttributeHandlers
     {
         // background-align
-        bool backgroundAlign::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool backgroundAlign::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             // We must have two tokens here.
             const char* xStart = nullptr;
@@ -1873,16 +1873,16 @@ namespace GTGUI
 
             return false;
         }
-        void backgroundAlign::Unset(StyleClass &sc)
+        void backgroundAlign::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "background-align-x");
-            sc.server.UnsetStyleAttribute(sc, "background-align-y");
+            sc.server.UnsetGUIStyleAttribute(sc, "background-align-x");
+            sc.server.UnsetGUIStyleAttribute(sc, "background-align-y");
         }
-        GT::String backgroundAlign::Get(StyleClass &sc) const
+        GT::String backgroundAlign::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundAlignX.GetValueAsString() + " " + sc.backgroundAlignY.GetValueAsString();
         }
-        void backgroundAlign::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void backgroundAlign::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.backgroundAlignX.inherit = inherit;
             sc.backgroundAlignX.isset   = inherit;
@@ -1898,7 +1898,7 @@ namespace GTGUI
 
 
         // background-repeat
-        bool backgroundRepeat::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool backgroundRepeat::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             // If only a single token is present, we set the alignment for both X and Y. Otherwise, the first token is the X
             // alignment and the second is the Y alignment.
@@ -1928,16 +1928,16 @@ namespace GTGUI
 
             return false;
         }
-        void backgroundRepeat::Unset(StyleClass &sc)
+        void backgroundRepeat::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "background-repeat-x");
-            sc.server.UnsetStyleAttribute(sc, "background-repeat-y");
+            sc.server.UnsetGUIStyleAttribute(sc, "background-repeat-x");
+            sc.server.UnsetGUIStyleAttribute(sc, "background-repeat-y");
         }
-        GT::String backgroundRepeat::Get(StyleClass &sc) const
+        GT::String backgroundRepeat::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundRepeatX.GetValueAsString() + " " + sc.backgroundRepeatY.GetValueAsString();
         }
-        void backgroundRepeat::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void backgroundRepeat::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.backgroundRepeatX.inherit = inherit;
             sc.backgroundRepeatX.isset   = inherit;
@@ -1953,7 +1953,7 @@ namespace GTGUI
 
 
         // background
-        bool background::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool background::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             // At the moment background is the same as background-color. But in the future we will add things like images.
             if (sc.backgroundColour.SetFromString(value, valueSize))
@@ -1964,15 +1964,15 @@ namespace GTGUI
 
             return false;
         }
-        void background::Unset(StyleClass &sc)
+        void background::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "background-color");
+            sc.server.UnsetGUIStyleAttribute(sc, "background-color");
         }
-        GT::String background::Get(StyleClass &sc) const
+        GT::String background::Get(GUIStyleClass &sc) const
         {
             return sc.backgroundColour.GetValueAsString();
         }
-        void background::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void background::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.backgroundColour.inherit = inherit;
             sc.backgroundColour.isset   = inherit;
@@ -1985,7 +1985,7 @@ namespace GTGUI
 
 
         // border-width
-        bool borderWidth::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderWidth::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             // We need to tokenize the value and look at the tokens. It has a different meaning depending on how many
             // arguments it has. If it has only 1 token, it means all borders share that size. If there are two values,
@@ -2048,18 +2048,18 @@ namespace GTGUI
 
             return true;
         }
-        void borderWidth::Unset(StyleClass &sc)
+        void borderWidth::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "border-left-width");
-            sc.server.UnsetStyleAttribute(sc, "border-right-width");
-            sc.server.UnsetStyleAttribute(sc, "border-top-width");
-            sc.server.UnsetStyleAttribute(sc, "border-bottom-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-left-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-right-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-top-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-bottom-width");
         }
-        GT::String borderWidth::Get(StyleClass &sc) const
+        GT::String borderWidth::Get(GUIStyleClass &sc) const
         {
             return sc.borderLeftWidth.GetValueAsString() + " " + sc.borderRightWidth.GetValueAsString() + " " + sc.borderTopWidth.GetValueAsString() + " " + sc.borderBottomWidth.GetValueAsString();
         }
-        void borderWidth::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void borderWidth::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.borderLeftWidth.inherit   = inherit;
             sc.borderLeftWidth.isset     = inherit;
@@ -2081,7 +2081,7 @@ namespace GTGUI
 
 
         // border-color
-        bool borderColour::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderColour::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             // border-color works in the same way as border-width.
             const char* tokensStart[4] = {nullptr, nullptr, nullptr, nullptr};
@@ -2140,18 +2140,18 @@ namespace GTGUI
 
             return true;
         }
-        void borderColour::Unset(StyleClass &sc)
+        void borderColour::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "border-left-color");
-            sc.server.UnsetStyleAttribute(sc, "border-right-color");
-            sc.server.UnsetStyleAttribute(sc, "border-top-color");
-            sc.server.UnsetStyleAttribute(sc, "border-bottom-color");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-left-color");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-right-color");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-top-color");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-bottom-color");
         }
-        GT::String borderColour::Get(StyleClass &sc) const
+        GT::String borderColour::Get(GUIStyleClass &sc) const
         {
             return sc.borderLeftColour.GetValueAsString() + " " + sc.borderRightColour.GetValueAsString() + " " + sc.borderTopColour.GetValueAsString() + " " + sc.borderBottomColour.GetValueAsString();
         }
-        void borderColour::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void borderColour::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.borderLeftColour.inherit   = inherit;
             sc.borderLeftColour.isset     = inherit;
@@ -2173,7 +2173,7 @@ namespace GTGUI
 
 
         // border-left
-        bool borderLeft::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderLeft::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (!GT::Strings::Equal(value, valueSize, "none"))
             {
@@ -2222,16 +2222,16 @@ namespace GTGUI
                 return true;
             }
         }
-        void borderLeft::Unset(StyleClass &sc)
+        void borderLeft::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "border-left-width");
-            sc.server.UnsetStyleAttribute(sc, "border-left-color");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-left-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-left-color");
         }
-        GT::String borderLeft::Get(StyleClass &sc) const
+        GT::String borderLeft::Get(GUIStyleClass &sc) const
         {
             return sc.borderLeftWidth.GetValueAsString() + " " + sc.borderLeftColour.GetValueAsString();
         }
-        void borderLeft::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void borderLeft::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.borderLeftWidth.inherit  = inherit;
             sc.borderLeftWidth.isset    = inherit;
@@ -2247,7 +2247,7 @@ namespace GTGUI
 
     
         // border-right
-        bool borderRight::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderRight::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (!GT::Strings::Equal(value, valueSize, "none"))
             {
@@ -2297,16 +2297,16 @@ namespace GTGUI
 
             return false;
         }
-        void borderRight::Unset(StyleClass &sc)
+        void borderRight::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "border-right-width");
-            sc.server.UnsetStyleAttribute(sc, "border-right-color");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-right-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-right-color");
         }
-        GT::String borderRight::Get(StyleClass &sc) const
+        GT::String borderRight::Get(GUIStyleClass &sc) const
         {
             return sc.borderRightWidth.GetValueAsString() + " " + sc.borderRightColour.GetValueAsString();
         }
-        void borderRight::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void borderRight::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.borderRightWidth.inherit  = inherit;
             sc.borderRightWidth.isset    = inherit;
@@ -2322,7 +2322,7 @@ namespace GTGUI
 
     
         // border-top
-        bool borderTop::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderTop::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (!GT::Strings::Equal(value, valueSize, "none"))
             {
@@ -2372,16 +2372,16 @@ namespace GTGUI
 
             return false;
         }
-        void borderTop::Unset(StyleClass &sc)
+        void borderTop::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "border-top-width");
-            sc.server.UnsetStyleAttribute(sc, "border-top-color");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-top-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-top-color");
         }
-        GT::String borderTop::Get(StyleClass &sc) const
+        GT::String borderTop::Get(GUIStyleClass &sc) const
         {
             return sc.borderTopWidth.GetValueAsString() + " " + sc.borderTopColour.GetValueAsString();
         }
-        void borderTop::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void borderTop::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.borderTopWidth.inherit  = inherit;
             sc.borderTopWidth.isset    = inherit;
@@ -2397,7 +2397,7 @@ namespace GTGUI
 
 
         // border-bottom
-        bool borderBottom::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool borderBottom::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             if (!GT::Strings::Equal(value, valueSize, "none"))
             {
@@ -2447,16 +2447,16 @@ namespace GTGUI
 
             return false;
         }
-        void borderBottom::Unset(StyleClass &sc)
+        void borderBottom::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "border-bottom-width");
-            sc.server.UnsetStyleAttribute(sc, "border-bottom-color");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-bottom-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-bottom-color");
         }
-        GT::String borderBottom::Get(StyleClass &sc) const
+        GT::String borderBottom::Get(GUIStyleClass &sc) const
         {
             return sc.borderBottomWidth.GetValueAsString() + " " + sc.borderBottomColour.GetValueAsString();
         }
-        void borderBottom::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void borderBottom::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.borderBottomWidth.inherit  = inherit;
             sc.borderBottomWidth.isset    = inherit;
@@ -2472,7 +2472,7 @@ namespace GTGUI
 
     
         // border
-        bool border::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool border::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             bool success = false;
 
@@ -2538,22 +2538,22 @@ namespace GTGUI
 
             return success;
         }
-        GT::String border::Get(StyleClass &sc) const
+        GT::String border::Get(GUIStyleClass &sc) const
         {
             return sc.borderLeftWidth.GetValueAsString() + " " + sc.borderLeftColour.GetValueAsString();
         }
-        void border::Unset(StyleClass &sc)
+        void border::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "border-left-width");
-            sc.server.UnsetStyleAttribute(sc, "border-right-width");
-            sc.server.UnsetStyleAttribute(sc, "border-top-width");
-            sc.server.UnsetStyleAttribute(sc, "border-bottom-width");
-            sc.server.UnsetStyleAttribute(sc, "border-left-colour");
-            sc.server.UnsetStyleAttribute(sc, "border-right-colour");
-            sc.server.UnsetStyleAttribute(sc, "border-top-colour");
-            sc.server.UnsetStyleAttribute(sc, "border-bottom-colour");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-left-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-right-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-top-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-bottom-width");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-left-colour");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-right-colour");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-top-colour");
+            sc.server.UnsetGUIStyleAttribute(sc, "border-bottom-colour");
         }
-        void border::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void border::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.borderLeftWidth.inherit    = inherit;
             sc.borderLeftWidth.isset      = inherit;
@@ -2590,7 +2590,7 @@ namespace GTGUI
     
     
         // padding
-        bool padding::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool padding::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             // padding is the same as border-width.
             const char* tokensStart[4] = {nullptr, nullptr, nullptr, nullptr};
@@ -2649,18 +2649,18 @@ namespace GTGUI
 
             return true;
         }
-        void padding::Unset(StyleClass &sc)
+        void padding::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "padding-left");
-            sc.server.UnsetStyleAttribute(sc, "padding-right");
-            sc.server.UnsetStyleAttribute(sc, "padding-top");
-            sc.server.UnsetStyleAttribute(sc, "padding-bottom");
+            sc.server.UnsetGUIStyleAttribute(sc, "padding-left");
+            sc.server.UnsetGUIStyleAttribute(sc, "padding-right");
+            sc.server.UnsetGUIStyleAttribute(sc, "padding-top");
+            sc.server.UnsetGUIStyleAttribute(sc, "padding-bottom");
         }
-        GT::String padding::Get(StyleClass &sc) const
+        GT::String padding::Get(GUIStyleClass &sc) const
         {
             return sc.paddingLeft.GetValueAsString() + " " + sc.paddingRight.GetValueAsString() + " " + sc.paddingTop.GetValueAsString() + " " + sc.paddingBottom.GetValueAsString();
         }
-        void padding::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void padding::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.paddingLeft.inherit   = inherit;
             sc.paddingLeft.isset     = inherit;
@@ -2682,7 +2682,7 @@ namespace GTGUI
     
 
         // margin
-        bool margin::Set(StyleClass &sc, const char* value, ptrdiff_t valueSize)
+        bool margin::Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize)
         {
             // margin is the same as border-width.
             const char* tokensStart[4] = {nullptr, nullptr, nullptr, nullptr};
@@ -2741,18 +2741,18 @@ namespace GTGUI
 
             return true;
         }
-        void margin::Unset(StyleClass &sc)
+        void margin::Unset(GUIStyleClass &sc)
         {
-            sc.server.UnsetStyleAttribute(sc, "margin-left");
-            sc.server.UnsetStyleAttribute(sc, "margin-right");
-            sc.server.UnsetStyleAttribute(sc, "margin-top");
-            sc.server.UnsetStyleAttribute(sc, "margin-bottom");
+            sc.server.UnsetGUIStyleAttribute(sc, "margin-left");
+            sc.server.UnsetGUIStyleAttribute(sc, "margin-right");
+            sc.server.UnsetGUIStyleAttribute(sc, "margin-top");
+            sc.server.UnsetGUIStyleAttribute(sc, "margin-bottom");
         }
-        GT::String margin::Get(StyleClass &sc) const
+        GT::String margin::Get(GUIStyleClass &sc) const
         {
             return sc.marginLeft.GetValueAsString() + " " + sc.marginRight.GetValueAsString() + " " + sc.marginTop.GetValueAsString() + " " + sc.marginBottom.GetValueAsString();
         }
-        void margin::SetInherit(StyleClass &sc, bool inherit, bool refresh)
+        void margin::SetInherit(GUIStyleClass &sc, bool inherit, bool refresh)
         {
             sc.marginLeft.inherit   = inherit;
             sc.marginLeft.isset     = inherit;
@@ -2778,11 +2778,11 @@ namespace GTGUI
 
 namespace GTGUI
 {
-    StyleAttributeHandler::StyleAttributeHandler()
+    GUIStyleAttributeHandler::GUIStyleAttributeHandler()
     {
     }
     
-    StyleAttributeHandler::~StyleAttributeHandler()
+    GUIStyleAttributeHandler::~GUIStyleAttributeHandler()
     {
     }
 }

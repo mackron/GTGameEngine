@@ -19,7 +19,7 @@ namespace GTGUI
 
 
 
-    GUIElementRenderingData::GUIElementRenderingData(GarbageCollector &gcIn)
+    GUIElementRenderingData::GUIElementRenderingData(GUIGarbageCollector &gcIn)
         : gc(gcIn),
           textMeshes(), shadowMesh(nullptr), borderMesh(nullptr), backgroundMesh(nullptr), backgroundImageMesh(nullptr),
           absoluteOpacity(1.0f)
@@ -35,7 +35,7 @@ namespace GTGUI
     }
 
 
-    void GUIElementRenderingData::UpdateTextMeshes(const Element &element)
+    void GUIElementRenderingData::UpdateTextMeshes(const GUIElement &element)
     {
         this->DeleteTextMeshes();
 
@@ -76,7 +76,7 @@ namespace GTGUI
     }
 
 
-    void GUIElementRenderingData::UpdateShadowMesh(const Element &element)
+    void GUIElementRenderingData::UpdateShadowMesh(const GUIElement &element)
     {
         this->DeleteShadowMesh();
 
@@ -275,7 +275,7 @@ namespace GTGUI
         }
     }
 
-    void GUIElementRenderingData::UpdateBorderMesh(const Element &element)
+    void GUIElementRenderingData::UpdateBorderMesh(const GUIElement &element)
     {
         this->DeleteBorderMesh();
 
@@ -420,7 +420,7 @@ namespace GTGUI
         }
     }
 
-    void GUIElementRenderingData::UpdateBackgroundMeshes(const Element &element)
+    void GUIElementRenderingData::UpdateBackgroundMeshes(const GUIElement &element)
     {
         this->DeleteBackgroundMeshes();
 

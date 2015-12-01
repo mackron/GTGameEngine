@@ -4,26 +4,26 @@
 
 namespace GTGUI
 {
-    bool StandardLibrary::Load(Server &server)
+    bool GUIStandardLibrary::Load(GUIServer &server)
     {
         bool result = true;
 
-        result = result && StandardLibrary::LoadMisc(server);
-        result = result && StandardLibrary::LoadImages(server);
+        result = result && GUIStandardLibrary::LoadMisc(server);
+        result = result && GUIStandardLibrary::LoadImages(server);
 
-        result = result && StandardLibrary::LoadButton(server);
-        result = result && StandardLibrary::LoadTextBox(server);
-        result = result && StandardLibrary::LoadCheckBox(server);
-        result = result && StandardLibrary::LoadLabeledSpinner(server);
-        result = result && StandardLibrary::LoadTreeView(server);
-        result = result && StandardLibrary::LoadScrollbars(server);
-        result = result && StandardLibrary::LoadTooltips(server);
+        result = result && GUIStandardLibrary::LoadButton(server);
+        result = result && GUIStandardLibrary::LoadTextBox(server);
+        result = result && GUIStandardLibrary::LoadCheckBox(server);
+        result = result && GUIStandardLibrary::LoadLabeledSpinner(server);
+        result = result && GUIStandardLibrary::LoadTreeView(server);
+        result = result && GUIStandardLibrary::LoadScrollbars(server);
+        result = result && GUIStandardLibrary::LoadTooltips(server);
 
         return result;
     }
 
 
-    bool StandardLibrary::LoadMisc(Server &server)
+    bool GUIStandardLibrary::LoadMisc(GUIServer &server)
     {
         bool result = true;
 
@@ -61,7 +61,7 @@ namespace GTGUI
 
     ////////////////////////////////////////////////
     // Button
-    bool StandardLibrary::LoadButton(Server &server)
+    bool GUIStandardLibrary::LoadButton(GUIServer &server)
     {
         bool result = true;
 
@@ -114,7 +114,7 @@ namespace GTGUI
 
     ////////////////////////////////////////////////
     // TextBox and MultiLineTextBox
-    bool StandardLibrary::LoadTextBox(Server &server)
+    bool GUIStandardLibrary::LoadTextBox(GUIServer &server)
     {
         bool result = true;
 
@@ -289,7 +289,7 @@ namespace GTGUI
 
     ////////////////////////////////////////////////
     // CheckBox
-    bool StandardLibrary::LoadCheckBox(Server &server)
+    bool GUIStandardLibrary::LoadCheckBox(GUIServer &server)
     {
         bool result = true;
 
@@ -430,7 +430,7 @@ namespace GTGUI
 
     ////////////////////////////////////////////////
     // LabeledSpinner
-    bool StandardLibrary::LoadLabeledSpinner(Server &server)
+    bool GUIStandardLibrary::LoadLabeledSpinner(GUIServer &server)
     {
         bool result = true;
 
@@ -643,7 +643,7 @@ namespace GTGUI
 
     ////////////////////////////////////////////////
     // TreeView
-    bool StandardLibrary::LoadTreeView(Server &server)
+    bool GUIStandardLibrary::LoadTreeView(GUIServer &server)
     {
         bool result = true;
 
@@ -1266,7 +1266,7 @@ namespace GTGUI
 
     ////////////////////////////////////////////////
     // VerticalScrollbar, HorizontalScrollbar
-    bool StandardLibrary::LoadScrollbars(Server &server)
+    bool GUIStandardLibrary::LoadScrollbars(GUIServer &server)
     {
         bool result = true;
 
@@ -1620,7 +1620,7 @@ namespace GTGUI
 
     ////////////////////////////////////////////////
     // Tooltips
-    bool StandardLibrary::LoadTooltips(Server &server)
+    bool GUIStandardLibrary::LoadTooltips(GUIServer &server)
     {
         bool result = true;
 

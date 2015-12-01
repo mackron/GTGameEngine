@@ -63,8 +63,8 @@ namespace GT
                 assert(this->textArea != nullptr);
                 {
                     this->textArea->SetText(fileContent);
-                    this->textArea->SetStyleAttribute("background-color", "inherit");
-                    this->textArea->SetStyleAttribute("text-color",       "inherit");
+                    this->textArea->SetGUIStyleAttribute("background-color", "inherit");
+                    this->textArea->SetGUIStyleAttribute("text-color",       "inherit");
                      
                     this->textArea->textManager.MoveCursorToStart();
                     gui.FocusElement(this->textArea);
@@ -210,7 +210,7 @@ namespace GT
         script.GetGlobal("GTGUI");
         assert(script.IsTable(-1));
         {
-            script.Push("Server");
+            script.Push("GUIServer");
             script.GetTableValue(-2);
             assert(script.IsTable(-1));
             {
@@ -249,7 +249,7 @@ namespace GT
         script.GetGlobal("GTGUI");
         assert(script.IsTable(-1));
         {
-            script.Push("Server");
+            script.Push("GUIServer");
             script.GetTableValue(-2);
             assert(script.IsTable(-1));
             {
@@ -290,7 +290,7 @@ namespace GT
     {
     }
 
-    void TextEditor::TextAreaEventHandler::OnTextChanged(GTGUI::Element &)
+    void TextEditor::TextAreaEventHandler::OnTextChanged(GTGUI::GUIElement &)
     {
         assert(this->ownerTextEditor != nullptr);
         {

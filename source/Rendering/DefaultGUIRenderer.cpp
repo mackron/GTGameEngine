@@ -3,7 +3,6 @@
 #include <GTEngine/Rendering/DefaultGUIRenderer.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
-
 #include <GTEngine/GUI/Server.hpp>
 
 
@@ -36,7 +35,7 @@ namespace GT
     }
 
 
-    void DefaultGUIRenderer::Begin(const GTGUI::Server &server)
+    void DefaultGUIRenderer::Begin(const GTGUI::GUIServer &server)
     {
         // We need to do a little bit of initialisation.
         unsigned int newViewportWidth;
@@ -84,11 +83,11 @@ namespace GT
         }
     }
 
-    void DefaultGUIRenderer::BeginElementOnDrawEvent(GTGUI::Element &)
+    void DefaultGUIRenderer::BeginElementOnDrawEvent(GTGUI::GUIElement &)
     {
     }
 
-    void DefaultGUIRenderer::EndElementOnDrawEvent(GTGUI::Element &)
+    void DefaultGUIRenderer::EndElementOnDrawEvent(GTGUI::GUIElement &)
     {
         // Anything that may be been changed needs to be resetored.
         this->RestoreCurrentState();
@@ -110,7 +109,7 @@ namespace GT
         this->uniformsRequirePush = true;
     }
 
-    void DefaultGUIRenderer::SetTexture(GTGUI::ImageHandle image)
+    void DefaultGUIRenderer::SetTexture(GTGUI::GUIImageHandle image)
     {
         if (image == 0)
         {
@@ -177,7 +176,7 @@ namespace GT
     {
         GT::Renderer::SetCurrentShader(this->currentShader);          // <-- Don't use this->SetCurrentShader() here.
         this->SetOffset(this->currentOffsetX, this->currentOffsetY);
-        this->SetTexture(reinterpret_cast<GTGUI::ImageHandle>(this->currentTexture));
+        this->SetTexture(reinterpret_cast<GTGUI::GUIImageHandle>(this->currentTexture));
 
         if (this->isBlendingEnabled)
         {

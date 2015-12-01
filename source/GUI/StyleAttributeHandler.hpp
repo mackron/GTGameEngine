@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __LICKGUI_STYLEATTRIBUTEHANDLER_HPP_
-#define __LICKGUI_STYLEATTRIBUTEHANDLER_HPP_
+#ifndef GT_GUIStyleAttributeHandler_hpp_
+#define GT_GUIStyleAttributeHandler_hpp_
 
 #include <GTEngine/GUI/StyleStack.hpp>
 #include <GTEngine/GUI/Element.hpp>
@@ -9,7 +9,7 @@
 
 namespace GTGUI
 {
-    class Element;
+    class GUIElement;
 
     /**
     *   \brief  Class for handling different style attributes.
@@ -20,19 +20,19 @@ namespace GTGUI
     *   There is actually two components to this class - the static and non-static components. The static component is used
     *   for taking all of the instantiated attribute handlers and working with them in order to efficiently handle an attribute.
     */
-    class StyleAttributeHandler
+    class GUIStyleAttributeHandler
     {
     public:
 
         /**
         *   \brief  Constructor.
         */
-        StyleAttributeHandler();
+        GUIStyleAttributeHandler();
 
         /**
         *   \brief  Destructor.
         */
-        virtual ~StyleAttributeHandler();
+        virtual ~GUIStyleAttributeHandler();
 
 
 
@@ -44,16 +44,16 @@ namespace GTGUI
         /**
         *   \brief  Virtual function for applying the value of an attribute.
         */
-        virtual bool Set(StyleClass &styleClass, const char* value, ptrdiff_t valueSize) = 0;
+        virtual bool Set(GUIStyleClass &styleClass, const char* value, ptrdiff_t valueSize) = 0;
 
         /**
         *   \brief  Virtual function for retrieving the value of an attribute as a string.
         */
-        virtual GT::String Get(StyleClass &styleClass) const = 0;
+        virtual GT::String Get(GUIStyleClass &styleClass) const = 0;
 
 
         /// Unsets the attribute.
-        virtual void Unset(StyleClass &) {};
+        virtual void Unset(GUIStyleClass &) {};
 
 
         /// Sets whether or not the style attribute should be set to 'inherit'.
@@ -61,27 +61,27 @@ namespace GTGUI
         /// @param sc      [in] The style class whose attribute is being set.
         /// @param inherit [in] True if the property should be set to 'inherit'; false otherwise.
         /// @param refresh [in] Whether or not the attribute should be refreshed.
-        virtual void SetInherit(StyleClass &, bool, bool) {};
+        virtual void SetInherit(GUIStyleClass &, bool, bool) {};
 
 
 
     private:    // No copying.
-        StyleAttributeHandler(const StyleAttributeHandler &);
-        StyleAttributeHandler & operator=(const StyleAttributeHandler &);
+        GUIStyleAttributeHandler(const GUIStyleAttributeHandler &);
+        GUIStyleAttributeHandler & operator=(const GUIStyleAttributeHandler &);
     };
 }
 
 
 #define DECLARE_ATTRIBUTE_HANDLER(name, attribName) \
-    struct name : public StyleAttributeHandler \
+    struct name : public GUIStyleAttributeHandler \
     { \
-        name() : StyleAttributeHandler() {} \
+        name() : GUIStyleAttributeHandler() {} \
         const char* GetAttributeName() const { return attribName; } \
         \
-        bool Set(StyleClass &sc, const char* value, ptrdiff_t valueSize); \
-        GT::String Get(StyleClass &sc) const; \
+        bool Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize); \
+        GT::String Get(GUIStyleClass &sc) const; \
         \
-        void Unset(StyleClass &sc) \
+        void Unset(GUIStyleClass &sc) \
         { \
             sc.name.inherit = false; \
             sc.name.isset   = false; \
@@ -89,7 +89,7 @@ namespace GTGUI
             Refresh(sc); \
         } \
         \
-        void SetInherit(StyleClass &sc, bool inheritIn, bool refresh) \
+        void SetInherit(GUIStyleClass &sc, bool inheritIn, bool refresh) \
         { \
             sc.name.inherit = inheritIn; \
             sc.name.isset   = inheritIn; /* If we set 'inherit' to true, it means the variable is set. Otherwise, it's unset. */ \
@@ -100,7 +100,7 @@ namespace GTGUI
             } \
         } \
         \
-        static void Refresh(StyleClass &sc, bool updateElements = true) \
+        static void Refresh(GUIStyleClass &sc, bool updateElements = true) \
         { \
             for (auto i = sc.hosts.root; i != nullptr; i = i->next) \
             { \
@@ -117,7 +117,7 @@ namespace GTGUI
             } \
         } \
         \
-        static void RefreshStack(StyleStack &stack) \
+        static void RefreshStack(GUIStyleStack &stack) \
         { \
             auto prev = stack.name; \
             for (auto iClass = stack.classes.root; iClass != nullptr; iClass = iClass->next) \
@@ -145,7 +145,7 @@ namespace GTGUI
             } \
         } \
         \
-        static void RefreshChildrenStacks(StyleStack &stack) \
+        static void RefreshChildrenStacks(GUIStyleStack &stack) \
         { \
             for (auto iChild = stack.owner.firstChild; iChild != nullptr; iChild = iChild->nextSibling) \
             { \
@@ -153,21 +153,21 @@ namespace GTGUI
             } \
         } \
         \
-        static void OnChanged(Element &element); \
+        static void OnChanged(GUIElement &element); \
     };
 
 #define DECLARE_SHORTHAND_ATTRIBUTE_HANDLER(name, attribName) \
-    struct name : public StyleAttributeHandler \
+    struct name : public GUIStyleAttributeHandler \
     { \
-        name() : StyleAttributeHandler() {} \
+        name() : GUIStyleAttributeHandler() {} \
         const char* GetAttributeName() const { return attribName; } \
         \
-        bool Set(StyleClass &sc, const char* value, ptrdiff_t valueSize); \
-        GT::String Get(StyleClass &sc) const; \
+        bool Set(GUIStyleClass &sc, const char* value, ptrdiff_t valueSize); \
+        GT::String Get(GUIStyleClass &sc) const; \
         \
-        void Unset(StyleClass &sc); \
+        void Unset(GUIStyleClass &sc); \
         \
-        void SetInherit(StyleClass &sc, bool inheritIn, bool refresh); \
+        void SetInherit(GUIStyleClass &sc, bool inheritIn, bool refresh); \
         \
     };
 

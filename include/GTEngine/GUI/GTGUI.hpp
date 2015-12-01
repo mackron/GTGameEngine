@@ -11,9 +11,9 @@
 #ifndef GT_GUI
 #define GT_GUI
 
-#include "Server.hpp"
+#include "GUIServer.hpp"
 #include "Rendering.hpp"
-#include "Caret.hpp"
+#include "GUICaret.hpp"
 #include "Colour.hpp"
 #include "Point.hpp"
 

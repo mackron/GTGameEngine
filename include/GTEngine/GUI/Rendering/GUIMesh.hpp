@@ -35,7 +35,7 @@ namespace GTGUI
 
         /// Constructor.
         GUIMesh();
-        GUIMesh(const GUIMeshVertex* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, ImageHandle texture = 0);
+        GUIMesh(const GUIMeshVertex* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, GUIImageHandle texture = 0);
 
         /// Destructor.
         ~GUIMesh();
@@ -58,10 +58,10 @@ namespace GTGUI
 
 
         /// Retrieves the texture being used by this mesh.
-        ImageHandle GetTexture() const { return this->texture; }
+        GUIImageHandle GetTexture() const { return this->texture; }
 
         /// Sets the texture.
-        void SetTexture(ImageHandle newTexture) { this->texture = newTexture; }
+        void SetTexture(GUIImageHandle newTexture) { this->texture = newTexture; }
 
 
         /// Sets the colour of every vertex
@@ -94,7 +94,7 @@ namespace GTGUI
         GT::Vector<unsigned int> indices;
 
         /// A handle to the texture to apply to the mesh at render time.
-        ImageHandle texture;
+        GUIImageHandle texture;
 
 
     private:    // No copying for now.

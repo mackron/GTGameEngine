@@ -12,7 +12,7 @@ namespace GT
     class SceneViewport;
 
     /// GUI element event handler for 3D viewports.
-    class Editor3DViewportEventHandler : public GTGUI::ElementEventHandler
+    class Editor3DViewportEventHandler : public GTGUI::GUIElementEventHandler
     {
     public:
 
@@ -42,17 +42,17 @@ namespace GT
         // Events.
 
         /// OnSize.
-        virtual void OnSize(GTGUI::Element &element);
+        virtual void OnSize(GTGUI::GUIElement &element);
 
         /// OnDraw.
-        virtual void OnDraw(GTGUI::Element &element);
+        virtual void OnDraw(GTGUI::GUIElement &element);
         virtual bool ImplementsOnDraw() const { return true; }
 
         /// OnMouseMove
-        virtual void OnMouseMove(GTGUI::Element &element, int x, int y);
+        virtual void OnMouseMove(GTGUI::GUIElement &element, int x, int y);
 
         /// OnMouseWhee
-        virtual void OnMouseWheel(GTGUI::Element &element, int delta, int x, int y);
+        virtual void OnMouseWheel(GTGUI::GUIElement &element, int delta, int x, int y);
 
 
 

@@ -6,7 +6,7 @@
 
 #include <GTEngine/Core/WindowEventHandler.hpp>
 #include "Rendering.hpp"
-#include "Caret.hpp"
+#include "GUICaret.hpp"
 
 namespace GTGUI
 {

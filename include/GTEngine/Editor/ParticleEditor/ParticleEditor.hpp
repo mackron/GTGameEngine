@@ -81,8 +81,8 @@ namespace GT
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()       { return this->mainElement; }
-        const GTGUI::Element* GetMainElement() const { return this->mainElement; }
+              GTGUI::GUIElement* GetMainElement()       { return this->mainElement; }
+        const GTGUI::GUIElement* GetMainElement() const { return this->mainElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -127,11 +127,11 @@ namespace GT
 
 
         /// The main container element.
-        GTGUI::Element* mainElement;
+        GTGUI::GUIElement* mainElement;
 
 
         /// The viewport element.
-        GTGUI::Element* viewportElement;
+        GTGUI::GUIElement* viewportElement;
 
         /// The viewport event handler to we can detect when it is resized.
         struct ViewportEventHandler : public Editor3DViewportEventHandler
@@ -144,7 +144,7 @@ namespace GT
 
 
             /// Called after the element has been resized.
-            void OnSize(GTGUI::Element &element)
+            void OnSize(GTGUI::GUIElement &element)
             {
                 Editor3DViewportEventHandler::OnSize(element);
                 owner.OnViewportSize();

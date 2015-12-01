@@ -4,15 +4,15 @@
 
 namespace GTGUI
 {
-    ImageManager::ImageManager()
+    GUIImageManager::GUIImageManager()
     {
     }
     
-    ImageManager::~ImageManager()
+    GUIImageManager::~GUIImageManager()
     {
     }
     
-    void ImageManager::GetImageDimensions(ImageHandle image, float &widthOut, float &heightOut) const
+    void GUIImageManager::GetImageDimensions(GUIImageHandle image, float &widthOut, float &heightOut) const
     {
         unsigned int width;
         unsigned int height;
@@ -22,7 +22,7 @@ namespace GTGUI
         heightOut = static_cast<float>(height);
     }
     
-    void ImageManager::GetImageDimensions(ImageHandle image, double &widthOut, double &heightOut) const
+    void GUIImageManager::GetImageDimensions(GUIImageHandle image, double &widthOut, double &heightOut) const
     {
         unsigned int width;
         unsigned int height;

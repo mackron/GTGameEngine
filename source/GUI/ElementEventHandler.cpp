@@ -4,132 +4,132 @@
 
 namespace GTGUI
 {
-    ElementEventHandler::~ElementEventHandler()
+    GUIElementEventHandler::~GUIElementEventHandler()
     {
     }
 
-    void ElementEventHandler::OnSize(Element &)
+    void GUIElementEventHandler::OnSize(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnMove(Element &)
+    void GUIElementEventHandler::OnMove(GUIElement &)
     {
     }
 
 
-    void ElementEventHandler::OnDraw(Element &)
+    void GUIElementEventHandler::OnDraw(GUIElement &)
     {
     }
 
-    bool ElementEventHandler::ImplementsOnDraw() const
+    bool GUIElementEventHandler::ImplementsOnDraw() const
     {
         return false;
     }
 
 
-    void ElementEventHandler::OnMouseButtonDown(Element &, int, int, int)
+    void GUIElementEventHandler::OnMouseButtonDown(GUIElement &, int, int, int)
     {
     }
     
-    void ElementEventHandler::OnMouseButtonUp(Element &, int, int, int)
+    void GUIElementEventHandler::OnMouseButtonUp(GUIElement &, int, int, int)
     {
     }
     
-    void ElementEventHandler::OnMouseButtonDoubleClick(Element &, int, int, int)
+    void GUIElementEventHandler::OnMouseButtonDoubleClick(GUIElement &, int, int, int)
     {
     }
 
 
-    void ElementEventHandler::OnMouseEnter(Element &)
+    void GUIElementEventHandler::OnMouseEnter(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnMouseLeave(Element &)
+    void GUIElementEventHandler::OnMouseLeave(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnPush(Element &)
+    void GUIElementEventHandler::OnPush(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnRelease(Element &)
+    void GUIElementEventHandler::OnRelease(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnPressed(Element &)
-    {
-    }
-
-
-    void ElementEventHandler::OnMouseMove(Element &, int, int)
-    {
-    }
-
-    void ElementEventHandler::OnMouseWheel(Element &, int, int, int)
+    void GUIElementEventHandler::OnPressed(GUIElement &)
     {
     }
 
 
-    void ElementEventHandler::OnKeyPressed(Element &, GT::Key)
+    void GUIElementEventHandler::OnMouseMove(GUIElement &, int, int)
     {
     }
 
-    bool ElementEventHandler::OnKeyDown(Element &, GT::Key)
+    void GUIElementEventHandler::OnMouseWheel(GUIElement &, int, int, int)
+    {
+    }
+
+
+    void GUIElementEventHandler::OnKeyPressed(GUIElement &, GT::Key)
+    {
+    }
+
+    bool GUIElementEventHandler::OnKeyDown(GUIElement &, GT::Key)
     {
         return true;
     }
     
-    void ElementEventHandler::OnKeyUp(Element &, GT::Key)
+    void GUIElementEventHandler::OnKeyUp(GUIElement &, GT::Key)
     {
     }
 
-    void ElementEventHandler::OnTextChanged(Element &)
+    void GUIElementEventHandler::OnTextChanged(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnFocus(Element &)
+    void GUIElementEventHandler::OnFocus(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnBlur(Element &)
+    void GUIElementEventHandler::OnBlur(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnTear(Element &)
+    void GUIElementEventHandler::OnTear(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnDrop(Element &, Element &)
+    void GUIElementEventHandler::OnDrop(GUIElement &, GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnDragAndDropEnter(Element &, Element &)
+    void GUIElementEventHandler::OnDragAndDropEnter(GUIElement &, GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnDragAndDropLeave(Element &, Element &)
+    void GUIElementEventHandler::OnDragAndDropLeave(GUIElement &, GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnDragAndDropProxyRemoved(Element &)
-    {
-    }
-
-
-    void ElementEventHandler::OnShow(Element &)
-    {
-    }
-
-    void ElementEventHandler::OnHide(Element &)
+    void GUIElementEventHandler::OnDragAndDropProxyRemoved(GUIElement &)
     {
     }
 
 
-    void ElementEventHandler::OnShowTooltip(Element &)
+    void GUIElementEventHandler::OnShow(GUIElement &)
     {
     }
 
-    void ElementEventHandler::OnHideTooltip(Element &)
+    void GUIElementEventHandler::OnHide(GUIElement &)
+    {
+    }
+
+
+    void GUIElementEventHandler::OnShowTooltip(GUIElement &)
+    {
+    }
+
+    void GUIElementEventHandler::OnHideTooltip(GUIElement &)
     {
     }
 }

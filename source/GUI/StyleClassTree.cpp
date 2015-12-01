@@ -1,16 +1,15 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTEngine/GUI/StyleClassTree.hpp>
-//#include <GTEngine/Core/Strings/Compare.hpp>
 
 namespace GTGUI
 {
-    StyleClassTree::StyleClassTree()
+    GUIStyleClassTree::GUIStyleClassTree()
         : m_root(nullptr), m_removeBySuccessor(false)
     {
     }
     
-    StyleClassTree::~StyleClassTree()
+    GUIStyleClassTree::~GUIStyleClassTree()
     {
         while (m_root != nullptr)
         {
@@ -19,7 +18,7 @@ namespace GTGUI
     }
     
     
-    void StyleClassTree::Insert(StyleClass &styleClass)
+    void GUIStyleClassTree::Insert(GUIStyleClass &styleClass)
     {
         // The style class should not already be in the list. If it exists, it's a higher level error.
         assert(styleClass.bst.left   == nullptr);
@@ -79,7 +78,7 @@ namespace GTGUI
     }
     
     
-    void StyleClassTree::Remove(StyleClass &styleClass)
+    void GUIStyleClassTree::Remove(GUIStyleClass &styleClass)
     {
         if (styleClass.bst.left != nullptr && styleClass.bst.right != nullptr)
         {
@@ -116,7 +115,7 @@ namespace GTGUI
     }
     
     
-    StyleClass* StyleClassTree::FindByName(const char* name, ptrdiff_t nameLengthInTs)
+    GUIStyleClass* GUIStyleClassTree::FindByName(const char* name, ptrdiff_t nameLengthInTs)
     {
         uint32_t hashedName = GT::Hash(name, nameLengthInTs);
         
@@ -160,13 +159,13 @@ namespace GTGUI
     }
     
     
-    StyleClass* StyleClassTree::GetRoot()
+    GUIStyleClass* GUIStyleClassTree::GetRoot()
     {
         return m_root;
     }
     
     
-    size_t StyleClassTree::GetCount() const
+    size_t GUIStyleClassTree::GetCount() const
     {
         return this->GetCount(m_root);
     }
@@ -176,7 +175,7 @@ namespace GTGUI
     /////////////////////////////////////////////////
     // Private
 
-    void StyleClassTree::RemoveByInOrderSuccessor(StyleClass &styleClass)
+    void GUIStyleClassTree::RemoveByInOrderSuccessor(GUIStyleClass &styleClass)
     {
         assert(styleClass.bst.left != nullptr && styleClass.bst.right != nullptr);
 
@@ -270,7 +269,7 @@ namespace GTGUI
         }
     }
 
-    void StyleClassTree::RemoveByInOrderPredecessor(StyleClass &styleClass)
+    void GUIStyleClassTree::RemoveByInOrderPredecessor(GUIStyleClass &styleClass)
     {
         assert(styleClass.bst.left != nullptr && styleClass.bst.right != nullptr);
 
@@ -365,7 +364,7 @@ namespace GTGUI
     }
 
     
-    void StyleClassTree::ReplaceStyleClassInParent(StyleClass &styleClass, StyleClass* replacementStyleClass)
+    void GUIStyleClassTree::ReplaceStyleClassInParent(GUIStyleClass &styleClass, GUIStyleClass* replacementStyleClass)
     {
         if (styleClass.bst.parent != nullptr)
         {
@@ -393,7 +392,7 @@ namespace GTGUI
     }
 
     
-    StyleClass* StyleClassTree::FindInOrderPredecessor(StyleClass &styleClass)
+    GUIStyleClass* GUIStyleClassTree::FindInOrderPredecessor(GUIStyleClass &styleClass)
     {
         auto result = &styleClass;
         while (result->bst.right != nullptr)
@@ -404,7 +403,7 @@ namespace GTGUI
         return result;
     }
 
-    StyleClass* StyleClassTree::FindInOrderSuccessor(StyleClass &styleClass)
+    GUIStyleClass* GUIStyleClassTree::FindInOrderSuccessor(GUIStyleClass &styleClass)
     {
         auto result = &styleClass;
         while (result->bst.left != nullptr)
@@ -416,7 +415,7 @@ namespace GTGUI
     }
     
     
-    size_t StyleClassTree::GetCount(StyleClass* root) const
+    size_t GUIStyleClassTree::GetCount(GUIStyleClass* root) const
     {
         if (root != nullptr)
         {
@@ -427,12 +426,12 @@ namespace GTGUI
     }
 
 
-    bool StyleClassTree::Verify() const
+    bool GUIStyleClassTree::Verify() const
     {
         return this->Verify(m_root);
     }
 
-    bool StyleClassTree::Verify(StyleClass* root) const
+    bool GUIStyleClassTree::Verify(GUIStyleClass* root) const
     {
         if (root != nullptr)
         {

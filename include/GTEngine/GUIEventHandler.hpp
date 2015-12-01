@@ -9,7 +9,7 @@ namespace GT
 {
     class Game;
 
-    class GUIEventHandler : public GTGUI::ServerEventHandler
+    class GUIEventHandler : public GTGUI::GUIServerEventHandler
     {
     public:
 

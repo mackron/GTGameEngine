@@ -16,29 +16,29 @@
 
 namespace GTGUI
 {
-    class Server;
+    class GUIServer;
 
     /**
     *   \brief  Class representing a basic element.
     */
-    class Element
+    class GUIElement
     {
     public:
     
         /**
         *   \brief  Constructor.
         */
-        Element(const char *id, Server &server);
+        GUIElement(const char *id, GUIServer &server);
         
         /**
         *   \brief  Destructor.
         */
-        ~Element();
+        ~GUIElement();
 
         /**
         *   \brief  Retrieves a reference to the server that owns this element.
         */
-        Server & GetServer() { return this->server; };
+        GUIServer & GetServer() { return this->server; };
         
         
         /// Retrieves the ID of the element.
@@ -48,12 +48,12 @@ namespace GTGUI
         /// Appends an element as a child.
         ///
         /// @param child [in] A reference to the child being appended.
-        void AppendChild(Element &child);
+        void AppendChild(GUIElement &child);
 
         /// Prepends an element as a child.
         ///
         /// @param child [in] A reference ot the child being prepended.
-        void PrependChild(Element &child);
+        void PrependChild(GUIElement &child);
 
 
         /// Removes a child, but does not delete it.
@@ -64,7 +64,7 @@ namespace GTGUI
         ///
         /// @remarks
         ///     This will not delete the child.
-        void RemoveChild(Element &child, bool invalidateParentLayout = true, bool updateScript = true);
+        void RemoveChild(GUIElement &child, bool invalidateParentLayout = true, bool updateScript = true);
 
         /// Removes every child, but does not delete them.
         void RemoveAllChildren();
@@ -78,7 +78,7 @@ namespace GTGUI
         *   \brief             Determines if the given element is an ancestor of this element.
         *   \param  other [in] The other element to check ancestory.
         */
-        bool IsAncestor(Element &ancestor);
+        bool IsAncestor(GUIElement &ancestor);
 
         /**
         *   \brief             Determines if the given element is a child of this element.
@@ -87,29 +87,29 @@ namespace GTGUI
         *   \remarks
         *       This does a deep recursive search.
         */
-        bool IsChild(Element &child);
+        bool IsChild(GUIElement &child);
 
         
         /**
         *   \brief                  Attaches a style class to the element, making that style class the priority class.
         *   \param  styleClass [in] A pointer to the style class being added.
         */
-        void AttachStyleClass(StyleClass &styleClass, bool refresh = true);
-        void AttachStyleClass(StyleClass* styleClass, bool refresh = true) { if (styleClass != nullptr) this->AttachStyleClass(*styleClass, refresh); }
+        void AttachStyleClass(GUIStyleClass &styleClass, bool refresh = true);
+        void AttachStyleClass(GUIStyleClass* styleClass, bool refresh = true) { if (styleClass != nullptr) this->AttachStyleClass(*styleClass, refresh); }
         void AttachStyleClass(const char* styleClass, bool refresh = true);
         
         /**
         *   \brief                  Removes a style class from the element.
         *   \param  styleClass [in] A pointer ot the style class being detached.
         */
-        void DetachStyleClass(StyleClass &styleClass, bool refresh = true);
-        void DetachStyleClass(StyleClass* styleClass, bool refresh = true) { if (styleClass != nullptr) this->DetachStyleClass(*styleClass, refresh); }
+        void DetachStyleClass(GUIStyleClass &styleClass, bool refresh = true);
+        void DetachStyleClass(GUIStyleClass* styleClass, bool refresh = true) { if (styleClass != nullptr) this->DetachStyleClass(*styleClass, refresh); }
         void DetachStyleClass(const char* styleClass, bool refresh = true);
 
         /**
         *   \brief  Retrieves a pointer to this element's primary style class.
         */
-        StyleClass* GetPrimaryStyleClass() const;
+        GUIStyleClass* GetPrimaryStyleClass() const;
 
         /// Deletes the primary style class.
         ///
@@ -122,18 +122,18 @@ namespace GTGUI
         ///
         /// @param name  [in] The name of the attribute being set.
         /// @param value [in] The new value of the attribute.
-        void SetStyleAttribute(const char* name, const char* value);
+        void SetGUIStyleAttribute(const char* name, const char* value);
 
 
         /**
         *   \brief  Attacheds an event handler to the element.
         */
-        void AttachEventHandler(ElementEventHandler &eventHandler);
+        void AttachEventHandler(GUIElementEventHandler &eventHandler);
 
         /**
         *   \brief  Detaches an event handler from the element.
         */
-        void DetachEventHandler(ElementEventHandler &eventHandler);
+        void DetachEventHandler(GUIElementEventHandler &eventHandler);
 
         /// Detaches every event handler.
         void DetachAllEventHandlers();
@@ -386,12 +386,12 @@ namespace GTGUI
         *   \param  absolute     [in] A reference to the list that will receive pointers to the 'absolute' positioned elements.
         *   \param  ignoreHidden [in] Whether or not hidden elements should be omitted from the results.
         */
-        void FilterChildrenByPositioning(GT::List<Element *> &automatic, GT::List<Element *> &relative, GT::List<Element *> &absolute, bool ignoreHidden = false);
+        void FilterChildrenByPositioning(GT::List<GUIElement *> &automatic, GT::List<GUIElement *> &relative, GT::List<GUIElement *> &absolute, bool ignoreHidden = false);
         
         /**
         *   \brief  Retrieves the chain of ancestors of this element.
         */
-        void GetAncestors(GT::List<Element *> &ancestors);
+        void GetAncestors(GT::List<GUIElement *> &ancestors);
 
 
         /**
@@ -570,31 +570,31 @@ namespace GTGUI
 
 
         /// Retrieves the next 'auto' positioned sibling.
-        Element* GetNextVisibleAutoSibling();
+        GUIElement* GetNextVisibleAutoSibling();
 
         /// Retrieves the previous 'auto' positioned sibling.
-        Element* GetPrevVisibleAutoSibling();
+        GUIElement* GetPrevVisibleAutoSibling();
 
         /// Retrieves the first visible 'auto' child. This is useful when needing to invalidate the positions of all 'auto' positioned children.
-        Element* GetFirstVisibleAutoChild();
+        GUIElement* GetFirstVisibleAutoChild();
 
 
     // Event stuff.
     public:
 
-        /// Called by Server when the mouse enters the element.
+        /// Called by GUIServer when the mouse enters the element.
         void OnMouseEnter();
 
-        /// Called by Server when the mouse leaves.
+        /// Called by GUIServer when the mouse leaves.
         void OnMouseLeave();
 
-        /// Called by Server when the element is pushed.
+        /// Called by GUIServer when the element is pushed.
         void OnPush();
 
-        /// Called by Server when the element has gone from a pushed to released state.
+        /// Called by GUIServer when the element has gone from a pushed to released state.
         void OnRelease();
 
-        /// Called by Server when an element has been clicked, and then released without the mouse moving off the element.
+        /// Called by GUIServer when an element has been clicked, and then released without the mouse moving off the element.
         void OnPressed();
 
 
@@ -752,7 +752,7 @@ namespace GTGUI
         }
 
         /// OnDrop.
-        void OnDrop(Element &droppedElement)
+        void OnDrop(GUIElement &droppedElement)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
@@ -761,7 +761,7 @@ namespace GTGUI
         }
 
         /// OnDragAndDropEnter.
-        void OnDragAndDropEnter(Element &dragAndDropElement)
+        void OnDragAndDropEnter(GUIElement &dragAndDropElement)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
@@ -770,7 +770,7 @@ namespace GTGUI
         }
 
         /// OnDragAndDropLeave.
-        void OnDragAndDropLeave(Element &dragAndDropElement)
+        void OnDragAndDropLeave(GUIElement &dragAndDropElement)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
@@ -832,13 +832,13 @@ namespace GTGUI
         ///
         /// @param styleClass      [in] The style class whose includes are being attached.
         /// @param alreadyAttached [in] A list of style class that have already been included. This is used in order to avoid cyclic attaching.
-        void AttachStyleClass(StyleClass &styleClass, GT::Vector<StyleClass*> &alreadyAttached, bool refresh = true);
+        void AttachStyleClass(GUIStyleClass &styleClass, GT::Vector<GUIStyleClass*> &alreadyAttached, bool refresh = true);
 
         /// Detaches the given style class including it's includes. This is called recursively on it's includes.
         ///
         /// @param styleClass      [in] The style class whose includes are being detached.
         /// @param alreadyDetached [in] A list of style classes that have already been detached. This is used in order to avoid cyclic detaching.
-        void DetachStyleClass(StyleClass &styleClass, GT::Vector<StyleClass*> &alreadyDetached, bool refresh = true);
+        void DetachStyleClass(GUIStyleClass &styleClass, GT::Vector<GUIStyleClass*> &alreadyDetached, bool refresh = true);
 
 
     public:
@@ -847,33 +847,33 @@ namespace GTGUI
         char* id;
 
         /// The server that owns this elements.
-        Server &server;
+        GUIServer &server;
         
         /// A pointer to the parent element.
-        Element* parent;
+        GUIElement* parent;
         
         /// A pointer to the first child.
-        Element* firstChild;
+        GUIElement* firstChild;
         
         /// A pointer to the last child.
-        Element* lastChild;
+        GUIElement* lastChild;
         
         /// A pointer to the previous sibling.
-        Element* prevSibling;
+        GUIElement* prevSibling;
         
         /// A pointer to the next sibling.
-        Element* nextSibling;
+        GUIElement* nextSibling;
         
         /// The style stack containing the style information about an element.
-        StyleStack style;
+        GUIStyleStack style;
 
         /// A pointer to the primary style class of this element. This is lazily initialised in GetPrimaryStyleClass(), and thus mutable.
-        mutable StyleClass* m_primaryStyleClass;
+        mutable GUIStyleClass* m_primaryStyleClass;
 
         // TODO: Consider using a pointer for this so that elements without event handlers (most elements) do not have to have a List object instantiated. This 
         //       will save a single pointer (List objects are only two pointers in size).
         /// The list of C++ event handlers attached to this element.
-        GT::List<ElementEventHandler*> eventHandlers;
+        GT::List<GUIElementEventHandler*> eventHandlers;
 
         // The attributes below are updated from the layout engine.
         int x;              ///< The x position relative to the parent.
@@ -904,7 +904,7 @@ namespace GTGUI
             GT::Rect<int> clippingRect;        ///< The clipping rectangle for borders and background.
             GT::Rect<int> clippingRectInner;   ///< The clipping rectangle for children and text.
             uint32_t         flags;               ///< Layout flags for use by the layout manager.
-            GT::ListItem<Element*>* layoutManagerListItem;  ///< The list item used by the layout manager.
+            GT::ListItem<GUIElement*>* layoutManagerListItem;  ///< The list item used by the layout manager.
 
             _layout()
                 : //x(0), y(0), width(0), height(0),
@@ -935,7 +935,7 @@ namespace GTGUI
         public:
 
             /// Constructor.
-            TextEventHandler(Element &element)
+            TextEventHandler(GUIElement &element)
                 : element(element)
             {
             }
@@ -947,7 +947,7 @@ namespace GTGUI
         private:
 
             /// The element that owns this event handler.
-            Element &element;
+            GUIElement &element;
 
 
         private:    // No copying.
@@ -999,20 +999,20 @@ namespace GTGUI
             uint32_t hashedID;
             
             /// The left side child in the BST.
-            Element* left;
+            GUIElement* left;
             
             /// The right side child in the BST.
-            Element* right;
+            GUIElement* right;
             
             /// The parent in the BST.
-            Element* parent;
+            GUIElement* parent;
             
         }bst;
 
 
     private:    // No copy.
-        Element(const Element &);
-        Element & operator=(const Element &);
+        GUIElement(const GUIElement &);
+        GUIElement & operator=(const GUIElement &);
     };
 }
 

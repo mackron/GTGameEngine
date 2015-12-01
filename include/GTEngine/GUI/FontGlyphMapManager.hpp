@@ -3,23 +3,23 @@
 #ifndef GT_GUI_FontGlyphMapManager
 #define GT_GUI_FontGlyphMapManager
 
-#include "ImageManager.hpp"             // For GTGUI::ImageHandle.
+#include "ImageManager.hpp"             // For GTGUI::GUIImageHandle.
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/GlyphMapManager.hpp>
 
 namespace GTGUI
 {
-    class Server;
+    class GUIServer;
     
-    class FontGlyphMapManager : public GT::GlyphMapManager
+    class GUIFontGlyphMapManager : public GT::GlyphMapManager
     {
     public:
     
         /// Constructor.
-        FontGlyphMapManager(Server &server);
+        GUIFontGlyphMapManager(GUIServer &server);
         
         /// Destructor.
-        ~FontGlyphMapManager();
+        ~GUIFontGlyphMapManager();
     
     
         /// GlyphMapManager::CreateGlyphMap()
@@ -44,15 +44,15 @@ namespace GTGUI
     private:
         
         /// A reference to the server. We need this because we are going to load the glyph maps via it's image manager.
-        Server &m_server;
+        GUIServer &m_server;
         
         /// For now, glyph maps are just GTLib images.
-        GT::Vector<ImageHandle> m_glyphMaps;
+        GT::Vector<GUIImageHandle> m_glyphMaps;
 
 
 	private:	// No copying.
-		FontGlyphMapManager(const FontGlyphMapManager &);
-		FontGlyphMapManager & operator=(const FontGlyphMapManager &);
+		GUIFontGlyphMapManager(const GUIFontGlyphMapManager &);
+		GUIFontGlyphMapManager & operator=(const GUIFontGlyphMapManager &);
     };
 }
 

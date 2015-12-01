@@ -41,8 +41,8 @@ namespace GT
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()        { return this->mainElement; }
-        const GTGUI::Element* GetMainElement( ) const { return this->mainElement; }
+              GTGUI::GUIElement* GetMainElement()        { return this->mainElement; }
+        const GTGUI::GUIElement* GetMainElement( ) const { return this->mainElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -68,7 +68,7 @@ namespace GT
     private:
 
         /// The event handler attached to the text area.
-        struct ScriptTextBoxEventHandler : public GTGUI::ElementEventHandler
+        struct ScriptTextBoxEventHandler : public GTGUI::GUIElementEventHandler
         {
             /// Constructor.
             ScriptTextBoxEventHandler(MaterialEditor &ownerEditorIn)
@@ -76,8 +76,8 @@ namespace GT
             {
             }
 
-            /// GTGUI::ElementEventHandler::OnTextChanged().
-            void OnTextChanged(GTGUI::Element &)
+            /// GTGUI::GUIElementEventHandler::OnTextChanged().
+            void OnTextChanged(GTGUI::GUIElement &)
             {
                 ownerEditor.OnScriptTextChanged();
             }
@@ -108,18 +108,18 @@ namespace GT
 
 
         /// The main container element.
-        GTGUI::Element* mainElement;
+        GTGUI::GUIElement* mainElement;
 
 
         /// The script text box element.
-        GTGUI::Element* scriptTextBoxElement;
+        GTGUI::GUIElement* scriptTextBoxElement;
 
         /// The event handler for the script text box.
         ScriptTextBoxEventHandler scriptTextBoxEventHandler;
 
 
         /// The viewport element.
-        GTGUI::Element* viewportElement;
+        GTGUI::GUIElement* viewportElement;
 
         /// The viewport event handler.
         Editor3DViewportEventHandler viewportEventHandler;

@@ -147,8 +147,8 @@ namespace GT
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()        { return this->mainElement; }
-        const GTGUI::Element* GetMainElement( ) const { return this->mainElement; }
+              GTGUI::GUIElement* GetMainElement()        { return this->mainElement; }
+        const GTGUI::GUIElement* GetMainElement( ) const { return this->mainElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -209,13 +209,13 @@ namespace GT
 
 
         /// The main container element.
-        GTGUI::Element* mainElement;
+        GTGUI::GUIElement* mainElement;
 
         /// The viewport element.
-        GTGUI::Element* viewportElement;
+        GTGUI::GUIElement* viewportElement;
 
         /// The timeline element.
-        GTGUI::Element* timelineElement;
+        GTGUI::GUIElement* timelineElement;
 
 
         /// The viewport event handler.

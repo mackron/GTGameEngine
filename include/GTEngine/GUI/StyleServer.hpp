@@ -14,27 +14,27 @@
 
 namespace GTGUI
 {
-    class Server;
-    class StyleAttributeHandler;
+    class GUIServer;
+    class GUIStyleAttributeHandler;
 
     /**
     *   \brief  Class for managing the styles in a server.
     *
     *   The style server handles everything to do with styling.
     */
-    class StyleServer
+    class GUIStyleServer
     {
     public:
     
         /**
         *   \brief  Constructor.
         */
-        StyleServer(Server &server);
+        GUIStyleServer(GUIServer &server);
         
         /**
         *   \brief  Destructor.
         */
-        ~StyleServer();
+        ~GUIStyleServer();
         
         /**
         *   \brief                   Loads a style script string.
@@ -131,13 +131,13 @@ namespace GTGUI
         *   \remarks
         *       Do NOT use this for modifier classes.
         */
-        StyleClass* CreateStyleClass(const char *name, ptrdiff_t nameSizeInBytes = -1);
+        GUIStyleClass* CreateStyleClass(const char *name, ptrdiff_t nameSizeInBytes = -1);
 
         /**
-        *   \brief                  Deletes a style class that was created internally by StyleServer.
+        *   \brief                  Deletes a style class that was created internally by GUIStyleServer.
         *   \param  styleClass [in] A reference to the style class being deleted.
         */
-        void DeleteStyleClass(StyleClass &styleClass, bool refreshHostStacks = true);
+        void DeleteStyleClass(GUIStyleClass &styleClass, bool refreshHostStacks = true);
 
         /// Deletes every style class created by the style server.
         void DeleteAllStyleClasses();
@@ -149,17 +149,17 @@ namespace GTGUI
         *   \param  modifierType [in] The type of the modifier class being created (StyleClassType_Hovered, StyleClassType_Pushed, etc).
         *   \return                   A pointer to the new modifier style class.
         */
-        StyleClass* CreateModifierStyleClass(StyleClass& baseClass, StyleClassType modifierType);
+        GUIStyleClass* CreateModifierStyleClass(GUIStyleClass& baseClass, GUIStyleClassType modifierType);
 
         /**
         *   \brief  Deletes a modifier style class for the given class.
         */
-        void DeleteModifierStyleClass(StyleClass& baseClass, StyleClassType modifierType);
+        void DeleteModifierStyleClass(GUIStyleClass& baseClass, GUIStyleClassType modifierType);
 
         /**
         *   \brief  Deletes all modifier classes of the given base class.
         */
-        void DeleteAllModifierStyleClasses(StyleClass& baseClass);
+        void DeleteAllModifierStyleClasses(GUIStyleClass& baseClass);
         
         
         /**
@@ -181,7 +181,7 @@ namespace GTGUI
         *   \remarks
         *       Use GetDefaultStyleClass() to retrieve a reference to the default style class.
         */
-        StyleClass* GetStyleClass(const char* className, ptrdiff_t nameSizeInBytes = -1);
+        GUIStyleClass* GetStyleClass(const char* className, ptrdiff_t nameSizeInBytes = -1);
         
         
         /// Retrieves a pointer to the default style class.
@@ -190,10 +190,10 @@ namespace GTGUI
         ///
         /// @remarks
         ///     The default style class is the * class.
-        StyleClass* GetDefaultStyleClass();
+        GUIStyleClass* GetDefaultStyleClass();
         
         /// Retrieves the style class of the root element.
-        StyleClass* GetRootElementStyleClass();
+        GUIStyleClass* GetRootElementStyleClass();
 
 
         /// Sets a style attribute for the given class.
@@ -205,14 +205,14 @@ namespace GTGUI
         /// @param valueSizeInTs [in] The size of <value> in chars.
         ///
         /// @return True if the value was set correctly; false otherwise.
-        bool SetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs, const char* value, ptrdiff_t valueSizeInTs);
+        bool SetGUIStyleAttribute(GUIStyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs, const char* value, ptrdiff_t valueSizeInTs);
 
         /// Unsets a style attribute for the given class.
         ///
         /// @param styleClass   [in] A reference to the style class whose attribute is being unset.
         /// @param name         [in] The name of the attribute being unset.
         /// @param nameSizeInTs [in] The size of the name string, in chars. Set to -1 if the string is null-terminated.
-        bool UnsetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs = -1);
+        bool UnsetGUIStyleAttribute(GUIStyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs = -1);
 
         /// Retrieves the stringified value of an attribute.
         ///
@@ -221,7 +221,7 @@ namespace GTGUI
         /// @param nameSizeInTs  [in] The size of <name> in chars.
         ///
         /// @return The stringified value of the given attribute. Will return an empty string if anything goes wrong.
-        GT::String GetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs);
+        GT::String GetGUIStyleAttribute(GUIStyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs);
         
 
         /// Clears the error stack.
@@ -232,12 +232,12 @@ namespace GTGUI
         /// @param errorOut [out] A reference to the object that will receive the error.
         ///
         /// @return True if an error was returned; false otherwise.
-        bool GetLastError(StyleScriptError &errorOut);
+        bool GetLastError(GUIStyleScriptError &errorOut);
 
         /// Called when a compilation error is received.
         ///
         /// @param error [in] A reference to the structure containing the error information.
-        void OnCompilerError(const StyleScriptError &error);
+        void OnCompilerError(const GUIStyleScriptError &error);
 
 
         
@@ -252,43 +252,43 @@ namespace GTGUI
         *   \brief                  Adds a style class to the server.
         *   \param  styleClass [in] A reference to the style class being added.
         */
-        void AddStyleClass(StyleClass &styleClass);
+        void AddStyleClass(GUIStyleClass &styleClass);
 
         /**
         *   \brief                  Removes a style class from the server.
         *   \param  styleClass [in] A reference to the style class being removed.
         *
         *   \remarks
-        *       This does not delete the style class. Use DeleteStyleClass() to delete a style class that was created by StyleServer.
+        *       This does not delete the style class. Use DeleteStyleClass() to delete a style class that was created by GUIStyleServer.
         */
-        void RemoveStyleClass(StyleClass &styleClass);
+        void RemoveStyleClass(GUIStyleClass &styleClass);
         
 
 
         /// Loads the style attribute handlers. This will be called in the constructor.
-        void LoadStyleAttributeHandlers();
+        void LoadGUIStyleAttributeHandlers();
 
         /// Unloads all style attribute handlers. This will be called in the destructor. Handlers will be deleted with 'delete'.
-        void UnloadStyleAttributeHandlers();
+        void UnloadGUIStyleAttributeHandlers();
 
         /// Adds a style attribute handler to the map of attribute handlers.
         ///
         /// @param attributeHandler [in] A reference to the attribute handler being added.
-        void AddStyleAttributeHandler(StyleAttributeHandler &attributeHandler);
+        void AddGUIStyleAttributeHandler(GUIStyleAttributeHandler &attributeHandler);
 
 
         /// Posts an error.
-        void PostError(const StyleScriptError &error);
+        void PostError(const GUIStyleScriptError &error);
 
 
-        /// Merges a style script compiler class object with the given StyleClass object.
+        /// Merges a style script compiler class object with the given GUIStyleClass object.
         ///
         /// @param dest   [in] The destination style class.
         /// @param source [in] The source style class.
         ///
         /// @remarks
         ///     A merge will append the includes, replace existing attribute and add new attributes.
-        void MergeStyleClass(StyleClass &dest, const StyleScriptCompilerClass &source);
+        void MergeStyleClass(GUIStyleClass &dest, const GUIStyleScriptCompilerClass &source);
 
 
         /// Unloads a compiler by it's index in the stack.
@@ -300,7 +300,7 @@ namespace GTGUI
         ///
         /// @param compilerVariable [in] A reference to the compiler variable.
         /// @param compilerIndex    [in] The index of the compiler in the stack.
-        void UnloadCompilerVariable(const StyleScriptCompilerVariable &compilerVariable, size_t compilerIndex);
+        void UnloadCompilerVariable(const GUIStyleScriptCompilerVariable &compilerVariable, size_t compilerIndex);
 
         /// Determines whether or not the given variable is defined after the compiler at the given index.
         ///
@@ -312,7 +312,7 @@ namespace GTGUI
         ///
         /// @param className     [in] The name of the variable.
         /// @param compilerIndex [in] The index of the compiler that owns the variable in question.
-        const StyleScriptCompilerVariable* FindPreviouslyDefinedCompilerVariable(const char* variableName, size_t compilerIndex) const;
+        const GUIStyleScriptCompilerVariable* FindPreviouslyDefinedCompilerVariable(const char* variableName, size_t compilerIndex) const;
 
 
         /// Unloads a compiler class.
@@ -320,7 +320,7 @@ namespace GTGUI
         /// @param compilerClass [in] A reference to the compiler class.
         /// @param modifierName  [in] The name of the modifier of the given class. This should be nullptr if it is the main base class.
         /// @param compilerIndex [in] The index of the compiler in the stack.
-        void UnloadCompilerClass(const StyleScriptCompilerClass &compilerClass, const char* modifierName, size_t compilerIndex);
+        void UnloadCompilerClass(const GUIStyleScriptCompilerClass &compilerClass, const char* modifierName, size_t compilerIndex);
 
         /// Determines whether or not the given class attribute is defined after the compiler at the given index.
         ///
@@ -336,41 +336,41 @@ namespace GTGUI
         /// @param modifierName  [in] The name of the class modifier, or nullptr if it's the base class.
         /// @param attributeName [in] The name of the attribute.
         /// @param compilerIndex [in] The index of the compiler that owns the class attribute in question.
-        const StyleScriptCompilerClassAttribute* FindPreviouslyDefinedCompilerAttribute(const char* className, const char* modifierName, const char* attributeName, size_t compilerIndex) const;
+        const GUIStyleScriptCompilerClassAttribute* FindPreviouslyDefinedCompilerAttribute(const char* className, const char* modifierName, const char* attributeName, size_t compilerIndex) const;
 
 
         
     private:
 
         /// A reference to the main parent server.
-        Server &server;
+        GUIServer &server;
     
         /// The list of variables, index by their name.
         GT::Dictionary<char*> variables;
 
 
         /// The list of style classes, index by their name.
-        StyleClassTree classes;
+        GUIStyleClassTree classes;
         
         /// A pointer to the default style class. This is the style class with the name "*".
-        StyleClass* defaultStyleClass;
+        GUIStyleClass* defaultStyleClass;
         
         /// A pointer to the style class of the root element.
-        StyleClass* rootElementStyleClass;
+        GUIStyleClass* rootElementStyleClass;
         
 
         /// The map of style attribute handlers. Basically, we map an object to each style attribute ('width', 'background-color', etc). We then access
         /// those objects based on the attribute name. When we have the object, we call virtual methods which will perform the assignment or retrieval.
-        /// This map is filled in the LoadStyleAttributeHandlers() method, which will be called in the constructor.
-        GT::Dictionary<StyleAttributeHandler*> attributeHandlers;
+        /// This map is filled in the LoadGUIStyleAttributeHandlers() method, which will be called in the constructor.
+        GT::Dictionary<GUIStyleAttributeHandler*> attributeHandlers;
 
         /// The stack of script errors.
-        GT::Vector<StyleScriptError> errorStack;
+        GT::Vector<GUIStyleScriptError> errorStack;
 
         /// The stack of compilers representing the order in which style scripts were loaded. We use this for unloading. When a style is loaded, a
         /// pointer to the compiler object will be placed at the end of this list. When a compiler is removed from the list, the server will look at
         /// this stack in determining how to modify the style classes and variables appopriately.
-        GT::Vector<StyleScriptCompiler*> compilerStack;
+        GT::Vector<GUIStyleScriptCompiler*> compilerStack;
         
 
         
@@ -380,8 +380,8 @@ namespace GTGUI
 
     
     private:    // No copying.
-        StyleServer(const StyleServer &);
-        StyleServer & operator=(const StyleServer &);
+        GUIStyleServer(const GUIStyleServer &);
+        GUIStyleServer & operator=(const GUIStyleServer &);
     };
 }
 

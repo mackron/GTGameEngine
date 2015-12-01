@@ -5,12 +5,12 @@
 
 namespace GTGUI
 {
-    enum StyleNumberFormat
+    enum GUIStyleNumberFormat
     {
-        StyleNumberFormat_Pixels = 0,   // The default format.
-        StyleNumberFormat_Percent,
-        StyleNumberFormat_Points,       // For fonts sizes.
-        StyleNumberFormat_Automatic     // Automatically determine the value. This has different effects in different context's.
+        GUIStyleNumberFormat_Pixels = 0,   // The default format.
+        GUIStyleNumberFormat_Percent,
+        GUIStyleNumberFormat_Points,       // For fonts sizes.
+        GUIStyleNumberFormat_Automatic     // Automatically determine the value. This has different effects in different context's.
     };
 }
 

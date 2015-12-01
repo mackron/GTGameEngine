@@ -41,7 +41,7 @@ namespace GT
         }
     }
 
-    bool Editor::Startup(GTGUI::Server &guiServer)
+    bool Editor::Startup(GTGUI::GUIServer &guiServer)
     {
         if (!this->isStarted)
         {
@@ -558,7 +558,7 @@ namespace GT
                         script.GetGlobal("GTGUI");
                         assert(script.IsTable(-1));
                         {
-                            script.Push("Server");
+                            script.Push("GUIServer");
                             script.GetTableValue(-2);
                             assert(script.IsTable(-1));
                             {
@@ -833,7 +833,7 @@ namespace GT
     }
 
 
-    GTGUI::Element* Editor::GetFileEditorElement(const char* path, const char* relativeTo)
+    GTGUI::GUIElement* Editor::GetFileEditorElement(const char* path, const char* relativeTo)
     {
         char absolutePath[EASYVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
@@ -1249,14 +1249,14 @@ namespace GT
     }
 
 
-    void Editor::FFI::PushElement(GT::Script &script, GTGUI::Element* element)
+    void Editor::FFI::PushElement(GT::Script &script, GTGUI::GUIElement* element)
     {
         if (element != nullptr)
         {
             script.GetGlobal("GTGUI");
             assert(script.IsTable(-1));
             {
-                script.Push("Server");
+                script.Push("GUIServer");
                 script.GetTableValue(-2);
                 assert(script.IsTable(-1));
                 {

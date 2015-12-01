@@ -3,41 +3,40 @@
 #include <GTEngine/GUI/StyleClass.hpp>
 #include <GTEngine/GUI/StyleServer.hpp>
 #include <GTEngine/Core/Strings/Create.hpp>
-
 #include "StyleAttributeHandler.hpp"
 
 namespace GTGUI
 {
-    StyleClassType ToStyleClassType(const char *name, ptrdiff_t nameSizeInBytes)
+    GUIStyleClassType ToStyleClassType(const char *name, ptrdiff_t nameSizeInBytes)
     {
         if (GT::Strings::Equal(name, nameSizeInBytes, "hovered"))
         {
-            return StyleClassType_Hovered;
+            return GUIStyleClassType_Hovered;
         }
 
         if (GT::Strings::Equal(name, nameSizeInBytes, "pushed"))
         {
-            return StyleClassType_Pushed;
+            return GUIStyleClassType_Pushed;
         }
 
         if (GT::Strings::Equal(name, nameSizeInBytes, "focused"))
         {
-            return StyleClassType_Focused;
+            return GUIStyleClassType_Focused;
         }
 
         if (GT::Strings::Equal(name, nameSizeInBytes, "disabled"))
         {
-            return StyleClassType_Disabled;
+            return GUIStyleClassType_Disabled;
         }
 
-        return StyleClassType_None;
+        return GUIStyleClassType_None;
     }
 }
 
 namespace GTGUI
 {
-    StyleClass::StyleClass(StyleServer &server, const char* name, ptrdiff_t nameSizeInBytes)
-        : server(server), name(GT::Strings::Create(name, nameSizeInBytes)), type(StyleClassType_Normal), includes(nullptr), hosts(),
+    GUIStyleClass::GUIStyleClass(GUIStyleServer &server, const char* name, ptrdiff_t nameSizeInBytes)
+        : server(server), name(GT::Strings::Create(name, nameSizeInBytes)), type(GUIStyleClassType_Normal), includes(nullptr), hosts(),
           width(), height(), minWidth(), maxWidth(), minHeight(), maxHeight(), relativeWidthMode(), relativeHeightMode(), flexChildWidth(), flexChildHeight(),
           backgroundColour(), backgroundImage(),backgroundImageColour(), backgroundAlignX(), backgroundAlignY(), backgroundRepeatX(), backgroundRepeatY(),
           borderLeftWidth(), borderLeftColour(),
@@ -76,23 +75,23 @@ namespace GTGUI
         }
     }
     
-    StyleClass::~StyleClass()
+    GUIStyleClass::~GUIStyleClass()
     {
         GT::Strings::Delete(this->name);
         GT::Strings::Delete(this->includes);
     }
 
-    GT::String StyleClass::GetAttribute(const char* nameIn, ptrdiff_t nameSizeInTs)
+    GT::String GUIStyleClass::GetAttribute(const char* nameIn, ptrdiff_t nameSizeInTs)
     {
-        return this->server.GetStyleAttribute(*this, nameIn, nameSizeInTs);
+        return this->server.GetGUIStyleAttribute(*this, nameIn, nameSizeInTs);
     }
     
-    bool StyleClass::SetAttribute(const char* nameIn, ptrdiff_t nameSizeInTs, const char *value, ptrdiff_t valueSizeInTs)
+    bool GUIStyleClass::SetAttribute(const char* nameIn, ptrdiff_t nameSizeInTs, const char *value, ptrdiff_t valueSizeInTs)
     {
-        return this->server.SetStyleAttribute(*this, nameIn, nameSizeInTs, value, valueSizeInTs);
+        return this->server.SetGUIStyleAttribute(*this, nameIn, nameSizeInTs, value, valueSizeInTs);
     }
 
-    void StyleClass::AppendIncludes(const char *newIncludes)
+    void GUIStyleClass::AppendIncludes(const char *newIncludes)
     {
         // We won't do anything if we don't have any includes.
         if (newIncludes != nullptr && !GT::Strings::Equal(newIncludes, ""))
@@ -116,7 +115,7 @@ namespace GTGUI
         }
     }
 
-    void StyleClass::RemoveIncludes(const char* includesToRemove)
+    void GUIStyleClass::RemoveIncludes(const char* includesToRemove)
     {
         auto result = GT::Strings::FindFirst(this->includes, includesToRemove);
         if (result != nullptr)
@@ -144,9 +143,9 @@ namespace GTGUI
         }
     }
 
-    void StyleClass::SetModifierClass(StyleClass& modifier)
+    void GUIStyleClass::SetModifierClass(GUIStyleClass& modifier)
     {
-        if (modifier.type >= 0 && modifier.type < StyleClassType_End)
+        if (modifier.type >= 0 && modifier.type < GUIStyleClassType_End)
         {
             auto &modifierAttrib = this->modifiers[modifier.type];
         
@@ -155,9 +154,9 @@ namespace GTGUI
         }
     }
 
-    void StyleClass::UnsetModifierClass(StyleClassType typeIn)
+    void GUIStyleClass::UnsetModifierClass(GUIStyleClassType typeIn)
     {
-        if (typeIn >= 0 && typeIn < StyleClassType_End)
+        if (typeIn >= 0 && typeIn < GUIStyleClassType_End)
         {
             auto &modifierAttrib = this->modifiers[typeIn];
 
@@ -166,9 +165,9 @@ namespace GTGUI
         }
     }
 
-    StyleClass* StyleClass::GetModifierClass(StyleClassType typeIn)
+    GUIStyleClass* GUIStyleClass::GetModifierClass(GUIStyleClassType typeIn)
     {
-        if (typeIn >= 0 && typeIn < StyleClassType_End)
+        if (typeIn >= 0 && typeIn < GUIStyleClassType_End)
         {
             auto &modifierAttrib = this->modifiers[typeIn];
 

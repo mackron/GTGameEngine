@@ -527,8 +527,8 @@ namespace GT
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()        { return this->GUI.Main; }
-        const GTGUI::Element* GetMainElement( ) const { return this->GUI.Main; }
+              GTGUI::GUIElement* GetMainElement()        { return this->GUI.Main; }
+        const GTGUI::GUIElement* GetMainElement( ) const { return this->GUI.Main; }
 
         /// SubEditor::Show()
         void Show();
@@ -934,9 +934,9 @@ namespace GT
             {
             }
 
-            GTGUI::Element* Main;
-            GTGUI::Element* Viewport;
-            GTGUI::Element* PropertiesPanel;
+            GTGUI::GUIElement* Main;
+            GTGUI::GUIElement* Viewport;
+            GTGUI::GUIElement* PropertiesPanel;
 
         }GUI;
 
@@ -952,7 +952,7 @@ namespace GT
 
 
             /// Called after the element has been resized.
-            void OnSize(GTGUI::Element &element)
+            void OnSize(GTGUI::GUIElement &element)
             {
                 Editor3DViewportEventHandler::OnSize(element);
                 owner.OnViewportSize();

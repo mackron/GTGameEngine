@@ -9,7 +9,7 @@ namespace GTGUI
     {
     }
 
-    GUIMesh::GUIMesh(const GUIMeshVertex* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, ImageHandle textureIn)
+    GUIMesh::GUIMesh(const GUIMeshVertex* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, GUIImageHandle textureIn)
         : vertices(vertexCount), indices(indexCount), texture(textureIn)
     {
         for (size_t i = 0; i < vertexCount; ++i)

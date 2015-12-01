@@ -8,7 +8,7 @@
 
 #if defined(_MSC_VER)
     #pragma warning(push)
-    #pragma warning(disable:4351)   // new behavior: elements of array 'GTGUI::StyleStack::modifiers' will be default initialized
+    #pragma warning(disable:4351)   // new behavior: elements of array 'GTGUI::GUIStyleStack::modifiers' will be default initialized
 #endif
 
 #define REFRESH_ATTRIBUTE(attribute) \
@@ -45,7 +45,7 @@
 
 namespace GTGUI
 {
-    StyleStack::StyleStack(Element &owner)
+    GUIStyleStack::GUIStyleStack(GUIElement &owner)
         : owner(owner),
           classes(),
           width(nullptr), height(nullptr), minWidth(nullptr), maxWidth(nullptr), minHeight(nullptr), maxHeight(nullptr), relativeWidthMode(nullptr), relativeHeightMode(nullptr), flexChildWidth(nullptr), flexChildHeight(nullptr),
@@ -163,7 +163,7 @@ namespace GTGUI
         }
     }
 
-    StyleStack::~StyleStack()
+    GUIStyleStack::~GUIStyleStack()
     {
         // We need to detach ourselves from every style class that is attached to this stack.
         while (this->classes.root != nullptr)
@@ -177,7 +177,7 @@ namespace GTGUI
         }
     }
 
-    void StyleStack::Attach(StyleClass &style, bool refresh)
+    void GUIStyleStack::Attach(GUIStyleClass &style, bool refresh)
     {
         // We need to check if the style class already exists. If it does, we just move it to the front.
         auto iClass = this->classes.Find(&style);
@@ -199,7 +199,7 @@ namespace GTGUI
         {
             if (this->modifiers[i])
             {
-                this->ActivateModifierClasses(static_cast<StyleClassType>(i));
+                this->ActivateModifierClasses(static_cast<GUIStyleClassType>(i));
             }
         }
 
@@ -210,7 +210,7 @@ namespace GTGUI
         }
     }
 
-    void StyleStack::Detach(StyleClass &style, bool refresh)
+    void GUIStyleStack::Detach(GUIStyleClass &style, bool refresh)
     {
         // We're no longer a host for the given style.
         style.hosts.Remove(style.hosts.Find(this));
@@ -223,7 +223,7 @@ namespace GTGUI
         }
     }
 
-    StyleClass * StyleStack::FirstStyleClass()
+    GUIStyleClass * GUIStyleStack::FirstStyleClass()
     {
         if (this->classes.root)
         {
@@ -234,7 +234,7 @@ namespace GTGUI
     }
 
 
-    void StyleStack::ActivateModifierClasses(StyleClassType type)
+    void GUIStyleStack::ActivateModifierClasses(GUIStyleClassType type)
     {
         bool stackChanged = false;
 
@@ -260,7 +260,7 @@ namespace GTGUI
         }
     }
 
-    void StyleStack::DeactivateModifierClasses(StyleClassType type)
+    void GUIStyleStack::DeactivateModifierClasses(GUIStyleClassType type)
     {
         bool stackChanged = false;
 
@@ -289,14 +289,14 @@ namespace GTGUI
         }
     }
 
-    void StyleStack::DeactivateAllModifierClasses()
+    void GUIStyleStack::DeactivateAllModifierClasses()
     {
         bool stackChanged = false;
 
         // To 'deactivate' the modifier classes, we just iterate forwards and remove classes until we find the first one that is not what we want.
         for (auto i = this->classes.root; i != nullptr; )
         {
-            if (i->value->type != StyleClassType_None && i->value->type != StyleClassType_Normal)
+            if (i->value->type != GUIStyleClassType_None && i->value->type != GUIStyleClassType_Normal)
             {
                 auto classToRemove = i;
                 i = i->next;
@@ -318,12 +318,12 @@ namespace GTGUI
 
 
 
-    void StyleStack::LockRefresh()
+    void GUIStyleStack::LockRefresh()
     {
         ++this->lockCount;
     }
 
-    void StyleStack::UnlockRefresh()
+    void GUIStyleStack::UnlockRefresh()
     {
         if (this->lockCount > 0)
         {
@@ -331,7 +331,7 @@ namespace GTGUI
         }
     }
 
-    void StyleStack::Refresh()
+    void GUIStyleStack::Refresh()
     {
         // Don't refresh anything if refreshing is locked.
         if (!this->IsRefreshLocked())
@@ -435,7 +435,7 @@ namespace GTGUI
 
 
 
-    void StyleStack::UpdatePositioningPriorities()
+    void GUIStyleStack::UpdatePositioningPriorities()
     {
         // We need to traverse through the style classes and check whether left, right, top and bottom should have priority over each other.
         bool rightPrioritySet  = false;

@@ -7,7 +7,7 @@
 
 namespace GTGUI
 {
-    StyleTokenizer::StyleTokenizer(const char *script)
+    GUIStyleTokenizer::GUIStyleTokenizer(const char *script)
         : start(script), end(script), lineStart(script), lineNumber(1),
           isInLineComment(false), isInBlockComment(false)
     {
@@ -15,7 +15,7 @@ namespace GTGUI
         ++(*this);
     }
     
-    size_t StyleTokenizer::Size() const
+    size_t GUIStyleTokenizer::Size() const
     {
         if (this->end > this->start)
         {
@@ -25,7 +25,7 @@ namespace GTGUI
         return 1;   // Enough room for an empty string with only a null terminator.
     }
     
-    size_t StyleTokenizer::Copy(char *dest) const
+    size_t GUIStyleTokenizer::Copy(char *dest) const
     {
         if (dest)
         {
@@ -46,7 +46,7 @@ namespace GTGUI
         return 0;
     }
     
-    bool StyleTokenizer::Equals(const char *value) const
+    bool GUIStyleTokenizer::Equals(const char *value) const
     {
         if (*this)
         {
@@ -56,7 +56,7 @@ namespace GTGUI
         return false;
     }
     
-    bool StyleTokenizer::Equals(char value) const
+    bool GUIStyleTokenizer::Equals(char value) const
     {
         if (*this)
         {
@@ -69,7 +69,7 @@ namespace GTGUI
         return false;
     }
     
-    void StyleTokenizer::SkipNewLines()
+    void GUIStyleTokenizer::SkipNewLines()
     {
         while (*this)
         {
@@ -83,12 +83,12 @@ namespace GTGUI
     }
 
 
-    GT::String StyleTokenizer::GetString() const
+    GT::String GUIStyleTokenizer::GetString() const
     {
         return GT::String(this->start, this->end - this->start);
     }
 
-    GT::String StyleTokenizer::GetCurrentLineString() const
+    GT::String GUIStyleTokenizer::GetCurrentLineString() const
     {
         // We just find the first occurance of the \n or \0 character.
         if (this->lineStart != nullptr)
@@ -107,7 +107,7 @@ namespace GTGUI
         return "";
     }
     
-    StyleTokenizer & StyleTokenizer::operator++()
+    GUIStyleTokenizer & GUIStyleTokenizer::operator++()
     {
         if (*this)
         {
@@ -210,7 +210,7 @@ namespace GTGUI
         return *this;
     }
     
-    StyleTokenizer::operator bool() const
+    GUIStyleTokenizer::operator bool() const
     {
         // If both the start and end are null, the tokenizer is finished.
         return !(this->start == nullptr && this->end == nullptr);

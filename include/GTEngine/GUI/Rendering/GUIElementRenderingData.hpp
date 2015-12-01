@@ -9,7 +9,7 @@
 
 namespace GTGUI
 {
-    class Element;
+    class GUIElement;
 
     /// Class containing the rendering data for an element.
     ///
@@ -21,7 +21,7 @@ namespace GTGUI
     public:
 
         /// Constructor.
-        GUIElementRenderingData(GarbageCollector &gc);
+        GUIElementRenderingData(GUIGarbageCollector &gc);
 
         /// Destructor.
         ~GUIElementRenderingData();
@@ -52,7 +52,7 @@ namespace GTGUI
         /// Updates the text meshes based on the text of the given element.
         ///
         /// @param element [in] The element whose text rendering data is being updated.
-        void UpdateTextMeshes(const Element &element);
+        void UpdateTextMeshes(const GUIElement &element);
 
         /// Update the colour of every text mesh.
         ///
@@ -63,17 +63,17 @@ namespace GTGUI
         /// Updates the shadow mesh for the given element.
         ///
         /// @param element [in] The element whose shadow is being updated.
-        void UpdateShadowMesh(const Element &element);
+        void UpdateShadowMesh(const GUIElement &element);
 
 
         /// Updates the border mesh for the given element.
         ///
         /// @param element [in] The element whose shadow is being updated.
-        void UpdateBorderMesh(const Element &element);
+        void UpdateBorderMesh(const GUIElement &element);
 
 
         /// Updates the background meshes.
-        void UpdateBackgroundMeshes(const Element &element);
+        void UpdateBackgroundMeshes(const GUIElement &element);
 
 
         /// Sets the absolute opacity.
@@ -107,7 +107,7 @@ namespace GTGUI
     private:
 
         /// The garbage collector to use for deleting meshes.
-        GarbageCollector &gc;
+        GUIGarbageCollector &gc;
 
         /// The list of meshes used for rendering the text of the element.
         GT::Vector<GUIMesh*> textMeshes;

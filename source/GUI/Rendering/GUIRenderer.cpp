@@ -19,7 +19,7 @@ namespace GTGUI
     ////////////////////////////////////////////////////////////////////////
     // Virtual Methods
 
-    void GUIRenderer::Begin(const Server &)
+    void GUIRenderer::Begin(const GUIServer &)
     {
     }
 
@@ -31,11 +31,11 @@ namespace GTGUI
     {
     }
 
-    void GUIRenderer::BeginElementOnDrawEvent(Element &)
+    void GUIRenderer::BeginElementOnDrawEvent(GUIElement &)
     {
     }
 
-    void GUIRenderer::EndElementOnDrawEvent(Element &)
+    void GUIRenderer::EndElementOnDrawEvent(GUIElement &)
     {
     }
 
@@ -51,7 +51,7 @@ namespace GTGUI
     {
     }
 
-    void GUIRenderer::SetTexture(ImageHandle)
+    void GUIRenderer::SetTexture(GUIImageHandle)
     {
     }
 
@@ -64,7 +64,7 @@ namespace GTGUI
     ////////////////////////////////////////////////////////////////////////
     // Non-Virtual Methods
 
-    void GUIRenderer::RenderElement(Server &server, Element &element)
+    void GUIRenderer::RenderElement(GUIServer &server, GUIElement &element)
     {
         // Helpers to make things a bit easier to use.
         const GT::Rect<int> &clippingRect      = element.layout.clippingRect;
@@ -118,7 +118,7 @@ namespace GTGUI
                 if (shadowMesh != nullptr)
                 {
                     // Scissor.
-                    if (element.style.positioning->value == Positioning_Auto)
+                    if (element.style.positioning->value == GUIPositioning_Auto)
                     {
                         this->_SetScissor(element.parent->layout.clippingRect.left, element.parent->layout.clippingRect.top, element.parent->layout.clippingRect.GetWidth(), element.parent->layout.clippingRect.GetHeight());
                     }
@@ -185,8 +185,7 @@ namespace GTGUI
                     
                 if (backgroundImageMesh != nullptr)
                 {
-                    //bool textureNeedsBlending = DoesImageFormatHaveAlphaComponent(backgroundImageMesh->GetTexture()->GetFormat());
-                    bool textureNeedsBlending = server.GetImageManager()->GetImageFormat(backgroundImageMesh->GetTexture()) == GTGUI::ImageFormat_RGBA8;
+                    bool textureNeedsBlending = server.GetImageManager()->GetImageFormat(backgroundImageMesh->GetTexture()) == GTGUI::GUIImageFormat_RGBA8;
 
                     this->_SetTexture(backgroundImageMesh->GetTexture());
                     {
@@ -290,7 +289,7 @@ namespace GTGUI
         this->SetOffset(offsetX, offsetY);
     }
 
-    void GUIRenderer::_SetTexture(GTGUI::ImageHandle texture)
+    void GUIRenderer::_SetTexture(GTGUI::GUIImageHandle texture)
     {
         if (texture != this->currentTexture)
         {

@@ -4,12 +4,12 @@
 
 namespace GTGUI
 {
-    ClippingVolume::ClippingVolume(float left, float top, float right, float bottom)
+    GUIClippingVolume::GUIClippingVolume(float left, float top, float right, float bottom)
         : left(left), top(top), right(right), bottom(bottom)
     {
     }
 
-    ClippingVolume::~ClippingVolume()
+    GUIClippingVolume::~GUIClippingVolume()
     {
     }
 }

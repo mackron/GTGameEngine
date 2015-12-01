@@ -7,15 +7,15 @@
 
 namespace GTGUI
 {
-    class Server;
-    class Element;
+    class GUIServer;
+    class GUIElement;
 
     /**
     *   \brief  Class for managing the scripts in the server.
     *
     *   The script server handles everything to do with scripting.
     */
-    class ScriptServer
+    class GUIScriptServer
     {
     public:
     
@@ -23,12 +23,12 @@ namespace GTGUI
         *   \brief              Constructor.
         *   \param  script [in] A pointer to the script object to use for scripting. Can be null, in which case GTGUI will create it's own script object.
         */
-        ScriptServer(Server &server, GT::Script* script);
+        GUIScriptServer(GUIServer &server, GT::Script* script);
         
         /**
         *   \brief  Destructor.
         */
-        ~ScriptServer();
+        ~GUIScriptServer();
         
         /**
         *   \brief              Loads a script string into the server.
@@ -47,8 +47,8 @@ namespace GTGUI
         bool ExecuteFromFile(const char* filename, int returnValueCount = -1);
 
         /// Retrieves a reference to the main server.
-              Server & GetServer()       { return this->server; }
-        const Server & GetServer() const { return this->server; }
+              GUIServer & GetServer()       { return this->server; }
+        const GUIServer & GetServer() const { return this->server; }
 
 
         /**
@@ -63,18 +63,18 @@ namespace GTGUI
         /// Removes the given element from the scripting environment.
         ///
         /// @param element [in] The element to remove from the scripting environment.
-        void RemoveElement(Element &element);
+        void RemoveElement(GUIElement &element);
 
         /// Detaches an element from it's parent, but leaves the element in the scripting environment.
         ///
         /// @param parent [in] The parent element.
         /// @param child  [in] The child element.
-        void RemoveChild(Element &parent, Element &child);
+        void RemoveChild(GUIElement &parent, GUIElement &child);
 
         /// Detaches every child from the given element.
         ///
         /// @param parent [in] The element whose children are being deleted.
-        void RemoveAllChildren(Element &parent);
+        void RemoveAllChildren(GUIElement &parent);
 
 
     // Event posting.
@@ -84,23 +84,23 @@ namespace GTGUI
         *   \brief               Posts the OnMouseEnter event to the given element.
         *   \param  element [in] A pointer to the element that is receiving the event.
         */
-        void PostEvent_OnMouseEnter(Element &element);
+        void PostEvent_OnMouseEnter(GUIElement &element);
 
         /**
         *   \brief               Posts the OnMouseLeave event to the given element.
         *   \param  element [in] A pointer to the element that is receiving the event.
         */
-        void PostEvent_OnMouseLeave(Element &element);
+        void PostEvent_OnMouseLeave(GUIElement &element);
 
-        void PostEvent_OnPush(Element &element);
-        void PostEvent_OnRelease(Element &element);
-        void PostEvent_OnPressed(Element &element);
+        void PostEvent_OnPush(GUIElement &element);
+        void PostEvent_OnRelease(GUIElement &element);
+        void PostEvent_OnPressed(GUIElement &element);
 
         /// Posts the OnSize event to the given element.
-        void PostEvent_OnSize(Element &element);
+        void PostEvent_OnSize(GUIElement &element);
 
         /// Posts the OnMove event to the given element.
-        void PostEvent_OnMove(Element &element);
+        void PostEvent_OnMove(GUIElement &element);
 
 
         /**
@@ -113,7 +113,7 @@ namespace GTGUI
         *       \par
         *       The initial key press will call both this event and OnKeyDown.
         */
-        void PostEvent_OnKeyPressed(Element &element, char32_t key);
+        void PostEvent_OnKeyPressed(GUIElement &element, char32_t key);
 
         /**
         *   \brief               Posts the OnKeyDown() event to the given receiver.
@@ -126,78 +126,78 @@ namespace GTGUI
         *       \par
         *       The initial key press will call both this event and OnKeyPressed.
         */
-        bool PostEvent_OnKeyDown(Element &element, char32_t key);
+        bool PostEvent_OnKeyDown(GUIElement &element, char32_t key);
 
         /**
         *   \brief               Posts the OnKeyUp() event to the given receiver.
         *   \param  element [in] The element that will be receiving the event.
         *   \param  key     [in] The key that was just released.
         */
-        void PostEvent_OnKeyUp(Element &element, char32_t key);
+        void PostEvent_OnKeyUp(GUIElement &element, char32_t key);
 
 
         /// Posts the OnMouseButtonDown event to all MouseButtonDown watchers.
-        void PostEvent_OnMouseButtonDown(Element &receiver, int button);
+        void PostEvent_OnMouseButtonDown(GUIElement &receiver, int button);
         
         /// Posts the OnMouseButtonUp event to all MouseButtonUp watchers.
-        void PostEvent_OnMouseButtonUp(Element &receiver, int button);
+        void PostEvent_OnMouseButtonUp(GUIElement &receiver, int button);
         
         /// Posts the OnMouseButtonDoubleClick event to all MouseButtonDoubleClick watchers.
-        void PostEvent_OnMouseButtonDoubleClick(Element &receiver, int button);
+        void PostEvent_OnMouseButtonDoubleClick(GUIElement &receiver, int button);
 
         /// Posts the OnMouseMove event to the given receiver.
-        void PostEvent_OnMouseMove(Element &element, int relativePosX, int relativePosY);
+        void PostEvent_OnMouseMove(GUIElement &element, int relativePosX, int relativePosY);
 
         /// Posts the OnMouseWheel event to the given receiver.
-        void PostEvent_OnMouseWheel(Element &element, int delta, int relativePosX, int relativePosY);
+        void PostEvent_OnMouseWheel(GUIElement &element, int delta, int relativePosX, int relativePosY);
 
 
         /// Posts the OnFocus event to the given receiver.
-        void PostEvent_OnFocus(Element &receiver);
+        void PostEvent_OnFocus(GUIElement &receiver);
 
         /// Posts the OnBlur event to the given receiver.
-        void PostEvent_OnBlur(Element &receiver);
+        void PostEvent_OnBlur(GUIElement &receiver);
 
 
         /// Posts the OnTear event to the given receiver.
-        void PostEvent_OnTear(Element &receiver);
+        void PostEvent_OnTear(GUIElement &receiver);
 
         /// Posts the OnDrop event to the given receiver.
-        void PostEvent_OnDrop(Element &receiver, Element &droppedElement);
+        void PostEvent_OnDrop(GUIElement &receiver, GUIElement &droppedElement);
 
         /// Posts the OnDragAndDropEnter event to the given receiver.
-        void PostEvent_OnDragAndDropEnter(Element &receiver, Element &dragAndDropElement);
+        void PostEvent_OnDragAndDropEnter(GUIElement &receiver, GUIElement &dragAndDropElement);
 
         /// Posts the OnDragAndDropLeave event to the given receiver.
-        void PostEvent_OnDragAndDropLeave(Element &receiver, Element &dragAndDropElement);
+        void PostEvent_OnDragAndDropLeave(GUIElement &receiver, GUIElement &dragAndDropElement);
 
         /// Posts the OnDragAndDropProxyRemoved event to the given receiver.
-        void PostEvent_OnDragAndDropProxyRemoved(Element &receiver);
+        void PostEvent_OnDragAndDropProxyRemoved(GUIElement &receiver);
 
 
         /// Posts the OnTextChanged event to the given receiver.
-        void PostEvent_OnTextChanged(Element &receiver);
+        void PostEvent_OnTextChanged(GUIElement &receiver);
 
 
         /// Posts the OnInnerXOffsetChanged event to the given receiver.
-        void PostEvent_OnInnerXOffsetChanged(Element &receiver);
+        void PostEvent_OnInnerXOffsetChanged(GUIElement &receiver);
 
         /// Posts the OnInnerYOffsetChanged event to the given receiver.
-        void PostEvent_OnInnerYOffsetChanged(Element &receiver);
+        void PostEvent_OnInnerYOffsetChanged(GUIElement &receiver);
 
     
         /// Posts the OnShow event to the given receiver.
-        void PostEvent_OnShow(Element &receiver);
+        void PostEvent_OnShow(GUIElement &receiver);
 
         /// Posts the OnHide event to the given receiver.
-        void PostEvent_OnHide(Element &receiver);
+        void PostEvent_OnHide(GUIElement &receiver);
 
 
         /// Posts the OnShowTooltip event to the given receiver.
-        void PostEvent_OnShowTooltip(Element &receiver);
+        void PostEvent_OnShowTooltip(GUIElement &receiver);
 
         /// Posts the OnHideTooltip event to the given receiver.
-        void PostEvent_OnHideTooltip(Element &receiver);
+        void PostEvent_OnHideTooltip(GUIElement &receiver);
 
 
     private:
@@ -211,7 +211,7 @@ namespace GTGUI
     private:
 
         /// A reference to the server that owns this script server.
-        Server &server;
+        GUIServer &server;
     
         /// The internal script object. This object basically IS the script server. We use a pointer here because applications have the option
         /// of using their own script object for scripting.
@@ -225,7 +225,7 @@ namespace GTGUI
     
         struct FFI
         {
-            static Server & GetServer(GT::Script &script);
+            static GUIServer & GetServer(GT::Script &script);
 
 
             // System.
@@ -308,7 +308,7 @@ namespace GTGUI
             static int _GetViewportHeight(GT::Script &script);
 
             
-            // Server.
+            // GUIServer.
             static int Log(GT::Script &script);
             static int New(GT::Script &script);
             static int BlurFocusedElement(GT::Script &script);
@@ -325,8 +325,8 @@ namespace GTGUI
         
         
     private:    // No copying.
-        ScriptServer(const ScriptServer &);
-        ScriptServer & operator=(const ScriptServer &);
+        GUIScriptServer(const GUIScriptServer &);
+        GUIScriptServer & operator=(const GUIScriptServer &);
     };
 }
 

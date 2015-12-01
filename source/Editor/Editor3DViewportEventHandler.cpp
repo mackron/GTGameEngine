@@ -30,7 +30,7 @@ namespace GT
     }
 
 
-    void Editor3DViewportEventHandler::OnSize(GTGUI::Element &element)
+    void Editor3DViewportEventHandler::OnSize(GTGUI::GUIElement &element)
     {
         int newWidth  = Max(element.GetInnerWidth(),  1);
         int newHeight = Max(element.GetInnerHeight(), 1);
@@ -41,7 +41,7 @@ namespace GT
         camera->Set3DProjection(camera->perspective.fov, static_cast<float>(newWidth) / static_cast<float>(newHeight), camera->zNear, camera->zFar);
     }
 
-    void Editor3DViewportEventHandler::OnDraw(GTGUI::Element &element)
+    void Editor3DViewportEventHandler::OnDraw(GTGUI::GUIElement &element)
     {
         auto colourBuffer = this->viewport.GetColourBuffer();
 
@@ -89,7 +89,7 @@ namespace GT
         }
     }
 
-    void Editor3DViewportEventHandler::OnMouseMove(GTGUI::Element &, int x, int y)
+    void Editor3DViewportEventHandler::OnMouseMove(GTGUI::GUIElement &, int x, int y)
     {
         if (!this->game.IsMouseCaptured())
         {
@@ -98,7 +98,7 @@ namespace GT
         }
     }
 
-    void Editor3DViewportEventHandler::OnMouseWheel(GTGUI::Element &, int delta, int x, int y)
+    void Editor3DViewportEventHandler::OnMouseWheel(GTGUI::GUIElement &, int delta, int x, int y)
     {
         (void)delta;
         (void)x;

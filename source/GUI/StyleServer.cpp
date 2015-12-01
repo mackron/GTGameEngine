@@ -14,18 +14,18 @@
 namespace GTGUI
 {
     /// Event handler used by the style server for intercepting styling errors.
-    class StyleServerCompilerErrorHandler : public StyleScriptCompilerErrorHandler
+    class GUIStyleServerCompilerErrorHandler : public GUIStyleScriptCompilerErrorHandler
     {
     public:
 
         /// Constructor.
-        StyleServerCompilerErrorHandler(StyleServer &server)
+        GUIStyleServerCompilerErrorHandler(GUIStyleServer &server)
             : m_server(server)
         {
         }
 
-        /// StyleScriptCompilerErrorHandler::OnError().
-        void OnError(const StyleScriptError &error)
+        /// GUIStyleScriptCompilerErrorHandler::OnError().
+        void OnError(const GUIStyleScriptError &error)
         {
             this->m_server.OnCompilerError(error);
         }
@@ -34,20 +34,20 @@ namespace GTGUI
     private:
 
         /// A reference to the main style server.
-        StyleServer &m_server;
+        GUIStyleServer &m_server;
 
 
     private:    // No copying.
-        StyleServerCompilerErrorHandler(const StyleServerCompilerErrorHandler &);
-        StyleServerCompilerErrorHandler & operator=(const StyleServerCompilerErrorHandler &);
+        GUIStyleServerCompilerErrorHandler(const GUIStyleServerCompilerErrorHandler &);
+        GUIStyleServerCompilerErrorHandler & operator=(const GUIStyleServerCompilerErrorHandler &);
     };
 
 
 
     //////////////////////////////////////
-    // StyleServer
+    // GUIStyleServer
 
-    StyleServer::StyleServer(Server &server)
+    GUIStyleServer::GUIStyleServer(GUIServer &server)
         : server(server),
           variables(),
           classes(), defaultStyleClass(nullptr), rootElementStyleClass(nullptr),
@@ -56,16 +56,16 @@ namespace GTGUI
           compilerStack()
     {
         // Before doing anything, we need to load our style attribute handlers.
-        this->LoadStyleAttributeHandlers();
+        this->LoadGUIStyleAttributeHandlers();
 
         // We need to add a few default things.
         if (!this->LoadDefaults())
         {
-            this->server.PostError("StyleServer::StyleServer() - Error loading defaults.");
+            this->server.PostError("GUIStyleServer::GUIStyleServer() - Error loading defaults.");
         }
     }
 
-    StyleServer::~StyleServer()
+    GUIStyleServer::~GUIStyleServer()
     {
         for (size_t i = 0; i < this->variables.count; ++i)
         {
@@ -73,7 +73,7 @@ namespace GTGUI
         }
 
         this->DeleteAllStyleClasses();
-        this->UnloadStyleAttributeHandlers();
+        this->UnloadGUIStyleAttributeHandlers();
 
         for (size_t iCompiler = 0; iCompiler < this->compilerStack.count; ++iCompiler)
         {
@@ -81,11 +81,11 @@ namespace GTGUI
         }
     }
 
-    bool StyleServer::Load(const char* script, const char* baseURLPath, const char* identifier)
+    bool GUIStyleServer::Load(const char* script, const char* baseURLPath, const char* identifier)
     {
-        StyleServerCompilerErrorHandler errorHandler(*this);
+        GUIStyleServerCompilerErrorHandler errorHandler(*this);
 
-        auto compiler = new StyleScriptCompiler(identifier);
+        auto compiler = new GUIStyleScriptCompiler(identifier);
         compiler->SetErrorHandler(&errorHandler);
 
         if (compiler->Compile(script, baseURLPath))
@@ -129,7 +129,7 @@ namespace GTGUI
                             auto &compilerModifierClass = compilerSubClasses.buffer[iSubClass]->value;
                             auto  modifierClassType     = ToStyleClassType(compilerSubClasses.buffer[iSubClass]->key);
                             
-                            if (modifierClassType != StyleClassType_None)
+                            if (modifierClassType != GUIStyleClassType_None)
                             {
                                 auto modifierClass = newClass->GetModifierClass(modifierClassType);
                                 if (modifierClass == nullptr)
@@ -157,7 +157,7 @@ namespace GTGUI
         return false;
     }
 
-    void StyleServer::Unload(const char* identifier, bool firstOccuranceOnly)
+    void GUIStyleServer::Unload(const char* identifier, bool firstOccuranceOnly)
     {
         if (identifier != nullptr)
         {
@@ -187,7 +187,7 @@ namespace GTGUI
         }
     }
 
-    bool StyleServer::LoadFromFile(const char* filePath)
+    bool GUIStyleServer::LoadFromFile(const char* filePath)
     {
         char* pFileData = easyvfs_open_and_read_text_file(GT::g_EngineContext->GetVFS(), filePath, nullptr);
         if (pFileData != nullptr)
@@ -221,7 +221,7 @@ namespace GTGUI
         }
     }
 
-    void StyleServer::UnloadFile(const char* filePath)
+    void GUIStyleServer::UnloadFile(const char* filePath)
     {
         // The file path needs to be absolute.
         char absolutePath[EASYVFS_MAX_PATH];
@@ -240,7 +240,7 @@ namespace GTGUI
     }
 
 
-    void StyleServer::AddVariable(const char* name, const char* valueIn, ptrdiff_t nameSize, ptrdiff_t valueSize)
+    void GUIStyleServer::AddVariable(const char* name, const char* valueIn, ptrdiff_t nameSize, ptrdiff_t valueSize)
     {
         // We need our own copy of the value.
         auto value = GT::Strings::Create(valueIn, valueSize);
@@ -260,7 +260,7 @@ namespace GTGUI
         }
     }
 
-    void StyleServer::RemoveVariable(const char* name, ptrdiff_t nameSizeInTs)
+    void GUIStyleServer::RemoveVariable(const char* name, ptrdiff_t nameSizeInTs)
     {
         auto item = this->variables.Find(name, nameSizeInTs);
         if (item != nullptr)
@@ -272,25 +272,25 @@ namespace GTGUI
         }
     }
 
-    void StyleServer::AddStyleClass(StyleClass &styleClass)
+    void GUIStyleServer::AddStyleClass(GUIStyleClass &styleClass)
     {
         this->classes.Insert(styleClass);
     }
 
-    void StyleServer::RemoveStyleClass(StyleClass &styleClass)
+    void GUIStyleServer::RemoveStyleClass(GUIStyleClass &styleClass)
     {
         this->classes.Remove(styleClass);
     }
 
-    StyleClass* StyleServer::CreateStyleClass(const char *name, ptrdiff_t nameSizeInBytes)
+    GUIStyleClass* GUIStyleServer::CreateStyleClass(const char *name, ptrdiff_t nameSizeInBytes)
     {
-        auto newClass = new StyleClass(*this, name, nameSizeInBytes);
+        auto newClass = new GUIStyleClass(*this, name, nameSizeInBytes);
         this->AddStyleClass(*newClass);
 
         return newClass;
     }
 
-    void StyleServer::DeleteStyleClass(StyleClass &styleClass, bool refreshHostStacks)
+    void GUIStyleServer::DeleteStyleClass(GUIStyleClass &styleClass, bool refreshHostStacks)
     {
         // We first remove the class.
         this->RemoveStyleClass(styleClass);
@@ -308,9 +308,9 @@ namespace GTGUI
         delete &styleClass;
     }
 
-    void StyleServer::DeleteAllStyleClasses()
+    void GUIStyleServer::DeleteAllStyleClasses()
     {
-        StyleClass* root;
+        GUIStyleClass* root;
         while ((root = this->classes.GetRoot()) != nullptr)
         {
             this->DeleteStyleClass(*root);
@@ -318,9 +318,9 @@ namespace GTGUI
     }
 
 
-    StyleClass* StyleServer::CreateModifierStyleClass(StyleClass& baseClass, StyleClassType modifierType)
+    GUIStyleClass* GUIStyleServer::CreateModifierStyleClass(GUIStyleClass& baseClass, GUIStyleClassType modifierType)
     {
-        auto newClass = new StyleClass(*this, "", 0);
+        auto newClass = new GUIStyleClass(*this, "", 0);
         newClass->type = modifierType;
 
         // The modifier must be set on the base class.
@@ -329,7 +329,7 @@ namespace GTGUI
         return newClass;
     }
 
-    void StyleServer::DeleteModifierStyleClass(StyleClass &baseClass, StyleClassType modifierType)
+    void GUIStyleServer::DeleteModifierStyleClass(GUIStyleClass &baseClass, GUIStyleClassType modifierType)
     {
         auto modifierClass = baseClass.GetModifierClass(modifierType);
         if (modifierClass != nullptr)
@@ -342,16 +342,16 @@ namespace GTGUI
         }
     }
 
-    void StyleServer::DeleteAllModifierStyleClasses(StyleClass &baseClass)
+    void GUIStyleServer::DeleteAllModifierStyleClasses(GUIStyleClass &baseClass)
     {
         for (int i = 0; i < StyleClassTypeCount; ++i)
         {
-            this->DeleteModifierStyleClass(baseClass, static_cast<StyleClassType>(i));
+            this->DeleteModifierStyleClass(baseClass, static_cast<GUIStyleClassType>(i));
         }
     }
 
 
-    const char* StyleServer::GetVariable(const char* name, ptrdiff_t nameSize)
+    const char* GUIStyleServer::GetVariable(const char* name, ptrdiff_t nameSize)
     {
         auto item = this->variables.Find(name, nameSize);
 
@@ -370,12 +370,12 @@ namespace GTGUI
         return nullptr;
     }
 
-    StyleClass* StyleServer::GetStyleClass(const char *name, ptrdiff_t nameSize)
+    GUIStyleClass* GUIStyleServer::GetStyleClass(const char *name, ptrdiff_t nameSize)
     {
         return this->classes.FindByName(name, nameSize); 
     }
 
-    StyleClass* StyleServer::GetDefaultStyleClass()
+    GUIStyleClass* GUIStyleServer::GetDefaultStyleClass()
     {
         if (this->defaultStyleClass == nullptr)
         {
@@ -385,7 +385,7 @@ namespace GTGUI
         return this->defaultStyleClass;
     }
     
-    StyleClass* StyleServer::GetRootElementStyleClass()
+    GUIStyleClass* GUIStyleServer::GetRootElementStyleClass()
     {
         if (this->rootElementStyleClass == nullptr)
         {
@@ -396,7 +396,7 @@ namespace GTGUI
     }
 
 
-    bool StyleServer::SetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs, const char* value, ptrdiff_t valueSizeInTs)
+    bool GUIStyleServer::SetGUIStyleAttribute(GUIStyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs, const char* value, ptrdiff_t valueSizeInTs)
     {
         // The result will be false if we don't find the attribute.
         bool result   = false;
@@ -434,12 +434,12 @@ namespace GTGUI
         return result;
     }
 
-    bool StyleServer::UnsetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs)
+    bool GUIStyleServer::UnsetGUIStyleAttribute(GUIStyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs)
     {
-        return this->SetStyleAttribute(styleClass, name, nameSizeInTs, nullptr, -1);
+        return this->SetGUIStyleAttribute(styleClass, name, nameSizeInTs, nullptr, -1);
     }
 
-    GT::String StyleServer::GetStyleAttribute(StyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs)
+    GT::String GUIStyleServer::GetGUIStyleAttribute(GUIStyleClass &styleClass, const char* name, ptrdiff_t nameSizeInTs)
     {
         auto handler = this->attributeHandlers.Find(name, nameSizeInTs);
         if (handler != nullptr)
@@ -451,12 +451,12 @@ namespace GTGUI
     }
 
 
-    void StyleServer::ClearErrors()
+    void GUIStyleServer::ClearErrors()
     {
         this->errorStack.Clear();
     }
 
-    bool StyleServer::GetLastError(StyleScriptError &errorOut)
+    bool GUIStyleServer::GetLastError(GUIStyleScriptError &errorOut)
     {
         if (this->errorStack.count > 0)
         {
@@ -469,13 +469,13 @@ namespace GTGUI
         return false;
     }
 
-    void StyleServer::OnCompilerError(const StyleScriptError &error)
+    void GUIStyleServer::OnCompilerError(const GUIStyleScriptError &error)
     {
         this->PostError(error);
     }
 
 
-    bool StyleServer::LoadDefaults()
+    bool GUIStyleServer::LoadDefaults()
     {
         bool success = true;
 
@@ -632,10 +632,10 @@ namespace GTGUI
 
 
 
-    void StyleServer::PrintDetails()
+    void GUIStyleServer::PrintDetails()
     {
         /*
-        std::cout << "--- StyleServer Details ---" << std::endl;
+        std::cout << "--- GUIStyleServer Details ---" << std::endl;
         std::cout << "Variables:" << std::endl;
         for (size_t i = 0; i < this->variables.count; ++i)
         {
@@ -652,12 +652,12 @@ namespace GTGUI
 }
 
 
-// This section here implements the LoadStyleAttributeHandlers() method. We keep this separate so that it's easy to find as new style attributes are added.
-#define ADD_HANDLER(ctor) this->AddStyleAttributeHandler(*(new ctor))
+// This section here implements the LoadGUIStyleAttributeHandlers() method. We keep this separate so that it's easy to find as new style attributes are added.
+#define ADD_HANDLER(ctor) this->AddGUIStyleAttributeHandler(*(new ctor))
 
 namespace GTGUI
 {
-    void StyleServer::LoadStyleAttributeHandlers()
+    void GUIStyleServer::LoadGUIStyleAttributeHandlers()
     {
         // Primitive attributes.
         ADD_HANDLER(AttributeHandlers::width);
@@ -757,7 +757,7 @@ namespace GTGUI
         ADD_HANDLER(AttributeHandlers::margin);
     }
 
-    void StyleServer::UnloadStyleAttributeHandlers()
+    void GUIStyleServer::UnloadGUIStyleAttributeHandlers()
     {
         for (size_t i = 0; i < this->attributeHandlers.count; ++i)
         {
@@ -765,17 +765,17 @@ namespace GTGUI
         }
     }
 
-    void StyleServer::AddStyleAttributeHandler(StyleAttributeHandler &handler)
+    void GUIStyleServer::AddGUIStyleAttributeHandler(GUIStyleAttributeHandler &handler)
     {
         this->attributeHandlers.Add(handler.GetAttributeName(), &handler);
     }
 
-    void StyleServer::PostError(const StyleScriptError &error)
+    void GUIStyleServer::PostError(const GUIStyleScriptError &error)
     {
         this->errorStack.PushBack(error);
     }
 
-    void StyleServer::MergeStyleClass(StyleClass &dest, const StyleScriptCompilerClass &source)
+    void GUIStyleServer::MergeStyleClass(GUIStyleClass &dest, const GUIStyleScriptCompilerClass &source)
     {
         // Includes.
         dest.AppendIncludes(source.GetIncludes());
@@ -799,7 +799,7 @@ namespace GTGUI
         }
     }
 
-    void StyleServer::UnloadCompilerByIndex(size_t compilerIndex)
+    void GUIStyleServer::UnloadCompilerByIndex(size_t compilerIndex)
     {
         auto compiler = this->compilerStack[compilerIndex];
         assert(compiler != nullptr);
@@ -835,7 +835,7 @@ namespace GTGUI
         this->compilerStack.Remove(compilerIndex);
     }
 
-    void StyleServer::UnloadCompilerVariable(const StyleScriptCompilerVariable &compilerVariable, size_t compilerIndex)
+    void GUIStyleServer::UnloadCompilerVariable(const GUIStyleScriptCompilerVariable &compilerVariable, size_t compilerIndex)
     {
         if (!this->HasMoreRecentlyDefinedCompilerVariable(compilerVariable.GetName(), compilerIndex))
         {
@@ -853,7 +853,7 @@ namespace GTGUI
         }
     }
 
-    bool StyleServer::HasMoreRecentlyDefinedCompilerVariable(const char* variableName, size_t compilerIndex) const
+    bool GUIStyleServer::HasMoreRecentlyDefinedCompilerVariable(const char* variableName, size_t compilerIndex) const
     {
         for (size_t iCompiler = compilerIndex + 1; iCompiler < this->compilerStack.count; ++iCompiler)
         {
@@ -870,7 +870,7 @@ namespace GTGUI
         return false;
     }
 
-    const StyleScriptCompilerVariable* StyleServer::FindPreviouslyDefinedCompilerVariable(const char* variableName, size_t compilerIndex) const
+    const GUIStyleScriptCompilerVariable* GUIStyleServer::FindPreviouslyDefinedCompilerVariable(const char* variableName, size_t compilerIndex) const
     {
         for (size_t iCompiler = compilerIndex; iCompiler > 0; --iCompiler)
         {
@@ -889,7 +889,7 @@ namespace GTGUI
     }
 
 
-    void StyleServer::UnloadCompilerClass(const StyleScriptCompilerClass &compilerClass, const char* modifierName, size_t compilerIndex)
+    void GUIStyleServer::UnloadCompilerClass(const GUIStyleScriptCompilerClass &compilerClass, const char* modifierName, size_t compilerIndex)
     {
         // The way this works is we see if any properties have a more recent definition. If so, we don't do anything. Otherwise, we need
         // to scan backwards and find the next most recent definition.
@@ -936,7 +936,7 @@ namespace GTGUI
         }
     }
 
-    bool StyleServer::HasMoreRecentlyDefinedCompilerAttribute(const char* className, const char* modifierName, const char* attributeName, size_t compilerIndex) const
+    bool GUIStyleServer::HasMoreRecentlyDefinedCompilerAttribute(const char* className, const char* modifierName, const char* attributeName, size_t compilerIndex) const
     {
         for (size_t iCompiler = compilerIndex + 1; iCompiler < this->compilerStack.count; ++iCompiler)
         {
@@ -953,7 +953,7 @@ namespace GTGUI
         return false;
     }
 
-    const StyleScriptCompilerClassAttribute* StyleServer::FindPreviouslyDefinedCompilerAttribute(const char* className, const char* modifierName, const char* attributeName, size_t compilerIndex) const
+    const GUIStyleScriptCompilerClassAttribute* GUIStyleServer::FindPreviouslyDefinedCompilerAttribute(const char* className, const char* modifierName, const char* attributeName, size_t compilerIndex) const
     {
         for (size_t iCompiler = compilerIndex; iCompiler > 0; --iCompiler)
         {

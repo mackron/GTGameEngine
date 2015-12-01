@@ -10,10 +10,10 @@
 
 namespace GTGUI
 {
-    struct Event
+    struct GUIEvent
     {
-        Element*  element;
-        EventCode code;
+        GUIElement*  element;
+        GUIEventCode code;
 
         union
         {

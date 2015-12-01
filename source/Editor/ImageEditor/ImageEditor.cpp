@@ -83,7 +83,7 @@ namespace GT
     //////////////////////////////////////////////////////
     // ViewportEventHandler
 
-    void ImageEditor::ViewportEventHandler::OnDraw(GTGUI::Element &element)
+    void ImageEditor::ViewportEventHandler::OnDraw(GTGUI::GUIElement &element)
     {
         if (this->vertexArray == nullptr)
         {
@@ -162,7 +162,7 @@ namespace GT
         }
     }
 
-    void ImageEditor::ViewportEventHandler::OnMouseWheel(GTGUI::Element &, int delta, int, int)
+    void ImageEditor::ViewportEventHandler::OnMouseWheel(GTGUI::GUIElement &, int delta, int, int)
     {
         this->ownerEditor.SetZoom(this->ownerEditor.GetZoom() + (this->ownerEditor.GetZoom() * (0.1f * delta)));
     }

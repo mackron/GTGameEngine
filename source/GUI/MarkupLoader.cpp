@@ -7,20 +7,20 @@
 
 namespace GTGUI
 {
-    MarkupLoader::MarkupLoader(Server &server)
+    GUIMarkupLoader::GUIMarkupLoader(GUIServer &server)
         : m_server(server), m_loadedFiles()
     {
     }
     
-    MarkupLoader::~MarkupLoader()
+    GUIMarkupLoader::~GUIMarkupLoader()
     {
     }
     
     
     
-    bool MarkupLoader::Load(const char* markup, const char* absoluteDirectory, GT::String &topElementID)
+    bool GUIMarkupLoader::Load(const char* markup, const char* absoluteDirectory, GT::String &topElementID)
     {
-        GT::Vector<Element*> loadedElements(1);
+        GT::Vector<GUIElement*> loadedElements(1);
         if (this->Load(markup, static_cast<size_t>(-1), absoluteDirectory, loadedElements))
         {
             if (loadedElements.count > 0)
@@ -39,9 +39,9 @@ namespace GTGUI
     }
     
     
-    bool MarkupLoader::LoadFile(const char* filePath)
+    bool GUIMarkupLoader::LoadFile(const char* filePath)
     {
-        GT::Vector<Element*> loadedElements(32);
+        GT::Vector<GUIElement*> loadedElements(32);
         if (this->LoadFile(filePath, loadedElements))
         {
             this->PostLoad(loadedElements);
@@ -52,7 +52,7 @@ namespace GTGUI
         return false;
     }
     
-    void MarkupLoader::UnloadFile(const char* filePath)
+    void GUIMarkupLoader::UnloadFile(const char* filePath)
     {
         char absolutePath[EASYVFS_MAX_PATH];
         if (easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
@@ -62,7 +62,7 @@ namespace GTGUI
     }
     
     
-    bool MarkupLoader::IsFileLoaded(const char* absolutePath) const
+    bool GUIMarkupLoader::IsFileLoaded(const char* absolutePath) const
     {
         return m_loadedFiles.Exists(absolutePath);
     }
@@ -72,10 +72,10 @@ namespace GTGUI
     ////////////////////////////////////////////////
     // Private
     
-    bool MarkupLoader::Load(const char* markup, size_t markupSizeInBytes, const char* absoluteDirectory, GT::Vector<Element*> &loadedElementsOut)
+    bool GUIMarkupLoader::Load(const char* markup, size_t markupSizeInBytes, const char* absoluteDirectory, GT::Vector<GUIElement*> &loadedElementsOut)
     {
         // We just create a server XML parser and look at it's results.
-        ServerXMLParser parser;
+        GUIServerXMLParser parser;
         if (parser.Parse(markup, markupSizeInBytes))
         {
             // We'll load <include /> tags first. We need to load relative to the given directory as defined by 'directory'.
@@ -137,7 +137,7 @@ namespace GTGUI
             // 3) <div ... style='' ...>
             //
             // This pass will generate any automatic IDs.
-            ServerXMLParser::Element *element = parser.firstElement;
+            GUIServerXMLParser::Element *element = parser.firstElement;
             while (element)
             {
                 // We're going to need an ID.
@@ -193,7 +193,7 @@ namespace GTGUI
 
                 // Here is where we output any errors. Note how we're not using a conditional here because it's possible that non-critical errors will
                 // be posted, which will still cause Load() to return true.
-                StyleScriptError styleError;
+                GUIStyleScriptError styleError;
                 while (m_server.GetStyleServer().GetLastError(styleError))
                 {
                     m_server.PostError(styleError.GetFormatted(m_server.GetErrorMessageLevel()).c_str());
@@ -306,7 +306,7 @@ namespace GTGUI
         return false;
     }
     
-    bool MarkupLoader::LoadFile(const char* filePath, GT::Vector<Element*> &loadedElementsOut)
+    bool GUIMarkupLoader::LoadFile(const char* filePath, GT::Vector<GUIElement*> &loadedElementsOut)
     {
         char absolutePath[EASYVFS_MAX_PATH];
         if (easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
@@ -348,7 +348,7 @@ namespace GTGUI
     }
     
     
-    void MarkupLoader::PostLoad(const GT::Vector<Element*> &loadedElements)
+    void GUIMarkupLoader::PostLoad(const GT::Vector<GUIElement*> &loadedElements)
     {
         //m_server.UpdateLayout();
         

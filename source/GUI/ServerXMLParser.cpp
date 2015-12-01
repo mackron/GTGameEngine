@@ -25,7 +25,7 @@ using namespace rapidxml;
 
 namespace GTGUI
 {
-    ServerXMLParser::ServerXMLParser()
+    GUIServerXMLParser::GUIServerXMLParser()
         : buffer(), lastError(),
           firstElement(nullptr), lastElement(nullptr),
           scripts(), externalScripts(),
@@ -34,12 +34,12 @@ namespace GTGUI
     {
     }
     
-    ServerXMLParser::~ServerXMLParser()
+    GUIServerXMLParser::~GUIServerXMLParser()
     {
         this->Clean();
     }
     
-    bool ServerXMLParser::Parse(const char *xml, size_t xmlSizeInBytes)
+    bool GUIServerXMLParser::Parse(const char *xml, size_t xmlSizeInBytes)
     {
         // Everything needs to be cleaned.
         this->Clean();
@@ -86,14 +86,14 @@ namespace GTGUI
         return true;
     }
     
-    const char* ServerXMLParser::GetLastErrorString() const
+    const char* GUIServerXMLParser::GetLastErrorString() const
     {
         return this->lastError.c_str();
     }
     
     
     
-    void ServerXMLParser::ParseXMLNode(void *_node, ServerXMLParser::Element *parent)
+    void GUIServerXMLParser::ParseXMLNode(void *_node, GUIServerXMLParser::Element *parent)
     {
         if (_node)
         {
@@ -156,7 +156,7 @@ namespace GTGUI
                 if (node->type() == node_element)
                 {
                     // The new element we'll be adding. We don't add it to the list yet just in case we get an error.
-                    ServerXMLParser::Element element;
+                    GUIServerXMLParser::Element element;
                     
                     element.tag    = node->name();
                     element.parent = parent;
@@ -186,7 +186,7 @@ namespace GTGUI
                     }
                     
                     // Now we need to add the new element to the end of the list.
-                    ServerXMLParser::Element *newElement = new ServerXMLParser::Element(element);
+                    GUIServerXMLParser::Element *newElement = new GUIServerXMLParser::Element(element);
                     this->AppendElement(newElement);
                     
                     // Now we need to check the children.
@@ -227,7 +227,7 @@ namespace GTGUI
         }
     }
     
-    void ServerXMLParser::AppendElement(ServerXMLParser::Element *element)
+    void GUIServerXMLParser::AppendElement(GUIServerXMLParser::Element *element)
     {
         if (element)
         {
@@ -245,7 +245,7 @@ namespace GTGUI
         }
     }
     
-    void ServerXMLParser::Clean()
+    void GUIServerXMLParser::Clean()
     {
         this->lastError = "";
         

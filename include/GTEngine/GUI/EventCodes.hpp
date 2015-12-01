@@ -5,21 +5,21 @@
 
 namespace GTGUI
 {
-    enum EventCode
+    enum GUIEventCode
     {
-        EventCode_Unknown = 0,
-        EventCode_Null    = 0,
+        GUIEventCode_Unknown = 0,
+        GUIEventCode_Null    = 0,
 
-        EventCode_OnSize,
-        EventCode_OnMove,
-        EventCode_OnKeyPressed,
-        EventCode_OnKeyDown,
-        EventCode_OnKeyUp,
-        EventCode_OnMouseMove,
-        EventCode_OnMouseWheel,
-        EventCode_OnMouseButtonDown,
-        EventCode_OnMouseButtonUp,
-        EventCode_OnMouseButtonDoubleClick,
+        GUIEventCode_OnSize,
+        GUIEventCode_OnMove,
+        GUIEventCode_OnKeyPressed,
+        GUIEventCode_OnKeyDown,
+        GUIEventCode_OnKeyUp,
+        GUIEventCode_OnMouseMove,
+        GUIEventCode_OnMouseWheel,
+        GUIEventCode_OnMouseButtonDown,
+        GUIEventCode_OnMouseButtonUp,
+        GUIEventCode_OnMouseButtonDoubleClick,
     };
 }
 

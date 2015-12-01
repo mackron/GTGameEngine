@@ -2,51 +2,50 @@
 
 #include <GTEngine/GUI/StyleScriptCompiler.hpp>
 #include "StyleTokenizer.hpp"
-
 #include <easy_fs/easy_vfs.h>
 #include <easy_path/easy_path.h>
 
 namespace GTGUI
 {
     ///////////////////////////////////////////////
-    // StyleScriptCompilerClassAttribute
+    // GUIStyleScriptCompilerClassAttribute
 
-    StyleScriptCompilerClassAttribute::StyleScriptCompilerClassAttribute()
+    GUIStyleScriptCompilerClassAttribute::GUIStyleScriptCompilerClassAttribute()
         : m_name(),
           m_value()
     {
     }
 
-    StyleScriptCompilerClassAttribute::StyleScriptCompilerClassAttribute(const StyleScriptCompilerClassAttribute &other)
+    GUIStyleScriptCompilerClassAttribute::GUIStyleScriptCompilerClassAttribute(const GUIStyleScriptCompilerClassAttribute &other)
         : m_name(other.GetName()),
           m_value(other.GetValue())
     {
     }
 
 
-    void StyleScriptCompilerClassAttribute::SetName(const char* name, ptrdiff_t nameSizeInTs)
+    void GUIStyleScriptCompilerClassAttribute::SetName(const char* name, ptrdiff_t nameSizeInTs)
     {
         this->m_name.Assign(name, nameSizeInTs);
     }
 
-    const char* StyleScriptCompilerClassAttribute::GetName() const
+    const char* GUIStyleScriptCompilerClassAttribute::GetName() const
     {
         return this->m_name.c_str();
     }
 
 
-    void StyleScriptCompilerClassAttribute::SetValue(const char* value, ptrdiff_t sizeInTs)
+    void GUIStyleScriptCompilerClassAttribute::SetValue(const char* value, ptrdiff_t sizeInTs)
     {
         this->m_value.Assign(value, sizeInTs);
     }
 
-    const char* StyleScriptCompilerClassAttribute::GetValue() const
+    const char* GUIStyleScriptCompilerClassAttribute::GetValue() const
     {
         return this->m_value.c_str();
     }
 
 
-    StyleScriptCompilerClassAttribute & StyleScriptCompilerClassAttribute::operator=(const StyleScriptCompilerClassAttribute &other)
+    GUIStyleScriptCompilerClassAttribute & GUIStyleScriptCompilerClassAttribute::operator=(const GUIStyleScriptCompilerClassAttribute &other)
     {
         if (this != &other)
         {
@@ -59,9 +58,9 @@ namespace GTGUI
 
 
     ///////////////////////////////////////////////
-    // StyleScriptCompilerClassAttribute
+    // GUIStyleScriptCompilerClassAttribute
 
-    StyleScriptCompilerClass::StyleScriptCompilerClass()
+    GUIStyleScriptCompilerClass::GUIStyleScriptCompilerClass()
         : m_name(),
           m_includes(),
           m_attributes(),
@@ -69,7 +68,7 @@ namespace GTGUI
     {
     }
 
-    StyleScriptCompilerClass::StyleScriptCompilerClass(const StyleScriptCompilerClass &other)
+    GUIStyleScriptCompilerClass::GUIStyleScriptCompilerClass(const GUIStyleScriptCompilerClass &other)
         : m_name(other.GetName()),
           m_includes(other.GetIncludes()),
           m_attributes(other.GetAttributes()),
@@ -77,34 +76,34 @@ namespace GTGUI
     {
     }
 
-    StyleScriptCompilerClass::~StyleScriptCompilerClass()
+    GUIStyleScriptCompilerClass::~GUIStyleScriptCompilerClass()
     {
     }
 
 
-    void StyleScriptCompilerClass::SetName(const char* name, ptrdiff_t sizeInTs)
+    void GUIStyleScriptCompilerClass::SetName(const char* name, ptrdiff_t sizeInTs)
     {
         this->m_name.Assign(name, sizeInTs);
     }
 
-    const char* StyleScriptCompilerClass::GetName() const
+    const char* GUIStyleScriptCompilerClass::GetName() const
     {
         return this->m_name.c_str();
     }
 
 
-    void StyleScriptCompilerClass::SetIncludes(const char* includes, ptrdiff_t sizeInTs)
+    void GUIStyleScriptCompilerClass::SetIncludes(const char* includes, ptrdiff_t sizeInTs)
     {
         this->m_includes.Assign(includes, sizeInTs);
     }
 
-    const char* StyleScriptCompilerClass::GetIncludes() const
+    const char* GUIStyleScriptCompilerClass::GetIncludes() const
     {
         return this->m_includes.c_str();
     }
 
 
-    void StyleScriptCompilerClass::AddAttribute(const StyleScriptCompilerClassAttribute &attribute)
+    void GUIStyleScriptCompilerClass::AddAttribute(const GUIStyleScriptCompilerClassAttribute &attribute)
     {
         // Remove the existing attribute. Don't want to replace, because we want to keep the order.
         for (size_t iAttribute = 0; iAttribute < this->m_attributes.count; ++iAttribute)
@@ -120,12 +119,12 @@ namespace GTGUI
         this->m_attributes.PushBack(attribute);
     }
 
-    void StyleScriptCompilerClass::RemoveAttributeByIndex(size_t index)
+    void GUIStyleScriptCompilerClass::RemoveAttributeByIndex(size_t index)
     {
         this->m_attributes.Remove(index);
     }
 
-    bool StyleScriptCompilerClass::FindAttributeByName(const char* name, size_t &index) const
+    bool GUIStyleScriptCompilerClass::FindAttributeByName(const char* name, size_t &index) const
     {
         for (size_t iAttribute = 0; iAttribute < this->m_attributes.count; ++iAttribute)
         {
@@ -139,23 +138,23 @@ namespace GTGUI
         return false;
     }
 
-    size_t StyleScriptCompilerClass::GetAttributeCount() const
+    size_t GUIStyleScriptCompilerClass::GetAttributeCount() const
     {
         return this->m_attributes.count;
     }
 
-    StyleScriptCompilerClassAttribute & StyleScriptCompilerClass::GetAttributeByIndex(size_t index)
+    GUIStyleScriptCompilerClassAttribute & GUIStyleScriptCompilerClass::GetAttributeByIndex(size_t index)
     {
         return this->m_attributes[index];
     }
 
-    const StyleScriptCompilerClassAttribute & StyleScriptCompilerClass::GetAttributeByIndex(size_t index) const
+    const GUIStyleScriptCompilerClassAttribute & GUIStyleScriptCompilerClass::GetAttributeByIndex(size_t index) const
     {
         return this->m_attributes[index];
     }
 
 
-    StyleScriptCompilerClass* StyleScriptCompilerClass::GetSubClass(const char* typeName, ptrdiff_t sizeInTs)
+    GUIStyleScriptCompilerClass* GUIStyleScriptCompilerClass::GetSubClass(const char* typeName, ptrdiff_t sizeInTs)
     {
         auto iSubClass = this->m_subclasses.Find(typeName, sizeInTs);
         if (iSubClass != nullptr)
@@ -166,7 +165,7 @@ namespace GTGUI
         return nullptr;
     }
 
-    const StyleScriptCompilerClass* StyleScriptCompilerClass::GetSubClass(const char* typeName, ptrdiff_t sizeInTs) const
+    const GUIStyleScriptCompilerClass* GUIStyleScriptCompilerClass::GetSubClass(const char* typeName, ptrdiff_t sizeInTs) const
     {
         auto iSubClass = this->m_subclasses.Find(typeName, sizeInTs);
         if (iSubClass != nullptr)
@@ -177,7 +176,7 @@ namespace GTGUI
         return nullptr;
     }
 
-    void StyleScriptCompilerClass::AddSubClass(const char* modifierName, ptrdiff_t modifierNameSizeInTs, const StyleScriptCompilerClass &subClass)
+    void GUIStyleScriptCompilerClass::AddSubClass(const char* modifierName, ptrdiff_t modifierNameSizeInTs, const GUIStyleScriptCompilerClass &subClass)
     {
         auto existingSubClass = this->GetSubClass(modifierName, modifierNameSizeInTs);
         if (existingSubClass != nullptr)
@@ -191,7 +190,7 @@ namespace GTGUI
     }
 
 
-    void StyleScriptCompilerClass::Merge(const StyleScriptCompilerClass &other)
+    void GUIStyleScriptCompilerClass::Merge(const GUIStyleScriptCompilerClass &other)
     {
         // Attributes.
         {
@@ -224,7 +223,7 @@ namespace GTGUI
     }
 
 
-    StyleScriptCompilerClass & StyleScriptCompilerClass::operator=(const StyleScriptCompilerClass &other)
+    GUIStyleScriptCompilerClass & GUIStyleScriptCompilerClass::operator=(const GUIStyleScriptCompilerClass &other)
     {
         if (this != &other)
         {
@@ -240,44 +239,44 @@ namespace GTGUI
 
 
     ///////////////////////////////////////////////
-    // StyleScriptCompilerVariable
+    // GUIStyleScriptCompilerVariable
 
-    StyleScriptCompilerVariable::StyleScriptCompilerVariable()
+    GUIStyleScriptCompilerVariable::GUIStyleScriptCompilerVariable()
         : m_name(),
           m_value()
     {
     }
 
-    StyleScriptCompilerVariable::StyleScriptCompilerVariable(const StyleScriptCompilerVariable &other)
+    GUIStyleScriptCompilerVariable::GUIStyleScriptCompilerVariable(const GUIStyleScriptCompilerVariable &other)
         : m_name(other.GetName()),
           m_value(other.GetValue())
     {
     }
 
 
-    void StyleScriptCompilerVariable::SetName(const char* name, ptrdiff_t nameSizeInTs)
+    void GUIStyleScriptCompilerVariable::SetName(const char* name, ptrdiff_t nameSizeInTs)
     {
         this->m_name.Assign(name, nameSizeInTs);
     }
 
-    const char* StyleScriptCompilerVariable::GetName() const
+    const char* GUIStyleScriptCompilerVariable::GetName() const
     {
         return this->m_name.c_str();
     }
 
 
-    void StyleScriptCompilerVariable::SetValue(const char* value, ptrdiff_t sizeInTs)
+    void GUIStyleScriptCompilerVariable::SetValue(const char* value, ptrdiff_t sizeInTs)
     {
         this->m_value.Assign(value, sizeInTs);
     }
 
-    const char* StyleScriptCompilerVariable::GetValue() const
+    const char* GUIStyleScriptCompilerVariable::GetValue() const
     {
         return this->m_value.c_str();
     }
 
 
-    StyleScriptCompilerVariable & StyleScriptCompilerVariable::operator=(const StyleScriptCompilerVariable &other)
+    GUIStyleScriptCompilerVariable & GUIStyleScriptCompilerVariable::operator=(const GUIStyleScriptCompilerVariable &other)
     {
         if (this != &other)
         {
@@ -290,9 +289,9 @@ namespace GTGUI
 
 
     ///////////////////////////////////////////////
-    // StyleScriptCompiler
+    // GUIStyleScriptCompiler
 
-    StyleScriptCompiler::StyleScriptCompiler()
+    GUIStyleScriptCompiler::GUIStyleScriptCompiler()
         : m_identifier(),
           m_classes(),
           m_variables(),
@@ -300,7 +299,7 @@ namespace GTGUI
     {
     }
 
-    StyleScriptCompiler::StyleScriptCompiler(const char* identifier)
+    GUIStyleScriptCompiler::GUIStyleScriptCompiler(const char* identifier)
         : m_identifier(identifier),
           m_classes(),
           m_variables(),
@@ -308,7 +307,7 @@ namespace GTGUI
     {
     }
     
-    StyleScriptCompiler::StyleScriptCompiler(const StyleScriptCompiler &other)
+    GUIStyleScriptCompiler::GUIStyleScriptCompiler(const GUIStyleScriptCompiler &other)
         : m_identifier(other.m_identifier),
           m_classes(other.m_classes),
           m_variables(other.m_variables),
@@ -316,7 +315,7 @@ namespace GTGUI
     {
     }
 
-    StyleScriptCompiler::~StyleScriptCompiler()
+    GUIStyleScriptCompiler::~GUIStyleScriptCompiler()
     {
         for (size_t i = 0; i < m_classes.GetCount(); ++i)
         {
@@ -330,13 +329,13 @@ namespace GTGUI
     }
 
 
-    bool StyleScriptCompiler::Compile(const char* script, const char* baseURLPath)
+    bool GUIStyleScriptCompiler::Compile(const char* script, const char* baseURLPath)
     {
         if (script != nullptr)
         {
             // Loading is simply a matter of iterating over the tokenizer. The tokenizer will handle things
             // like comments and syntax.
-            StyleTokenizer token(script);
+            GUIStyleTokenizer token(script);
             while (token)
             {
                 if (token.Equals("var"))
@@ -378,7 +377,7 @@ namespace GTGUI
                                     }
                                     else
                                     {
-                                        auto variable = new StyleScriptCompilerVariable;
+                                        auto variable = new GUIStyleScriptCompilerVariable;
                                         variable->SetName(variableNameStart, variableNameEnd - variableNameStart);
                                         variable->SetValue(variableValueStart, variableValueEnd - variableValueStart);
                                         
@@ -387,7 +386,7 @@ namespace GTGUI
                                 }
                                 else
                                 {
-                                    StyleScriptError error;
+                                    GUIStyleScriptError error;
                                     error.message    = "Unexpected end of script while reading variable. Expecting value. Format should be 'var <name>:<value>'.";
                                     error.lineString = token.GetCurrentLineString().c_str();
                                     error.lineNumber = token.GetCurrentLineNumber();
@@ -398,7 +397,7 @@ namespace GTGUI
                             }
                             else
                             {
-                                StyleScriptError error;
+                                GUIStyleScriptError error;
                                 error.message.AssignFormatted("Unexpected Token '%s'. Expecting ':'", token.GetString().c_str());
                                 error.lineString = token.GetCurrentLineString().c_str();
                                 error.lineNumber = token.GetCurrentLineNumber();
@@ -418,7 +417,7 @@ namespace GTGUI
                         }
                         else
                         {
-                            StyleScriptError error;
+                            GUIStyleScriptError error;
                             error.message    = "Unexpected end of script while reading variable. Expecting ':'. Format should be 'var <name>:<value>'.";
                             error.lineString = token.GetCurrentLineString().c_str();
                             error.lineNumber = token.GetCurrentLineNumber();
@@ -429,7 +428,7 @@ namespace GTGUI
                     }
                     else
                     {
-                        StyleScriptError error;
+                        GUIStyleScriptError error;
                         error.message    = "Unexpected end of script while reading variable. Expecting name after 'var'. Format should be 'var <name>:<value>'.";
                         error.lineString = token.GetCurrentLineString().c_str();
                         error.lineNumber = token.GetCurrentLineNumber();
@@ -441,7 +440,7 @@ namespace GTGUI
                 else if (!token.Equals('\n'))
                 {
                     // Assume this token is a class name.
-                    StyleScriptCompilerClass newClass;
+                    GUIStyleScriptCompilerClass newClass;
                     newClass.SetName(token.start, token.end - token.start);
 
                     if (++token)
@@ -486,7 +485,7 @@ namespace GTGUI
                                 // If we don't have a token, it means we've hit an unexpected end to the script.
                                 if (!token)
                                 {
-                                    StyleScriptError error;
+                                    GUIStyleScriptError error;
                                     error.message    = "Unexpected end of script while reading includes. Expecting '{' or ':'.";
                                     error.lineString = token.GetCurrentLineString().c_str();
                                     error.lineNumber = token.GetCurrentLineNumber();
@@ -503,7 +502,7 @@ namespace GTGUI
                             }
                             else
                             {
-                                StyleScriptError error;
+                                GUIStyleScriptError error;
                                 error.message    = "Unexpected end of script while reading includes. Expecting parent class names.";
                                 error.lineString = token.GetCurrentLineString().c_str();
                                 error.lineNumber = token.GetCurrentLineNumber();
@@ -533,7 +532,7 @@ namespace GTGUI
                                 // that we haven't reached the end.
                                 if (!(++token))
                                 {
-                                    StyleScriptError error;
+                                    GUIStyleScriptError error;
                                     error.message    = "Unexpected end of script while reading event class. Expecting parent class names. Expecting opening curly bracket '{' or 'includes'.";
                                     error.lineString = token.GetCurrentLineString().c_str();
                                     error.lineNumber = token.GetCurrentLineNumber();
@@ -550,7 +549,7 @@ namespace GTGUI
                             }
                             else
                             {
-                                StyleScriptError error;
+                                GUIStyleScriptError error;
                                 error.message    = "Unexpected end of script while reading event class. Expecting parent class names. Expecting event class name (e.g. 'hovered').";
                                 error.lineString = token.GetCurrentLineString().c_str();
                                 error.lineNumber = token.GetCurrentLineNumber();
@@ -592,7 +591,7 @@ namespace GTGUI
                                         if (!token.Equals('\n'))
                                         {
                                             // Now assume it's an attribute name.
-                                            StyleScriptCompilerClassAttribute attribute;
+                                            GUIStyleScriptCompilerClassAttribute attribute;
                                             attribute.SetName(token.start, token.end - token.start);
 
                                             if (++token)
@@ -652,7 +651,7 @@ namespace GTGUI
                                                                     }
                                                                     else
                                                                     {
-                                                                        StyleScriptError error;
+                                                                        GUIStyleScriptError error;
                                                                         error.message.AssignFormatted("Unexpected token '%s' while reading URL. Expecting '('.", token.GetString().c_str());
                                                                         error.lineString = token.GetCurrentLineString().c_str();
                                                                         error.lineNumber = token.GetCurrentLineNumber();
@@ -671,7 +670,7 @@ namespace GTGUI
                                                                 }
                                                                 else
                                                                 {
-                                                                    StyleScriptError error;
+                                                                    GUIStyleScriptError error;
                                                                     error.message    = "Unexpected end of script while reading URL. Expecting '('.";
                                                                     error.lineString = token.GetCurrentLineString().c_str();
                                                                     error.lineNumber = token.GetCurrentLineNumber();
@@ -720,7 +719,7 @@ namespace GTGUI
                                                     }
                                                     else
                                                     {
-                                                        StyleScriptError error;
+                                                        GUIStyleScriptError error;
                                                         error.message    = "Unexpected end of script while reading class attribute. Expecting value.";
                                                         error.lineString = token.GetCurrentLineString().c_str();
                                                         error.lineNumber = token.GetCurrentLineNumber();
@@ -737,7 +736,7 @@ namespace GTGUI
                                                 }
                                                 else
                                                 {
-                                                    StyleScriptError error;
+                                                    GUIStyleScriptError error;
                                                     error.message.AssignFormatted("Unexpected Token '%s'. Expecting ':'", token.GetString().c_str());
                                                     error.lineString = token.GetCurrentLineString().c_str();
                                                     error.lineNumber = token.GetCurrentLineNumber();
@@ -789,7 +788,7 @@ namespace GTGUI
                                 // If we don't have a token here, it means we reached the end too early.
                                 if (!token)
                                 {
-                                    StyleScriptError error;
+                                    GUIStyleScriptError error;
                                     error.message    = "Unexpected end of script. Closing curly bracket was not found.";
                                     error.lineString = token.GetCurrentLineString().c_str();
                                     error.lineNumber = token.GetCurrentLineNumber();
@@ -815,7 +814,7 @@ namespace GTGUI
                                     auto baseClass = this->FindClassByName(newClass.GetName());
                                     if (baseClass == nullptr)
                                     {
-                                        auto newBaseClass = new StyleScriptCompilerClass;
+                                        auto newBaseClass = new GUIStyleScriptCompilerClass;
                                         newBaseClass->SetName(newClass.GetName());
                                                 
                                         this->m_classes.PushBack(newBaseClass);
@@ -837,13 +836,13 @@ namespace GTGUI
                                     }
                                     else
                                     {
-                                        this->m_classes.PushBack(new StyleScriptCompilerClass(newClass));
+                                        this->m_classes.PushBack(new GUIStyleScriptCompilerClass(newClass));
                                     }
                                 }
                             }
                             else
                             {
-                                StyleScriptError error;
+                                GUIStyleScriptError error;
                                 error.message    = "Unexpected end of script. Style class is not closed.";
                                 error.lineString = token.GetCurrentLineString().c_str();
                                 error.lineNumber = token.GetCurrentLineNumber();
@@ -860,7 +859,7 @@ namespace GTGUI
                         }
                         else
                         {
-                            StyleScriptError error;
+                            GUIStyleScriptError error;
                             error.message    = "Unexpected end of script. Expecting opening curly bracket '{'.";
                             error.lineString = token.GetCurrentLineString().c_str();
                             error.lineNumber = token.GetCurrentLineNumber();
@@ -877,7 +876,7 @@ namespace GTGUI
                     }
                     else
                     {
-                        StyleScriptError error;
+                        GUIStyleScriptError error;
                         error.message    = "Unexpected end of script while reading style class.";
                         error.lineString = token.GetCurrentLineString().c_str();
                         error.lineNumber = token.GetCurrentLineNumber();
@@ -903,32 +902,32 @@ namespace GTGUI
     }
 
 
-    const char* StyleScriptCompiler::GetIdentifier() const
+    const char* GUIStyleScriptCompiler::GetIdentifier() const
     {
         return this->m_identifier.c_str();
     }
 
 
-    size_t StyleScriptCompiler::GetClassCount() const
+    size_t GUIStyleScriptCompiler::GetClassCount() const
     {
         return this->m_classes.count;
     }
 
-    StyleScriptCompilerClass & StyleScriptCompiler::GetClassByIndex(size_t index)
+    GUIStyleScriptCompilerClass & GUIStyleScriptCompiler::GetClassByIndex(size_t index)
     {
         assert(m_classes[index] != nullptr);
         
         return *this->m_classes[index];
     }
 
-    const StyleScriptCompilerClass & StyleScriptCompiler::GetClassByIndex(size_t index) const
+    const GUIStyleScriptCompilerClass & GUIStyleScriptCompiler::GetClassByIndex(size_t index) const
     {
         assert(m_classes[index] != nullptr);
         
         return *this->m_classes[index];
     }
 
-    StyleScriptCompilerClass* StyleScriptCompiler::FindClassByName(const char* name, ptrdiff_t nameLengthInTs)
+    GUIStyleScriptCompilerClass* GUIStyleScriptCompiler::FindClassByName(const char* name, ptrdiff_t nameLengthInTs)
     {
         for (size_t iClass = 0; iClass < this->m_classes.count; ++iClass)
         {
@@ -944,26 +943,26 @@ namespace GTGUI
     }
 
     
-    size_t StyleScriptCompiler::GetVariableCount() const
+    size_t GUIStyleScriptCompiler::GetVariableCount() const
     {
         return this->m_variables.count;
     }
 
-    StyleScriptCompilerVariable & StyleScriptCompiler::GetVariableByIndex(size_t index)
+    GUIStyleScriptCompilerVariable & GUIStyleScriptCompiler::GetVariableByIndex(size_t index)
     {
         assert(m_variables[index] != nullptr);
         
         return *m_variables[index];
     }
 
-    const StyleScriptCompilerVariable & StyleScriptCompiler::GetVariableByIndex(size_t index) const
+    const GUIStyleScriptCompilerVariable & GUIStyleScriptCompiler::GetVariableByIndex(size_t index) const
     {
         assert(m_variables[index] != nullptr);
         
         return *m_variables[index];
     }
 
-    StyleScriptCompilerVariable* StyleScriptCompiler::FindVariableByName(const char* name, ptrdiff_t nameLengthInTs)
+    GUIStyleScriptCompilerVariable* GUIStyleScriptCompiler::FindVariableByName(const char* name, ptrdiff_t nameLengthInTs)
     {
         for (size_t iClass = 0; iClass < m_variables.count; ++iClass)
         {
@@ -979,7 +978,7 @@ namespace GTGUI
     }
 
 
-    StyleScriptCompilerClassAttribute* StyleScriptCompiler::GetClassAttribute(const char* className, const char* classModifierName, const char* attributeName)
+    GUIStyleScriptCompilerClassAttribute* GUIStyleScriptCompiler::GetClassAttribute(const char* className, const char* classModifierName, const char* attributeName)
     {
         auto compilerClass = this->FindClassByName(className);
         if (compilerClass != nullptr)
@@ -1005,25 +1004,25 @@ namespace GTGUI
         return nullptr;
     }
 
-    const StyleScriptCompilerClassAttribute* StyleScriptCompiler::GetClassAttribute(const char* className, const char* classModifierName, const char* attributeName) const
+    const GUIStyleScriptCompilerClassAttribute* GUIStyleScriptCompiler::GetClassAttribute(const char* className, const char* classModifierName, const char* attributeName) const
     {
-        return const_cast<StyleScriptCompiler*>(this)->GetClassAttribute(className, classModifierName, attributeName);
+        return const_cast<GUIStyleScriptCompiler*>(this)->GetClassAttribute(className, classModifierName, attributeName);
     }
 
 
-    void StyleScriptCompiler::SetErrorHandler(StyleScriptCompilerErrorHandler* errorHandler)
+    void GUIStyleScriptCompiler::SetErrorHandler(GUIStyleScriptCompilerErrorHandler* errorHandler)
     {
         this->m_errorHandler = errorHandler;
     }
 
-    StyleScriptCompilerErrorHandler* StyleScriptCompiler::GetErrorHandler()
+    GUIStyleScriptCompilerErrorHandler* GUIStyleScriptCompiler::GetErrorHandler()
     {
         return this->m_errorHandler;
     }
     
     
     
-    StyleScriptCompiler & StyleScriptCompiler::operator=(const StyleScriptCompiler &other)
+    GUIStyleScriptCompiler & GUIStyleScriptCompiler::operator=(const GUIStyleScriptCompiler &other)
     {
         if (this != &other)
         {
@@ -1041,7 +1040,7 @@ namespace GTGUI
     /////////////////////////////////////////////
     // Private
 
-    void StyleScriptCompiler::PostError(const StyleScriptError &error)
+    void GUIStyleScriptCompiler::PostError(const GUIStyleScriptError &error)
     {
         if (this->m_errorHandler != nullptr)
         {

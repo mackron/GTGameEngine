@@ -5,11 +5,11 @@
 
 namespace GTGUI
 {
-    enum Positioning
+    enum GUIPositioning
     {
-        Positioning_Auto,
-        Positioning_Relative,
-        Positioning_Absolute
+        GUIPositioning_Auto,
+        GUIPositioning_Relative,
+        GUIPositioning_Absolute
     };
 }
 

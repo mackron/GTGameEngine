@@ -9,24 +9,24 @@
 
 namespace GTGUI
 {
-    struct StyleScriptError
+    struct GUIStyleScriptError
     {
-        StyleScriptError()
+        GUIStyleScriptError()
             : message(), lineString(), lineNumber(0), info(0)
         {
         }
 
-        StyleScriptError(const char* messageIn, const char* lineStringIn, unsigned int lineNumberIn, const char* infoIn)
+        GUIStyleScriptError(const char* messageIn, const char* lineStringIn, unsigned int lineNumberIn, const char* infoIn)
             : message(messageIn), lineString(lineStringIn), lineNumber(lineNumberIn), info(infoIn)
         {
         }
 
-        StyleScriptError(const StyleScriptError &other)
+        GUIStyleScriptError(const GUIStyleScriptError &other)
             : message(other.message), lineString(other.lineString), lineNumber(other.lineNumber), info(other.info)
         {
         }
 
-        StyleScriptError & operator=(const StyleScriptError &other)
+        GUIStyleScriptError & operator=(const GUIStyleScriptError &other)
         {
             this->message    = other.message;
             this->lineString = other.lineString;

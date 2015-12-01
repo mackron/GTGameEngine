@@ -18,26 +18,26 @@ namespace GTGUI
     *   The caret is the cursor for text input. Only a single element can "own" the caret at a time. When an element gains focus, it should show
     *   the caret. When it loses focus, it should hide it.
     */
-    class Caret
+    class GUICaret
     {
     public:
 
         /**
         *   \brief  Constructor.
         */
-        Caret();
+        GUICaret();
 
         /// Destructor.
-        ~Caret();
+        ~GUICaret();
     
         /**
         *   \brief  Shows the caret for the given element.
         *
         *   \remarks
-        *       If an element needs the caret, it should obtain it with Caret::Show() in the OnReceiveFocus() event. When the element receives
-        *       the OnLoseFocus() event it should call Caret::Hide().
+        *       If an element needs the caret, it should obtain it with GUICaret::Show() in the OnReceiveFocus() event. When the element receives
+        *       the OnLoseFocus() event it should call GUICaret::Hide().
         */
-        void Show(Element *owner);
+        void Show(GUIElement *owner);
         
         /**
         *   \brief  Hides the caret.
@@ -82,7 +82,7 @@ namespace GTGUI
         *   \remarks
         *       If the carent is hidden (not owned by anything) the function will return null.
         */
-        Element* GetOwner() const { return this->owner; }
+        GUIElement* GetOwner() const { return this->owner; }
 
 
         /// Validates the rendering data. This is called just before the caret's RC command is posted.
@@ -108,7 +108,7 @@ namespace GTGUI
     private:
 
         /// The control that currently owns the caret.
-        Element *owner;
+        GUIElement *owner;
     
         /// The current position of the caret.
         int xPos;
@@ -136,8 +136,8 @@ namespace GTGUI
 
 
     private:    // No copying.
-        Caret(const Caret &);
-        Caret & operator=(const Caret &);
+        GUICaret(const GUICaret &);
+        GUICaret & operator=(const GUICaret &);
     };
 }
 

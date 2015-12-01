@@ -11,9 +11,9 @@
 namespace GTGUI
 {
     /**
-    *   \brief  Class for parsing GTGUI Server XML scripts.
+    *   \brief  Class for parsing GTGUI GUIServer XML scripts.
     *
-    *   When constructing an XML parser, you must specify a ServerEventHandler. This will be used when
+    *   When constructing an XML parser, you must specify a GUIServerEventHandler. This will be used when
     *   an error needs to be posted.
     *
     *   To parse an XML script, call the Parse() method. This method takes a const char* containing the
@@ -21,7 +21,7 @@ namespace GTGUI
     *
     *   After the script has been parsed, you can look at the content through publicly visible attributes.
     *   These attributes are reset during each call to Parse(), so make sure you have finished with them
-    *   before calling Parse() again on the same ServerXMLParser object.
+    *   before calling Parse() again on the same GUIServerXMLParser object.
     *
     *   There are three main parts to a server XML script: <script>, <style> and elements. Scripts and 
     *   styles can be accessed via the \c scripts and \c styles string lists directly. The elements are
@@ -36,7 +36,7 @@ namespace GTGUI
     *   When a script fails to parse, the GetLastErrorString() method can be used to retrieve the error
     *   message. The parser will stop when the first error message is retrieved.
     */
-    class ServerXMLParser
+    class GUIServerXMLParser
     {
     public:
     
@@ -109,7 +109,7 @@ namespace GTGUI
             
             
         private:    // No assignment.
-            ServerXMLParser::Element & operator=(const ServerXMLParser::Element &);
+            GUIServerXMLParser::Element & operator=(const GUIServerXMLParser::Element &);
         };
         
         
@@ -118,12 +118,12 @@ namespace GTGUI
         /**
         *   \brief  Constructor.
         */
-        ServerXMLParser();
+        GUIServerXMLParser();
         
         /**
         *   \brief  Destructor.
         */
-        ~ServerXMLParser();
+        ~GUIServerXMLParser();
     
         /**
         *   \brief           Parses an XML script.
@@ -151,13 +151,13 @@ namespace GTGUI
         *       The \c parentElement argument is only valid for element tags (<div>, <button>, etc). Set to null if
         *       it's not needed.
         */
-        void ParseXMLNode(void* node, ServerXMLParser::Element* parentElement);
+        void ParseXMLNode(void* node, GUIServerXMLParser::Element* parentElement);
         
         /**
         *   \brief               A helper function for appending a new element to the end of the list.
         *   \param  element [in] A pointer to the element being appended.
         */
-        void AppendElement(ServerXMLParser::Element* element);
+        void AppendElement(GUIServerXMLParser::Element* element);
         
         /**
         *   \brief  Helper for clearning the internal data from the last parse.
@@ -195,8 +195,8 @@ namespace GTGUI
         
         
     private:    // No copying.
-        ServerXMLParser(const ServerXMLParser &);
-        ServerXMLParser & operator=(const ServerXMLParser &);
+        GUIServerXMLParser(const GUIServerXMLParser &);
+        GUIServerXMLParser & operator=(const GUIServerXMLParser &);
     };
 }
 

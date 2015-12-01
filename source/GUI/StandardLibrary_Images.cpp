@@ -517,7 +517,7 @@ static const struct {
 
 namespace GTGUI
 {
-    bool StandardLibrary::LoadImages(Server &server)
+    bool GUIStandardLibrary::LoadImages(GUIServer &server)
     {
         server.RegisterImage("std-tick-12x12", tick_12x12.width, tick_12x12.height, tick_12x12.bytes_per_pixel, tick_12x12.pixel_data);
 
