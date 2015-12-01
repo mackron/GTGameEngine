@@ -3,7 +3,6 @@
 #include <GTEngine/Material.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/ShaderParameter.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Core/Parse.hpp>
@@ -89,7 +88,7 @@ namespace GT
         }
         catch (rapidxml::parse_error &e)
         {
-            GT::PostError("Material: %s", e.what());
+            g_EngineContext->LogErrorf("Material: %s", e.what());
             return false;
         }
 
@@ -135,7 +134,7 @@ namespace GT
                     else
                     {
                         // It is an error for a <channel> tag to not have a name.
-                        GT::PostError("Material: Warning: Missing 'name' attribute from a <channel> tag. Ignoring.");
+                        g_EngineContext->LogErrorf("Material: Warning: Missing 'name' attribute from a <channel> tag. Ignoring.");
                     }
                 }
 
@@ -265,7 +264,7 @@ namespace GT
             return true;
         }
 
-        GT::PostError("Material: Missing <material> node.");
+        g_EngineContext->LogErrorf("Material: Missing <material> node.");
         return false;
     }
 
@@ -296,7 +295,7 @@ namespace GT
             }
             else
             {
-                GT::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
+                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
                 return false;
             }
         }

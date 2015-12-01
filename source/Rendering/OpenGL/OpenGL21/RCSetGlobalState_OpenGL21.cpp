@@ -5,7 +5,6 @@
 #include <gtgl/gtgl.h>
 
 #include "../CapabilityBits.hpp"
-#include <GTEngine/Logging.hpp>
 
 namespace GT
 {
@@ -37,7 +36,7 @@ namespace GT
     void PostRedundancyMessage(const char* message)
     {
 #if 0
-        Log(message);
+        g_EngineContext->Logf(message);
 #else
         (void)message;
 #endif

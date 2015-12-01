@@ -4,7 +4,6 @@
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/Core/Dictionary.hpp>
 #include <GTEngine/Core/Vector.hpp>
 #include <GTEngine/Core/String.hpp>
@@ -496,12 +495,12 @@ namespace GT
                 }
                 else
                 {
-                    GT::PostError("ShaderLibrary - There was an unknown error loading a <shader> tag. This shader will be ignored.");
+                    g_EngineContext->LogError("ShaderLibrary - There was an unknown error loading a <shader> tag. This shader will be ignored.");
                 }
             }
             else
             {
-                GT::PostError("ShaderLibrary - <shader> tags must have an 'id' attribute.");
+                g_EngineContext->LogError("ShaderLibrary - <shader> tags must have an 'id' attribute.");
             }
         }
 
@@ -530,7 +529,7 @@ namespace GT
             }
             catch (rapidxml::parse_error &e)
             {
-                GT::PostError("ShaderLibrary: %s", e.what());
+                g_EngineContext->LogErrorf("ShaderLibrary: %s", e.what());
                 return false;
             }
             

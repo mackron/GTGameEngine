@@ -3,7 +3,7 @@
 #include <GTEngine/Components/ModelComponent.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Scene.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -249,7 +249,7 @@ namespace GT
 
             default:
                 {
-                    Log("Error deserializing ModelComponent. Main chunk has an unsupported version (%d).", header.version);
+                    g_EngineContext->Logf("Error deserializing ModelComponent. Main chunk has an unsupported version (%d).", header.version);
                     break;
                 }
             }

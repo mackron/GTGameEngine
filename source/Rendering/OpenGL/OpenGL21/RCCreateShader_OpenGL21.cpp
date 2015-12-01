@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include "RCCreateShader_OpenGL21.hpp"
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Core/Strings/Find.hpp>          // For checking the compilation output.
 #include <gtgl/gtgl.h>
 
@@ -213,7 +213,7 @@ namespace GT
                     title = "Geometry Shader Info Log";
                 }
 
-                Log("--- %s ---\n%s%s", title.c_str(), log, source);
+                g_EngineContext->Logf("--- %s ---\n%s%s", title.c_str(), log, source);
 
 
                 // We only delete the shader object if we failed the compilation.
@@ -267,7 +267,7 @@ namespace GT
             auto log = static_cast<char*>(malloc(static_cast<size_t>(logLength)));
             glGetProgramInfoLog(program, logLength, nullptr, log);
 
-            Log("--- Program Link Status ---\n%s", log);
+            g_EngineContext->Logf("--- Program Link Status ---\n%s", log);
 
             free(log);
 

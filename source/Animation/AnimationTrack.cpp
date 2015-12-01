@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Animation/AnimationTrack.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -159,7 +159,7 @@ namespace GT
             }
             else
             {
-                Log("Error deserializing AnimationTrack. Chunk version is unsupported (%d).", header.version);
+                g_EngineContext->Logf("Error deserializing AnimationTrack. Chunk version is unsupported (%d).", header.version);
             }
         }
     }

@@ -2,8 +2,7 @@
 
 #include <GTEngine/NavigationMesh.hpp>
 #include <GTEngine/Scene.hpp>
-#include <GTEngine/Errors.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Recast/RecastAlloc.h>
 
 namespace GT
@@ -224,34 +223,34 @@ namespace GT
                                     }
                                     else
                                     {
-                                        GT::PostError("NavigationMesh: Failed to init nav mesh query object.");
+                                        g_EngineContext->LogErrorf("NavigationMesh: Failed to init nav mesh query object.");
                                     }
                                 }
                                 else
                                 {
                                     dtFree(navData);
-                                    GT::PostError("NavigationMesh: Failed to init detail nav mesh.");
+                                    g_EngineContext->LogErrorf("NavigationMesh: Failed to init detail nav mesh.");
                                 }
                             }
                             else
                             {
                                 dtFree(navData);
-                                GT::PostError("NavigationMesh: Error creating Detour nav mesh data.");
+                                g_EngineContext->LogErrorf("NavigationMesh: Error creating Detour nav mesh data.");
                             }
                         }
                         else
                         {
-                            GT::PostError("NavigationMesh: Error creating detail mesh.");
+                            g_EngineContext->LogErrorf("NavigationMesh: Error creating detail mesh.");
                         }
                     }
                     else
                     {
-                        GT::PostError("NavigationMesh: Error creating main navigation mesh.");
+                        g_EngineContext->LogErrorf("NavigationMesh: Error creating main navigation mesh.");
                     }
                 }
                 else
                 {
-                    GT::PostError("NavigationMesh: Error creating contours.");
+                    g_EngineContext->LogErrorf("NavigationMesh: Error creating contours.");
                 }
 
 
@@ -259,14 +258,14 @@ namespace GT
             }
             else
             {
-                GT::PostError("NavigationMesh: Error creating compact heightfield.");
+                g_EngineContext->LogErrorf("NavigationMesh: Error creating compact heightfield.");
             }
 
             rcFreeCompactHeightfield(compactHeightfield);
         }
         else
         {
-            GT::PostError("NavigationMesh: Error creating heightfield.");
+            g_EngineContext->LogErrorf("NavigationMesh: Error creating heightfield.");
         }
 
         rcFreeHeightField(heightfield);
@@ -663,7 +662,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Error deserializing main chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        g_EngineContext->Logf("Error deserializing main chunk of navigation mesh. Unsupported version (%d).", header.version);
                         successful = false;
                     }
 
@@ -765,7 +764,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Error deserializing Recast Poly Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        g_EngineContext->Logf("Error deserializing Recast Poly Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
                         successful = false;
                     }
 
@@ -834,7 +833,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Error deserializing Detour Nav Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        g_EngineContext->Logf("Error deserializing Detour Nav Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
                         successful = false;
                     }
 

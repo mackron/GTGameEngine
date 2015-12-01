@@ -4,7 +4,7 @@
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Scripting.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -1056,7 +1056,7 @@ namespace GT
 
             default:
                 {
-                    Log("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
+                    g_EngineContext->Logf("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
 
                     deserializer.Seek(header.sizeInBytes);
                     break;

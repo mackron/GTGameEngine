@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include "RCCreateFramebuffer_OpenGL21.hpp"
-#include <GTEngine/Logging.hpp>
 
 namespace GT
 {

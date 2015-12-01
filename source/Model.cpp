@@ -4,7 +4,7 @@
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
 #include <GTEngine/Math.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Core/Timing.hpp>
 #include <cfloat>
 
@@ -472,7 +472,7 @@ namespace GT
 
                     default:
                         {
-                            Log("Error deserializing model. Meshes chunk has an unsupported version (%d).", header.version);
+                            g_EngineContext->Logf("Error deserializing model. Meshes chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -518,7 +518,7 @@ namespace GT
 
                     default:
                         {
-                            Log("Error deserializing model. Bones chunk has an unsupported version (%d).", header.version);
+                            g_EngineContext->Logf("Error deserializing model. Bones chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -546,7 +546,7 @@ namespace GT
 
                     default:
                         {
-                            Log("Error deserializing model. Animation chunk has an unsupported version (%d).", header.version);
+                            g_EngineContext->Logf("Error deserializing model. Animation chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }

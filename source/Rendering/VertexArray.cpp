@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Rendering/VertexArray.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -217,7 +217,7 @@ namespace GT
 
             default:
                 {
-                    Log("Error deserializing VertexArray. Info chunk is an unsupported version (%d).", header.version);
+                    g_EngineContext->Logf("Error deserializing VertexArray. Info chunk is an unsupported version (%d).", header.version);
                     break;
                 }
             }
@@ -244,7 +244,7 @@ namespace GT
 
             default:
                 {
-                    Log("Error deserializing VertexArray. Vertices chunk is an unsupported version (%d).", header.version);
+                    g_EngineContext->Logf("Error deserializing VertexArray. Vertices chunk is an unsupported version (%d).", header.version);
                     break;
                 }
             }
@@ -271,7 +271,7 @@ namespace GT
 
             default:
                 {
-                    Log("Error deserializing VertexArray. Indices chunk is an unsupported version (%d).", header.version);
+                    g_EngineContext->Logf("Error deserializing VertexArray. Indices chunk is an unsupported version (%d).", header.version);
                     break;
                 }
             }

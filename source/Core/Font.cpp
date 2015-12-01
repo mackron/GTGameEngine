@@ -3,7 +3,6 @@
 #include <GTEngine/Core/Font.hpp>
 #include <GTEngine/Core/FontServer.hpp>
 #include <GTEngine/Core/System.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/Core/ToString.hpp>
 #include <GTEngine/Core/Map.hpp>
 #include <GTEngine/Core/Math.hpp>

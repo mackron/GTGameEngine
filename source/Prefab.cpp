@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Prefab.hpp>
-#include <GTEngine/Logging.hpp>
 #include <GTEngine/GTEngine.hpp>
 
 namespace GT
@@ -264,7 +263,7 @@ namespace GT
 
                 default:
                     {
-                        Log("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
+                        g_EngineContext->Logf("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -304,7 +303,7 @@ namespace GT
         }
         else
         {
-            Log("Can not open file: '%s'.", this->absolutePath.c_str());
+            g_EngineContext->Logf("Can not open file: '%s'.", this->absolutePath.c_str());
         }
 
         return false;

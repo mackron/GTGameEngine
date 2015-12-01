@@ -110,20 +110,24 @@ namespace GT
         ////////////////////////////////////////////////////
         // Messages
 
-        /// @copydoc GT::MessageDispatcher::PostMessage(const Message &)
-        void PostMessage(const Message &message);
+        /// Posts a simple log message.
+        void Log(const char* message);
 
-        /// @copydoc GT::MessageDispatcher::PostMessage(MessageType, const char*)
-        void PostMessage(MessageType type, const char* message);
+        /// Posts a generic, formatted message.
+        void Logf(const char* format, ...);
 
-        /// @copydoc GT::MessageDispatcher::PostErrorMessage(const char*)
-        void PostErrorMessage(const char* message);
+        /// Posts a message.
+        void LogMessage(const char* message);
+        void LogMessagef(const char* format, ...);
 
-        /// @copydoc GT::MessageDispatcher::PostWarningMessage(const char*)
-        void PostWarningMessage(const char* message);
+        /// Posts a warning message.
+        void LogWarning(const char* message);
+        void LogWarningf(const char* format, ...);
 
-        /// @copydoc GT::MessageDispatcher::PostLogMessage(const char*)
-        void PostLogMessage(const char* message);
+        /// Posts an error message.
+        void LogError(const char* message);
+        void LogErrorf(const char* format, ...);
+
 
 
 
@@ -166,6 +170,9 @@ namespace GT
         /// A pointer to the object representing the virtual file system. This is where base directories are added.
         easyvfs_context* m_pVFS;
 
+        /// The logging object.
+        LogFile m_logFile;
+
 
         /// The list of every active thread that is owned by the engine. When a thread is created, it'll be added to this list. When a thread is
         /// deleted, it will not actually be destructed - instead it will be added to the dormant thread list for re-use. This is done this way
@@ -184,10 +191,10 @@ namespace GT
 
 
         /// The default message handler.
-        GT::DefaultMessageHandler m_messageHandler;
+        //GT::DefaultMessageHandler m_messageHandler;
 
         /// The message dispatcher.
-        MessageDispatcher m_messageDispatcher;
+        //MessageDispatcher m_messageDispatcher;
 
 
         /// A pointer to the easy_audio context for audio playback.

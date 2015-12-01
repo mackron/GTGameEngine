@@ -56,7 +56,7 @@ namespace GT
             m_executableDirectoryAbsolutePath(),
             m_pVFS(nullptr),
             m_applicationConfig(),
-            m_messageHandler(), m_messageDispatcher(),
+            /*m_messageHandler(), m_messageDispatcher(),*/
             m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
             m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
             m_assetLibrary()
@@ -86,12 +86,14 @@ namespace GT
         // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
         char logpath[EASYVFS_MAX_PATH];
         easypath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
-            
-        m_messageHandler.OpenLogFile(m_pVFS, logpath);
+        
+        m_logFile.Open(m_pVFS, logpath, "GTGE");  
 
+        //m_messageHandler.OpenLogFile(m_pVFS, logpath);
 
         // At this point the message handler should be setup, so we'll go ahead and add it to the dispatcher.
-        m_messageDispatcher.AddMessageHandler(m_messageHandler);
+        //m_messageDispatcher.AddMessageHandler(m_messageHandler);
+
 
 
         // After moving into the application directory, we need to load up the config file and move into the data directory. From
@@ -121,8 +123,7 @@ namespace GT
         //// Asset Library ////
         if (!m_assetLibrary.Startup(m_pVFS))
         {
-            this->PostErrorMessage("Failed to initialize asset library.");
-            //return false;
+            this->LogError("Failed to initialize asset library.");
         }
 
 
@@ -133,7 +134,7 @@ namespace GT
             
         m_pAudioContext = easyaudio_create_context();
         if (m_pAudioContext == NULL) {
-            this->PostWarningMessage("Failed to create audio system.");
+            this->LogError("Failed to create audio system.");
         }
 
         // TEMP: Print the playback devices.
@@ -143,10 +144,7 @@ namespace GT
             easyaudio_device_info info;
             if (easyaudio_get_output_device_info(m_pAudioContext, iDevice, &info))
             {
-                String message;
-                message.AppendFormatted("Playback Device (%d) - %s", iDevice, info.description);
-
-                this->PostLogMessage(message.c_str());
+                this->Logf("Playback Device (%d) - %s", iDevice, info.description);
             }
         }
 
@@ -317,29 +315,82 @@ namespace GT
     ////////////////////////////////////////////////////
     // Messages
 
-    void EngineContext::PostMessage(const Message &message)
+    void EngineContext::Log(const char* message)
     {
-        m_messageDispatcher.PostMessage(message);
+        // Write to the log file.
+        if (m_logFile.IsOpen()) {
+            m_logFile.Write(message);
+        }
+
+        // Post to the terminal.
+        printf("%s\n", message);
     }
 
-    void EngineContext::PostMessage(MessageType type, const char* message)
+    void EngineContext::Logf(const char* format, ...)
     {
-        m_messageDispatcher.PostMessage(type, message);
+        va_list args;
+        va_start(args, format);
+        {
+            char msg[4096];
+            vsnprintf(msg, sizeof(msg), format, args);
+        
+            this->Log(msg);
+        }
+        va_end(args);
     }
 
-    void EngineContext::PostErrorMessage(const char* message)
+    void EngineContext::LogMessage(const char* message)
     {
-        m_messageDispatcher.PostErrorMessage(message);
+        this->Logf("[MESSAGE] %s", message);
     }
 
-    void EngineContext::PostWarningMessage(const char* message)
+    void EngineContext::LogMessagef(const char* format, ...)
     {
-        m_messageDispatcher.PostWarningMessage(message);
+        va_list args;
+        va_start(args, format);
+        {
+            char msg[4096];
+            vsnprintf(msg, sizeof(msg), format, args);
+        
+            this->LogMessage(msg);
+        }
+        va_end(args);
     }
 
-    void EngineContext::PostLogMessage(const char* message)
+    void EngineContext::LogWarning(const char* message)
     {
-        m_messageDispatcher.PostLogMessage(message);
+        this->Logf("[ERROR] %s", message);
+    }
+
+    void EngineContext::LogWarningf(const char* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+        {
+            char msg[4096];
+            vsnprintf(msg, sizeof(msg), format, args);
+        
+            this->LogWarning(msg);
+        }
+        va_end(args);
+    }
+
+    void EngineContext::LogError(const char* message)
+    {
+        this->Logf("[ERROR] %s", message);
+    }
+
+    void EngineContext::LogErrorf(const char* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+        {
+            char msg[4096];
+            vsnprintf(msg, sizeof(msg), format, args);
+        
+            this->LogError(msg);
+        }
+        va_end(args);
     }
 
 

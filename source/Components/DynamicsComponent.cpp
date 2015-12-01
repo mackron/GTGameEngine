@@ -9,7 +9,7 @@
 
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Physics.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 
 namespace GT
@@ -414,7 +414,7 @@ namespace GT
 
             default:
                 {
-                    Log("DynamicsComponent deserialization error. The main chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
+                    g_EngineContext->Logf("DynamicsComponent deserialization error. The main chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
                     break;
                 }
             }

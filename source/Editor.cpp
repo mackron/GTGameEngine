@@ -1,8 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Editor.hpp>
-#include <GTEngine/Errors.hpp>
-#include <GTEngine/Logging.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
@@ -156,7 +154,7 @@ namespace GT
             }
             else
             {
-                GT::PostError("Error initializing editor: Failed to load editor/main.xml. Ensure the 'editor' directory exists. %s.", script.ToString(-1));
+                g_EngineContext->LogErrorf("Error initializing editor: Failed to load editor/main.xml. Ensure the 'editor' directory exists. %s.", script.ToString(-1));
                 return false;
             }
         }
@@ -255,7 +253,7 @@ namespace GT
                     }
                     else
                     {
-                        GT::PostError("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
+                        g_EngineContext->LogErrorf("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
                         return nullptr;
                     }
                 }
@@ -288,13 +286,13 @@ namespace GT
 
                         if (!easyvfs_is_existing_file(g_EngineContext->GetVFS(), absolutePathWithExt))
                         {
-                            GT::PostError("Editor: Can not open model file '%s'. Associated .gtmodel file does not exist.\n", path);
+                            g_EngineContext->LogErrorf("Editor: Can not open model file '%s'. Associated .gtmodel file does not exist.\n", path);
                             return nullptr;
                         }
                     }
                     else
                     {
-                        GT::PostError("Editor: Can not open file '%s'. Does not exist.\n", path);
+                        g_EngineContext->LogErrorf("Editor: Can not open file '%s'. Does not exist.\n", path);
                         return nullptr;
                     }
                 }
@@ -351,7 +349,7 @@ namespace GT
                     {
                         // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
                         // a SubEditor object for it.
-                        Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
+                        g_EngineContext->Logf("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
                         newSubEditor = new SubEditor(*this, absolutePath, relativePath);
                     }
                 }

@@ -2,8 +2,7 @@
 
 #include <GTEngine/GUIEventHandler.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTEngine/Errors.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -18,17 +17,17 @@ namespace GT
 
     void GUIEventHandler::OnError(const char* msg)
     {
-        GT::PostError("%s", msg);
+        g_EngineContext->LogErrorf("%s", msg);
     }
 
     void GUIEventHandler::OnWarning(const char* msg)
     {
-        Log("%s", msg);
+        g_EngineContext->Logf("%s", msg);
     }
 
     void GUIEventHandler::OnLog(const char* msg)
     {
-        Log("%s", msg);
+        g_EngineContext->Logf("%s", msg);
     }
 
     void GUIEventHandler::OnChangeCursor(Cursor cursor)

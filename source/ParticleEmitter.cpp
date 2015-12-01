@@ -2,8 +2,7 @@
 
 #include <GTEngine/ParticleEmitter.hpp>
 #include <GTEngine/Rendering.hpp>
-#include <GTEngine/Errors.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -151,7 +150,7 @@ namespace GT
                     {
                         assert(false);
                         
-                        Log("You've forgotten to handle the particle function in the ParticleEmitter copy constructor!");
+                        g_EngineContext->Logf("You've forgotten to handle the particle function in the ParticleEmitter copy constructor!");
                         break;
                     }
                 }
@@ -928,7 +927,7 @@ namespace GT
         }
         else
         {
-            GT::PostError("Error deserializing particle emitter. Unknown chunk ID (%d).", header.id);
+            g_EngineContext->LogErrorf("Error deserializing particle emitter. Unknown chunk ID (%d).", header.id);
             return;
         }
     }

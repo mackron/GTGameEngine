@@ -2,7 +2,7 @@
 
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Scene.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -929,7 +929,7 @@ namespace GT
             }
             else
             {
-                Log("Warning: Failed to add component '%s' to scene node.", componentName);
+                g_EngineContext->Logf("Warning: Failed to add component '%s' to scene node.", componentName);
             }
         }
 
@@ -1310,7 +1310,7 @@ namespace GT
 
                 default:
                     {
-                        Log("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
+                        g_EngineContext->Logf("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         break;

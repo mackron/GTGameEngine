@@ -4,7 +4,7 @@
 #include <GTEngine/CPUVertexShader_Skinning.hpp>
 #include <GTEngine/Rendering.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -219,7 +219,7 @@ namespace GT
 
                     default:
                         {
-                            Log("Error deserializing Mesh. Material chunk is an unsupported version (%d).", header.version);
+                            g_EngineContext->Logf("Error deserializing Mesh. Material chunk is an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -250,7 +250,7 @@ namespace GT
 
                     default:
                         {
-                            Log("Error deserializing Mesh. Geometry chunk is an unsupported version (%d).", header.version);
+                            g_EngineContext->Logf("Error deserializing Mesh. Geometry chunk is an unsupported version (%d).", header.version);
                             break;
                         }
                     }

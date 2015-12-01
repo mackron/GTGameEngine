@@ -4,9 +4,7 @@
 #include <GTEngine/DefaultSceneUpdateManager.hpp>
 #include <GTEngine/DefaultScenePhysicsManager.hpp>
 #include <GTEngine/DefaultSceneCullingManager.hpp>
-#include <GTEngine/Logging.hpp>
 #include <GTEngine/Scripting.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/Core/ToString.hpp>
 #include <GTEngine/GTEngine.hpp>
 
@@ -351,7 +349,7 @@ namespace GT
                 // If a scene node of the same ID already exists, we have a bug somewhere.
                 if (this->sceneNodes.Exists(uniqueID))
                 {
-                    GT::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", ToString(uniqueID).c_str());
+                    g_EngineContext->LogErrorf("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", ToString(uniqueID).c_str());
                     return;
                 }
             }
@@ -381,7 +379,7 @@ namespace GT
         }
         else
         {
-            GT::PostError("Error: Attempting to add a scene node to a scene while it is already part of a different scene. Ignoring.");
+            g_EngineContext->LogErrorf("Error: Attempting to add a scene node to a scene while it is already part of a different scene. Ignoring.");
         }
     }
 
@@ -428,7 +426,7 @@ namespace GT
         }
         else
         {
-            Log("Warning: Attempting to remove a scene node from a scene it is not a part of. Ignoring.");
+            g_EngineContext->Logf("Warning: Attempting to remove a scene node from a scene it is not a part of. Ignoring.");
         }
     }
 
@@ -488,7 +486,7 @@ namespace GT
             {
                 if (!createNewIDIfExists)
                 {
-                    Log("Scene::CreateNewSceneNode(Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
+                    g_EngineContext->Logf("Scene::CreateNewSceneNode(Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
                     return nullptr;
                 }
 
@@ -555,7 +553,7 @@ namespace GT
             }
             else
             {
-                Log("Scene::CreateNewSceneNode(Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
+                g_EngineContext->Logf("Scene::CreateNewSceneNode(Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
 
                 delete sceneNode;
                 return nullptr;
@@ -1809,7 +1807,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        g_EngineContext->Logf("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -1817,7 +1815,7 @@ namespace GT
                 }
                 else
                 {
-                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Info, header.id);
+                    g_EngineContext->Logf("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Info, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -1879,7 +1877,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        g_EngineContext->Logf("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -1887,7 +1885,7 @@ namespace GT
                 }
                 else
                 {
-                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Properties, header.id);
+                    g_EngineContext->Logf("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Properties, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -1909,7 +1907,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        g_EngineContext->Logf("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -1917,7 +1915,7 @@ namespace GT
                 }
                 else
                 {
-                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Navigation, header.id);
+                    g_EngineContext->Logf("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Navigation, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -1940,7 +1938,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        g_EngineContext->Logf("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -1948,7 +1946,7 @@ namespace GT
                 }
                 else
                 {
-                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_NodesHierarchy, header.id);
+                    g_EngineContext->Logf("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_NodesHierarchy, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -2040,7 +2038,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        g_EngineContext->Logf("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -2048,7 +2046,7 @@ namespace GT
                 }
                 else
                 {
-                    Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Nodes, header.id);
+                    g_EngineContext->Logf("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Nodes, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
@@ -2141,7 +2139,7 @@ namespace GT
 
                 default:
                     {
-                        Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        g_EngineContext->Logf("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -2181,7 +2179,7 @@ namespace GT
 
                 default:
                     {
-                        Log("Error deserializing scene. The version of the scene node chunk (%d) is not supported.\n", header.version);
+                        g_EngineContext->Logf("Error deserializing scene. The version of the scene node chunk (%d) is not supported.\n", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -2207,7 +2205,7 @@ namespace GT
 
                 default:
                     {
-                        Log("Error deserializing scene. The version of the scene node hierarchy chunk (%d) is not supported.", header.version);
+                        g_EngineContext->Logf("Error deserializing scene. The version of the scene node hierarchy chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         // We may have nodes instantiated, so they'll need to be killed.
@@ -2274,7 +2272,7 @@ namespace GT
                 }
                 else
                 {
-                    Log("Error deserializing scene properties. Unsupported version (%d). Properties have been skipped.", header.version);
+                    g_EngineContext->Logf("Error deserializing scene properties. Unsupported version (%d). Properties have been skipped.", header.version);
                     deserializer.Seek(header.sizeInBytes);
                 }
             }
@@ -2294,7 +2292,7 @@ namespace GT
                 }
                 else
                 {
-                    Log("Error deserializing scene navigation. Unsupported version (%d). Navigation has been skipped.", header.version);
+                    g_EngineContext->Logf("Error deserializing scene navigation. Unsupported version (%d). Navigation has been skipped.", header.version);
                     deserializer.Seek(header.sizeInBytes);
                 }
             }
@@ -2327,19 +2325,19 @@ namespace GT
 
         if (readInfo == false)
         {
-            Log("Error deserializing scene. The info chunk (%d) was not found.", Serialization::ChunkID_Scene_Info);
+            g_EngineContext->Logf("Error deserializing scene. The info chunk (%d) was not found.", Serialization::ChunkID_Scene_Info);
             return false;
         }
 
         if (readSceneNodes == false)
         {
-            Log("Error deserializing scene. The scene node chunk (%d) was not found.", Serialization::ChunkID_Scene_Nodes);
+            g_EngineContext->Logf("Error deserializing scene. The scene node chunk (%d) was not found.", Serialization::ChunkID_Scene_Nodes);
             return false;
         }
 
         if (readSceneNodesHierarchy == false)
         {
-            Log("Error deserializing scene. The scene node hierarchy chunk (%d) was not found.", Serialization::ChunkID_Scene_NodesHierarchy);
+            g_EngineContext->Logf("Error deserializing scene. The scene node hierarchy chunk (%d) was not found.", Serialization::ChunkID_Scene_NodesHierarchy);
 
             // We may have nodes instantiated, so they'll need to be killed.
             for (size_t iNode = 0; iNode < deserializedNodes.count; ++iNode)
@@ -2888,7 +2886,7 @@ namespace GT
                     }
                     else
                     {
-                        //Log("Warning: Attempting to add a dynamics component without collision shapes. The rigid body has not been added to the dynamics world.");
+                        //g_EngineContext->Logf("Warning: Attempting to add a dynamics component without collision shapes. The rigid body has not been added to the dynamics world.");
                     }
                 }
             }
@@ -2907,7 +2905,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Warning: Attempting to add a proximity component without a collision shape. Ignoring.");
+                        g_EngineContext->Logf("Warning: Attempting to add a proximity component without a collision shape. Ignoring.");
                     }
                 }
 
@@ -2927,7 +2925,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Warning: Attempting to add a generic constraint component without attachments. Ignoring.");
+                        g_EngineContext->Logf("Warning: Attempting to add a generic constraint component without attachments. Ignoring.");
                     }
                 }
                 else if (Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
@@ -2939,7 +2937,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Warning: Attempting to add a cone twist constraint component without attachments. Ignoring.");
+                        g_EngineContext->Logf("Warning: Attempting to add a cone twist constraint component without attachments. Ignoring.");
                     }
                 }
                 else if (Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
@@ -2951,7 +2949,7 @@ namespace GT
                     }
                     else
                     {
-                        Log("Warning: Attempting to add a point-to-point constraint component without attachments. Ignoring.");
+                        g_EngineContext->Logf("Warning: Attempting to add a point-to-point constraint component without attachments. Ignoring.");
                     }
                 }
                 else

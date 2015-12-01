@@ -2,7 +2,6 @@
 
 #include <GTEngine/Components/PrefabComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
-#include <GTEngine/Logging.hpp>
 #include <GTEngine/GTEngine.hpp>
 
 namespace GT
@@ -36,7 +35,7 @@ namespace GT
     {
         char absolutePath[EASYVFS_MAX_PATH];
         if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
-            g_EngineContext->PostWarningMessage("Could not find absolute path of prefab.");
+            g_EngineContext->LogWarning("Could not find absolute path of prefab.");
         }
 
         this->prefabAbsolutePath = absolutePath;
@@ -113,7 +112,7 @@ namespace GT
             }
             else
             {
-                Log("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
+                g_EngineContext->Logf("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
                 deserializer.Seek(header.sizeInBytes);
             }
         }

@@ -5,7 +5,7 @@
 
 #include <GTEngine/ModelDefinition.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -557,13 +557,13 @@ namespace GT
             }
             else
             {
-                GT::PostError("Error creating model info for %s: %s", absolutePath.c_str(), importer.GetErrorString());
+                g_EngineContext->LogErrorf("Error creating model info for %s: %s", absolutePath.c_str(), importer.GetErrorString());
                 return false;
             }
         }
         else
         {
-            GT::PostError("Error importing %s: %s", absolutePath.c_str(), importer.GetErrorString());
+            g_EngineContext->LogErrorf("Error importing %s: %s", absolutePath.c_str(), importer.GetErrorString());
             return false;
         }
     }

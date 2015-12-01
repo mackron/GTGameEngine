@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTEngine/GUI/GUIServerEventHandler.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -9,12 +9,12 @@ namespace GT
     
     void GUIServerEventHandler::OnError(const char *msg)
     {
-        GT::PostError("%s", msg);
+        g_EngineContext->LogErrorf("%s", msg);
     }
     
     void GUIServerEventHandler::OnWarning(const char *msg)
     {
-        GT::PostError("%s", msg);
+        g_EngineContext->LogErrorf("%s", msg);
     }
     
     void GUIServerEventHandler::OnLog(const char *)

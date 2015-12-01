@@ -2,7 +2,6 @@
 
 #include <GTEngine/ParticleSystemDefinition.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Errors.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT
@@ -35,7 +34,7 @@ namespace GT
             }
             else
             {
-                GT::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
+                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
                 return false;
             }
         }
@@ -171,7 +170,7 @@ namespace GT
         }
         else
         {
-            GT::PostError("Error deserializing particle system definition. Unknown chunk ID (%d).", header.id);
+            g_EngineContext->LogErrorf("Error deserializing particle system definition. Unknown chunk ID (%d).", header.id);
         }
     }
 

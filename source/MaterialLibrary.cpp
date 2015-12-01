@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Core/Dictionary.hpp>
 #include <GTEngine/Core/List.hpp>
@@ -157,7 +156,7 @@ namespace GT
             }
             else
             {
-                GT::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return nullptr;
             }
         }

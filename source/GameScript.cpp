@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Scripting.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
@@ -102,7 +101,7 @@ namespace GT
     void GameScript::ErrorHandler::OnError(GT::Script &, const char* message)
     {
         this->script.SetLastError(message);
-        GT::PostError("Script Error: %s", message);
+        g_EngineContext->LogErrorf("Script Error: %s", message);
     }
 }
 

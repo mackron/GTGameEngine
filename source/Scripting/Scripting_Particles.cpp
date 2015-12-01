@@ -3,7 +3,7 @@
 #include <GTEngine/Scripting/Scripting_Particles.hpp>
 #include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/ParticleSystem.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -984,7 +984,7 @@ namespace GT
                         {
                             assert(false);
                                 
-                            Log("You've forgotten to add the particle function to the scripting environment!");
+                            g_EngineContext->Logf("You've forgotten to add the particle function to the scripting environment!");
                             break;
                         }
                     }
@@ -1057,7 +1057,7 @@ namespace GT
                             {
                                 assert(false);
                                     
-                                Log("You've forgotten to handle the particle function in the SetFunctionRangeByIndex() scripting function!");
+                                g_EngineContext->Logf("You've forgotten to handle the particle function in the SetFunctionRangeByIndex() scripting function!");
                                 break;
                             }
                         }

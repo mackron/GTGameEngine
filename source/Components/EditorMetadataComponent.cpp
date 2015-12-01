@@ -5,7 +5,7 @@
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTEngine/MeshBuilder.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
 
@@ -816,7 +816,7 @@ namespace GT
 
             default:
                 {
-                    Log("Error deserializing EditorMetadataComponent. Main chunk has an unsupported version (%d).", header.version);
+                    g_EngineContext->Logf("Error deserializing EditorMetadataComponent. Main chunk has an unsupported version (%d).", header.version);
                     break;
                 }
             }

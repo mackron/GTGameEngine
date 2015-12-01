@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTEngine/Core/System.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/Core/Strings/Create.hpp>
 #include <cstring>
 

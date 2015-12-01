@@ -2,7 +2,6 @@
 
 #include <GTEngine/PrefabLibrary.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/Core/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>
@@ -56,7 +55,7 @@ namespace GT
             }
             else
             {
-                GT::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return nullptr;
             }
         }
@@ -84,7 +83,7 @@ namespace GT
                 }
                 else
                 {
-                    GT::PostError("Can not find file: %s", fileName);
+                    g_EngineContext->LogErrorf("Can not find file: %s", fileName);
                 }
             }
             else
@@ -97,7 +96,7 @@ namespace GT
         }
         else
         {
-            GT::PostError("Can not find file: %s", fileName);
+            g_EngineContext->LogErrorf("Can not find file: %s", fileName);
         }
 
 

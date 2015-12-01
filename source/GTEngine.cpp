@@ -3,7 +3,6 @@
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
-#include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
@@ -41,15 +40,15 @@ namespace GT
 
 
         // With the log file created, we can startup all of our other sub-systems.
-        Log("Starting Rendering Sub-System...");
+        g_EngineContext->Logf("Starting Rendering Sub-System...");
         if (Renderer::Startup())
         {
-            Log("Renderer Caps:");
-            Log("    Max Colour Attachments: %d", Renderer::GetMaxColourAttachments());
-            Log("    Max Draw Buffers:       %d", Renderer::GetMaxDrawBuffers());
-            Log("    Max Texture Units:      %d", Renderer::GetMaxTextureUnits());
+            g_EngineContext->Logf("Renderer Caps:");
+            g_EngineContext->Logf("    Max Colour Attachments: %d", Renderer::GetMaxColourAttachments());
+            g_EngineContext->Logf("    Max Draw Buffers:       %d", Renderer::GetMaxDrawBuffers());
+            g_EngineContext->Logf("    Max Texture Units:      %d", Renderer::GetMaxTextureUnits());
 
-            Log("Loading Shaders...");
+            g_EngineContext->Logf("Loading Shaders...");
             ShaderLibrary::LoadFromDirectory("engine/shaders/glsl");
             ShaderLibrary::LoadFromDirectory("shaders/glsl");
         }
@@ -60,25 +59,25 @@ namespace GT
 
 
         // With sub-systems started up, we can startup our resource libraries.
-        Log("Initializing Texture Library...");
+        g_EngineContext->Logf("Initializing Texture Library...");
         Texture2DLibrary::Startup();
 
-        Log("Initializing Material Library...");
+        g_EngineContext->Logf("Initializing Material Library...");
         MaterialLibrary::Startup();
 
-        Log("Initializing Vertex Array Library...");
+        g_EngineContext->Logf("Initializing Vertex Array Library...");
         VertexArrayLibrary::Startup();
 
-        Log("Initializing Model Library...");
+        g_EngineContext->Logf("Initializing Model Library...");
         ModelLibrary::Startup();
 
-        Log("Initializing Prefab Library...");
+        g_EngineContext->Logf("Initializing Prefab Library...");
         PrefabLibrary::Startup();
 
-        Log("Initializing Particle System Library...");
+        g_EngineContext->Logf("Initializing Particle System Library...");
         ParticleSystemLibrary::Startup();
 
-        Log("Initializing Script Library...");
+        g_EngineContext->Logf("Initializing Script Library...");
         ScriptLibrary::Startup();
 
 

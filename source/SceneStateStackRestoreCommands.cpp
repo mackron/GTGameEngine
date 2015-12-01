@@ -3,7 +3,7 @@
 #include <GTEngine/SceneStateStackRestoreCommands.hpp>
 #include <GTEngine/SceneStateStackBranch.hpp>
 #include <GTEngine/Scene.hpp>
-#include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GT
 {
@@ -492,7 +492,7 @@ namespace GT
 
                 default:
                     {
-                        Log("Error deserializing SceneStateStackRestoreCommands. The main chunk is an unsupported version (%d).", header.version);
+                        g_EngineContext->Logf("Error deserializing SceneStateStackRestoreCommands. The main chunk is an unsupported version (%d).", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         break;

@@ -1,8 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/Logging.hpp>
-#include <GTEngine/Errors.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Core/ImageUtils.hpp>
 
 
@@ -206,32 +205,32 @@ namespace GT
                 unsigned int versionMajor;
                 unsigned int versionMinor;
                 gtglGetOpenGLVersion(&versionMajor, &versionMinor);
-                Log("OpenGL Version:  %d.%d", versionMajor, versionMinor);
-                Log("OpenGL Renderer: %s",    glGetString(GL_RENDERER));
-                Log("OpenGL Vendor:   %s",    glGetString(GL_VENDOR));
+                g_EngineContext->Logf("OpenGL Version:  %d.%d", versionMajor, versionMinor);
+                g_EngineContext->Logf("OpenGL Renderer: %s",    glGetString(GL_RENDERER));
+                g_EngineContext->Logf("OpenGL Vendor:   %s",    glGetString(GL_VENDOR));
 
-                Log("OpenGL Extensions:");
-                Log("    ARB_vertex_program:                 %s", GTGL_ARB_vertex_program                 ? "yes" : "no");
-                Log("    ARB_fragment_program:               %s", GTGL_ARB_fragment_program               ? "yes" : "no");
-                Log("    ARB_texture_rg:                     %s", GTGL_ARB_texture_rg                     ? "yes" : "no");
-                Log("    ARB_texture_float:                  %s", GTGL_ARB_texture_float                  ? "yes" : "no");
-                Log("    ARB_framebuffer_object:             %s", GTGL_ARB_framebuffer_object             ? "yes" : "no");
-                Log("    ARB_cl_event:                       %s", GTGL_ARB_cl_event                       ? "yes" : "no");
-                Log("    ARB_timer_query:                    %s", GTGL_ARB_timer_query                    ? "yes" : "no");
-                Log("    ARB_vertex_buffer_object:           %s", GTGL_ARB_vertex_buffer_object           ? "yes" : "no");
-                Log("    ARB_get_program_binary:             %s", GTGL_ARB_get_program_binary             ? "yes" : "no");
-                Log("    ARB_separate_shader_objects:        %s", GTGL_ARB_separate_shader_objects        ? "yes" : "no");
-                Log("    ARB_ES2_compatibility:              %s", GTGL_ARB_ES2_compatibility              ? "yes" : "no");
-                Log("    EXT_framebuffer_object:             %s", GTGL_EXT_framebuffer_object             ? "yes" : "no");
-                Log("    EXT_packed_depth_stencil:           %s", GTGL_EXT_packed_depth_stencil           ? "yes" : "no");
-                Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
-                Log("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
-                Log("    EXT_timer_query:                    %s", GTGL_EXT_timer_query                    ? "yes" : "no");
-                Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
-                Log("    NV_shader_buffer_load:              %s", GTGL_NV_shader_buffer_load              ? "yes" : "no");
-                Log("    NV_vertex_buffer_unified_memory:    %s", GTGL_NV_vertex_buffer_unified_memory    ? "yes" : "no");
-                Log("    NV_gpu_program4:                    %s", GTGL_NV_gpu_program4                    ? "yes" : "no");
-                Log("    NV_gpu_program5:                    %s", GTGL_NV_gpu_program5                    ? "yes" : "no");
+                g_EngineContext->Logf("OpenGL Extensions:");
+                g_EngineContext->Logf("    ARB_vertex_program:                 %s", GTGL_ARB_vertex_program                 ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_fragment_program:               %s", GTGL_ARB_fragment_program               ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_texture_rg:                     %s", GTGL_ARB_texture_rg                     ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_texture_float:                  %s", GTGL_ARB_texture_float                  ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_framebuffer_object:             %s", GTGL_ARB_framebuffer_object             ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_cl_event:                       %s", GTGL_ARB_cl_event                       ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_timer_query:                    %s", GTGL_ARB_timer_query                    ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_vertex_buffer_object:           %s", GTGL_ARB_vertex_buffer_object           ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_get_program_binary:             %s", GTGL_ARB_get_program_binary             ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_separate_shader_objects:        %s", GTGL_ARB_separate_shader_objects        ? "yes" : "no");
+                g_EngineContext->Logf("    ARB_ES2_compatibility:              %s", GTGL_ARB_ES2_compatibility              ? "yes" : "no");
+                g_EngineContext->Logf("    EXT_framebuffer_object:             %s", GTGL_EXT_framebuffer_object             ? "yes" : "no");
+                g_EngineContext->Logf("    EXT_packed_depth_stencil:           %s", GTGL_EXT_packed_depth_stencil           ? "yes" : "no");
+                g_EngineContext->Logf("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
+                g_EngineContext->Logf("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
+                g_EngineContext->Logf("    EXT_timer_query:                    %s", GTGL_EXT_timer_query                    ? "yes" : "no");
+                g_EngineContext->Logf("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
+                g_EngineContext->Logf("    NV_shader_buffer_load:              %s", GTGL_NV_shader_buffer_load              ? "yes" : "no");
+                g_EngineContext->Logf("    NV_vertex_buffer_unified_memory:    %s", GTGL_NV_vertex_buffer_unified_memory    ? "yes" : "no");
+                g_EngineContext->Logf("    NV_gpu_program4:                    %s", GTGL_NV_gpu_program4                    ? "yes" : "no");
+                g_EngineContext->Logf("    NV_gpu_program5:                    %s", GTGL_NV_gpu_program5                    ? "yes" : "no");
 
 
             #if !defined(NDEBUG)
@@ -267,7 +266,7 @@ namespace GT
             }
             else
             {
-                GT::PostError("Error creating OpenGL context. %s", gtglGetLastError()->message);
+                g_EngineContext->LogErrorf("Error creating OpenGL context. %s", gtglGetLastError()->message);
             }
         }
 

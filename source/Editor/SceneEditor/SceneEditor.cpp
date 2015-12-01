@@ -3,7 +3,6 @@
 #include <GTEngine/Editor/SceneEditor/SceneEditor.hpp>
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTEngine/Logging.hpp>
 #include <GTEngine/PrefabLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/IO.hpp>

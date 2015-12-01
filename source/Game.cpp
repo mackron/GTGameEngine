@@ -1,8 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Game.hpp>
-#include <GTEngine/Logging.hpp>
-#include <GTEngine/Errors.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
@@ -766,18 +764,18 @@ namespace GT
 
 
                 // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
-                Log("Loading GUI...");
+                g_EngineContext->Logf("Loading GUI...");
                 if (!this->InitialiseGUI())
                 {
-                    Log("Error loading GUI.");
+                    g_EngineContext->Logf("Error loading GUI.");
                 }
 
 
                 // Now we initialise the object that will watch the data directory.
-                Log("Loading Files Watcher...");
+                g_EngineContext->Logf("Loading Files Watcher...");
                 if (!this->InitialiseDataFilesWatcher())
                 {
-                    Log("Error starting up files watcher.");
+                    g_EngineContext->Logf("Error starting up files watcher.");
                 }
 
 
@@ -794,12 +792,12 @@ namespace GT
             else
             {
                 // We couldn't create a window, which means the renderer is not usable...
-                GT::PostError("Error initialising renderer.");
+                g_EngineContext->LogErrorf("Error initialising renderer.");
             }
         }
         else
         {
-            GT::PostError("Error initialising scripting environment.");
+            g_EngineContext->LogErrorf("Error initialising scripting environment.");
         }
 
         return false;
