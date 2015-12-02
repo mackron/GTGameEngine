@@ -1420,27 +1420,6 @@ namespace GT
 
 
 
-            // TODO: Delete these deprecated functions.
-#if 0
-            "function GTGUI.Element:AttachChild(element)"
-            "    GTGUI.Server.g_EngineContext->Logf('GTGUI: AttachChild() is deprecated. Use AppendChild() or PrependChild()');"
-            "    return self:AppendChild(element);"
-            "end;\n"
-            
-            "function GTGUI.Element:DetachChild(element)"
-            "    GTGUI.Server.g_EngineContext->Logf('GTGUI: DetachChild() is deprecated. Use RemoveChild()');"
-            "    return self:RemoveChild(element);"
-            "end;"
-
-            "function GTGUI.Element:DetachAllChildren()"
-            "    GTGUI.Server.g_EngineContext->Logf('GTGUI: DetachAllChildren() is deprecated. Use RemoveAllChildren()');"
-            "    self:RemoveAllChildren();"
-            "end;"
-#endif
-
-            
-            
-
 
             "function GTGUI.Element:GetChildCount()"
             "    return self.ChildCount;"

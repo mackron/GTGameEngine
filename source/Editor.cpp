@@ -10,8 +10,6 @@
 #include <GTGE/Core/Keyboard.hpp>
 #include <easy_path/easy_path.h>
 
-using namespace GT;     // <-- Delete me later when we change to the GT namespace!
-
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4355)   // 'this' used in initialise list.
