@@ -13,7 +13,7 @@ namespace GT
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ScriptComponent, "Script")
 
     ScriptComponent::ScriptComponent(SceneNode &node)
-        : Component(node), scripts(), publicVariables(), hasOnStartupBeenCalled(false)
+        : Component(node), scripts(), scriptRelativePaths(), publicVariables(), hasOnStartupBeenCalled(false)
     {
     }
 
@@ -34,6 +34,7 @@ namespace GT
             if (definition != nullptr)
             {
                 this->scripts.PushBack(definition);
+                this->scriptRelativePaths.PushBack(relativePath);
 
                 // We need to merge the variables from the new definition into our own. The definition is allowed to be null here, so
                 // that'll also need to be checked.
@@ -52,7 +53,7 @@ namespace GT
         return definition;
     }
 
-    void ScriptComponent::RemoveScript(const char* relativePath)
+    void ScriptComponent::RemoveScriptByRelativePath(const char* relativePath)
     {
         size_t index;
         auto definition = this->GetScriptDefinitionByRelativePath(relativePath, index);
@@ -74,6 +75,7 @@ namespace GT
 
 
         this->scripts.Remove(index);
+        this->scriptRelativePaths.Remove(index);
 
         this->OnChanged();
     }
@@ -119,12 +121,17 @@ namespace GT
 
     ScriptDefinition* ScriptComponent::GetScriptDefinitionByRelativePath(const char* relativePath, size_t &indexOut)
     {
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
+            return nullptr;
+        }
+
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto definition = this->scripts[i];
             if (definition != nullptr)
             {
-                if (Strings::Equal(definition->GetRelativePath(), relativePath))
+                if (Strings::Equal(definition->GetAbsolutePath(), absolutePath))
                 {
                     indexOut = i;
                     return definition;
@@ -148,7 +155,7 @@ namespace GT
     {
         assert(this->scripts[index] != nullptr);
         {
-            return this->scripts[index]->GetRelativePath();
+            return this->scriptRelativePaths[index].c_str();
         }
     }
 
@@ -714,11 +721,7 @@ namespace GT
 
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
-            auto script = this->scripts[i];
-            assert(script != nullptr);
-            {
-                intermediarySerializer.WriteString(script->GetRelativePath());
-            }
+            intermediarySerializer.WriteString(this->GetScriptRelativePathByIndex(i));
         }
 
 

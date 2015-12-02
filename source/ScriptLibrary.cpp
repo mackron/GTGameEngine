@@ -83,7 +83,7 @@ namespace GT
                 char* scriptString = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), absolutePath, nullptr);
                 if (scriptString != nullptr)
                 {
-                    auto newDefinition = new ScriptDefinition(absolutePath, relativePath, scriptString);
+                    auto newDefinition = new ScriptDefinition(absolutePath, scriptString);
                     LoadedDefinitions.Add(absolutePath, ScriptDefinitionReference(newDefinition, 1));
 
 
@@ -201,7 +201,7 @@ namespace GT
                     if (scriptString != nullptr)
                     {
                         definition->~ScriptDefinition();
-                        new (definition) ScriptDefinition(absolutePath, relativePath, scriptString);
+                        new (definition) ScriptDefinition(absolutePath, scriptString);
 
 
                         assert(GlobalGame != nullptr);

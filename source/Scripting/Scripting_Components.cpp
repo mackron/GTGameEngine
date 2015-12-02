@@ -3998,7 +3998,7 @@ namespace GT
             auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
             if (component != nullptr)
             {
-                component->RemoveScript(script.ToString(2));
+                component->RemoveScriptByRelativePath(script.ToString(2));
             }
 
             return 0;

@@ -8,8 +8,8 @@
 
 namespace GT
 {
-    ScriptDefinition::ScriptDefinition(const char* absolutePathIn, const char* relativePathIn, const char* scriptStringIn)
-        : absolutePath(absolutePathIn), relativePath(relativePathIn), scriptString(scriptStringIn),
+    ScriptDefinition::ScriptDefinition(const char* absolutePathIn, const char* scriptStringIn)
+        : absolutePath(absolutePathIn), scriptString(scriptStringIn),
           hasOnUpdate(false), hasOnStartup(false), hasOnShutdown(false), hasOnShow(false), hasOnHide(false),
           hasOnSceneNodeEnter(false), hasOnEnterSceneNode(false), hasOnSceneNodeLeave(false), hasOnLeaveSceneNode(false),
           hasOnMouseMove(false), hasOnMouseWheel(false), hasOnMouseButtonDown(false), hasOnMouseButtonUp(false), hasOnMouseButtonDoubleClick(false),
@@ -384,11 +384,6 @@ namespace GT
     const char* ScriptDefinition::GetAbsolutePath() const
     {
         return this->absolutePath.c_str();
-    }
-
-    const char* ScriptDefinition::GetRelativePath() const
-    {
-        return this->relativePath.c_str();
     }
 
     const char* ScriptDefinition::GetScriptString() const

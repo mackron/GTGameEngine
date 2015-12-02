@@ -3609,10 +3609,15 @@ namespace GT
 
     void SceneEditor::UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath)
     {
+        char scriptAbsolutePath[EASYVFS_MAX_PATH];
+        if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), scriptRelativePath, scriptAbsolutePath, sizeof(scriptAbsolutePath))) {
+            return;
+        }
+
         // If the scene is registered to the script we're going to reload the definition.
         if (m_scene.GetRegisteredScript() != nullptr)
         {
-            if (ScriptLibrary::IsLoaded(scriptRelativePath))
+            if (ScriptLibrary::IsLoaded(scriptAbsolutePath))
             {
                 auto definition = ScriptLibrary::Acquire(scriptRelativePath);
                 assert(definition != nullptr);
@@ -3644,7 +3649,7 @@ namespace GT
                         auto script = scriptComponent->GetScriptDefinitionByIndex(iScript);
                         assert(script != nullptr);
                         {
-                            if (Strings::Equal(script->GetRelativePath(), scriptRelativePath))
+                            if (Strings::Equal(script->GetAbsolutePath(), scriptAbsolutePath))
                             {
                                 scriptComponent->ReloadScript(iScript);
 

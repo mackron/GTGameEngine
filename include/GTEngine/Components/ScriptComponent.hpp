@@ -34,7 +34,7 @@ namespace GT
         /// Removes a script by it's file name.
         ///
         /// @param relativePath [in] The relative path of the file to remove.
-        void RemoveScript(const char* relativePath);
+        void RemoveScriptByRelativePath(const char* relativePath);
 
         /// Removes a script by it's index.
         ///
@@ -309,6 +309,9 @@ namespace GT
 
         /// The list of scripts attached to the component.
         Vector<ScriptDefinition*> scripts;
+
+        /// The list of relative paths of the scripts attached to this component. This maps to an item in "scripts" at the same location.
+        Vector<String> scriptRelativePaths;
 
         /// We keep a list of every public variable here. We keep these separate from the definitions because we want to allow these to have
         /// their own values.

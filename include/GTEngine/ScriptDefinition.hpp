@@ -15,7 +15,7 @@ namespace GT
     public:
 
         /// Constructor.
-        ScriptDefinition(const char* absolutePath, const char* relativePath, const char* scriptString);
+        ScriptDefinition(const char* absolutePath, const char* scriptString);
 
         /// Destructor.
         ~ScriptDefinition();
@@ -23,9 +23,6 @@ namespace GT
 
         /// Retrieves the absolute path.
         const char* GetAbsolutePath() const;
-
-        /// Retrieves the relative path.
-        const char* GetRelativePath() const;
 
         /// Retrieves the script string.
         const char* GetScriptString() const;
@@ -132,9 +129,6 @@ namespace GT
 
         /// The absolute path of the script.
         String absolutePath;
-
-        /// The relative path of the script.
-        String relativePath;
 
         /// The script string.
         String scriptString;
