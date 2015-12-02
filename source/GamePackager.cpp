@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GamePackager.hpp>
-#include <GTEngine/IO.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GamePackager.hpp>
+#include <GTGE/IO.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 #include <easy_fs/easy_vfs.h>
 

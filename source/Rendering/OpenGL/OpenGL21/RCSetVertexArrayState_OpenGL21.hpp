@@ -4,7 +4,7 @@
 #define GT_Rendering_OpenGL21_RCSetVertexArrayState
 
 #include "../../RenderCommand.hpp"
-#include <GTEngine/Rendering/VertexFormat.hpp>
+#include <GTGE/Rendering/VertexFormat.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 

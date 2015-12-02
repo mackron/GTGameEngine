@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Physics/btEllipsoidShape.hpp>
+#include <GTGE/Physics/btEllipsoidShape.hpp>
 
 btEllipsoidShape::btEllipsoidShape(const btVector3 &semiAxes)
     : btConvexInternalShape()

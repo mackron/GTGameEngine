@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTEngine/Assets/MaterialAsset.hpp>
+#include <GTGE/Assets/MaterialAsset.hpp>
 #include <easy_draw/easy_mtl.h>
 #include <easy_util/easy_util.h>
 

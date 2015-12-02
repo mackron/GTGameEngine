@@ -14,15 +14,15 @@
  */
 #define _CRT_SECURE_NO_WARNINGS
 #include <sstream>
-#include <GTEngine/HACD/hacdGraph.h>
-#include <GTEngine/HACD/hacdHACD.h>
-#include <GTEngine/HACD/hacdICHull.h>
+#include <GTGE/HACD/hacdGraph.h>
+#include <GTGE/HACD/hacdHACD.h>
+#include <GTGE/HACD/hacdICHull.h>
 #include <string.h>
 #include <algorithm>
 #include <iterator>
 #include <limits>
-#include <GTEngine/HACD/hacdMeshDecimator.h>
-#include <GTEngine/HACD/hacdRaycastMesh.h>
+#include <GTGE/HACD/hacdMeshDecimator.h>
+#include <GTGE/HACD/hacdRaycastMesh.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

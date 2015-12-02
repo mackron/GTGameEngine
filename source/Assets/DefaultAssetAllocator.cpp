@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTEngine/Config.hpp>
+#include <GTGE/Config.hpp>
 #include <easy_path/easy_path.h>
 #include <easy_util/easy_util.h>
 

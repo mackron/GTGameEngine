@@ -2,7 +2,7 @@
 
 #ifdef __linux__
 
-#include <GTEngine/Core/Windowing/X11/X11Keys.hpp>
+#include <GTGE/Core/Windowing/X11/X11Keys.hpp>
 
 namespace GT
 {

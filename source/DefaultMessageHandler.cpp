@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/DefaultMessageHandler.hpp>
+#include <GTGE/DefaultMessageHandler.hpp>
 
 namespace GT
 {

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Prefab.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Prefab.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

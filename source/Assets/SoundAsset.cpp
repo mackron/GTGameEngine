@@ -1,6 +1,6 @@
 // Copyright (C) 2015 David Reid. See included LICENCE file.
 
-#include <GTEngine/Assets/SoundAsset.hpp>
+#include <GTGE/Assets/SoundAsset.hpp>
 
 namespace GT
 {

@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ApplicationConfig.hpp>
-#include <GTEngine/Script.hpp>
-#include <GTEngine/Core/String.hpp>
-#include <GTEngine/Core/stdlib.hpp>
+#include <GTGE/ApplicationConfig.hpp>
+#include <GTGE/Script.hpp>
+#include <GTGE/Core/String.hpp>
+#include <GTGE/Core/stdlib.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT

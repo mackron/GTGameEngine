@@ -1,13 +1,13 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Scripting.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/IO.hpp>
-#include <GTEngine/PrefabLibrary.hpp>
-#include <GTEngine/ScriptLibrary.hpp>
-#include <GTEngine/Physics/CollisionShapeTypes.hpp>
+#include <GTGE/Scripting.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/IO.hpp>
+#include <GTGE/PrefabLibrary.hpp>
+#include <GTGE/ScriptLibrary.hpp>
+#include <GTGE/Physics/CollisionShapeTypes.hpp>
 #include <easy_path/easy_path.h>
-#include <GTEngine/Core/System.hpp>
+#include <GTGE/Core/System.hpp>
 
 // Temp until we get some more support in Script.
 extern "C"

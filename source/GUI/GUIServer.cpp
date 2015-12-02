@@ -1,13 +1,13 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIServer.hpp>
-#include <GTEngine/GUI/GUIStandardLibrary.hpp>
-#include <GTEngine/Core/Strings/Tokenizer.hpp>
-#include <GTEngine/Core/Strings/Create.hpp>
-#include <GTEngine/Core/Strings/Equal.hpp>
-#include <GTEngine/Core/ToString.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
+#include <GTGE/GUI/GUIStandardLibrary.hpp>
+#include <GTGE/Core/Strings/Tokenizer.hpp>
+#include <GTGE/Core/Strings/Create.hpp>
+#include <GTGE/Core/Strings/Equal.hpp>
+#include <GTGE/Core/ToString.hpp>
 #include <cassert>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
 // GUIServer

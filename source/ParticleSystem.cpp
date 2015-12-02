@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ParticleSystem.hpp>
+#include <GTGE/ParticleSystem.hpp>
 
 namespace GT
 {

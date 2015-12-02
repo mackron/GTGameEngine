@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Profiler.hpp>
-#include <GTEngine/Core/Math.hpp>
+#include <GTGE/Profiler.hpp>
+#include <GTGE/Core/Math.hpp>
 
 namespace GT
 {

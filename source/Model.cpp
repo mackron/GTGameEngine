@@ -1,11 +1,11 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Model.hpp>
-#include <GTEngine/VertexArrayLibrary.hpp>
-#include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
-#include <GTEngine/Math.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Core/Timing.hpp>
+#include <GTGE/Model.hpp>
+#include <GTGE/VertexArrayLibrary.hpp>
+#include <GTGE/CPUVertexShader_SimpleTransform.hpp>
+#include <GTGE/Math.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Core/Timing.hpp>
 #include <cfloat>
 
 #undef min

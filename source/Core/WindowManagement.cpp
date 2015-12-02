@@ -1,12 +1,12 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/WindowManagement.hpp>
+#include <GTGE/Core/WindowManagement.hpp>
 
 #ifdef __linux__
-#include <GTEngine/Core/Windowing/X11/X11.hpp>
-#include <GTEngine/Core/Windowing/X11/X11Keys.hpp>
-#include <GTEngine/Core/Threading.hpp>
-#include <GTEngine/Core/Map.hpp>
+#include <GTGE/Core/Windowing/X11/X11.hpp>
+#include <GTGE/Core/Windowing/X11/X11Keys.hpp>
+#include <GTGE/Core/Threading.hpp>
+#include <GTGE/Core/Map.hpp>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -854,8 +854,8 @@ namespace GT
     }
 }
 #else
-#include <GTEngine/Core/Windowing/Win32/Win32.hpp>
-#include <GTEngine/Core/windows.hpp>
+#include <GTGE/Core/Windowing/Win32/Win32.hpp>
+#include <GTGE/Core/windows.hpp>
 #include <windowsx.h>
 #include <cstdio>
 

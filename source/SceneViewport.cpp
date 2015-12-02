@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/SceneViewport.hpp>
-#include <GTEngine/Scene.hpp>
+#include <GTGE/SceneViewport.hpp>
+#include <GTGE/Scene.hpp>
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/epsilon.hpp>

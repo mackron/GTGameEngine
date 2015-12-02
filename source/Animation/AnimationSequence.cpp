@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Animation/AnimationSequence.hpp>
+#include <GTGE/Animation/AnimationSequence.hpp>
 
 namespace GT
 {

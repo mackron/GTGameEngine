@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
+#include <GTGE/CPUVertexShader_SimpleTransform.hpp>
 
 namespace GT
 {

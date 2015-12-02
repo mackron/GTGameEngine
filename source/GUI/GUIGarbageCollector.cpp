@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIGarbageCollector.hpp>
-#include <GTEngine/GUI/GUIElement.hpp>
-#include <GTEngine/GUI/GUIServer.hpp>
-#include <GTEngine/GUI/Rendering/GUIMesh.hpp>
+#include <GTGE/GUI/GUIGarbageCollector.hpp>
+#include <GTGE/GUI/GUIElement.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
+#include <GTGE/GUI/Rendering/GUIMesh.hpp>
 
 namespace GT
 {

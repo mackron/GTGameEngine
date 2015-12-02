@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <vector>
-#include <GTEngine/HACD/hacdMeshDecimator.h>
+#include <GTGE/HACD/hacdMeshDecimator.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

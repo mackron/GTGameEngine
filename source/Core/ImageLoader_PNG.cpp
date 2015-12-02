@@ -3,10 +3,10 @@
 
 #ifndef GTLIB_NO_PNG
 
-#include <GTEngine/Core/stdlib.hpp>
+#include <GTGE/Core/stdlib.hpp>
 #include "ImageLoader_PNG.hpp"
 
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_fs/easy_vfs.h>
 
 namespace GT

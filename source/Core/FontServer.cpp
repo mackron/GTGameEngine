@@ -1,12 +1,12 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/FontServer.hpp>
+#include <GTGE/Core/FontServer.hpp>
 #include "FontEngine_FCFT.hpp"
 
 #include "FontEngine_FCFT.hpp"
 #include "FontEngine_Win32.hpp"
 
-#include <GTEngine/Core/System.hpp>
+#include <GTGE/Core/System.hpp>
 #include <cassert>
 
 namespace GT

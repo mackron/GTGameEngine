@@ -27,7 +27,7 @@
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
-#include <GTEngine/Core/Vector.hpp>
+#include <GTGE/Core/Vector.hpp>
 
 namespace GT
 {

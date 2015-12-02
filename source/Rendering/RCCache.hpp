@@ -3,7 +3,7 @@
 #ifndef GT_Rendering_RCCache
 #define GT_Rendering_RCCache
 
-#include <GTEngine/Core/Vector.hpp>
+#include <GTGE/Core/Vector.hpp>
 #include <new>
 
 namespace GT

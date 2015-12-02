@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Projectile.hpp>
+#include <GTGE/Projectile.hpp>
 
 namespace GT
 {
@@ -79,7 +79,7 @@ namespace GT
 }
 
 
-#include <GTEngine/Scene.hpp>
+#include <GTGE/Scene.hpp>
 
 namespace GT
 {

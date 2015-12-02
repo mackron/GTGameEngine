@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Mesh.hpp>
-#include <GTEngine/CPUVertexShader_Skinning.hpp>
-#include <GTEngine/Rendering.hpp>
-#include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Mesh.hpp>
+#include <GTGE/CPUVertexShader_Skinning.hpp>
+#include <GTGE/Rendering.hpp>
+#include <GTGE/MaterialLibrary.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

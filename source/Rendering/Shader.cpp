@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Rendering/Shader.hpp>
-#include <GTEngine/Material.hpp>
+#include <GTGE/Rendering/Shader.hpp>
+#include <GTGE/Material.hpp>
 
 namespace GT
 {

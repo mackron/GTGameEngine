@@ -1,12 +1,12 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIElement.hpp>
-#include <GTEngine/GUI/GUIServer.hpp>
-#include <GTEngine/Core/Strings/Create.hpp>
-#include <GTEngine/Core/Strings/Tokenizer.hpp>
-#include <GTEngine/Core/ToString.hpp>
-#include <GTEngine/Core/Math.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GUI/GUIElement.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
+#include <GTGE/Core/Strings/Create.hpp>
+#include <GTGE/Core/Strings/Tokenizer.hpp>
+#include <GTGE/Core/ToString.hpp>
+#include <GTGE/Core/Math.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

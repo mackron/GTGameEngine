@@ -18,10 +18,10 @@
 
 #include <float.h>
 #include <string.h>
-#include <GTEngine/Recast/DetourLocalBoundary.h>
-#include <GTEngine/Recast/DetourNavMeshQuery.h>
-#include <GTEngine/Recast/DetourCommon.h>
-#include <GTEngine/Recast/DetourAssert.h>
+#include <GTGE/Recast/DetourLocalBoundary.h>
+#include <GTGE/Recast/DetourNavMeshQuery.h>
+#include <GTGE/Recast/DetourCommon.h>
+#include <GTGE/Recast/DetourAssert.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

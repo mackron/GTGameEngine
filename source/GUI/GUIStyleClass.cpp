@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIStyleClass.hpp>
-#include <GTEngine/GUI/GUIStyleServer.hpp>
-#include <GTEngine/Core/Strings/Create.hpp>
+#include <GTGE/GUI/GUIStyleClass.hpp>
+#include <GTGE/GUI/GUIStyleServer.hpp>
+#include <GTGE/Core/Strings/Create.hpp>
 #include "GUIStyleAttributeHandler.hpp"
 
 namespace GT

@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/Editor3DViewportEventHandler.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/SceneViewport.hpp>
-#include <GTEngine/ShaderLibrary.hpp>
+#include <GTGE/Editor/Editor3DViewportEventHandler.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/SceneViewport.hpp>
+#include <GTGE/ShaderLibrary.hpp>
 
 namespace GT
 {

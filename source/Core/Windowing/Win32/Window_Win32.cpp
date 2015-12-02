@@ -2,8 +2,8 @@
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
 
-#include <GTEngine/Core/Window.hpp>
-#include <GTEngine/Core/Windowing/Win32/Win32.hpp>
+#include <GTGE/Core/Window.hpp>
+#include <GTGE/Core/Windowing/Win32/Win32.hpp>
 
 
 namespace GT

@@ -3,7 +3,7 @@
 #ifndef GT_Rendering_Framebuffer_OpenGL21
 #define GT_Rendering_Framebuffer_OpenGL21
 
-#include <GTEngine/Rendering/Framebuffer.hpp>
+#include <GTGE/Rendering/Framebuffer.hpp>
 #include "FramebufferState_OpenGL21.hpp"
 
 namespace GT

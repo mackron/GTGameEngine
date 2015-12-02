@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/SceneCullingDbvtPolicy.hpp>
-#include <GTEngine/SceneNode.hpp>
-#include <GTEngine/CollisionGroups.hpp>
+#include <GTGE/SceneCullingDbvtPolicy.hpp>
+#include <GTGE/SceneNode.hpp>
+#include <GTGE/CollisionGroups.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

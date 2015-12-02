@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIServerXMLParser.hpp>
-#include <GTEngine/Core/Strings/Size.hpp>
-#include <GTEngine/Core/Strings/Equal.hpp>
+#include <GTGE/GUI/GUIServerXMLParser.hpp>
+#include <GTGE/Core/Strings/Size.hpp>
+#include <GTGE/Core/Strings/Equal.hpp>
 #include <cstring>
 
 // A hate the using command, but it's such a pain doing Strings all the time...
@@ -16,7 +16,7 @@ using namespace GT;
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
-#include <GTEngine/Core/rapidxml.hpp>
+#include <GTGE/Core/rapidxml.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif

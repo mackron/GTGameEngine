@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Strings/NextChar.hpp>
+#include <GTGE/Core/Strings/NextChar.hpp>
 
 namespace GT
 {

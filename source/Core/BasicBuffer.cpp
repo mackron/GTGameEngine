@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/BasicBuffer.hpp>
-#include <GTEngine/Core/stdlib.hpp>
+#include <GTGE/Core/BasicBuffer.hpp>
+#include <GTGE/Core/stdlib.hpp>
 #include <cstring>  // For memory stuff.
 
 namespace GT

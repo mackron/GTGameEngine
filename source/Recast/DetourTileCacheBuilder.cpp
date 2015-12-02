@@ -16,10 +16,10 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-#include <GTEngine/Recast/DetourCommon.h>
-#include <GTEngine/Recast/DetourStatus.h>
-#include <GTEngine/Recast/DetourAssert.h>
-#include <GTEngine/Recast/DetourTileCacheBuilder.h>
+#include <GTGE/Recast/DetourCommon.h>
+#include <GTGE/Recast/DetourStatus.h>
+#include <GTGE/Recast/DetourAssert.h>
+#include <GTGE/Recast/DetourTileCacheBuilder.h>
 #include <string.h>
 #include <math.h>
 

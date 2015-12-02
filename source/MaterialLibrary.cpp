@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Core/Dictionary.hpp>
-#include <GTEngine/Core/List.hpp>
-#include <GTEngine/Core/Vector.hpp>
+#include <GTGE/MaterialLibrary.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Core/Dictionary.hpp>
+#include <GTGE/Core/List.hpp>
+#include <GTGE/Core/Vector.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>
 

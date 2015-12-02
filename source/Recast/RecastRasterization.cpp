@@ -19,9 +19,9 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <stdio.h>
-#include <GTEngine/Recast/Recast.h>
-#include <GTEngine/Recast/RecastAlloc.h>
-#include <GTEngine/Recast/RecastAssert.h>
+#include <GTGE/Recast/Recast.h>
+#include <GTGE/Recast/RecastAlloc.h>
+#include <GTGE/Recast/RecastAssert.h>
 
 inline bool overlapBounds(const float* amin, const float* amax, const float* bmin, const float* bmax)
 {

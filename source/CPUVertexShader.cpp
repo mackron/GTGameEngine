@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/CPUVertexShader.hpp>
-#include <GTEngine/ThreadCache.hpp>
-#include <GTEngine/Core/Timing.hpp>
+#include <GTGE/CPUVertexShader.hpp>
+#include <GTGE/ThreadCache.hpp>
+#include <GTGE/Core/Timing.hpp>
 
 
 // Helpers

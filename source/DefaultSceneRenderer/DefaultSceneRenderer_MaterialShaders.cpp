@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MaterialShaders.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
+#include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_MaterialShaders.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
 
 namespace GT
 {

@@ -2,13 +2,13 @@
 
 #ifdef __linux__
 
-#include <GTEngine/Core/WindowManagement.hpp>
-#include <GTEngine/Core/Windowing/X11/X11.hpp>
-#include <GTEngine/Core/Windowing/X11/X11Keys.hpp>
-#include <GTEngine/Core/Map.hpp>
-#include <GTEngine/Core/Dictionary.hpp>      // <-- For named window properties.
-#include <GTEngine/Core/Log.hpp>
-#include <GTEngine/Core/Keyboard.hpp>
+#include <GTGE/Core/WindowManagement.hpp>
+#include <GTGE/Core/Windowing/X11/X11.hpp>
+#include <GTGE/Core/Windowing/X11/X11Keys.hpp>
+#include <GTGE/Core/Map.hpp>
+#include <GTGE/Core/Dictionary.hpp>      // <-- For named window properties.
+#include <GTGE/Core/Log.hpp>
+#include <GTGE/Core/Keyboard.hpp>
 
 #include <X11/XKBlib.h>
 #include <X11/extensions/xf86vmode.h>

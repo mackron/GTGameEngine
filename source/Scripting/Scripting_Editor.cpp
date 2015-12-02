@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Scripting/Scripting_Editor.hpp>
-#include <GTEngine/Scripting/Scripting_Math.hpp>
-#include <GTEngine/Editor.hpp>
+#include <GTGE/Scripting/Scripting_Editor.hpp>
+#include <GTGE/Scripting/Scripting_Math.hpp>
+#include <GTGE/Editor.hpp>
 
 namespace GT
 {

@@ -1,17 +1,17 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/SceneEditor/SceneEditor.hpp>
-#include <GTEngine/Editor.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/PrefabLibrary.hpp>
-#include <GTEngine/ScriptLibrary.hpp>
-#include <GTEngine/IO.hpp>
-#include <GTEngine/Scripting.hpp>
-#include <GTEngine/VertexArrayLibrary.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Core/Serializer.hpp>
-#include <GTEngine/Core/Deserializer.hpp>
-#include <GTEngine/Core/String.hpp>
+#include <GTGE/Editor/SceneEditor/SceneEditor.hpp>
+#include <GTGE/Editor.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/PrefabLibrary.hpp>
+#include <GTGE/ScriptLibrary.hpp>
+#include <GTGE/IO.hpp>
+#include <GTGE/Scripting.hpp>
+#include <GTGE/VertexArrayLibrary.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Core/Serializer.hpp>
+#include <GTGE/Core/Deserializer.hpp>
+#include <GTGE/Core/String.hpp>
 #include <easy_path/easy_path.h>
 
 #undef min

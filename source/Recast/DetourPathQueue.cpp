@@ -17,11 +17,11 @@
 //
 
 #include <string.h>
-#include <GTEngine/Recast/DetourPathQueue.h>
-#include <GTEngine/Recast/DetourNavMesh.h>
-#include <GTEngine/Recast/DetourNavMeshQuery.h>
-#include <GTEngine/Recast/DetourAlloc.h>
-#include <GTEngine/Recast/DetourCommon.h>
+#include <GTGE/Recast/DetourPathQueue.h>
+#include <GTGE/Recast/DetourNavMesh.h>
+#include <GTGE/Recast/DetourNavMeshQuery.h>
+#include <GTGE/Recast/DetourAlloc.h>
+#include <GTGE/Recast/DetourCommon.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

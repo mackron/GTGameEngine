@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/SceneEditor/SceneEditorPrefabLinker.hpp>
-#include <GTEngine/Editor/SceneEditor/SceneEditor.hpp>
+#include <GTGE/Editor/SceneEditor/SceneEditorPrefabLinker.hpp>
+#include <GTGE/Editor/SceneEditor/SceneEditor.hpp>
 
 namespace GT
 {

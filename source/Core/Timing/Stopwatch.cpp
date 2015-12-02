@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Timing/Stopwatch.hpp>
+#include <GTGE/Core/Timing/Stopwatch.hpp>
 
 namespace GT
 {

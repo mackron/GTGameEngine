@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ScriptDefinition.hpp>
-#include <GTEngine/ScriptLibrary.hpp>
-#include <GTEngine/Script.hpp>
-#include <GTEngine/Core/Strings/LineIterator.hpp>
-#include <GTEngine/Core/Strings/Tokenizer.hpp>
+#include <GTGE/ScriptDefinition.hpp>
+#include <GTGE/ScriptLibrary.hpp>
+#include <GTGE/Script.hpp>
+#include <GTGE/Core/Strings/LineIterator.hpp>
+#include <GTGE/Core/Strings/Tokenizer.hpp>
 
 namespace GT
 {

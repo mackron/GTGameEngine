@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/GUIEventHandler.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GUIEventHandler.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

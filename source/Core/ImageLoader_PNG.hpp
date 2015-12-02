@@ -4,8 +4,8 @@
 #define GT_ImageLoader_PNG
 #ifndef GTLIB_NO_PNG
 
-#include <GTEngine/Core/ImageLoader.hpp>
-#include <GTEngine/external/stb_image.h>
+#include <GTGE/Core/ImageLoader.hpp>
+#include <GTGE/external/stb_image.h>
 
 namespace GT
 {

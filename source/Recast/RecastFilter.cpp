@@ -19,8 +19,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <stdio.h>
-#include <GTEngine/Recast/Recast.h>
-#include <GTEngine/Recast/RecastAssert.h>
+#include <GTGE/Recast/Recast.h>
+#include <GTGE/Recast/RecastAssert.h>
 
 /// @par
 ///

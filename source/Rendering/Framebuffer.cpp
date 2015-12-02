@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Rendering/Framebuffer.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
+#include <GTGE/Rendering/Framebuffer.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
 
 namespace GT
 {

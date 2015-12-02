@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Utilities/DynamicCharacterController.hpp>
-#include <GTEngine/Scene.hpp>
+#include <GTGE/Utilities/DynamicCharacterController.hpp>
+#include <GTGE/Scene.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

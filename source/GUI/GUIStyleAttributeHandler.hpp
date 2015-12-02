@@ -3,9 +3,9 @@
 #ifndef GT_GUIStyleAttributeHandler_hpp_
 #define GT_GUIStyleAttributeHandler_hpp_
 
-#include <GTEngine/GUI/GUIStyleStack.hpp>
-#include <GTEngine/GUI/GUIElement.hpp>
-#include <GTEngine/Core/String.hpp>
+#include <GTGE/GUI/GUIStyleStack.hpp>
+#include <GTGE/GUI/GUIElement.hpp>
+#include <GTGE/Core/String.hpp>
 
 namespace GT
 {

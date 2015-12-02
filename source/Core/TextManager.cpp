@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/TextManager.hpp>
-#include <GTEngine/Core/FontServer.hpp>
-#include <GTEngine/Core/Strings/LineIterator.hpp>
-#include <GTEngine/Core/Windowing/Clipboard.hpp>
-#include <GTEngine/Core/Math.hpp>
+#include <GTGE/Core/TextManager.hpp>
+#include <GTGE/Core/FontServer.hpp>
+#include <GTGE/Core/Strings/LineIterator.hpp>
+#include <GTGE/Core/Windowing/Clipboard.hpp>
+#include <GTGE/Core/Math.hpp>
 #include <cassert>
 
 namespace GT

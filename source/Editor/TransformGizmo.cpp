@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/TransformGizmo.hpp>
-#include <GTEngine/ModelLibrary.hpp>            // <-- Can delete this.
-#include <GTEngine/MaterialLibrary.hpp>
+#include <GTGE/Editor/TransformGizmo.hpp>
+#include <GTGE/ModelLibrary.hpp>            // <-- Can delete this.
+#include <GTGE/MaterialLibrary.hpp>
 
 namespace GT
 {

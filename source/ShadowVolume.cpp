@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ShadowVolume.hpp>
-#include <GTEngine/MeshBuilder.hpp>
+#include <GTGE/ShadowVolume.hpp>
+#include <GTGE/MeshBuilder.hpp>
 
 namespace GT
 {

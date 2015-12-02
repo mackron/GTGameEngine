@@ -5,7 +5,7 @@
 
 #include "../../RenderCommand.hpp"
 #include "FramebufferState_OpenGL21.hpp"
-#include <GTEngine/Core/Map.hpp>
+#include <GTGE/Core/Map.hpp>
 #include <cstdint>
 
 namespace GT

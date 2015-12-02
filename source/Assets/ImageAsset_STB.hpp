@@ -3,7 +3,7 @@
 #ifndef GT_ImageAsset_STB
 #define GT_ImageAsset_STB
 
-#include <GTEngine/Assets/ImageAsset.hpp>
+#include <GTGE/Assets/ImageAsset.hpp>
 
 namespace GT
 {

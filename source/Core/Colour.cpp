@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Colour.hpp>
-#include <GTEngine/Core/Strings/Trim.hpp>
-#include <GTEngine/Core/Parse.hpp>
-#include <GTEngine/Core/stdio.hpp>  // for snprintf
+#include <GTGE/Core/Colour.hpp>
+#include <GTGE/Core/Strings/Trim.hpp>
+#include <GTGE/Core/Parse.hpp>
+#include <GTGE/Core/stdio.hpp>  // for snprintf
 
 namespace GT
 {

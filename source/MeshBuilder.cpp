@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/MeshBuilder.hpp>
-#include <GTEngine/Physics.hpp>
+#include <GTGE/MeshBuilder.hpp>
+#include <GTGE/Physics.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 /// This file contains the raw image data for images used by the standard library.
-#include <GTEngine/GUI/GUIStandardLibrary.hpp>
+#include <GTGE/GUI/GUIStandardLibrary.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

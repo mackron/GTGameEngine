@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/FontEventHandler.hpp>
-#include <GTEngine/Core/FontServer.hpp>
+#include <GTGE/Core/FontEventHandler.hpp>
+#include <GTGE/Core/FontServer.hpp>
 
 namespace GT
 {

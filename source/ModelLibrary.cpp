@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ModelLibrary.hpp>
-#include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/VertexArrayLibrary.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/ModelLibrary.hpp>
+#include <GTGE/MaterialLibrary.hpp>
+#include <GTGE/VertexArrayLibrary.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)

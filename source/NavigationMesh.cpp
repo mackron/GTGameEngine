@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/NavigationMesh.hpp>
-#include <GTEngine/Scene.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Recast/RecastAlloc.h>
+#include <GTGE/NavigationMesh.hpp>
+#include <GTGE/Scene.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Recast/RecastAlloc.h>
 
 namespace GT
 {

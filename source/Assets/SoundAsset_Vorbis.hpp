@@ -3,10 +3,10 @@
 #ifndef GT_SoundAsset_Vorbis
 #define GT_SoundAsset_Vorbis
 
-#include <GTEngine/Config.hpp>
+#include <GTGE/Config.hpp>
 
 #if defined(GT_BUILD_VORBIS)
-#include <GTEngine/Assets/SoundAsset.hpp>
+#include <GTGE/Assets/SoundAsset.hpp>
 
 namespace GT
 {

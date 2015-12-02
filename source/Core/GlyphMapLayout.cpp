@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/GlyphMapLayout.hpp>
+#include <GTGE/Core/GlyphMapLayout.hpp>
 
 namespace GT
 {

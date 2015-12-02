@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/GameWindowEventHandler.hpp>
-#include <GTEngine/Game.hpp>
+#include <GTGE/GameWindowEventHandler.hpp>
+#include <GTGE/Game.hpp>
 
 namespace GT
 {

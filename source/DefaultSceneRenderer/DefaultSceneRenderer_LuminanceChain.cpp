@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_LuminanceChain.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/VertexArrayLibrary.hpp>
+#include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_LuminanceChain.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
+#include <GTGE/VertexArrayLibrary.hpp>
 
 namespace GT
 {

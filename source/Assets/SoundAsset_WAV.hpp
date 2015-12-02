@@ -3,10 +3,10 @@
 #ifndef GT_SoundAsset_WAV
 #define GT_SoundAsset_WAV
 
-#include <GTEngine/Config.hpp>
+#include <GTGE/Config.hpp>
 
 #if defined(GT_BUILD_WAV)
-#include <GTEngine/Assets/SoundAsset.hpp>
+#include <GTGE/Assets/SoundAsset.hpp>
 
 namespace GT
 {

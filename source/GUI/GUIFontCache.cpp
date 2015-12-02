@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIFontCache.hpp>
+#include <GTGE/GUI/GUIFontCache.hpp>
 
 namespace GT
 {

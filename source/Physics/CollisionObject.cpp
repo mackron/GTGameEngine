@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Physics/CollisionObject.hpp>
-#include <GTEngine/Physics/BaseCollisionWorld.hpp>
+#include <GTGE/Physics/CollisionObject.hpp>
+#include <GTGE/Physics/BaseCollisionWorld.hpp>
 
 namespace GT
 {

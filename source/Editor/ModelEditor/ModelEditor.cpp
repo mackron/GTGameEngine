@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/ModelEditor/ModelEditor.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/IO.hpp>
-#include <GTEngine/MaterialLibrary.hpp>
+#include <GTGE/Editor/ModelEditor/ModelEditor.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/IO.hpp>
+#include <GTGE/MaterialLibrary.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)

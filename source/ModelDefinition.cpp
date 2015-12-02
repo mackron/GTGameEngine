@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ModelDefinition.hpp>
-#include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/IO.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/ModelDefinition.hpp>
+#include <GTGE/MaterialLibrary.hpp>
+#include <GTGE/IO.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT

@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Timing/Timer.hpp>
+#include <GTGE/Core/Timing/Timer.hpp>
 
 namespace GT
 {

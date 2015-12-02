@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ShaderParameterCache.hpp>
-#include <GTEngine/ShaderParameter.hpp>
-#include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/ShaderParameterCache.hpp>
+#include <GTGE/ShaderParameter.hpp>
+#include <GTGE/Texture2DLibrary.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

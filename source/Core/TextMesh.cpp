@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/TextMesh.hpp>
+#include <GTGE/Core/TextMesh.hpp>
 
 namespace GT
 {

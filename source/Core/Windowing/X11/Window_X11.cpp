@@ -2,10 +2,10 @@
 
 #ifdef __linux__
 
-#include <GTEngine/Core/Window.hpp>
-#include <GTEngine/Core/WindowManagement.hpp>
-#include <GTEngine/Core/Windowing/X11/X11.hpp>
-#include <GTEngine/Core/Strings/Size.hpp>
+#include <GTGE/Core/Window.hpp>
+#include <GTGE/Core/WindowManagement.hpp>
+#include <GTGE/Core/Windowing/X11/X11.hpp>
+#include <GTGE/Core/Strings/Size.hpp>
 
 #include <cstdio>
 

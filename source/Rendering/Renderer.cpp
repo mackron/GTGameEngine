@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/VertexArrayLibrary.hpp>
-#include <GTEngine/ShaderLibrary.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
+#include <GTGE/VertexArrayLibrary.hpp>
+#include <GTGE/ShaderLibrary.hpp>
 
 namespace GT
 {

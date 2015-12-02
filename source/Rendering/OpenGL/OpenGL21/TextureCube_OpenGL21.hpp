@@ -3,7 +3,7 @@
 #ifndef GT_Rendering_TextureCube_OpenGL21
 #define GT_Rendering_TextureCube_OpenGL21
 
-#include <GTEngine/Rendering/TextureCube.hpp>
+#include <GTGE/Rendering/TextureCube.hpp>
 #include <gtgl/gtgl.h>
 
 #include "TextureState_OpenGL21.hpp"

@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Threading/Thread.hpp>
-#include <GTEngine/Core/Threading/Semaphore.hpp>
-#include <GTEngine/Core/Threading/Mutex.hpp>
+#include <GTGE/Core/Threading/Thread.hpp>
+#include <GTGE/Core/Threading/Semaphore.hpp>
+#include <GTGE/Core/Threading/Mutex.hpp>
 
 namespace GT
 {
@@ -190,7 +190,7 @@ namespace GT
 
 
 #if defined(_WIN32)
-#include <GTEngine/Core/windows.hpp>
+#include <GTGE/Core/windows.hpp>
 
 namespace GT
 {

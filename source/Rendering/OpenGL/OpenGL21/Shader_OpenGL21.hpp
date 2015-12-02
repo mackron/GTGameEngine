@@ -3,7 +3,7 @@
 #ifndef GT_Rendering_Shader_OpenGL21
 #define GT_Rendering_Shader_OpenGL21
 
-#include <GTEngine/Rendering/Shader.hpp>
+#include <GTGE/Rendering/Shader.hpp>
 #include <gtgl/gtgl.h>
 
 #include "ShaderState_OpenGL21.hpp"

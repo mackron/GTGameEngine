@@ -1,15 +1,15 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 // HACD headers need to be first.
-#include <GTEngine/HACD/hacdCircularList.h>
-#include <GTEngine/HACD/hacdVector.h>
-#include <GTEngine/HACD/hacdICHull.h>
-#include <GTEngine/HACD/hacdGraph.h>
-#include <GTEngine/HACD/hacdHACD.h>
+#include <GTGE/HACD/hacdCircularList.h>
+#include <GTGE/HACD/hacdVector.h>
+#include <GTGE/HACD/hacdICHull.h>
+#include <GTGE/HACD/hacdGraph.h>
+#include <GTGE/HACD/hacdHACD.h>
 
-#include <GTEngine/SceneNode.hpp>
-#include <GTEngine/Physics.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/SceneNode.hpp>
+#include <GTGE/Physics.hpp>
+#include <GTGE/GTEngine.hpp>
 
 
 namespace GT

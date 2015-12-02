@@ -1,12 +1,12 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Log.hpp>
-#include <GTEngine/Core/DateTime.hpp>
-#include <GTEngine/Core/Strings/Replacer.hpp>
-#include <GTEngine/Core/Strings/List.hpp>
-#include <GTEngine/Core/Threading.hpp>
-#include <GTEngine/Core/BasicBuffer.hpp>
-#include <GTEngine/Core/stdlib.hpp>
+#include <GTGE/Core/Log.hpp>
+#include <GTGE/Core/DateTime.hpp>
+#include <GTGE/Core/Strings/Replacer.hpp>
+#include <GTGE/Core/Strings/List.hpp>
+#include <GTGE/Core/Threading.hpp>
+#include <GTGE/Core/BasicBuffer.hpp>
+#include <GTGE/Core/stdlib.hpp>
 #include <easy_path/easy_path.h>
 
 #include <clocale>

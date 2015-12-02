@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/GameEventQueue.hpp>
+#include <GTGE/GameEventQueue.hpp>
 #include <cassert>
 
 namespace GT

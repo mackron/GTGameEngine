@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ParticleSystemDefinition.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/ParticleSystemDefinition.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT

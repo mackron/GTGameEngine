@@ -20,11 +20,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <GTEngine/Recast/DetourNavMesh.h>
-#include <GTEngine/Recast/DetourCommon.h>
-#include <GTEngine/Recast/DetourNavMeshBuilder.h>
-#include <GTEngine/Recast/DetourAlloc.h>
-#include <GTEngine/Recast/DetourAssert.h>
+#include <GTGE/Recast/DetourNavMesh.h>
+#include <GTGE/Recast/DetourCommon.h>
+#include <GTGE/Recast/DetourNavMeshBuilder.h>
+#include <GTGE/Recast/DetourAlloc.h>
+#include <GTGE/Recast/DetourAssert.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

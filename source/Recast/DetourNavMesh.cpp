@@ -20,11 +20,11 @@
 #include <float.h>
 #include <string.h>
 #include <stdio.h>
-#include <GTEngine/Recast/DetourNavMesh.h>
-#include <GTEngine/Recast/DetourNode.h>
-#include <GTEngine/Recast/DetourCommon.h>
-#include <GTEngine/Recast/DetourAlloc.h>
-#include <GTEngine/Recast/DetourAssert.h>
+#include <GTGE/Recast/DetourNavMesh.h>
+#include <GTGE/Recast/DetourNode.h>
+#include <GTGE/Recast/DetourCommon.h>
+#include <GTGE/Recast/DetourAlloc.h>
+#include <GTGE/Recast/DetourAssert.h>
 #include <new>
 
 

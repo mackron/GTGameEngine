@@ -3,11 +3,11 @@
 #ifndef GT_ModelAsset_MD2
 #define GT_ModelAsset_MD2
 
-#include <GTEngine/Config.hpp>
+#include <GTGE/Config.hpp>
 
 #if defined(GT_BUILD_MD2)
-#include <GTEngine/Assets/ModelAsset.hpp>
-#include <GTEngine/Core/Vector.hpp>
+#include <GTGE/Assets/ModelAsset.hpp>
+#include <GTGE/Core/Vector.hpp>
 
 namespace GT
 {

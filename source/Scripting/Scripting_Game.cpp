@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Scripting/Scripting_Game.hpp>
-#include <GTEngine/GTEngine.hpp>    // For g_EngineContext
+#include <GTGE/Scripting/Scripting_Game.hpp>
+#include <GTGE/GTEngine.hpp>    // For g_EngineContext
 
 namespace GT
 {

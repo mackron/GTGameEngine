@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/CPUVertexShader_Skinning.hpp>
+#include <GTGE/CPUVertexShader_Skinning.hpp>
 
 namespace GT
 {

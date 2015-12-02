@@ -19,10 +19,10 @@
 #include <math.h>
 #include <string.h>
 #include <new>
-#include <GTEngine/Recast/DetourProximityGrid.h>
-#include <GTEngine/Recast/DetourCommon.h>
-#include <GTEngine/Recast/DetourAlloc.h>
-#include <GTEngine/Recast/DetourAssert.h>
+#include <GTGE/Recast/DetourProximityGrid.h>
+#include <GTGE/Recast/DetourCommon.h>
+#include <GTGE/Recast/DetourAlloc.h>
+#include <GTGE/Recast/DetourAssert.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

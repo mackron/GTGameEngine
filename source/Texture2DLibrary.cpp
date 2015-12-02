@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Core/Dictionary.hpp>
+#include <GTGE/Texture2DLibrary.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Core/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT

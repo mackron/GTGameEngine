@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Scripting.hpp>
-#include <GTEngine/Core/Strings/List.hpp>
-#include <GTEngine/Core/Strings/Tokenizer.hpp>
-#include <GTEngine/Core/ToString.hpp>
-#include <GTEngine/Core/Parse.hpp>
+#include <GTGE/Scripting.hpp>
+#include <GTGE/Core/Strings/List.hpp>
+#include <GTGE/Core/Strings/Tokenizer.hpp>
+#include <GTGE/Core/ToString.hpp>
+#include <GTGE/Core/Parse.hpp>
 
 extern "C"
 {

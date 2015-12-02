@@ -16,10 +16,10 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-#include <GTEngine/Recast/DetourNode.h>
-#include <GTEngine/Recast/DetourAlloc.h>
-#include <GTEngine/Recast/DetourAssert.h>
-#include <GTEngine/Recast/DetourCommon.h>
+#include <GTGE/Recast/DetourNode.h>
+#include <GTGE/Recast/DetourAlloc.h>
+#include <GTGE/Recast/DetourAssert.h>
+#include <GTGE/Recast/DetourCommon.h>
 #include <string.h>
 
 #if defined(__GNUC__)

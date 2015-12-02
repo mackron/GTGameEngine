@@ -6,7 +6,7 @@
 #define GT_FontEngine_FCFT
 
 #if defined(__linux__)
-#include <GTEngine/Core/FontEngine.hpp>
+#include <GTGE/Core/FontEngine.hpp>
 
 #include <fontconfig/fontconfig.h>
 #include <ft2build.h>

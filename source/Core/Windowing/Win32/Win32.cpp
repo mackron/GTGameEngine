@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
-#include <GTEngine/Core/Windowing/Win32/Win32.hpp>
-#include <GTEngine/Core/Window.hpp>
-#include <GTEngine/Core/Vector.hpp>
+#include <GTGE/Core/Windowing/Win32/Win32.hpp>
+#include <GTGE/Core/Window.hpp>
+#include <GTGE/Core/Vector.hpp>
 
 #include <cstdio>
 

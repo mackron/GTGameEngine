@@ -1,11 +1,11 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Font.hpp>
-#include <GTEngine/Core/FontServer.hpp>
-#include <GTEngine/Core/System.hpp>
-#include <GTEngine/Core/ToString.hpp>
-#include <GTEngine/Core/Map.hpp>
-#include <GTEngine/Core/Math.hpp>
+#include <GTGE/Core/Font.hpp>
+#include <GTGE/Core/FontServer.hpp>
+#include <GTGE/Core/System.hpp>
+#include <GTGE/Core/ToString.hpp>
+#include <GTGE/Core/Map.hpp>
+#include <GTGE/Core/Math.hpp>
 #include <cstdio>
 #include <cstdint>
 

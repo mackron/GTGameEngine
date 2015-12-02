@@ -3,10 +3,10 @@
 #ifndef GT_ModelAsset_OBJ
 #define GT_ModelAsset_OBJ
 
-#include <GTEngine/Config.hpp>
+#include <GTGE/Config.hpp>
 
 #if defined(GT_BUILD_OBJ)
-#include <GTEngine/Assets/ModelAsset.hpp>
+#include <GTGE/Assets/ModelAsset.hpp>
 
 namespace GT
 {

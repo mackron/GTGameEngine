@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Scripting.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/ApplicationConfig.hpp>
-#include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
+#include <GTGE/Scripting.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/ApplicationConfig.hpp>
+#include <GTGE/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
 
 #if defined(_MSC_VER)
     #pragma warning(push)

@@ -3,7 +3,7 @@
 #ifndef GT_Audio_SoundStreamer_WAV
 #define GT_Audio_SoundStreamer_WAV
 
-#include <GTEngine/Audio/SoundStreamer.hpp>
+#include <GTGE/Audio/SoundStreamer.hpp>
 
 namespace GT
 {

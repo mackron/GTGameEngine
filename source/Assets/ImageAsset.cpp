@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTEngine/Assets/ImageAsset.hpp>
+#include <GTGE/Assets/ImageAsset.hpp>
 
 namespace GT
 {

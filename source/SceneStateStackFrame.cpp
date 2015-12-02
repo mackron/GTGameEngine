@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/SceneStateStackFrame.hpp>
-#include <GTEngine/SceneStateStackBranch.hpp>
-#include <GTEngine/Scene.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/SceneStateStackFrame.hpp>
+#include <GTGE/SceneStateStackBranch.hpp>
+#include <GTGE/Scene.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

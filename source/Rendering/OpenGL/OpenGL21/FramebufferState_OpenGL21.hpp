@@ -3,7 +3,7 @@
 #ifndef GT_Rendering_FramebufferState_OpenGL21
 #define GT_Rendering_FramebufferState_OpenGL21
 
-#include <GTEngine/Core/Map.hpp>
+#include <GTGE/Core/Map.hpp>
 #include <gtgl/gtgl.h>
 
 #include "TextureState_OpenGL21.hpp"

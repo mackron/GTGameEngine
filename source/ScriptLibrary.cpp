@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/ScriptLibrary.hpp>
-#include <GTEngine/Scripting.hpp>
-#include <GTEngine/Core/Dictionary.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/ScriptLibrary.hpp>
+#include <GTGE/Scripting.hpp>
+#include <GTGE/Core/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>
 

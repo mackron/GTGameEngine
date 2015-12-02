@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/SceneNode.hpp>
+#include <GTGE/SceneNode.hpp>
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>

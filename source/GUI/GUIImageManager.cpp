@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIImageManager.hpp>
+#include <GTGE/GUI/GUIImageManager.hpp>
 
 namespace GT
 {

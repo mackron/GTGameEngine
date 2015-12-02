@@ -2,8 +2,8 @@
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
 #include "FontEngine_Win32.hpp"
-#include <GTEngine/Core/GlyphCache.hpp>
-#include <GTEngine/Core/Map.hpp>
+#include <GTGE/Core/GlyphCache.hpp>
+#include <GTGE/Core/Map.hpp>
 
 namespace GT
 {

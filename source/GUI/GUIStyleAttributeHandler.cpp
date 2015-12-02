@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include "GUIStyleAttributeHandler.hpp"
-#include <GTEngine/GUI/GUIStyleStack.hpp>
-#include <GTEngine/GUI/GUIElement.hpp>
-#include <GTEngine/GUI/GUIServer.hpp>
-#include <GTEngine/Core/Strings/Tokenizer.hpp>
+#include <GTGE/GUI/GUIStyleStack.hpp>
+#include <GTGE/GUI/GUIElement.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
+#include <GTGE/Core/Strings/Tokenizer.hpp>
 
 /* !!! Don't forget to add new attribute handlers to GUIStyleServer::LoadGUIStyleAttributeHandlers(). It's at the end of GUIStyleServer.cpp. !!! */
 

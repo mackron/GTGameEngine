@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/FontEngine.hpp>
+#include <GTGE/Core/FontEngine.hpp>
 
 namespace GT
 {

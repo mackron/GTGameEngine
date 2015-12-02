@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Components/ScriptComponent.hpp>
-#include <GTEngine/SceneNode.hpp>
-#include <GTEngine/ScriptLibrary.hpp>
-#include <GTEngine/Scripting.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Components/ScriptComponent.hpp>
+#include <GTGE/SceneNode.hpp>
+#include <GTGE/ScriptLibrary.hpp>
+#include <GTGE/Scripting.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

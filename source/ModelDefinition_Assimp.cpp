@@ -3,9 +3,9 @@
 // This file is where anything requiring Assimp is located. It is forbidden to place any Assimp code anywhere other
 // than inside this file. FORBIDDEN, I TELL YOU!
 
-#include <GTEngine/ModelDefinition.hpp>
-#include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/ModelDefinition.hpp>
+#include <GTGE/MaterialLibrary.hpp>
+#include <GTGE/GTEngine.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

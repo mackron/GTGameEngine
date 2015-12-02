@@ -3,10 +3,10 @@
 #ifndef GT_DefaultAssetAllocator
 #define GT_DefaultAssetAllocator
 
-#include <GTEngine/Config.hpp>
+#include <GTGE/Config.hpp>
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
-#include <GTEngine/Assets/AssetAllocator.hpp>
+#include <GTGE/Assets/AssetAllocator.hpp>
 
 namespace GT
 {

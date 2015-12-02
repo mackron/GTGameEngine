@@ -1,13 +1,13 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Image.hpp>
-#include <GTEngine/Core/ImageDataConverter.hpp>
-#include <GTEngine/Core/ImageUtils.hpp>
-#include <GTEngine/Core/MipmapGenerator.hpp>
-#include <GTEngine/Core/Math.hpp>
+#include <GTGE/Core/Image.hpp>
+#include <GTGE/Core/ImageDataConverter.hpp>
+#include <GTGE/Core/ImageUtils.hpp>
+#include <GTGE/Core/MipmapGenerator.hpp>
+#include <GTGE/Core/Math.hpp>
 #include <cassert>
 
-#include <GTEngine/Core/Timing.hpp>
+#include <GTGE/Core/Timing.hpp>
 #include <cstdio>
 
 namespace GT

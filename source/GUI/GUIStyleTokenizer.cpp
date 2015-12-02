@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include "GUIStyleTokenizer.hpp"
-#include <GTEngine/Core/Strings/Equal.hpp>
-#include <GTEngine/Core/Strings/Find.hpp>
+#include <GTGE/Core/Strings/Equal.hpp>
+#include <GTGE/Core/Strings/Find.hpp>
 #include <cstring>
 
 namespace GT

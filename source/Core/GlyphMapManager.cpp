@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/GlyphMapManager.hpp>
+#include <GTGE/Core/GlyphMapManager.hpp>
 
 namespace GT
 {

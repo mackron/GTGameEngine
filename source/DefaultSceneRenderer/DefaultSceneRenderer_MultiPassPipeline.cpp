@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer.hpp>
-#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MultiPassPipeline.hpp>
-#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_VisibilityProcessor.hpp>
+#include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer.hpp>
+#include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_MultiPassPipeline.hpp>
+#include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_VisibilityProcessor.hpp>
 
 namespace GT
 {

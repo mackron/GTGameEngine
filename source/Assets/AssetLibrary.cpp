@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTEngine/Assets/AssetLibrary.hpp>
-#include <GTEngine/Assets/Asset.hpp>
-#include <GTEngine/Assets/AssetAllocator.hpp>
+#include <GTGE/Assets/AssetLibrary.hpp>
+#include <GTGE/Assets/Asset.hpp>
+#include <GTGE/Assets/AssetAllocator.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)

@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/MipmapGenerator.hpp>
-#include <GTEngine/Core/ImageUtils.hpp>
-#include <GTEngine/Core/stdlib.hpp>
+#include <GTGE/Core/MipmapGenerator.hpp>
+#include <GTGE/Core/ImageUtils.hpp>
+#include <GTGE/Core/stdlib.hpp>
 #include <cstdint>
 
 namespace GT

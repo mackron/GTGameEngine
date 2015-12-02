@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/SceneNodeEventHandler.hpp>
+#include <GTGE/SceneNodeEventHandler.hpp>
 
 namespace GT
 {

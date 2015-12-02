@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIMarkupLoader.hpp>
-#include <GTEngine/GUI/GUIServer.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GUI/GUIMarkupLoader.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT

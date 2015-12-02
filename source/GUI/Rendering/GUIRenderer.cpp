@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/Rendering/GUIRenderer.hpp>
-#include <GTEngine/GUI/GUIServer.hpp>
+#include <GTGE/GUI/Rendering/GUIRenderer.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
 
 namespace GT
 {

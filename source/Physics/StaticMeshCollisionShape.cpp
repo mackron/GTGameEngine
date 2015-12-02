@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Physics/StaticMeshCollisionShape.hpp>
+#include <GTGE/Physics/StaticMeshCollisionShape.hpp>
 
 namespace GT
 {

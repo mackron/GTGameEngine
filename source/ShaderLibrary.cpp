@@ -1,12 +1,12 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ShaderLibrary.hpp>
-#include <GTEngine/ApplicationConfig.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
-#include <GTEngine/Core/Dictionary.hpp>
-#include <GTEngine/Core/Vector.hpp>
-#include <GTEngine/Core/String.hpp>
+#include <GTGE/ShaderLibrary.hpp>
+#include <GTGE/ApplicationConfig.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
+#include <GTGE/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
+#include <GTGE/Core/Dictionary.hpp>
+#include <GTGE/Core/Vector.hpp>
+#include <GTGE/Core/String.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)
@@ -16,7 +16,7 @@
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
-#include <GTEngine/Core/rapidxml.hpp>
+#include <GTGE/Core/rapidxml.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif

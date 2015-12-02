@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ParticleEmitter.hpp>
-#include <GTEngine/Rendering.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/ParticleEmitter.hpp>
+#include <GTGE/Rendering.hpp>
+#include <GTGE/GTEngine.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

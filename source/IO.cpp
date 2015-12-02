@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/IO.hpp>
-#include <GTEngine/ModelLibrary.hpp>
-#include <GTEngine/Core/ImageLoader.hpp>
-#include <GTEngine/Core/Strings/Find.hpp>
+#include <GTGE/IO.hpp>
+#include <GTGE/ModelLibrary.hpp>
+#include <GTGE/Core/ImageLoader.hpp>
+#include <GTGE/Core/Strings/Find.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT

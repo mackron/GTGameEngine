@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Physics/GenericConstraint.hpp>
-#include <GTEngine/Physics/RigidBody.hpp>
-#include <GTEngine/Physics/DynamicsWorld.hpp>
-#include <GTEngine/Physics.hpp>
+#include <GTGE/Physics/GenericConstraint.hpp>
+#include <GTGE/Physics/RigidBody.hpp>
+#include <GTGE/Physics/DynamicsWorld.hpp>
+#include <GTGE/Physics.hpp>
 
 namespace GT
 {

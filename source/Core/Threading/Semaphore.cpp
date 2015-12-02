@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Threading/Semaphore.hpp>
+#include <GTGE/Core/Threading/Semaphore.hpp>
 #include <easy_util/easy_util.h>
 
 namespace GT

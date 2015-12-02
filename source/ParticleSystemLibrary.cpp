@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ParticleSystemLibrary.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Core/Dictionary.hpp>
-#include <GTEngine/Core/Vector.hpp>
+#include <GTGE/ParticleSystemLibrary.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Core/Dictionary.hpp>
+#include <GTGE/Core/Vector.hpp>
 #include <easy_path/easy_path.h>
 
 

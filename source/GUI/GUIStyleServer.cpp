@@ -2,10 +2,10 @@
 
 #include "GUIStyleTokenizer.hpp"
 #include "GUIStyleAttributeHandler.hpp"
-#include <GTEngine/GUI/GUIServer.hpp>
-#include <GTEngine/Core/String.hpp>
-#include <GTEngine/Core/stdlib.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
+#include <GTGE/Core/String.hpp>
+#include <GTGE/Core/stdlib.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
 // Delete the headers below later on.

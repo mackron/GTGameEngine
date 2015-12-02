@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/stdio.hpp>
+#include <GTGE/Core/stdio.hpp>
 
 namespace GT
 {

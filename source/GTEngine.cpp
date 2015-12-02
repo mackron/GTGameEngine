@@ -1,20 +1,20 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/ApplicationConfig.hpp>
-#include <GTEngine/Rendering.hpp>
-#include <GTEngine/ShaderLibrary.hpp>
-#include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/ModelLibrary.hpp>
-#include <GTEngine/VertexArrayLibrary.hpp>
-#include <GTEngine/PrefabLibrary.hpp>
-#include <GTEngine/ParticleSystemLibrary.hpp>
-#include <GTEngine/ScriptLibrary.hpp>
-#include <GTEngine/ThreadCache.hpp>
-#include <GTEngine/MessageDispatcher.hpp>
-#include <GTEngine/Core/WindowManagement.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/ApplicationConfig.hpp>
+#include <GTGE/Rendering.hpp>
+#include <GTGE/ShaderLibrary.hpp>
+#include <GTGE/Texture2DLibrary.hpp>
+#include <GTGE/MaterialLibrary.hpp>
+#include <GTGE/ModelLibrary.hpp>
+#include <GTGE/VertexArrayLibrary.hpp>
+#include <GTGE/PrefabLibrary.hpp>
+#include <GTGE/ParticleSystemLibrary.hpp>
+#include <GTGE/ScriptLibrary.hpp>
+#include <GTGE/ThreadCache.hpp>
+#include <GTGE/MessageDispatcher.hpp>
+#include <GTGE/Core/WindowManagement.hpp>
 
 // Basic globals.
 namespace GT

@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Scripting/Scripting_Rendering.hpp>
-#include <GTEngine/Script.hpp>
-#include <GTEngine/Rendering.hpp>
+#include <GTGE/Scripting/Scripting_Rendering.hpp>
+#include <GTGE/Script.hpp>
+#include <GTGE/Rendering.hpp>
 
 namespace GT
 {

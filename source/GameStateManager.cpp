@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/GameStateManager.hpp>
-#include <GTEngine/Scene.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GameStateManager.hpp>
+#include <GTGE/Scene.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer.hpp>
-#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_SinglePassPipeline.hpp>
-#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MultiPassPipeline.hpp>
-#include <GTEngine/ShaderLibrary.hpp>
+#include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer.hpp>
+#include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_SinglePassPipeline.hpp>
+#include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_MultiPassPipeline.hpp>
+#include <GTGE/ShaderLibrary.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

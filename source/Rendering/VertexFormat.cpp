@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Rendering/VertexFormat.hpp>
+#include <GTGE/Rendering/VertexFormat.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

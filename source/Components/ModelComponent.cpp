@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Components/ModelComponent.hpp>
-#include <GTEngine/ModelLibrary.hpp>
-#include <GTEngine/Scene.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Components/ModelComponent.hpp>
+#include <GTGE/ModelLibrary.hpp>
+#include <GTGE/Scene.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

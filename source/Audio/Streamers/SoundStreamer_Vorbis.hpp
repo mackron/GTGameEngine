@@ -3,13 +3,13 @@
 #ifndef GT_SoundStreamer_Vorbis
 #define GT_SoundStreamer_Vorbis
 
-#include <GTEngine/Config.hpp>
+#include <GTGE/Config.hpp>
 
 #if defined(GT_BUILD_VORBIS)
-#include <GTEngine/Audio/SoundStreamer.hpp>
+#include <GTGE/Audio/SoundStreamer.hpp>
 
 #define STB_VORBIS_HEADER_ONLY
-#include <GTEngine/external/stb_vorbis.c>
+#include <GTGE/external/stb_vorbis.c>
 
 namespace GT
 {

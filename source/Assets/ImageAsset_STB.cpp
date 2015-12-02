@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include "ImageAsset_STB.hpp"
-#include <GTEngine/Config.hpp>
-#include <GTEngine/external/stb_image.h>
+#include <GTGE/Config.hpp>
+#include <GTGE/external/stb_image.h>
 
 namespace GT
 {

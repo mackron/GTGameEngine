@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/SceneDeserializeCallback.hpp>
+#include <GTGE/SceneDeserializeCallback.hpp>
 
 namespace GT
 {

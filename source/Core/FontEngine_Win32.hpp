@@ -6,9 +6,9 @@
 #define GT_FontEngine_Win32
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
-#include <GTEngine/Core/FontEngine.hpp>
+#include <GTGE/Core/FontEngine.hpp>
 
-#include <GTEngine/Core/windows.hpp>
+#include <GTGE/Core/windows.hpp>
 
 namespace GT
 {

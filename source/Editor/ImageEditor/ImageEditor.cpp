@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/ImageEditor/ImageEditor.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/ShaderLibrary.hpp>
-#include <GTEngine/IO.hpp>
+#include <GTGE/Editor/ImageEditor/ImageEditor.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
+#include <GTGE/ShaderLibrary.hpp>
+#include <GTGE/IO.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/PrefabLibrary.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Core/Dictionary.hpp>
+#include <GTGE/PrefabLibrary.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Core/Dictionary.hpp>
 #include <easy_path/easy_path.h>
 #include <utility>
 

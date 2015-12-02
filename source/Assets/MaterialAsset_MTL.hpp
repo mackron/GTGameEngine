@@ -3,10 +3,10 @@
 #ifndef GT_MaterialAsset_MTL
 #define GT_MaterialAsset_MTL
 
-#include <GTEngine/Config.hpp>
+#include <GTGE/Config.hpp>
 
 #if defined(GT_BUILD_MTL)
-#include <GTEngine/Assets/MaterialAsset.hpp>
+#include <GTGE/Assets/MaterialAsset.hpp>
 
 namespace GT
 {

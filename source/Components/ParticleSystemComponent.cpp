@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Components/ParticleSystemComponent.hpp>
-#include <GTEngine/ParticleSystemLibrary.hpp>
-#include <GTEngine/SceneNode.hpp>
-#include <GTEngine/Scene.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Components/ParticleSystemComponent.hpp>
+#include <GTGE/ParticleSystemLibrary.hpp>
+#include <GTGE/SceneNode.hpp>
+#include <GTGE/Scene.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

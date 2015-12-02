@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include "RCCreateShader_OpenGL21.hpp"
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Core/Strings/Find.hpp>          // For checking the compilation output.
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Core/Strings/Find.hpp>          // For checking the compilation output.
 #include <gtgl/gtgl.h>
 
 namespace GT

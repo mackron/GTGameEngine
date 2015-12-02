@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/SceneStateStack.hpp>
-#include <GTEngine/Scene.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/SceneStateStack.hpp>
+#include <GTGE/Scene.hpp>
+#include <GTGE/GTEngine.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

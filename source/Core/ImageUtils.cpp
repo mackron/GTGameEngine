@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/ImageUtils.hpp>
-#include <GTEngine/Core/Math.hpp>
-#include <GTEngine/Core/stdlib.hpp>
+#include <GTGE/Core/ImageUtils.hpp>
+#include <GTGE/Core/Math.hpp>
+#include <GTGE/Core/stdlib.hpp>
 #include <cstring>      // For memcpy().
 
 namespace GT

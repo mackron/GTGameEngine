@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/SubEditorTabEventHandler.hpp>
-#include <GTEngine/Editor/SubEditor.hpp>
+#include <GTGE/Editor/SubEditorTabEventHandler.hpp>
+#include <GTGE/Editor/SubEditor.hpp>
 
 namespace GT
 {

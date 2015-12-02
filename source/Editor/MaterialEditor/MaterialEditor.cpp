@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/MaterialEditor/MaterialEditor.hpp>
-#include <GTEngine/Editor.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/IO.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Editor/MaterialEditor/MaterialEditor.hpp>
+#include <GTGE/Editor.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/IO.hpp>
+#include <GTGE/GTEngine.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

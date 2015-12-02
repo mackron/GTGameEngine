@@ -1,12 +1,12 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Scene.hpp>
-#include <GTEngine/DefaultSceneUpdateManager.hpp>
-#include <GTEngine/DefaultScenePhysicsManager.hpp>
-#include <GTEngine/DefaultSceneCullingManager.hpp>
-#include <GTEngine/Scripting.hpp>
-#include <GTEngine/Core/ToString.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Scene.hpp>
+#include <GTGE/DefaultSceneUpdateManager.hpp>
+#include <GTGE/DefaultScenePhysicsManager.hpp>
+#include <GTGE/DefaultSceneCullingManager.hpp>
+#include <GTGE/Scripting.hpp>
+#include <GTGE/Core/ToString.hpp>
+#include <GTGE/GTEngine.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

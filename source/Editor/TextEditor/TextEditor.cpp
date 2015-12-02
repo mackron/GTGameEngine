@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/TextEditor/TextEditor.hpp>
-#include <GTEngine/Editor.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/Scripting.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Editor/TextEditor/TextEditor.hpp>
+#include <GTGE/Editor.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/Scripting.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)

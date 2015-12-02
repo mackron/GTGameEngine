@@ -1,10 +1,10 @@
-#include <GTEngine/Recast/DetourTileCache.h>
-#include <GTEngine/Recast/DetourTileCacheBuilder.h>
-#include <GTEngine/Recast/DetourNavMeshBuilder.h>
-#include <GTEngine/Recast/DetourNavMesh.h>
-#include <GTEngine/Recast/DetourCommon.h>
-#include <GTEngine/Recast/DetourAlloc.h>
-#include <GTEngine/Recast/DetourAssert.h>
+#include <GTGE/Recast/DetourTileCache.h>
+#include <GTGE/Recast/DetourTileCacheBuilder.h>
+#include <GTGE/Recast/DetourNavMeshBuilder.h>
+#include <GTGE/Recast/DetourNavMesh.h>
+#include <GTGE/Recast/DetourCommon.h>
+#include <GTGE/Recast/DetourAlloc.h>
+#include <GTGE/Recast/DetourAssert.h>
 #include <math.h>
 #include <string.h>
 #include <new>

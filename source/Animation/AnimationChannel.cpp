@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Animation/AnimationChannel.hpp>
+#include <GTGE/Animation/AnimationChannel.hpp>
 
 namespace GT
 {

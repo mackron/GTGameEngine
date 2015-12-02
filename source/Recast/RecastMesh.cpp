@@ -20,9 +20,9 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
-#include <GTEngine/Recast/Recast.h>
-#include <GTEngine/Recast/RecastAlloc.h>
-#include <GTEngine/Recast/RecastAssert.h>
+#include <GTGE/Recast/Recast.h>
+#include <GTGE/Recast/RecastAlloc.h>
+#include <GTGE/Recast/RecastAssert.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

@@ -4,8 +4,8 @@
 #define GT_Rendering_OpenGL21_RCDraw
 
 #include "../../RenderCommand.hpp"
-#include <GTEngine/Rendering/VertexFormat.hpp>
-#include <GTEngine/Rendering/DrawModes.hpp>
+#include <GTGE/Rendering/VertexFormat.hpp>
+#include <GTGE/Rendering/DrawModes.hpp>
 #include <gtgl/gtgl.h>
 
 namespace GT

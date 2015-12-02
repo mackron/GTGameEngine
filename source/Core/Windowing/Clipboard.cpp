@@ -1,12 +1,12 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Windowing/Clipboard.hpp>
-#include <GTEngine/Core/WindowManagement.hpp>
-#include <GTEngine/Core/Vector.hpp>
+#include <GTGE/Core/Windowing/Clipboard.hpp>
+#include <GTGE/Core/WindowManagement.hpp>
+#include <GTGE/Core/Vector.hpp>
 
 #if defined(_WIN32)
-#include <GTEngine/Core/Windowing/Win32/Win32.hpp>
-#include <GTEngine/Core/Strings/LineIterator.hpp>
+#include <GTGE/Core/Windowing/Win32/Win32.hpp>
+#include <GTGE/Core/Strings/LineIterator.hpp>
 
 namespace GT
 {
@@ -101,7 +101,7 @@ namespace GT
     }
 }
 #elif defined(__linux__)
-#include <GTEngine/Core/Windowing/X11/X11.hpp>
+#include <GTGE/Core/Windowing/X11/X11.hpp>
 #include <unistd.h>
 
 namespace GT

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/GameUpdateJob.hpp>
-#include <GTEngine/Game.hpp>
+#include <GTGE/GameUpdateJob.hpp>
+#include <GTGE/Game.hpp>
 
 namespace GT
 {

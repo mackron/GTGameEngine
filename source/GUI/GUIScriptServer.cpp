@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIServer.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
 #include <cassert>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

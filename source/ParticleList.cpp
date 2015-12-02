@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/ParticleList.hpp>
+#include <GTGE/ParticleList.hpp>
 #include <new>
 #include <cstring>  // For memcpy()
 

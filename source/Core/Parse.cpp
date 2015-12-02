@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Parse.hpp>
-#include <GTEngine/Core/BasicBuffer.hpp>
-#include <GTEngine/Core/stdlib.hpp>
+#include <GTGE/Core/Parse.hpp>
+#include <GTGE/Core/BasicBuffer.hpp>
+#include <GTGE/Core/stdlib.hpp>
 
 #include <cstring>
 

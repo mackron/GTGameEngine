@@ -1,13 +1,13 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor.hpp>
-#include <GTEngine/Game.hpp>
-#include <GTEngine/IO.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/ParticleSystemLibrary.hpp>
-#include <GTEngine/ScriptLibrary.hpp>
-#include <GTEngine/GUI/GUIServer.hpp>
-#include <GTEngine/Core/Keyboard.hpp>
+#include <GTGE/Editor.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/IO.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/ParticleSystemLibrary.hpp>
+#include <GTGE/ScriptLibrary.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
+#include <GTGE/Core/Keyboard.hpp>
 #include <easy_path/easy_path.h>
 
 using namespace GT;     // <-- Delete me later when we change to the GT namespace!

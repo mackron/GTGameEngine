@@ -1,10 +1,10 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/ImageLoader.hpp>
-#include <GTEngine/Core/Log.hpp>
-#include <GTEngine/Core/Strings/Equal.hpp>
-#include <GTEngine/Core/Strings/Create.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Core/ImageLoader.hpp>
+#include <GTGE/Core/Log.hpp>
+#include <GTGE/Core/Strings/Equal.hpp>
+#include <GTGE/Core/Strings/Create.hpp>
+#include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 
 // TODO: Delete this once DDS is implemented.

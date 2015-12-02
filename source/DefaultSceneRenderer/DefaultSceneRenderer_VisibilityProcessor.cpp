@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_VisibilityProcessor.hpp>
-#include <GTEngine/Scene.hpp>
+#include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_VisibilityProcessor.hpp>
+#include <GTGE/Scene.hpp>
 
 namespace GT
 {

@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/Rendering/GUIMesh.hpp>
+#include <GTGE/GUI/Rendering/GUIMesh.hpp>
 
 namespace GT
 {

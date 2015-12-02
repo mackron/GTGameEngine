@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/System.hpp>
-#include <GTEngine/Core/Strings/Create.hpp>
+#include <GTGE/Core/System.hpp>
+#include <GTGE/Core/Strings/Create.hpp>
 #include <cstring>
 
 /*
@@ -22,7 +22,7 @@ with malloc(). It will be free with free().
     #pragma GCC diagnostic ignored "-Wunknown-pragmas"
     #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #endif
-#include <GTEngine/Core/windows.hpp>
+#include <GTGE/Core/windows.hpp>
 #include <shlobj.h>
 #include <shellapi.h>
 #if defined(__clang__)
@@ -134,7 +134,7 @@ namespace GT
 #include <unistd.h>
 #include <dirent.h>
 
-#include <GTEngine/Core/Strings/List.hpp>
+#include <GTGE/Core/Strings/List.hpp>
 
 namespace GT
 {

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/SceneNode.hpp>
-#include <GTEngine/Physics.hpp>
+#include <GTGE/SceneNode.hpp>
+#include <GTGE/Physics.hpp>
 
 namespace GT
 {

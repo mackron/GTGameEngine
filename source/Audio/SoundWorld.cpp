@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Audio/SoundWorld.hpp>
-#include <GTEngine/Assets/SoundAsset.hpp>
-#include <GTEngine/EngineContext.hpp>
+#include <GTGE/Audio/SoundWorld.hpp>
+#include <GTGE/Assets/SoundAsset.hpp>
+#include <GTGE/EngineContext.hpp>
 
 #include "../Audio/Streamers/SoundStreamer_WAV.hpp"
 #include "../Audio/Streamers/SoundStreamer_Vorbis.hpp"

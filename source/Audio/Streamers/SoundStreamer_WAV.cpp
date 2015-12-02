@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include "SoundStreamer_WAV.hpp"
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/GTEngine.hpp>
 
 
 #define WAVE_FORMAT_PCM        0x1

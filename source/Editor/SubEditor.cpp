@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/SubEditor.hpp>
-#include <GTEngine/Editor.hpp>
-#include <GTEngine/Game.hpp>
+#include <GTGE/Editor/SubEditor.hpp>
+#include <GTGE/Editor.hpp>
+#include <GTGE/Game.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)

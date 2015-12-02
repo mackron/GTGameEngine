@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Threading/ThreadJob.hpp>
+#include <GTGE/Core/Threading/ThreadJob.hpp>
 
 namespace GT
 {

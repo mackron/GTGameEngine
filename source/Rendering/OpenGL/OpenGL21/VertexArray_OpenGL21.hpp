@@ -3,7 +3,7 @@
 #ifndef GT_VertexArray_OpenGL21
 #define GT_VertexArray_OpenGL21
 
-#include <GTEngine/Rendering/VertexArray.hpp>
+#include <GTGE/Rendering/VertexArray.hpp>
 #include <gtgl/gtgl.h>
 
 namespace GT

@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/SceneNodeMap.hpp>
+#include <GTGE/SceneNodeMap.hpp>
 
 namespace GT
 {

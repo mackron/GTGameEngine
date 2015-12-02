@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/VertexArrayLibrary.hpp>
-#include <GTEngine/MeshBuilder.hpp>
-#include <GTEngine/Core/Math.hpp>
+#include <GTGE/VertexArrayLibrary.hpp>
+#include <GTGE/MeshBuilder.hpp>
+#include <GTGE/Core/Math.hpp>
 
 
 namespace GT

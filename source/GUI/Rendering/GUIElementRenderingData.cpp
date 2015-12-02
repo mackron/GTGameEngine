@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/Rendering/GUIElementRenderingData.hpp>
-#include <GTEngine/GUI/GUIElement.hpp>
-#include <GTEngine/GUI/GUIServer.hpp>
-#include <GTEngine/Core/TextManager.hpp>
+#include <GTGE/GUI/Rendering/GUIElementRenderingData.hpp>
+#include <GTGE/GUI/GUIElement.hpp>
+#include <GTGE/GUI/GUIServer.hpp>
+#include <GTGE/Core/TextManager.hpp>
 #include <cmath>
 
 

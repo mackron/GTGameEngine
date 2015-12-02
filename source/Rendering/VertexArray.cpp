@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Rendering/VertexArray.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Rendering/VertexArray.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {
@@ -284,8 +284,8 @@ namespace GT
 }
 
 
-#include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
-#include <GTEngine/MeshBuilder.hpp>
+#include <GTGE/CPUVertexShader_SimpleTransform.hpp>
+#include <GTGE/MeshBuilder.hpp>
 
 namespace GT
 {

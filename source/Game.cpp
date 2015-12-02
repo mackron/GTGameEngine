@@ -1,22 +1,22 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Game.hpp>
-#include <GTEngine/ThreadCache.hpp>
-#include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/ApplicationConfig.hpp>
-#include <GTEngine/ModelLibrary.hpp>
-#include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/ParticleSystemLibrary.hpp>
-#include <GTEngine/ScriptLibrary.hpp>
-#include <GTEngine/Scripting.hpp>
-#include <GTEngine/IO.hpp>
-#include <GTEngine/GamePackager.hpp>
-#include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
-#include <GTEngine/Core/System.hpp>
-#include <GTEngine/Core/Strings/Tokenizer.hpp>
-#include <GTEngine/Core/String.hpp>
-#include <GTEngine/Core/Keyboard.hpp>
+#include <GTGE/Game.hpp>
+#include <GTGE/ThreadCache.hpp>
+#include <GTGE/Texture2DLibrary.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
+#include <GTGE/ApplicationConfig.hpp>
+#include <GTGE/ModelLibrary.hpp>
+#include <GTGE/Texture2DLibrary.hpp>
+#include <GTGE/ParticleSystemLibrary.hpp>
+#include <GTGE/ScriptLibrary.hpp>
+#include <GTGE/Scripting.hpp>
+#include <GTGE/IO.hpp>
+#include <GTGE/GamePackager.hpp>
+#include <GTGE/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
+#include <GTGE/Core/System.hpp>
+#include <GTGE/Core/Strings/Tokenizer.hpp>
+#include <GTGE/Core/String.hpp>
+#include <GTGE/Core/Keyboard.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)

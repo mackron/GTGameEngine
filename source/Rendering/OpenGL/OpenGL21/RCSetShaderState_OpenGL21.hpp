@@ -3,8 +3,8 @@
 #ifndef GT_Rendering_OpenGL21_RCSetShaderState
 #define GT_Rendering_OpenGL21_RCSetShaderState
 
-#include <GTEngine/ShaderParameterCache.hpp>
-#include <GTEngine/Core/Dictionary.hpp>
+#include <GTGE/ShaderParameterCache.hpp>
+#include <GTGE/Core/Dictionary.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 

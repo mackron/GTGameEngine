@@ -1,13 +1,13 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Components/EditorMetadataComponent.hpp>
-#include <GTEngine/Components/ModelComponent.hpp>
-#include <GTEngine/Scene.hpp>
-#include <GTEngine/ModelLibrary.hpp>
-#include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/MeshBuilder.hpp>
-#include <GTEngine/VertexArrayLibrary.hpp>
+#include <GTGE/Components/EditorMetadataComponent.hpp>
+#include <GTGE/Components/ModelComponent.hpp>
+#include <GTGE/Scene.hpp>
+#include <GTGE/ModelLibrary.hpp>
+#include <GTGE/Texture2DLibrary.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/MeshBuilder.hpp>
+#include <GTGE/VertexArrayLibrary.hpp>
 
 namespace GT
 {

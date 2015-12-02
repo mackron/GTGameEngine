@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Components/LightComponent.hpp>
-#include <GTEngine/Scene.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Components/LightComponent.hpp>
+#include <GTGE/Scene.hpp>
+#include <GTGE/GTEngine.hpp>
 
 
 // PointLight

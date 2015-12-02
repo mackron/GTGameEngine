@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Physics/ConeTwistConstraint.hpp>
-#include <GTEngine/Physics/DynamicsWorld.hpp>
-#include <GTEngine/Physics.hpp>
+#include <GTGE/Physics/ConeTwistConstraint.hpp>
+#include <GTGE/Physics/DynamicsWorld.hpp>
+#include <GTGE/Physics.hpp>
 
 namespace GT
 {

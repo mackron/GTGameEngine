@@ -3,12 +3,12 @@
 #ifndef GT_Rendering_ShaderState_OpenGL21
 #define GT_Rendering_ShaderState_OpenGL21
 
-#include <GTEngine/Math.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/Core/Dictionary.hpp>
-#include <GTEngine/Core/Map.hpp>
-#include <GTEngine/Core/Vector.hpp>
-#include <GTEngine/Core/String.hpp>
+#include <GTGE/Math.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
+#include <GTGE/Core/Dictionary.hpp>
+#include <GTGE/Core/Map.hpp>
+#include <GTGE/Core/Vector.hpp>
+#include <GTGE/Core/String.hpp>
 #include <gtgl/gtgl.h>
 
 #include "TextureState_OpenGL21.hpp"

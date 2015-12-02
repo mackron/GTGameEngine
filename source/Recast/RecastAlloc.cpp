@@ -18,7 +18,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <GTEngine/Recast/RecastAlloc.h>
+#include <GTGE/Recast/RecastAlloc.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

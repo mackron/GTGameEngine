@@ -17,7 +17,7 @@
 //
 
 #include <stdlib.h>
-#include <GTEngine/Recast/DetourAlloc.h>
+#include <GTGE/Recast/DetourAlloc.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

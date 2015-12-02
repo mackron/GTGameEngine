@@ -3,8 +3,8 @@
 #include "ModelAsset_OBJ.hpp"
 
 #if defined(GT_BUILD_OBJ)
-#include <GTEngine/Math.hpp>
-#include <GTEngine/Core/Vector.hpp>
+#include <GTGE/Math.hpp>
+#include <GTGE/Core/Vector.hpp>
 #include <easy_util/easy_util.h>
 
 // TODO: Correctly handle "usemtl" to properly handle multiple materials.

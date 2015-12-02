@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Core/ImageUtils.hpp>
+#include <GTGE/Rendering/Renderer.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Core/ImageUtils.hpp>
 
 
 #include <gtgl/gtgl.h>
@@ -10,7 +10,7 @@
 #if defined(_WIN32)
 #include <WinGDI.h>
 #else
-#include <GTEngine/Core/Windowing/X11/X11.hpp>
+#include <GTGE/Core/Windowing/X11/X11.hpp>
 #endif
 
 

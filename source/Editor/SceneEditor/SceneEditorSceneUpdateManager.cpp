@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Editor/SceneEditor/SceneEditorSceneUpdateManager.hpp>
+#include <GTGE/Editor/SceneEditor/SceneEditorSceneUpdateManager.hpp>
 
 namespace GT
 {

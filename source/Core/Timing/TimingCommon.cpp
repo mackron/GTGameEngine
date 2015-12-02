@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/Timing/TimingCommon.hpp>
+#include <GTGE/Core/Timing/TimingCommon.hpp>
 
 #if defined(_WIN32)
-#include <GTEngine/Core/windows.hpp>
+#include <GTGE/Core/windows.hpp>
 #include <cstdint>
 
 namespace GT

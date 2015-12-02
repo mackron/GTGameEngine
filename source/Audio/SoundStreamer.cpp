@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Audio/SoundStreamer.hpp>
-#include <GTEngine/Assets/SoundAsset.hpp>
+#include <GTGE/Audio/SoundStreamer.hpp>
+#include <GTGE/Assets/SoundAsset.hpp>
 
 #include "Streamers/SoundStreamer_WAV.hpp"
 #include "Streamers/SoundStreamer_Vorbis.hpp"

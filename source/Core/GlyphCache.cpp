@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/Core/GlyphCache.hpp>
+#include <GTGE/Core/GlyphCache.hpp>
 
 namespace GT
 {

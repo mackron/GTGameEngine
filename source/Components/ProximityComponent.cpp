@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Components/ProximityComponent.hpp>
-#include <GTEngine/SceneNode.hpp>
+#include <GTGE/Components/ProximityComponent.hpp>
+#include <GTGE/SceneNode.hpp>
 
 namespace GT
 {

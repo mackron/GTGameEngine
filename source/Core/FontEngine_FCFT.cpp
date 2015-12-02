@@ -4,8 +4,8 @@
 
 #if defined(__linux__)
 #include "FontEngine_FCFT.hpp"
-#include <GTEngine/Core/GlyphCache.hpp>
-#include <GTEngine/Core/Math.hpp>          // For Abs().
+#include <GTGE/Core/GlyphCache.hpp>
+#include <GTGE/Core/Math.hpp>          // For Abs().
 
 namespace GT
 {

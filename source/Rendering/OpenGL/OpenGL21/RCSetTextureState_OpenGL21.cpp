@@ -3,7 +3,7 @@
 #include "RCSetTextureState_OpenGL21.hpp"
 #include "ServerState_OpenGL21.hpp"
 #include "../TypeConversion.hpp"
-#include <GTEngine/Core/ImageUtils.hpp>
+#include <GTGE/Core/ImageUtils.hpp>
 #include <gtgl/gtgl.h>
 #include <assert.h>
 

@@ -3,8 +3,8 @@
 #ifndef GT_Rendering_OpenGL21_RCSetTextureState
 #define GT_Rendering_OpenGL21_RCSetTextureState
 
-#include <GTEngine/Core/ImageFormats.hpp>
-#include <GTEngine/Core/Map.hpp>
+#include <GTGE/Core/ImageFormats.hpp>
+#include <GTGE/Core/Map.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 

@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Scripting/Scripting_Particles.hpp>
-#include <GTEngine/Scripting/Scripting_Math.hpp>
-#include <GTEngine/ParticleSystem.hpp>
-#include <GTEngine/GTEngine.hpp>
+#include <GTGE/Scripting/Scripting_Particles.hpp>
+#include <GTGE/Scripting/Scripting_Math.hpp>
+#include <GTGE/ParticleSystem.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {

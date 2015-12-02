@@ -1,12 +1,12 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Material.hpp>
-#include <GTEngine/ShaderLibrary.hpp>
-#include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/ShaderParameter.hpp>
-#include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Core/Parse.hpp>
-#include <GTEngine/Core/Strings/Tokenizer.hpp>
+#include <GTGE/Material.hpp>
+#include <GTGE/ShaderLibrary.hpp>
+#include <GTGE/Texture2DLibrary.hpp>
+#include <GTGE/ShaderParameter.hpp>
+#include <GTGE/GTEngine.hpp>
+#include <GTGE/Core/Parse.hpp>
+#include <GTGE/Core/Strings/Tokenizer.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)
@@ -16,7 +16,7 @@
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
-#include <GTEngine/Core/rapidxml.hpp>
+#include <GTGE/Core/rapidxml.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif

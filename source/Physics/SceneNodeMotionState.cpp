@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
-#include <GTEngine/Physics/SceneNodeMotionState.hpp>
-#include <GTEngine/SceneNode.hpp>
+#include <GTGE/Physics/SceneNodeMotionState.hpp>
+#include <GTGE/SceneNode.hpp>
 
 namespace GT
 {

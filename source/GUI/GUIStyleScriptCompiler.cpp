@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTEngine/GUI/GUIStyleScriptCompiler.hpp>
+#include <GTGE/GUI/GUIStyleScriptCompiler.hpp>
 #include "GUIStyleTokenizer.hpp"
 #include <easy_fs/easy_vfs.h>
 #include <easy_path/easy_path.h>

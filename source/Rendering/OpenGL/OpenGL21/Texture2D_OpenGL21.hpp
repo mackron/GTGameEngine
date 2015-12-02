@@ -3,7 +3,7 @@
 #ifndef GT_Rendering_Texture2D_OpenGL21
 #define GT_Rendering_Texture2D_OpenGL21
 
-#include <GTEngine/Rendering/Texture2D.hpp>
+#include <GTGE/Rendering/Texture2D.hpp>
 #include <gtgl/gtgl.h>
 
 #include "TextureState_OpenGL21.hpp"
