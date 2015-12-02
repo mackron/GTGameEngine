@@ -103,13 +103,6 @@ namespace GT
         int IsMouseSmoothingEnabled(GT::Script &script);
 
 
-        /// Scans the data files for changes and posts the relevant events.
-        ///
-        /// @remarks
-        ///     This happens immediately and synchronously.
-        int ScanDataFilesForChanges(GT::Script &script);
-
-
         /// Retrieves the GUI element of the main game window.
         int GetGameWindowGUIElement(GT::Script &script);
 

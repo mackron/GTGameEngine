@@ -17,7 +17,6 @@ function GTGUI.Element:DataExplorer()
             Editor.ShowNewFileDialog("Create New Folder...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateDirectory(absolutePath);
-                    Game.ScanDataFilesForChanges();                 -- This will force the files watcher to update.
 
                     self:SelectAndExpandItemByPath(absolutePath);
                 end;
@@ -32,7 +31,6 @@ function GTGUI.Element:DataExplorer()
             Editor.ShowNewFileDialog("Create New Scene...", self.FolderMenu.DestinationDirectory, "gtscene", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateEmptyFile(absolutePath);
-                    Game.ScanDataFilesForChanges();
 
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                     self:SelectAndExpandItemByPath(absolutePath);
@@ -46,7 +44,6 @@ function GTGUI.Element:DataExplorer()
             Editor.ShowNewFileDialog("Create New Prefab...", self.FolderMenu.DestinationDirectory, "gtprefab", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateEmptyFile(absolutePath);
-                    Game.ScanDataFilesForChanges();
                 end
             end);
         end
@@ -57,7 +54,6 @@ function GTGUI.Element:DataExplorer()
             Editor.ShowNewFileDialog("Create New Material...", self.FolderMenu.DestinationDirectory, "material", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateEmptyFile(absolutePath);
-                    Game.ScanDataFilesForChanges();
 
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                     self:SelectAndExpandItemByPath(absolutePath);
@@ -71,7 +67,6 @@ function GTGUI.Element:DataExplorer()
             Editor.ShowNewFileDialog("Create New Particle System...", self.FolderMenu.DestinationDirectory, "gtparticle", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateEmptyFile(absolutePath);
-                    Game.ScanDataFilesForChanges();
 
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                     self:SelectAndExpandItemByPath(absolutePath);
@@ -85,7 +80,6 @@ function GTGUI.Element:DataExplorer()
             Editor.ShowNewFileDialog("Create New Text File...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
                     GT.IO.CreateEmptyFile(absolutePath);
-                    Game.ScanDataFilesForChanges();
 
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                     self:SelectAndExpandItemByPath(absolutePath);
@@ -102,7 +96,6 @@ function GTGUI.Element:DataExplorer()
                 self:ForceCloseFilesInDirectory(self:FindItemByPath(self.FolderMenu.DestinationDirectory));
 
                 GT.IO.DeleteDirectory(self.FolderMenu.DestinationDirectory);
-                Game.ScanDataFilesForChanges();
             end
         end);
     end);
@@ -137,8 +130,6 @@ function GTGUI.Element:DataExplorer()
                         end
                     end
                 end
-
-                Game.ScanDataFilesForChanges();
             end
         end);
     end);
@@ -212,7 +203,6 @@ function GTGUI.Element:DataExplorer()
                         data.droppedElement.sceneEditor:CreatePrefab(item.path, item:GetRootPath(), data.droppedElement.sceneNodePtr);
                     else
                         GTEngine.CreatePrefab(item.path, item:GetRootPath(), data.droppedElement.sceneNodePtr);
-                        Game.ScanDataFilesForChanges();     -- This will force the data files watcher to update, which will in turn notify the scene of the changes to it can update any nodes linked to this prefab.
                     end
                 end
             end
@@ -249,14 +239,14 @@ function GTGUI.Element:DataExplorer()
     function self:RemoveItemByPath(path)
         self.TreeView:RemoveItem(self:FindItemByPath(path));
     end
-	
-	function self:RenameItem(pathOld, pathNew)
-		local item = self:FindItemByPath(pathOld);
-		if item then
-			item.path = pathNew;
-			item:SetText(GT.IO.GetFileNameFromPath(pathNew));
-		end
-	end
+
+    function self:RenameItem(pathOld, pathNew)
+        local item = self:FindItemByPath(pathOld);
+        if item then
+            item.path = pathNew;
+            item:SetText(GT.IO.GetFileNameFromPath(pathNew));
+        end
+    end
 
     function self:FindItemByPath(path, root)
         -- Brute force for now, but we should probably use the hierarchial nature of the file system for optimizing later.
@@ -417,8 +407,8 @@ function GTGUI.Element:DataExplorer()
     function self:OnFileRemove(absolutePath)
         self:RemoveItemByPath(absolutePath);
     end
-	
-	function self:OnFileRename(absolutePath, absolutePathNew)
+
+    function self:OnFileRename(absolutePath, absolutePathNew)
         self:RenameItem(absolutePath, absolutePathNew);
     end
 

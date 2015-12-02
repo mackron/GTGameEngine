@@ -63,7 +63,6 @@ namespace GT
         {
             if (makeRelativeTo != nullptr)
             {
-                //relativePath = IO::ToRelativePath(fileName, makeRelativeTo);
                 easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else

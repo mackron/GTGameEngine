@@ -157,7 +157,6 @@ namespace GT
             script.SetTableFunction(-1, "EnableMouseSmoothing",               GameFFI::EnableMouseSmoothing);
             script.SetTableFunction(-1, "DisableMouseSmoothing",              GameFFI::DisableMouseSmoothing);
             script.SetTableFunction(-1, "IsMouseSmoothingEnabled",            GameFFI::IsMouseSmoothingEnabled);
-            script.SetTableFunction(-1, "ScanDataFilesForChanges",            GameFFI::ScanDataFilesForChanges);
             script.SetTableFunction(-1, "GetGameWindowGUIElement",            GameFFI::GetGameWindowGUIElement);
             script.SetTableFunction(-1, "SaveGameState",                      GameFFI::SaveGameState);
             script.SetTableFunction(-1, "LoadGameState",                      GameFFI::LoadGameState);
@@ -340,13 +339,6 @@ namespace GT
         {
             script.Push(GetGame(script).IsMouseSmoothingEnabled());
             return 1;
-        }
-
-
-        int ScanDataFilesForChanges(GT::Script &script)
-        {
-            GetGame(script).GetDataFilesWatcher().CheckForChangesAndDispatchEvents();
-            return 0;
         }
 
 
