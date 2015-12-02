@@ -1,11 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/CPUVertexShader.hpp>
-#include <GTGE/ThreadCache.hpp>
-#include <GTGE/Core/Timing.hpp>
 
-
-// Helpers
 namespace GT
 {
     inline glm::vec4 GetVertexAttribute4(const float* data, size_t componentCount, size_t offset)
@@ -74,11 +70,7 @@ namespace GT
             
         }
     }
-}
 
-
-namespace GT
-{
     void ProcessVertexShader(CPUVertexShader &shader, size_t firstVertexID, size_t lastVertexID)
     {
         // We need to iterate over each vertex and process it.
@@ -107,65 +99,6 @@ namespace GT
     }
 
 
-    /// Class representing the threading job to execute for processing a chunk of vertices.
-    class ProcessVertexShaderJob : public ThreadJob
-    {
-    public:
-
-        /// Default constructor.
-        ProcessVertexShaderJob()
-            : m_shader(nullptr), m_firstVertexID(0), m_lastVertexID(0)
-        {
-        }
-
-        /// Constructor.
-        ProcessVertexShaderJob(CPUVertexShader &shader, size_t firstVertexID, size_t lastVertexID)
-            : m_shader(&shader), m_firstVertexID(firstVertexID), m_lastVertexID(lastVertexID)
-        {
-        }
-
-
-        /// Sets the range of vertices to execute.
-        void SetVertexRange(CPUVertexShader &shader, size_t firstVertexID, size_t lastVertexID)
-        {
-            m_shader        = &shader;
-            m_firstVertexID = firstVertexID;
-            m_lastVertexID  = lastVertexID;
-        }
-
-
-        void Run()
-        {
-            if (m_shader != nullptr)
-            {
-                ProcessVertexShader(*m_shader, m_firstVertexID, m_lastVertexID);
-            }
-        }
-
-
-    private:
-
-        /// A pointer to the shader this job will be working on.
-        CPUVertexShader* m_shader;
-
-        /// The index of the first vertex to work on.
-        size_t m_firstVertexID;
-
-        /// the index of the last vertex to work on.
-        size_t m_lastVertexID;
-        
-        
-    private:    // No copying.
-        ProcessVertexShaderJob(const ProcessVertexShaderJob &);
-        ProcessVertexShaderJob & operator=(const ProcessVertexShaderJob &);
-    };
-}
-
-
-namespace GT
-{
-    // Temp benchmarker.
-    Benchmarker benchmarker;
 
     CPUVertexShader::CPUVertexShader()
         : m_input(nullptr), m_vertexCount(0), m_format(), m_vertexSizeInFloats(m_format.GetSize()), m_output(nullptr),
@@ -187,110 +120,23 @@ namespace GT
     {
         if (input != nullptr && output != nullptr)
         {
-            //benchmarker.Start();
-
             this->OnStartExecute();
-
-            m_input              = input;
-            m_vertexCount        = vertexCount;
-            m_format             = format;
-            m_vertexSizeInFloats = m_format.GetSize();
-            m_output             = output;
-
-            m_usingPosition  = m_format.GetAttributeInfo(VertexAttribs::Position,  m_positionComponentCount,  m_positionOffset);
-            m_usingTexCoord  = m_format.GetAttributeInfo(VertexAttribs::TexCoord,  m_texCoordComponentCount,  m_texCoordOffset);
-            m_usingNormal    = m_format.GetAttributeInfo(VertexAttribs::Normal,    m_normalComponentCount,    m_normalOffset);
-            m_usingTangent   = m_format.GetAttributeInfo(VertexAttribs::Tangent,   m_tangentComponentCount,   m_tangentOffset);
-            m_usingBitangent = m_format.GetAttributeInfo(VertexAttribs::Bitangent, m_bitangentComponentCount, m_bitangentOffset);
-
-
-            // We only do multithreading if we have enough vertices to warrant it.
-            if (m_vertexCount >= 64 && threadCount > 1)
             {
-                // What we do here is modify <threadCount> to store the number of helper threads. That is, the number of thread, not including the calling thread.
-                --threadCount;
+                m_input              = input;
+                m_vertexCount        = vertexCount;
+                m_format             = format;
+                m_vertexSizeInFloats = m_format.GetSize();
+                m_output             = output;
 
-                // This is a temporary buffer containing the threads we've acquired.
-                Thread** threads      = new Thread*[threadCount];
-                ProcessVertexShaderJob** jobs = new ProcessVertexShaderJob*[threadCount];
+                m_usingPosition  = m_format.GetAttributeInfo(VertexAttribs::Position,  m_positionComponentCount,  m_positionOffset);
+                m_usingTexCoord  = m_format.GetAttributeInfo(VertexAttribs::TexCoord,  m_texCoordComponentCount,  m_texCoordOffset);
+                m_usingNormal    = m_format.GetAttributeInfo(VertexAttribs::Normal,    m_normalComponentCount,    m_normalOffset);
+                m_usingTangent   = m_format.GetAttributeInfo(VertexAttribs::Tangent,   m_tangentComponentCount,   m_tangentOffset);
+                m_usingBitangent = m_format.GetAttributeInfo(VertexAttribs::Bitangent, m_bitangentComponentCount, m_bitangentOffset);
 
-
-                // First we will grab as many threads as we can.
-                for (size_t i = 0; i < threadCount; ++i)
-                {
-                    auto thread = ThreadCache::AcquireThread();
-                    if (thread != nullptr)
-                    {
-                        // We need to keep track of this thread so we can sync and unacquire afterwards.
-                        threads[i] = thread;
-
-                        // Now we need a job. We need to keep track of this job so we can delete it later.
-                        auto job = new ProcessVertexShaderJob;
-                        jobs[i] = job;
-                    }
-                    else
-                    {
-                        // If we get here there were not enough available threads. Thus, we will have a new thread count and we need to break and give the remaining vertices to the calling thread.
-                        threadCount = i;
-                        break;
-                    }
-                }
-
-
-                // With the helper threads created, we can now divide up the work and start executing.
-                size_t vertexChunkSize = m_vertexCount / (threadCount + 1);
-                size_t firstVertexID   = 0;
-
-                for (size_t i = 0; (i < threadCount) && (firstVertexID < m_vertexCount - 1); ++i)
-                {
-                    auto thread = threads[i];
-                    auto job    = jobs[i];
-
-                    assert(thread != nullptr && job != nullptr);
-
-                    size_t lastVertexID = Min(firstVertexID + vertexChunkSize, m_vertexCount - 1);
-                    job->SetVertexRange(*this, firstVertexID, lastVertexID);
-                        
-                    thread->Start(*job, false);     // <-- second argument specifies not to wait for the execution of the current procedure to complete. It will be guaranteed that the thread won't already be running.
-
-                    // We have a new first index.
-                    firstVertexID = lastVertexID + 1;
-                }
-
-
-                // We will get the calling thread to process whatever is left over.
-                ProcessVertexShader(*this, firstVertexID, m_vertexCount - 1);
-
-
-                // Now we need to do a cleanup.
-                for (size_t i = 0; i < threadCount; ++i)
-                {
-                    threads[i]->Wait();
-                    ThreadCache::UnacquireThread(threads[i]);
-                    
-                    delete jobs[i];
-                }
-
-                delete [] jobs;
-                delete [] threads;
-            }
-            else
-            {
-                // We'll get here if we're not bothering with multithreading.
                 ProcessVertexShader(*this, 0, m_vertexCount - 1);
             }
-
             this->OnEndExecute();
-
-            /*
-            benchmarker.End();
-
-            if (benchmarker.counter == 200)
-            {
-                printf("CPU Vertex Shader Time: %f\n", static_cast<float>(benchmarker.GetAverageTime()));
-                benchmarker.Reset();
-            }
-            */
 
             return true;
         }
@@ -306,12 +152,13 @@ namespace GT
     void CPUVertexShader::OnEndExecute()
     {
     }
-}
 
 
-// CPUVertexShader::Vertex
-namespace GT
-{
+
+
+    ///////////////////////////////////////
+    // CPUVertexShader::Vertex
+
     CPUVertexShader::Vertex::Vertex(unsigned int id, float* data, const VertexFormat &format)
         : id(id), data(data), format(format),
           Position(0.0f, 0.0f, 0.0f, 1.0f),
