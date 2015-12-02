@@ -51,11 +51,56 @@ namespace GT
     }
 
 
+    typedef struct
+    {
+        /// A pointer to the main context.
+        EngineContext* pContext;
+
+        /// A pointer to the file to read the config data from.
+        easyvfs_file* pFile;
+
+    } AppConfigData;
+
+    static unsigned int app_config_read(void* pUserData, void* pDataOut, unsigned int bytesToRead)
+    {
+        AppConfigData* pData = reinterpret_cast<AppConfigData*>(pUserData);
+        assert(pData != NULL);
+
+        unsigned int bytesRead;
+        if (easyvfs_read(pData->pFile, pDataOut, bytesToRead, &bytesRead)) {
+            return bytesRead;
+        }
+
+        return 0;
+    }
+
+    static void app_config_pair(void* pUserData, const char* key, const char* value)
+    {
+        AppConfigData* pData = reinterpret_cast<AppConfigData*>(pUserData);
+        assert(pData != NULL);
+
+        if (strcmp(key, "BaseDirectory") == 0)
+        {
+            pData->pContext->AddBaseDirectoryRelativeToExe(value);
+            return;
+        }
+    }
+
+    static void app_config_error(void* pUserData, const char* message, unsigned int line)
+    {
+        AppConfigData* pData = reinterpret_cast<AppConfigData*>(pUserData);
+        assert(pData != NULL);
+
+        pData->pContext->LogErrorf("config.cfg:%d %s", line, message);
+    }
+
+
+
+
     EngineContext::EngineContext(int argc, char** argv)
         : m_cmdline(),
             m_executableDirectoryAbsolutePath(),
             m_pVFS(nullptr),
-            m_applicationConfig(),
             m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
             m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
             m_assetLibrary()
@@ -85,7 +130,6 @@ namespace GT
         // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
         char logpath[EASYVFS_MAX_PATH];
         easypath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
-        
         m_logFile.Open(m_pVFS, logpath, "GTGE");  
 
 
@@ -95,21 +139,13 @@ namespace GT
         // This is different from a user configuration (which are located in the 'configs' folder). The application configuration
         // usually remains constant. It defines things like directories. We won't return false if we fail to open, in which case
         // the game will use defaults.
-        if (m_applicationConfig.Open(m_pVFS, "config.lua"))
-        {
-            // The application config will define the data directories where all of the game's data and assets are located. We will
-            // move into the directory of the first defined data directory.
-            auto &directories = m_applicationConfig.GetDataDirectories();
-            if (directories.count > 0)
-            {
-                // Here is where we add each of the base directories. Each directory is inserted in the second-to-last position
-                // because we always want the executable's directory to be the lowest priority one.
-                for (size_t i = 0; i < directories.count; ++i)
-                {
-                    easyvfs_insert_base_directory(m_pVFS, directories[i].c_str(), easyvfs_get_base_directory_count(m_pVFS) - 1);
-                }
-            }
+        AppConfigData cfg;
+        cfg.pContext = this;
+        cfg.pFile    = easyvfs_open(m_pVFS, "config.cfg", EASYVFS_READ, 0);
+        if (cfg.pFile != NULL) {
+            easyutil_parse_key_value_pairs(app_config_read, app_config_pair, app_config_error, &cfg);
         }
+        
 
 
 
@@ -193,16 +229,6 @@ namespace GT
 
 
     ////////////////////////////////////////////////////
-    // Command Line
-
-    const GT::ApplicationConfig & EngineContext::GetApplicationConfig() const
-    {
-        return m_applicationConfig;
-    }
-
-
-
-    ////////////////////////////////////////////////////
     // File System Management
 
     const char* EngineContext::GetExecutableAbsolutePath() const
@@ -213,6 +239,14 @@ namespace GT
     const char* EngineContext::GetExecutableDirectoryAbsolutePath() const
     {
         return m_executableDirectoryAbsolutePath;
+    }
+
+    void EngineContext::AddBaseDirectoryRelativeToExe(const char* relativePath)
+    {
+        char absolutePath[EASYVFS_MAX_PATH];
+        easypath_to_absolute(relativePath, this->GetExecutableDirectoryAbsolutePath(), absolutePath, sizeof(absolutePath));
+
+        easyvfs_insert_base_directory(m_pVFS, absolutePath, easyvfs_get_base_directory_count(m_pVFS) - 1);
     }
 
 

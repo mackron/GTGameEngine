@@ -147,7 +147,7 @@ namespace GT
             //configPath.Append("config.lua");
 
             char configPath[EASYVFS_MAX_PATH];
-            easypath_copy_and_append(configPath, sizeof(configPath), executableDirectory, "config.lua");
+            easypath_copy_and_append(configPath, sizeof(configPath), executableDirectory, "config.cfg");
 
             easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), configPath, EASYVFS_WRITE, 0);
             if (pFile != nullptr)
@@ -157,7 +157,7 @@ namespace GT
                     auto index = static_cast<int>(iDataDirectory + 1);       // +1 because Lua is 1 based.
                     auto path  = dataDirectoryConfigPaths[iDataDirectory].c_str();
 
-                    easyvfs_write_string(pFile, String::CreateFormatted("Directories.Data[%d] = \"%s\";", index, path).c_str());
+                    easyvfs_write_string(pFile, String::CreateFormatted("BaseDirectory \"%s\"\n", index, path).c_str());
                 }
 
 

@@ -2,7 +2,6 @@
 
 #include <GTGE/Scripting.hpp>
 #include <GTGE/Game.hpp>
-#include <GTGE/ApplicationConfig.hpp>
 #include <GTGE/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
 
 #if defined(_MSC_VER)
@@ -42,10 +41,10 @@ namespace GT
                 this->GetTableValue(-2);
                 if (this->IsTable(-1))
                 {
-                    auto &dataDirectories = g_EngineContext->GetApplicationConfig().GetDataDirectories();
-                    for (size_t iDirectory = 0; iDirectory < dataDirectories.count; ++iDirectory)
+                    assert(easyvfs_get_base_directory_count(g_EngineContext->GetVFS()) > 0);
+                    for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
                     {
-                        this->SetTableValue(-1, iDirectory + 1, dataDirectories[iDirectory].c_str());
+                        this->SetTableValue(-1, iBaseDir + 1, easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBaseDir));
                     }
                 }
                 this->Pop(1);

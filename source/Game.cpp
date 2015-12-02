@@ -4,7 +4,6 @@
 #include <GTGE/ThreadCache.hpp>
 #include <GTGE/Texture2DLibrary.hpp>
 #include <GTGE/Rendering/Renderer.hpp>
-#include <GTGE/ApplicationConfig.hpp>
 #include <GTGE/ModelLibrary.hpp>
 #include <GTGE/Texture2DLibrary.hpp>
 #include <GTGE/ParticleSystemLibrary.hpp>
@@ -534,14 +533,13 @@ namespace GT
         GamePackager packager(absoluteOutputDirectory);
 
 
-        // We will start by copying over the data directories.
-        auto &absoluteDataDirectories = g_EngineContext->GetApplicationConfig().GetDataDirectories();
+        // We will start by copying over the data directories, not including the executable directory.
+        assert(easyvfs_get_base_directory_count(g_EngineContext->GetVFS()) > 0);
+        for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
         {
-            for (size_t iDataDirectory = 0; iDataDirectory < absoluteDataDirectories.count; ++iDataDirectory)
-            {
-                packager.CopyDataDirectory(absoluteDataDirectories[iDataDirectory].c_str());
-            }
+            packager.CopyDataDirectory(easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBaseDir));
         }
+
 
         if (easypath_extension_equal(g_EngineContext->GetExecutableAbsolutePath(), "exe"))
         {

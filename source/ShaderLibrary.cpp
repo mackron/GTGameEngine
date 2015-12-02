@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/ShaderLibrary.hpp>
-#include <GTGE/ApplicationConfig.hpp>
 #include <GTGE/Rendering/Renderer.hpp>
 #include <GTGE/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
 #include <GTGE/Core/Dictionary.hpp>

@@ -2,7 +2,6 @@
 
 #include <GTGE/GTEngine.hpp>
 #include <GTGE/Game.hpp>
-#include <GTGE/ApplicationConfig.hpp>
 #include <GTGE/Rendering.hpp>
 #include <GTGE/ShaderLibrary.hpp>
 #include <GTGE/Texture2DLibrary.hpp>

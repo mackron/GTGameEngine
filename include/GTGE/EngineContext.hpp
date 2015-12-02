@@ -3,7 +3,6 @@
 #ifndef GT_EngineContext
 #define GT_EngineContext
 
-#include "ApplicationConfig.hpp"
 #include "MessageDispatcher.hpp"
 #include "DefaultMessageHandler.hpp"
 #include "Audio/SoundWorld.hpp"
@@ -41,16 +40,6 @@ namespace GT
 
 
         ////////////////////////////////////////////////////
-        // Config
-
-        /// Retrieves a reference to the application config object.
-        ///
-        /// @return A reference to the internal application config object.
-        const GT::ApplicationConfig & GetApplicationConfig() const;
-
-
-
-        ////////////////////////////////////////////////////
         // File System Management
 
         /// Retrieves a pointer to the virtual file system object.
@@ -64,6 +53,9 @@ namespace GT
         /// @remarks
         ///     This does not include the executable's directory
         const char* GetExecutableDirectoryAbsolutePath() const;
+
+        /// Adds a base directory relative to the executable.
+        void AddBaseDirectoryRelativeToExe(const char* relativePath);
 
 
 
@@ -184,10 +176,6 @@ namespace GT
 
         /// The mutex for controlling access to the thread acquiring/unacquiring procedures.
         Mutex m_threadManagementLock;
-
-
-        /// The application config.
-        GT::ApplicationConfig m_applicationConfig;
 
 
         /// A pointer to the easy_audio context for audio playback.
