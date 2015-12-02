@@ -144,6 +144,7 @@ namespace GT
         cfg.pFile    = easyvfs_open(m_pVFS, "config.cfg", EASYVFS_READ, 0);
         if (cfg.pFile != NULL) {
             easyutil_parse_key_value_pairs(app_config_read, app_config_pair, app_config_error, &cfg);
+            easyvfs_close(cfg.pFile);
         }
         
 
