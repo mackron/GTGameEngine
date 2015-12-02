@@ -1619,10 +1619,6 @@ namespace GT
 
             if (prefab->WriteToFile())
             {
-                // With the prefab written to the file, we now need to force a check of the file system so that events are posted which in turn
-                // will cause the scene editor to update anything linked to the prefab.
-                this->GetOwnerEditor().GetGame().GetDataFilesWatcher().CheckForChangesAndDispatchEvents();
-
                 // If this was created from via the scene editor, we want to make sure any scene nodes that have updated in accordance
                 // with the new prefab definition are not part of the undo/redo stack. To do this, we just clear the undo/redo staging
                 // area. If we don't do this, the next undo will actually revert the changed scene nodes to their previous state, which

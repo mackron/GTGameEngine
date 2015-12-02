@@ -192,7 +192,6 @@ namespace GT
             if (this->IsScriptFile())
             {
                 this->CompileAndUpdateErrorOutput();
-                this->GetOwnerEditor().GetGame().GetDataFilesWatcher().CheckForChangesAndDispatchEvents();
             }
         }
 

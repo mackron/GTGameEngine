@@ -267,12 +267,6 @@ namespace GT
 
                 easyvfs_close(file);
                 wasSaved = true;
-
-
-                // We want to immediatly force the game to check for changes so that the particle system is immediately reloaded.
-                auto &dataFilesWatcher = this->GetOwnerEditor().GetGame().GetDataFilesWatcher();
-                dataFilesWatcher.CheckForChanges(false);
-                dataFilesWatcher.DispatchEvents();
             }
         }
         this->isSaving = false;

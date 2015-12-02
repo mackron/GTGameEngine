@@ -50,8 +50,6 @@ namespace GT
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
           mousePosX(0), mousePosY(0), mouseMoveLockCounter(0),
-          dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false),
-          dataFilesWatcherEventHandler(*this),
           profilerToggleKey(Keys::F11),
           editorToggleKeyCombination(Keys::Shift, Keys::Tab)
     {
@@ -568,58 +566,6 @@ namespace GT
 
 
 
-    void Game::OnFileInsert(const char* absolutePath)
-    {
-        (void)absolutePath;
-    }
-
-    void Game::OnFileRemove(const char* absolutePath)
-    {
-        (void)absolutePath;
-    }
-
-    void Game::OnFileUpdate(const char* absolutePath)
-    {
-        // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
-        if (!easyvfs_is_existing_directory(g_EngineContext->GetVFS(), absolutePath))
-        {
-            // It's not a directory.
-
-            auto extension = easypath_extension(absolutePath);
-
-            if (ModelLibrary::IsExtensionSupported(extension))
-            {
-                ModelLibrary::Reload(absolutePath);
-            }
-            else if (Texture2DLibrary::IsExtensionSupported(extension))
-            {
-                Texture2DLibrary::Reload(absolutePath);
-            }
-            else if (GT::IsSupportedMaterialExtension(absolutePath))
-            {
-                MaterialLibrary::Reload(absolutePath);
-            }
-            else if (GT::IsSupportedParticleSystemExtension(absolutePath))
-            {
-                ParticleSystemLibrary::Reload(absolutePath);
-            }
-            else
-            {
-                // It might be a script file. We'll try reloading.
-                ScriptLibrary::Reload(absolutePath);
-
-                // If we have a script file we will reload it if applicable.
-                if (this->IsScriptAutoReloadEnabled())
-                {
-                    if (this->script.HasFileBeenLoaded(absolutePath))
-                    {
-                        this->script.ExecuteFile(g_EngineContext->GetVFS(), absolutePath);
-                    }
-                }
-            }
-        }
-    }
-
 
     Key Game::GetProfilerToggleKey() const
     {
@@ -770,14 +716,6 @@ namespace GT
                 }
 
 
-                // Now we initialise the object that will watch the data directory.
-                g_EngineContext->Logf("Loading Files Watcher...");
-                if (!this->InitialiseDataFilesWatcher())
-                {
-                    g_EngineContext->Logf("Error starting up files watcher.");
-                }
-
-
                 // Here is where we let the game object do some startup stuff.
                 if (m_gameStateManager.OnStartup(*this))
                 {
@@ -809,30 +747,9 @@ namespace GT
         return true;
     }
 
-    bool Game::InitialiseDataFilesWatcher()
-    {
-        auto &directories = g_EngineContext->GetApplicationConfig().GetDataDirectories();
-        if (directories.count > 0)
-        {
-            for (size_t i = 0; i < directories.count; ++i)
-            {
-                this->dataFilesWatcher.AddRootDirectory(directories[i].c_str());
-            }
-        }
-
-        this->dataFilesWatcher.AddEventHandler(this->dataFilesWatcherEventHandler);
-
-        return true;
-    }
-
 
     void Game::Shutdown()
     {
-        // The data files watcher might be running. We better wait for it to finish.
-        this->dataFilesWatcher.__Deactivate();          // <-- This will cause the background thread to die quicker if it happens to be running.
-        this->dataFilesWatcher.WaitForEvents();         // <-- This will make sure the background thread has finished.
-
-
         // We first let the game know that we are shutting down. It's important that we do this before killing anything.
         m_gameStateManager.OnShutdown(*this);
         this->script.Execute("Game.OnShutdown();");     // <-- TODO: Don't use this inline style calling. Instead, properly call it through the C++ API.
@@ -862,24 +779,6 @@ namespace GT
 
             // First we need to handle any pending window messages. We do not want to wait here (first argument).
             while (PumpNextWindowEvent(false));
-
-
-            // If we're watching the data directories, we want to check for changes now.
-            if (this->IsDataFilesWatchingEnabled())
-            {
-                float checkInterval = this->GetDataFilesWatchInterval();
-
-                if (Timing::GetTimeInSeconds() - this->lastDataFilesWatchTime >= checkInterval)
-                {
-                    if (this->dataFilesWatcher.EventsReady())
-                    {
-                        this->dataFilesWatcher.DispatchEvents(false);       // <-- 'false' means to not wait.
-                        this->dataFilesWatcher.CheckForChanges(true);       // <-- 'true' means to go asynchronous.
-                    }
-
-                    this->lastDataFilesWatchTime = static_cast<float>(Timing::GetTimeInSeconds());
-                }
-            }
 
 
             // We want our events to be handled synchronously on the main thread.
@@ -1292,13 +1191,6 @@ namespace GT
     void Game::HandleEvent_OnReceiveFocus(GameEvent &e)
     {
         this->focused = true;
-
-        // If we're watching data files, we're going to check and update right now. This is useful for toggling between the editor and the other application.
-        if (this->IsDataFilesWatchingEnabled() || this->IsScriptAutoReloadEnabled())
-        {
-            this->dataFilesWatcher.CheckForChanges(false);
-            this->dataFilesWatcher.DispatchEvents();
-        }
 
         if (this->captureMouseOnReceiveFocus)
         {

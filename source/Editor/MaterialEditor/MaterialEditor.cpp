@@ -209,11 +209,6 @@ namespace GT
             if (wasSaved)
             {
                 this->UnmarkAsModified();
-
-                // We want to immediatly force the game to check for changes so that the material is immediately reloaded.
-                auto &dataFilesWatcher = this->GetOwnerEditor().GetGame().GetDataFilesWatcher();
-                dataFilesWatcher.CheckForChanges(false);
-                dataFilesWatcher.DispatchEvents();
             }
         }
         this->isSaving = false;

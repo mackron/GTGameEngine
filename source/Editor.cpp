@@ -4,6 +4,8 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
+#include <GTEngine/ParticleSystemLibrary.hpp>
+#include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/GUI/GUIServer.hpp>
 #include <GTEngine/Core/Keyboard.hpp>
 #include <easy_path/easy_path.h>
@@ -27,8 +29,7 @@ namespace GT
           openedFiles(), currentlyShownEditor(nullptr),
           GUI(),
           lastProfilingUpdateTime(0.0),
-          isStarted(false), isOpen(false), disableFileWatchingAfterClose(true),
-          dataFilesWatcherEventHandler(*this)
+          isStarted(false), isOpen(false)
     {
     }
 
@@ -1063,6 +1064,44 @@ namespace GT
 
     void Editor::OnFileUpdate(const char* absolutePath)
     {
+        // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
+        if (!easyvfs_is_existing_directory(g_EngineContext->GetVFS(), absolutePath))
+        {
+            // It's not a directory.
+
+            auto extension = easypath_extension(absolutePath);
+
+            if (ModelLibrary::IsExtensionSupported(extension))
+            {
+                ModelLibrary::Reload(absolutePath);
+            }
+            else if (Texture2DLibrary::IsExtensionSupported(extension))
+            {
+                Texture2DLibrary::Reload(absolutePath);
+            }
+            else if (GT::IsSupportedMaterialExtension(absolutePath))
+            {
+                MaterialLibrary::Reload(absolutePath);
+            }
+            else if (GT::IsSupportedParticleSystemExtension(absolutePath))
+            {
+                ParticleSystemLibrary::Reload(absolutePath);
+            }
+            else
+            {
+                // It might be a script file. We'll try reloading.
+                ScriptLibrary::Reload(absolutePath);
+
+                // If we have a script file we will reload it if applicable.
+                if (this->GetGame().GetScript().HasFileBeenLoaded(absolutePath))
+                {
+                    this->GetGame().GetScript().ExecuteFile(g_EngineContext->GetVFS(), absolutePath);
+                }
+            }
+        }
+
+
+
         auto &script = this->game.GetScript();
 
         script.GetGlobal("Editor");

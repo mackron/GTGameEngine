@@ -8,7 +8,6 @@
 
 #include "SubEditorTabEventHandler.hpp"
 #include "../GameScript.hpp"
-#include "../DataFilesWatcher.hpp"
 
 namespace GT
 {

@@ -10,7 +10,7 @@
 #include "Editor/ParticleEditor/ParticleEditor.hpp"
 #include "Editor/TextEditor/TextEditor.hpp"
 #include "Editor/PackagingToolEditor/PackagingToolEditor.hpp"
-#include "DataFilesWatcher.hpp"
+#include <easy_fs/easy_fsw.h>
 
 namespace GT
 {
@@ -362,39 +362,6 @@ namespace GT
 
         /// Whether or not the editor is open. Defaults to false.
         bool isOpen;
-
-        /// Whether or not file watching should be disabled when the editor is closed.
-        bool disableFileWatchingAfterClose;
-
-
-        /// The event handler for the data files watcher. This will just dispatch the events to the main Editor object.
-        class DataFilesWatcherEventHandler : public DataFilesWatcher::EventHandler
-        {
-        public:
-
-            /// Constructor.
-            DataFilesWatcherEventHandler(Editor &editor)
-                : editor(editor)
-            {
-            }
-
-
-            void OnInsert(const char* absolutePath) { this->editor.OnFileInsert(absolutePath); }
-            void OnRemove(const char* absolutePath) { this->editor.OnFileRemove(absolutePath); }
-            void OnUpdate(const char* absolutePath) { this->editor.OnFileUpdate(absolutePath); }
-
-        private:
-
-            /// The editor object that owns this event handler.
-            Editor &editor;
-
-        private:    // No copying.
-            DataFilesWatcherEventHandler(const DataFilesWatcherEventHandler &);
-            DataFilesWatcherEventHandler & operator=(const DataFilesWatcherEventHandler &);
-
-        }dataFilesWatcherEventHandler;
-
-
 
 
         /// The scripting FFI.

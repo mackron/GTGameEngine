@@ -10,7 +10,6 @@
 #include "Editor.hpp"
 #include "GUIEventHandler.hpp"
 #include "GameUpdateJob.hpp"
-#include "DataFilesWatcher.hpp"
 #include "Profiler.hpp"
 #include "DefaultGUIImageManager.hpp"
 #include "Rendering/DefaultGUIRenderer.hpp"
@@ -281,31 +280,6 @@ namespace GT
 
 
 
-        /// Retrieves a reference to the data files watcher.
-        DataFilesWatcher & GetDataFilesWatcher() { return this->dataFilesWatcher; }
-
-        /// Enables watching of the data files.
-        void EnableDataFilesWatching() { this->isDataFilesWatchingEnabled = true; }
-
-        /// Disables watching of the data files.
-        void DisableDataFilesWatching() { this->isDataFilesWatchingEnabled = false; }
-
-        /// Determines whether or not the data files are being watched.
-        bool IsDataFilesWatchingEnabled() const { return this->isDataFilesWatchingEnabled; }
-
-        /// Retrieves the interval for checking for changes to the data files.
-        float GetDataFilesWatchInterval() const
-        {
-            float interval = this->script.GetFloat("Game.DataFilesWatchInterval");
-            if (interval == 0.0f)
-            {
-                interval = 2.0f;
-            }
-
-            return interval;
-        }
-
-
 
         /// Enables automatic script reloading.
         ///
@@ -332,19 +306,6 @@ namespace GT
         /// @param executableName  [in] The name of the executable.
         bool PackageForDistribution(const char* outputDirectory, const char* executableName);
 
-
-
-        ///////////////////////////////////////////////
-        // Events from Files Watcher.
-
-        /// Called when a file is added.
-        void OnFileInsert(const char* absolutePath);
-
-        /// Called when a file is removed.
-        void OnFileRemove(const char* absolutePath);
-
-        /// Called when a file is updated.
-        void OnFileUpdate(const char* absolutePath);
 
 
        
@@ -573,12 +534,6 @@ namespace GT
         *       This should be called after InitialiseFonts() because the GUI depends on the font server.
         */
         bool InitialiseGUI();
-
-        /// Helper method for starting up the data files watcher.
-        ///
-        /// @return True if the data files watcher was initialised successfully.
-        bool InitialiseDataFilesWatcher();
-
         
         /**
         *   \brief  Performs the main game loop.
@@ -924,46 +879,6 @@ namespace GT
 
         /// Incrementing this will cause that number of mouse move events to be discarded. Really useful for locking movement events from mouse captures.
         int mouseMoveLockCounter;
-
-
-        /// Object use for watching changes to the data directories. Mainly used for the editor.
-        DataFilesWatcher dataFilesWatcher;
-
-        /// The last time the data files where checked.
-        float lastDataFilesWatchTime;
-
-        /// Controls whether or not the data directories should be dynamically watched. This should only really need to be enabled when running tools like the editor.
-        bool isDataFilesWatchingEnabled;
-
-
-
-        /// The event handler for the data files watcher. This will just dispatch the events to the main Game object.
-        class DataFilesWatcherEventHandler : public DataFilesWatcher::EventHandler
-        {
-        public:
-
-            /// Constructor.
-            DataFilesWatcherEventHandler(Game &game)
-                : game(game)
-            {
-            }
-
-
-            void OnInsert(const char* absolutePath) { this->game.OnFileInsert(absolutePath); }
-            void OnRemove(const char* absolutePath) { this->game.OnFileRemove(absolutePath); }
-            void OnUpdate(const char* absolutePath) { this->game.OnFileUpdate(absolutePath); }
-
-        private:
-
-            /// The editor object that owns this event handler.
-            Game &game;
-
-        private:    // No copying.
-            DataFilesWatcherEventHandler(const DataFilesWatcherEventHandler &);
-            DataFilesWatcherEventHandler & operator=(const DataFilesWatcherEventHandler &);
-
-        }dataFilesWatcherEventHandler;
-
 
 
 
