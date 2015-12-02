@@ -249,23 +249,22 @@ namespace GT
         ///////////////////////////////////////////////
         // Events from the file system watcher.
 
-        /// Recursively inserts each file contained within the given base directory.
-        void InsertDirectoryChildren_Recursive(const char* baseDir);
-
         /// Called when a file is added.
-        //void OnFileInsert(const DataFilesWatcher::Item &item);
         void OnFileInsert(const char* absolutePath);
 
         /// Called when a file is removed.
-        //void OnFileRemove(const DataFilesWatcher::Item &item);
         void OnFileRemove(const char* absolutePath);
 
         /// Called when a file is renamed.
         void OnFileRename(const char* absolutePathOld, const char* absolutePathNew);
 
         /// Called when a file is updated.
-        //void OnFileUpdate(const DataFilesWatcher::Item &item);
         void OnFileUpdate(const char* absolutePath);
+
+
+        /// Retrieves a pointer to the internal file system watcher.
+        easyfsw_context* GetFSW() { return m_pFSW; }
+
 
 
     private:
@@ -288,10 +287,26 @@ namespace GT
         bool IsSpecialPath(const char* path) const;
 
 
+        /// Recursively inserts each file contained within the given base directory.
+        void InsertDirectoryChildren_Recursive(const char* baseDir);
+
+        /// Starts up the file system watcher thread.
+        void StartupFileSystemWatcher();
+
+        /// Shuts down the file system watcher.
+        void ShutdownFileSystemWatcher();
+
+
     private:
 
         /// The game that owns this editor object.
         Game &game;
+
+        /// A pointer to the file system watcher.
+        easyfsw_context* m_pFSW;
+
+        /// The file system watcher thread.
+        //easyutil_thread m_FSWThread;
 
 
         /// The list of open files. This is indexed by the full, absolute file path. We need to index like this since we need to support

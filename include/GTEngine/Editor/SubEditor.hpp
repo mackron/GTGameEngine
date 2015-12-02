@@ -137,10 +137,13 @@ namespace GT
         /// @param item [in] The object containing information about the file.
         virtual void OnFileInsert(const char* absolutePath);
 
-        /// Called when a file is remove from a data directory.
+        /// Called when a file is removed from a data directory.
         ///
         /// @param item [in] The object containing information about the file.
         virtual void OnFileRemove(const char* absolutePath);
+
+        /// Called when a file is renamed in a data directory.
+        virtual void OnFileRename(const char* absolutePathOld, const char* absolutePathNew);
 
         /// Called when a file in a data directory is updated.
         ///

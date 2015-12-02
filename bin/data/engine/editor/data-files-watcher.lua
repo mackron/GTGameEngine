@@ -23,6 +23,12 @@ function Editor.DataFilesWatcher.OnRemove(absolutePath)
     end
 end
 
+function Editor.DataFilesWatcher.OnRename(absolutePath, absolutePathNew)
+    for i,value in ipairs(Editor.DataFilesWatcher.RegisteredExplorers) do
+        value:OnFileRename(absolutePath, absolutePathNew);
+    end
+end
+
 function Editor.DataFilesWatcher.OnUpdate(absolutePath)
     for i,value in ipairs(Editor.DataFilesWatcher.RegisteredExplorers) do
         value:OnFileUpdate(absolutePath);

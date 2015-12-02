@@ -23,6 +23,7 @@ namespace GT
 
     Editor::Editor(Game &game)
         : game(game),
+          m_pFSW(nullptr),// m_FSWThread(nullptr),
           openedFiles(), currentlyShownEditor(nullptr),
           GUI(),
           lastProfilingUpdateTime(0.0),
@@ -145,13 +146,6 @@ namespace GT
                 // where the editor will be placed underneath another GUI element, causing it to not look quite right.
                 guiServer.GetRootElement()->PrependChild(*this->GUI.EditorMain);
 
-
-                // Here we need to attach our files watcher event handler.
-                //this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
-
-                
-
-
                 this->isStarted = true;
             }
             else
@@ -171,17 +165,8 @@ namespace GT
             this->game.ShowCursor();
             this->GUI.EditorMain->Show();
 
-            // TODO: Start the file system watcher thread.
-
-            // We always want to watch the data files while in the editor, but the game may or may not want to have watching enabled after the editor is closed. We will need
-            // keep track of whether or not we should disable watching when the editor is closed.
-            //this->disableFileWatchingAfterClose = !this->game.IsDataFilesWatchingEnabled();
-            //this->game.EnableDataFilesWatching();
-
-            // We also want to get an update on the data files immediately.
-            //this->game.GetDataFilesWatcher().CheckForChanges(false);
-            //this->game.GetDataFilesWatcher().DispatchEvents();
-
+            // We start up the file system watcher before doing the initial directory iteration.
+            this->StartupFileSystemWatcher();
 
             // We need to iterate over every file and folder in each base directory and make the editor aware of it.
             for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()); ++iBaseDir)
@@ -206,20 +191,7 @@ namespace GT
             // We need to make sure everything is saved.
             this->SaveAllOpenModifiedFiles();
 
-            // We want to update the data files so we can see them in-game.
-            //this->game.GetDataFilesWatcher().CheckForChanges(false);
-            //this->game.GetDataFilesWatcher().DispatchEvents();
-
-            // We may want to disable file watching.
-            //if (this->disableFileWatchingAfterClose)
-            //{
-            //    this->game.DisableDataFilesWatching();
-            //}
-
-
-            // TODO: Exit the file system watcher thread.
-
-
+            this->ShutdownFileSystemWatcher();
             this->isOpen = false;
         }
     }
@@ -413,7 +385,6 @@ namespace GT
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -456,7 +427,6 @@ namespace GT
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -536,7 +506,6 @@ namespace GT
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -859,7 +828,6 @@ namespace GT
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = IO::ToAbsolutePath(path, relativeTo);
                     easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
@@ -886,6 +854,23 @@ namespace GT
 
     void Editor::Update(double deltaTimeInSeconds)
     {
+        // Check for changes to the file system.
+        easyfsw_event e;
+        while (easyfsw_peek_event(m_pFSW, &e))
+        {
+            switch (e.type)
+            {
+                case easyfsw_event_type_created: this->OnFileInsert(e.absolutePath); break;
+                case easyfsw_event_type_deleted: this->OnFileRemove(e.absolutePath); break;
+                case easyfsw_event_type_renamed: this->OnFileRename(e.absolutePath, e.absolutePathNew); break;
+                case easyfsw_event_type_updated: this->OnFileUpdate(e.absolutePath); break;
+                default: break;
+            }
+        }
+
+
+
+
         if (this->currentlyShownEditor != nullptr)
         {
             this->currentlyShownEditor->OnUpdate(deltaTimeInSeconds);
@@ -969,32 +954,6 @@ namespace GT
     }
 
 
-    void Editor::InsertDirectoryChildren_Recursive(const char* baseDir)
-    {
-        assert(easyvfs_is_existing_directory(g_EngineContext->GetVFS(), baseDir));
-
-        easyvfs_iterator iFile;
-        if (easyvfs_begin_iteration(g_EngineContext->GetVFS(), baseDir, &iFile))
-        {
-            easyvfs_file_info fi;
-            while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
-            {
-                if (!easyvfs_is_base_directory(g_EngineContext->GetVFS(), fi.absolutePath))
-                {
-                    this->OnFileInsert(fi.absolutePath);
-
-                    // Call this function recursively if the file is a directory and is not another base directory.
-                    if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
-                    {
-                        this->InsertDirectoryChildren_Recursive(fi.absolutePath);
-                    }
-                }
-            }
-        }
-    }
-
-
-    //void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
     void Editor::OnFileInsert(const char* absolutePath)
     {
         auto &script = this->game.GetScript();
@@ -1031,7 +990,6 @@ namespace GT
         }
     }
 
-    //void Editor::OnFileRemove(const DataFilesWatcher::Item &item)
     void Editor::OnFileRemove(const char* absolutePath)
     {
         auto &script = this->game.GetScript();
@@ -1067,13 +1025,42 @@ namespace GT
         }
     }
 
-    void OnFileRename(const char* absolutePathOld, const char* absolutePathNew)
+    void Editor::OnFileRename(const char* absolutePathOld, const char* absolutePathNew)
     {
-        (void)absolutePathOld;
-        (void)absolutePathNew;
+        auto &script = this->game.GetScript();
+
+        script.GetGlobal("Editor");
+        assert(script.IsTable(-1));
+        {
+            script.Push("DataFilesWatcher");
+            script.GetTableValue(-2);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnRename");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Push(absolutePathOld);
+                    script.Push(absolutePathNew);
+                    script.Call(2, 0);
+                }
+            }
+            script.Pop(1);
+        }
+        script.Pop(1);
+
+
+        // We're now going to let every sub-editor know about this.
+        for (size_t i = 0; i < this->openedFiles.count; ++i)
+        {
+            auto subEditor = this->openedFiles.buffer[i]->value;
+            assert(subEditor != nullptr);
+            {
+                subEditor->OnFileRename(absolutePathOld, absolutePathNew);
+            }
+        }
     }
 
-    //void Editor::OnFileUpdate(const DataFilesWatcher::Item &item)
     void Editor::OnFileUpdate(const char* absolutePath)
     {
         auto &script = this->game.GetScript();
@@ -1178,6 +1165,99 @@ namespace GT
     bool Editor::IsSpecialPath(const char* path) const
     {
         return Strings::Equal<false>(path, PackagingToolPath);
+    }
+
+
+
+
+    ///////////////////////////////////////
+    // Private
+
+    void Editor::InsertDirectoryChildren_Recursive(const char* baseDir)
+    {
+        assert(easyvfs_is_existing_directory(g_EngineContext->GetVFS(), baseDir));
+
+        easyvfs_iterator iFile;
+        if (easyvfs_begin_iteration(g_EngineContext->GetVFS(), baseDir, &iFile))
+        {
+            easyvfs_file_info fi;
+            while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
+            {
+                if (!easyvfs_is_base_directory(g_EngineContext->GetVFS(), fi.absolutePath))
+                {
+                    this->OnFileInsert(fi.absolutePath);
+
+                    // Call this function recursively if the file is a directory and is not another base directory.
+                    if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    {
+                        this->InsertDirectoryChildren_Recursive(fi.absolutePath);
+                    }
+                }
+            }
+        }
+    }
+
+
+#if 0
+    static int EditorFSWProc(void* pData)
+    {
+        Editor* pEditor = reinterpret_cast<Editor*>(pData);
+        assert(pEditor != nullptr);
+
+        easyfsw_context* pFSW = pEditor->GetFSW();
+        assert(pFSW != nullptr);
+
+        easyfsw_event e;
+        while (pFSW != NULL && easyfsw_next_event(pFSW, &e))
+        {
+            switch (e.type)
+            {
+                case easyfsw_event_type_created: pEditor->OnFileInsert(e.absolutePath); break;
+                case easyfsw_event_type_deleted: pEditor->OnFileRemove(e.absolutePath); break;
+                case easyfsw_event_type_renamed: pEditor->OnFileRename(e.absolutePath, e.absolutePathNew); break;
+                case easyfsw_event_type_updated: pEditor->OnFileUpdate(e.absolutePath); break;
+                default: break;
+            }
+        }
+
+        return 0;
+    }
+#endif
+
+    void Editor::StartupFileSystemWatcher()
+    {
+        // Don't do anything if the file system watcher has already been initialized.
+        if (m_pFSW == NULL)
+        {
+            m_pFSW = easyfsw_create_context();
+
+            // We add the base directories based ont he virtual file system.
+            for (unsigned int i = 0; i < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()); ++i)
+            {
+                easyfsw_add_directory(m_pFSW, easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), i));
+            }
+
+
+            // The file system watcher waits for events in the background in another thread.
+            //assert(m_FSWThread == nullptr);
+            //m_FSWThread = easyutil_create_thread(EditorFSWProc, this);
+        }
+    }
+
+    void Editor::ShutdownFileSystemWatcher()
+    {
+        if (m_pFSW != NULL)
+        {
+            easyfsw_context* pFSW = m_pFSW;
+            m_pFSW = NULL;
+            
+            // Deleting the context will cause the FSW thread to terminate.
+            easyfsw_delete_context(pFSW);
+
+            // The thread handle also needs to be deleted.
+            //easyutil_wait_and_delete_thread(m_FSWThread);
+            //m_FSWThread = NULL;
+        }
     }
 
 

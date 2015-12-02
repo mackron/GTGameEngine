@@ -294,6 +294,10 @@ namespace GT
     {
     }
 
+    void SubEditor::OnFileRename(const char*, const char*)
+    {
+    }
+
     void SubEditor::OnFileUpdate(const char*)
     {
     }

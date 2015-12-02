@@ -249,6 +249,14 @@ function GTGUI.Element:DataExplorer()
     function self:RemoveItemByPath(path)
         self.TreeView:RemoveItem(self:FindItemByPath(path));
     end
+	
+	function self:RenameItem(pathOld, pathNew)
+		local item = self:FindItemByPath(pathOld);
+		if item then
+			item.path = pathNew;
+			item:SetText(GT.IO.GetFileNameFromPath(pathNew));
+		end
+	end
 
     function self:FindItemByPath(path, root)
         -- Brute force for now, but we should probably use the hierarchial nature of the file system for optimizing later.
@@ -408,6 +416,10 @@ function GTGUI.Element:DataExplorer()
 
     function self:OnFileRemove(absolutePath)
         self:RemoveItemByPath(absolutePath);
+    end
+	
+	function self:OnFileRename(absolutePath, absolutePathNew)
+        self:RenameItem(absolutePath, absolutePathNew);
     end
 
     function self:OnFileUpdate(absolutePath)
