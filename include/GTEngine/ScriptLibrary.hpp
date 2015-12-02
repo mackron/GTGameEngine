@@ -51,13 +51,8 @@ namespace GT
 
         /// Determines whether or not the given definition is currently loaded (currently acquired at least once).
         ///
-        /// @param fileName       [in] The file name of the script being loaded, relative to the data directory.
-        /// @param makeRelativeTo [in] If 'fileName' is absolute, this will be used to turn it into a relative path.
-        ///
-        /// @remarks
-        ///     All resources must have a relative path somewhere. If it doesn't, there will be errors with serialization. Thus,
-        ///     this will return null if 'fileName' is absolute and 'makeRelativeTo' is null.
-        static bool IsLoaded(const char* fileName, const char* makeRelativeTo = nullptr);
+        /// @param fileName [in] The file name of the script being loaded, relative to the data directory.
+        static bool IsLoaded(const char* fileName);
 
         /// Reloads the given file.
         ///

@@ -154,25 +154,8 @@ namespace GT
         }
     }
 
-    bool ScriptLibrary::IsLoaded(const char* fileName, const char* makeRelativeTo)
+    bool ScriptLibrary::IsLoaded(const char* fileName)
     {
-        char relativePath[EASYVFS_MAX_PATH];
-        strcpy_s(relativePath, sizeof(relativePath), fileName);
-
-        if (easypath_is_absolute(fileName))
-        {
-            if (makeRelativeTo != nullptr)
-            {
-                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
-            }
-            else
-            {
-                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
-                return false;
-            }
-        }
-
-
         // We key the definitions by their absolute path, so we'll need to retrieve that.
         char absolutePath[EASYVFS_MAX_PATH];
         if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
