@@ -60,7 +60,7 @@ namespace GT
         ///
         /// @remarks
         ///     If the file has not yet been loaded it will NOT be loaded and false will be returned.
-        static bool Reload(const char* fileName, const char* makeRelativeTo = nullptr);
+        static bool Reload(const char* fileName);
 
 
         /////////////////////////////////////////////////
