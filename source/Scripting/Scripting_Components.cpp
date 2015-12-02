@@ -822,6 +822,10 @@ namespace GT
             "    return GTEngine.System.ScriptComponent.GetScriptRelativeFilePaths(self._internalPtr);"
             "end;"
 
+            "function GTEngine.ScriptComponent:GetScriptAbsoluteFilePaths()"
+            "    return GTEngine.System.ScriptComponent.GetScriptAbsoluteFilePaths(self._internalPtr);"
+            "end;"
+
             "function GTEngine.ScriptComponent:IsUsingScript(relativePath)"
             "    return GTEngine.System.ScriptComponent.IsUsingScript(self._internalPtr, relativePath);"
             "end;"
@@ -1241,6 +1245,7 @@ namespace GT
                         script.SetTableFunction(-1, "RemoveScriptByIndex",                          ScriptComponentFFI::RemoveScriptByIndex);
                         script.SetTableFunction(-1, "ReloadScript",                                 ScriptComponentFFI::ReloadScript);
                         script.SetTableFunction(-1, "GetScriptRelativeFilePaths",                   ScriptComponentFFI::GetScriptRelativeFilePaths);
+                        script.SetTableFunction(-1, "GetScriptAbsoluteFilePaths",                   ScriptComponentFFI::GetScriptAbsoluteFilePaths);
                         script.SetTableFunction(-1, "IsUsingScript",                                ScriptComponentFFI::IsUsingScript);
                         script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByIndex",        ScriptComponentFFI::GetPublicVariableNamesAndTypesByIndex);
                         script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByRelativePath", ScriptComponentFFI::GetPublicVariableNamesAndTypesByRelativePath);
@@ -4035,6 +4040,25 @@ namespace GT
                 {
                     auto relativePath = component->GetScriptRelativePathByIndex(i);
                     script.SetTableValue(-1, static_cast<int>(i + 1), (relativePath != nullptr) ? relativePath : "");      // <-- i + 1 because Lua is 1-based.
+                }
+            }
+
+            return 1;
+        }
+
+        int GetScriptAbsoluteFilePaths(GT::Script &script)
+        {
+            script.PushNewTable();
+
+            auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+            if (component != nullptr)
+            {
+                size_t fileCount = component->GetScriptCount();
+
+                for (size_t i = 0; i < fileCount; ++i)
+                {
+                    auto absolutePath = component->GetScriptAbsolutePathByIndex(i);
+                    script.SetTableValue(-1, static_cast<int>(i + 1), (absolutePath != nullptr) ? absolutePath : "");      // <-- i + 1 because Lua is 1-based.
                 }
             }
 

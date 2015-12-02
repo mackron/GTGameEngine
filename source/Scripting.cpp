@@ -692,6 +692,7 @@ namespace GT
                     script.SetTableFunction(-1, "CreateEmptyFile",        FFI::IOFFI::CreateEmptyFile);
                     script.SetTableFunction(-1, "DeleteFile",             FFI::IOFFI::DeleteFile);
                     script.SetTableFunction(-1, "IsDirectory",            FFI::IOFFI::IsDirectory);
+                    script.SetTableFunction(-1, "FindAbsolutePath",       FFI::IOFFI::FindAbsolutePath);
                 }
                 script.SetTableValue(-3);
 
@@ -2085,7 +2086,7 @@ namespace GT
 
 
 
-    bool LoadScriptDefinition(GT::Script &script, const char* scriptRelativePath, const char* scriptString)
+    bool LoadScriptDefinition(GT::Script &script, const char* scriptAbsolutePath, const char* scriptString)
     {
         // We actually want to do this as a text script for now.
         Strings::List<char> fullScriptString;
@@ -2094,12 +2095,12 @@ namespace GT
         fullScriptString.Append("    "); fullScriptString.Append(scriptString);
         fullScriptString.Append("    return self;");
         fullScriptString.Append("end;");
-        fullScriptString.Append("GTEngine.ScriptDefinitions['"); fullScriptString.Append(scriptRelativePath); fullScriptString.Append("'] = GTEngine.__CreateScriptClass();");
+        fullScriptString.Append("GTEngine.ScriptDefinitions['"); fullScriptString.Append(scriptAbsolutePath); fullScriptString.Append("'] = GTEngine.__CreateScriptClass();");
 
         return script.Execute(fullScriptString.c_str());
     }
 
-    void UnloadScriptDefinition(GT::Script &script, const char* scriptRelativePath)
+    void UnloadScriptDefinition(GT::Script &script, const char* scriptAbsolutePath)
     {
         script.GetGlobal("GTEngine");
         assert(script.IsTable(-1));
@@ -2108,7 +2109,7 @@ namespace GT
             script.GetTableValue(-2);
             assert(script.IsTable(-1));
             {
-                script.Push(scriptRelativePath);    // Key   - The file path.
+                script.Push(scriptAbsolutePath);    // Key   - The file path.
                 script.PushNil();                   // Value - Lua object, or in this case nil so that it's removed.
                 script.SetTableValue(-3);
             }
@@ -2403,6 +2404,18 @@ namespace GT
             int IsDirectory(Script &script)
             {
                 script.Push(easyvfs_is_existing_directory(g_EngineContext->GetVFS(), script.ToString(1)));
+                return 1;
+            }
+
+            int FindAbsolutePath(Script &script)
+            {
+                char absolutePath[EASYVFS_MAX_PATH];
+                if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), script.ToString(1), absolutePath, sizeof(absolutePath))) {
+                    script.Push(absolutePath);
+                } else {
+                    script.PushNil();
+                }
+
                 return 1;
             }
         }

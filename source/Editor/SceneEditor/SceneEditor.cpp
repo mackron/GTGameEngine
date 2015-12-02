@@ -3617,7 +3617,7 @@ namespace GT
                 auto definition = ScriptLibrary::Acquire(scriptRelativePath);
                 assert(definition != nullptr);
                 {
-                    GT::LoadScriptDefinition(*m_scene.GetRegisteredScript(), scriptRelativePath, definition->GetScriptString());
+                    GT::LoadScriptDefinition(*m_scene.GetRegisteredScript(), definition->GetAbsolutePath(), definition->GetScriptString());
                 }
                 ScriptLibrary::Unacquire(definition);
             }

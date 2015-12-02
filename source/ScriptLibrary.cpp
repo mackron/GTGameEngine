@@ -89,7 +89,7 @@ namespace GT
 
                     assert(GlobalGame != nullptr);
                     {
-                        GT::LoadScriptDefinition(GlobalGame->GetScript(), relativePath, scriptString);
+                        GT::LoadScriptDefinition(GlobalGame->GetScript(), absolutePath, scriptString);
                     }
 
                     easyvfs_free(scriptString);
@@ -140,7 +140,7 @@ namespace GT
                         {
                             assert(GlobalGame != nullptr);
                             {
-                                GT::UnloadScriptDefinition(GlobalGame->GetScript(), scriptDefinitionToUnacquire->GetRelativePath());
+                                GT::UnloadScriptDefinition(GlobalGame->GetScript(), scriptDefinitionToUnacquire->GetAbsolutePath());
                             }
 
                             delete value.first;
@@ -206,7 +206,7 @@ namespace GT
 
                         assert(GlobalGame != nullptr);
                         {
-                            GT::LoadScriptDefinition(GlobalGame->GetScript(), relativePath, scriptString);
+                            GT::LoadScriptDefinition(GlobalGame->GetScript(), definition->GetAbsolutePath(), scriptString);
                         }
 
                         easyvfs_free(scriptString);

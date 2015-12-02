@@ -1412,6 +1412,12 @@ namespace GT
         ///     Argument 1: A pointer to the component.
         int GetScriptRelativeFilePaths(GT::Script &script);
 
+        /// Retrieves the absolute paths of the script files the given script component uses.
+        ///
+        /// @remarks
+        ///     Argument 1: A pointer to the component.
+        int GetScriptAbsoluteFilePaths(GT::Script &script);
+
         /// Determines if the script component is using the given script file.
         ///
         /// @remarks

@@ -120,15 +120,15 @@ namespace GT
     /// Loads a scene node script, replacing the old one if it exists.
     ///
     /// @param script             [in] A reference to the script to load the scene node script into.
-    /// @param scriptRelativePath [in] The relative path of the script.
+    /// @param scriptAbsolutePath [in] The absolute path of the script.
     /// @param scriptString       [in] The actual script content.
-    bool LoadScriptDefinition(GT::Script &script, const char* scriptRelativePath, const char* scriptString);
+    bool LoadScriptDefinition(GT::Script &script, const char* scriptAbsolutePath, const char* scriptString);
 
     /// Unloads a scene node script.
     ///
     /// @param script             [in] A reference to the script to unload the scene node script from.
-    /// @param scriptRelativePath [in] The relative path of the script to unload.
-    void UnloadScriptDefinition(GT::Script &script, const char* scriptRelativePath);
+    /// @param scriptAbsolutePath [in] The absolute path of the script to unload.
+    void UnloadScriptDefinition(GT::Script &script, const char* scriptAbsolutePath);
 
 
 
@@ -263,6 +263,9 @@ namespace GT
 
             /// Determines if the file with the given path refers to an existing directory.
             int IsDirectory(Script &script);
+
+            /// Retrieves the absolute path from the given relative path.
+            int FindAbsolutePath(Script &script);
         }
 
         namespace TimingFFI
