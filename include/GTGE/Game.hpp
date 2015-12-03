@@ -9,7 +9,6 @@
 #include "GameScript.hpp"
 #include "Editor.hpp"
 #include "GUIEventHandler.hpp"
-#include "GameUpdateJob.hpp"
 #include "Profiler.hpp"
 #include "DefaultGUIImageManager.hpp"
 #include "Rendering/DefaultGUIRenderer.hpp"
@@ -663,13 +662,6 @@ namespace GT
         mutable GameScript script;
 
 
-        /// A pointer to the update thread. This will point to a member in the 'threads' array.
-        Thread* updateThread;
-
-        /// The job that will do the game updates.
-        GameUpdateJob updateJob;
-
-
         /// The time between the last two frames. Use this for time-based operations.
         double deltaTimeInSeconds;
 
@@ -896,7 +888,7 @@ namespace GT
         Game & operator=(const Game &);
 
 
-    friend class GameUpdateJob;     // <-- GameUpdateJob is basically a part of this class...
+    //friend class GameUpdateJob;     // <-- GameUpdateJob is basically a part of this class...
     };
 }
 

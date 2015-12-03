@@ -34,7 +34,6 @@ namespace GT
           eventFilter(nullptr),
           window(nullptr), windowEventHandler(*this),
           script(*this),
-          updateThread(nullptr), updateJob(*this),
           deltaTimeInSeconds(0.0), totalRunninTimeInSeconds(0.0), updateTimer(),
           guiImageManager(), gui(&script, &guiImageManager), guiEventHandler(*this), guiRenderer(), gameWindowGUIElement(nullptr),
           paused(false), focused(true),
@@ -674,17 +673,6 @@ namespace GT
             // This is where the user config scripts are loaded.
             easyutil_parse_cmdline(&g_EngineContext->GetCommandLine(), GameCommandLineProc, this);
 
-#if 0
-            const char** cmdLine_config = commandLine.GetArgument("config");
-            if (cmdLine_config != nullptr)
-            {
-                for (int i = 0; cmdLine_config[i] != nullptr; ++i)
-                {
-                    this->script.ExecuteFile(cmdLine_config[i]);
-                }
-            }
-#endif
-
 
             // Here we will set the default anistropy for textures via the texture library.
             Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("GTEngine.Display.Textures.Anisotropy")));
@@ -694,11 +682,6 @@ namespace GT
             this->window = Renderer::CreateWindow();
             if (this->window != nullptr)
             {
-                // We'll need to grab the update thread object. We grab this from the thread cache which will have been initialised
-                // in Startup(). It's important that we have a thread here, so we need to force it (first argument = true).
-                this->updateThread = ThreadCache::AcquireThread(true);
-
-
                 // We'll want to set a few window properties before showing it... We want to show the window relatively early to make
                 // the game feel a little bit more speedy, even though it's not really.
                 this->window->SetTitle("GTEngine Game");
@@ -757,13 +740,6 @@ namespace GT
 
 
         delete this->window;
-
-
-        ThreadCache::UnacquireThread(this->updateThread);
-
-
-        // NOTE: Got a random crash here. I think it was the destructor of the window. I recently added garbage collection for renderers, so perhaps
-        //       there is a sync issue with that. My first thought is that maybe the renderer was destructing rendering resources or something... don't know for sure.
     }
 
     void Game::Loop()
@@ -834,14 +810,11 @@ namespace GT
         m_gameStateManager.OnStartFrame(*this);
 
         // Now we just run the job without attempting to block (second argument).
-        this->updateThread->Start(this->updateJob, false);
+        this->Update();
     }
 
     void Game::EndFrame() // [Main Thread]
     {
-        // First we need to block until all threads have finished executing...
-        this->updateThread->Wait();
-
         // Now we can let the game know that we've finished the frame...
         m_gameStateManager.OnEndFrame(*this);
     }
