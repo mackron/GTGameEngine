@@ -8,7 +8,6 @@
 #include "Rendering/GUIElementRenderingData.hpp"
 
 #include <GTGE/Core/Rect.hpp>
-#include <GTGE/Core/Threading.hpp>
 #include <GTGE/Core/List.hpp>
 #include <GTGE/Core/Vector.hpp>
 #include <GTGE/Core/TextManager.hpp>

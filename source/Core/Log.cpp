@@ -4,7 +4,6 @@
 #include <GTGE/Core/DateTime.hpp>
 #include <GTGE/Core/Strings/Replacer.hpp>
 #include <GTGE/Core/Strings/List.hpp>
-#include <GTGE/Core/Threading.hpp>
 #include <GTGE/Core/stdlib.hpp>
 #include <easy_path/easy_path.h>
 

@@ -8,7 +8,7 @@
 #include "Audio/SoundWorld.hpp"
 #include "Assets/AssetLibrary.hpp"
 #include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/Threading.hpp>
+#include <GTGE/Core/Threading/Thread.hpp>
 #include <easy_util/easy_util.h>
 #include <easy_fs/easy_vfs.h>
 

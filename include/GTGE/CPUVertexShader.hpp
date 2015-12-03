@@ -6,7 +6,6 @@
 #include "Rendering/VertexFormat.hpp"
 #include "Math.hpp"
 #include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/Threading.hpp>
 
 namespace GT
 {

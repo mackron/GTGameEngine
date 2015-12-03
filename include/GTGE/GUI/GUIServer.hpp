@@ -22,7 +22,6 @@
 #include <GTGE/Core/Dictionary.hpp>
 #include <GTGE/Core/SortedVector.hpp>
 #include <GTGE/Core/Timing.hpp>
-#include <GTGE/Core/Threading.hpp>
 #include <GTGE/Core/FontServer.hpp>
 #include <easy_util/easy_util.h>
 

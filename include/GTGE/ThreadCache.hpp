@@ -3,7 +3,7 @@
 #ifndef GT_ThreadCache
 #define GT_ThreadCache
 
-#include <GTGE/Core/Threading.hpp>
+#include <GTGE/Core/Threading/Thread.hpp>
 #include <cstddef>
 
 namespace GT
