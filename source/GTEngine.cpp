@@ -11,7 +11,6 @@
 #include <GTGE/PrefabLibrary.hpp>
 #include <GTGE/ParticleSystemLibrary.hpp>
 #include <GTGE/ScriptLibrary.hpp>
-#include <GTGE/ThreadCache.hpp>
 #include <GTGE/MessageDispatcher.hpp>
 #include <GTGE/Core/WindowManagement.hpp>
 
@@ -31,11 +30,6 @@ namespace GT
     {
         // Before we can do any windowing operations we will need to initialise the window management module of GTLib.
         StartupWindowManager();
-
-
-        // Here we'll startup the thread cache. We will do this before starting the sub-systems so that they themselves can do some
-        // multithreaded initialisation if needed.
-        ThreadCache::Startup();
 
 
         // With the log file created, we can startup all of our other sub-systems.
@@ -112,9 +106,6 @@ namespace GT
         Renderer::Shutdown();
 
 
-        // Thread cache.
-        ThreadCache::Shutdown();
-        
         // GTLib's window management module.
         ShutdownWindowManager();
 

@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/Game.hpp>
-#include <GTGE/ThreadCache.hpp>
 #include <GTGE/Texture2DLibrary.hpp>
 #include <GTGE/Rendering/Renderer.hpp>
 #include <GTGE/ModelLibrary.hpp>
