@@ -83,6 +83,7 @@ namespace GT
     /**
     *   \brief  Thread procedure for executing a job. 'data' is a Job object.
     */
+#if 0
     void JobThreadProc(void *data)
     {
         if (data)
@@ -90,6 +91,7 @@ namespace GT
             ((ThreadJob *)data)->Run();
         }
     }
+#endif
 
 
     Thread::Thread()
@@ -105,12 +107,14 @@ namespace GT
         this->Start(entryProc, entryData);
     }
 
+#if 0
     Thread::Thread(ThreadJob &job)
         : data(nullptr)
     {
         this->ctor();
         this->Start(job);
     }
+#endif
 
     Thread::~Thread()
     {
@@ -159,10 +163,10 @@ namespace GT
         return true;
     }
 
-    bool Thread::Start(ThreadJob &job, bool block)
-    {
-        return this->Start(JobThreadProc, &job, block);
-    }
+    //bool Thread::Start(ThreadJob &job, bool block)
+    //{
+    //    return this->Start(JobThreadProc, &job, block);
+    //}
 
     void Thread::Stop()
     {
