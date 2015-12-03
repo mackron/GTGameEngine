@@ -4,7 +4,7 @@
 #define GT_RCQueue
 
 #include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/Threading/Mutex.hpp>
+#include <easy_util/easy_util.h>
 
 namespace GT
 {
@@ -78,6 +78,9 @@ namespace GT
         /// Constructor.
         SynchronizedRCQueue();
 
+        /// Destructor.
+        ~SynchronizedRCQueue();
+
 
         /// RCQueue::Append(RenderCommand &)
         void Append(RenderCommand &cmd);
@@ -98,7 +101,7 @@ namespace GT
     private:
 
         /// The synchronization lock.
-        mutable Mutex lock;
+        mutable easyutil_mutex lock;
 
 
     private:    // No copying.

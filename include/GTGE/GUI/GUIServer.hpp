@@ -24,6 +24,7 @@
 #include <GTGE/Core/Timing.hpp>
 #include <GTGE/Core/Threading.hpp>
 #include <GTGE/Core/FontServer.hpp>
+#include <easy_util/easy_util.h>
 
 /*
 --- Implementation Details ---
@@ -940,7 +941,7 @@ namespace GT
         GUIEventQueue eventQueue;
 
         /// The lock we'll use to keep access to 'eventQueue' thread-safe.
-        GT::Mutex eventLock;
+        easyutil_mutex eventLock;
 
 
         unsigned int viewportWidth;     //< The width of the working area.

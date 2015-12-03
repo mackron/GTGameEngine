@@ -4,7 +4,9 @@
 #define GT_Log
 
 #include "Vector.hpp"
+#include "BasicBuffer.hpp"
 #include <easy_fs/easy_vfs.h>
+#include <easy_util/easy_util.h>
 
 namespace GT
 {
@@ -58,6 +60,10 @@ namespace GT
         *       This constructor will attempt to open the log. Use IsOpen() to determine if the log was opened successfully.
         */
         LogFile(easyvfs_context* pVFS, const char *fileName, const char *title);
+
+        /// Destructor.
+        ~LogFile();
+
 
         /**
         *   \brief  Opens a log for writing.
@@ -143,6 +149,17 @@ namespace GT
 
         /// The list of event handlers attached to this log.
         Vector<LogEventHandler *> eventHandlers;
+
+
+        /// The temporary buffer used by all logs. Results from building strings are stored in this
+        /// buffer by all logs. It is protected with a mutex.
+        mutable GT::BasicBuffer LogTempBuffer;
+
+        /// The replacer object for replacing unicode text to HTML.
+        //Strings::Replacer LogReplacer;
+
+        /// The mutex protecting access to the global objects.
+        easyutil_mutex LogMutex;
 
 
     private:    // No copying.

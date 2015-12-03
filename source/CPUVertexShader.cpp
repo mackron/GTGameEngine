@@ -118,6 +118,8 @@ namespace GT
 
     bool CPUVertexShader::Execute(const float* input, size_t vertexCount, const VertexFormat &format, float* output, size_t threadCount)
     {
+        (void)threadCount;
+
         if (input != nullptr && output != nullptr)
         {
             this->OnStartExecute();

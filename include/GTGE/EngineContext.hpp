@@ -175,7 +175,7 @@ namespace GT
         Vector<Thread*> m_dormantThreads;
 
         /// The mutex for controlling access to the thread acquiring/unacquiring procedures.
-        Mutex m_threadManagementLock;
+        easyutil_mutex m_threadManagementLock;
 
 
         /// A pointer to the easy_audio context for audio playback.

@@ -56,55 +56,61 @@ namespace GT
     // SynchronizedRCQueue
 
     SynchronizedRCQueue::SynchronizedRCQueue()
-        : RCQueue(), lock()
+        : RCQueue(), lock(NULL)
     {
+        this->lock = easyutil_create_mutex();
+    }
+
+    SynchronizedRCQueue::~SynchronizedRCQueue()
+    {
+        easyutil_delete_mutex(this->lock);
     }
 
     void SynchronizedRCQueue::Append(RenderCommand &cmd)
     {
-        this->lock.Lock();
+        easyutil_lock_mutex(this->lock);
         {
             RCQueue::Append(cmd);
         }
-        this->lock.Unlock();
+        easyutil_unlock_mutex(this->lock);
     }
 
     void SynchronizedRCQueue::Append(const RCQueue &other)
     {
-        this->lock.Lock();
+        easyutil_lock_mutex(this->lock);
         {
             RCQueue::Append(other);
         }
-        this->lock.Unlock();
+        easyutil_unlock_mutex(this->lock);
     }
 
     void SynchronizedRCQueue::Execute()
     {
-        this->lock.Lock();
+        easyutil_lock_mutex(this->lock);
         {
             RCQueue::Execute();
         }
-        this->lock.Unlock();
+        easyutil_unlock_mutex(this->lock);
     }
 
     void SynchronizedRCQueue::Clear()
     {
-        this->lock.Lock();
+        easyutil_lock_mutex(this->lock);
         {
             RCQueue::Clear();
         }
-        this->lock.Unlock();
+        easyutil_unlock_mutex(this->lock);
     }
 
     bool SynchronizedRCQueue::IsEmpty() const
     {
         bool result;
         
-        this->lock.Lock();
+        easyutil_lock_mutex(this->lock);
         {
             result = RCQueue::IsEmpty();
         }
-        this->lock.Unlock();
+        easyutil_unlock_mutex(this->lock);
 
         return result;
     }

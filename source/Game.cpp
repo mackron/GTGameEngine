@@ -30,7 +30,7 @@ namespace GT
     Game::Game(GameStateManager &gameStateManager)
         : m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
-          eventQueue(), eventQueueLock(),
+          eventQueue(), eventQueueLock(NULL),
           eventFilter(nullptr),
           window(nullptr), windowEventHandler(*this),
           script(*this),
@@ -52,6 +52,8 @@ namespace GT
           profilerToggleKey(Keys::F11),
           editorToggleKeyCombination(Keys::Shift, Keys::Tab)
     {
+        this->eventQueueLock = easyutil_create_mutex();
+
         // The main game window GUI element needs to be created. It is just a 100% x 100% invisible element off the root element.
         this->gui.Load("<div id='MainGameWindow' style='width:100%; height:100%' />");
         this->gameWindowGUIElement = this->gui.GetElementByID("MainGameWindow");
@@ -61,6 +63,7 @@ namespace GT
 
     Game::~Game()
     {
+        easyutil_delete_mutex(this->eventQueueLock);
     }
 
     int Game::Run()
@@ -89,11 +92,11 @@ namespace GT
 
     void Game::SendEvent(const GameEvent &e)
     {
-        this->eventQueueLock.Lock();
+        easyutil_lock_mutex(this->eventQueueLock);
         {
             this->eventQueue.Push(e);
         }
-        this->eventQueueLock.Unlock();
+        easyutil_unlock_mutex(this->eventQueueLock);
     }
 
 

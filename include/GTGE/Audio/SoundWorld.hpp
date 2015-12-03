@@ -4,7 +4,6 @@
 #define GT_SoundWorld
 
 #include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/Threading/Mutex.hpp>
 #include "../Math.hpp"
 #include <easy_audio/easy_audio.h>
 

@@ -4,8 +4,6 @@
 #define GT_Threading
 
 #include "Threading/Thread.hpp"
-#include "Threading/Mutex.hpp"
-#include "Threading/Semaphore.hpp"
 #include <cstdint>
 
 namespace GT

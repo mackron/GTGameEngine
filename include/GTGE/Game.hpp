@@ -647,7 +647,7 @@ namespace GT
         GameEventQueue eventQueue;
 
         /// The mutex for protecting access to the event queue.
-        Mutex eventQueueLock;
+        easyutil_mutex eventQueueLock;
         
         /// A pointer to the event filter to filter events with. This can be null, in which case events will be dispatched without filtering. Defaults to null.
         GameEventFilter* eventFilter;

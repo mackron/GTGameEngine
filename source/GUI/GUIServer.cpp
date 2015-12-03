@@ -24,7 +24,7 @@ namespace GT
           elementsUsingZIndex(),
           layoutManager(),
           stepTimer(),
-          eventQueue(), eventLock(),
+          eventQueue(), eventLock(NULL),
           viewportWidth(0), viewportHeight(0),
           fontServer(glyphMapManager), fontCache(fontServer),
           hoveredElements(),
@@ -52,6 +52,9 @@ namespace GT
           elementsNeedingOnShow(), elementsNeedingOnHide(),
           autoElementCounter(0)
     {
+        this->eventLock = easyutil_create_mutex();
+
+
         // Load the defaults after setting the event handlers.
         this->LoadDefaults();
 
@@ -94,6 +97,9 @@ namespace GT
                 m_imageManager->DeleteImage(this->registeredImages.buffer[i]->value);
             }
         }
+
+
+        easyutil_delete_mutex(this->eventLock);
     }
 
     bool GUIServer::IsInitialised() const
@@ -977,11 +983,11 @@ namespace GT
 
     void GUIServer::QueueEvent(GUIEvent &e)
     {
-        this->eventLock.Lock();
+        easyutil_lock_mutex(this->eventLock);
         {
             this->eventQueue.Push(e);
         }
-        this->eventLock.Unlock();
+        easyutil_unlock_mutex(this->eventLock);
     }
 
     void GUIServer::FocusElement(GUIElement *element)

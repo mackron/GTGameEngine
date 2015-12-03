@@ -5,7 +5,6 @@
 #include <GTGE/Core/Strings/Replacer.hpp>
 #include <GTGE/Core/Strings/List.hpp>
 #include <GTGE/Core/Threading.hpp>
-#include <GTGE/Core/BasicBuffer.hpp>
 #include <GTGE/Core/stdlib.hpp>
 #include <easy_path/easy_path.h>
 
@@ -46,13 +45,13 @@ namespace GT
     {
         /// The temporary buffer used by all logs. Results from building strings are stored in this
         /// buffer by all logs. It is protected with a mutex.
-        GT::BasicBuffer LogTempBuffer;
+        //GT::BasicBuffer LogTempBuffer;
 
         /// The replacer object for replacing unicode text to HTML.
-        Strings::Replacer LogReplacer;
+        //Strings::Replacer LogReplacer;
 
         /// The mutex protecting access to the global objects.
-        Mutex LogMutex;
+        //easyutil_mutex LogMutex = easyutil_create_mutex();
     }
 
     #if defined(_WIN32)
@@ -73,12 +72,19 @@ namespace GT
     LogFile::LogFile()
         : file(nullptr), format(LogFormat_Text), isOpen(false), currentHTMLPosition(0), eventHandlers()
     {
+        LogMutex = easyutil_create_mutex();
     }
 
     LogFile::LogFile(easyvfs_context* pVFS, const char *fileName, const char *title)
         : file(nullptr), format(LogFormat_Text), isOpen(false), currentHTMLPosition(0), eventHandlers()
     {
+        LogMutex = easyutil_create_mutex();
         this->Open(pVFS, fileName, title);
+    }
+
+    LogFile::~LogFile()
+    {
+        easyutil_delete_mutex(LogMutex);
     }
 
     bool LogFile::Open(easyvfs_context* pVFS, const char *fileName, const char *title)
@@ -99,7 +105,7 @@ namespace GT
                 // HTML.
                 this->format = LogFormat_HTML;
 
-                Detail::LogMutex.Lock();
+                easyutil_lock_mutex(LogMutex);
                 {
                     // We need to setup a few things if we're doing HTML. We first output the header, then we grab the position, then we
                     // write the tail. We need the position just after the header because that is where new entries will be inserted. We
@@ -111,7 +117,7 @@ namespace GT
 
                     easyvfs_write_string(this->file, this->BuildHTMLTail());
                 }
-                Detail::LogMutex.Unlock();
+                easyutil_unlock_mutex(LogMutex);
 
                 easyvfs_flush(this->file);
             }
@@ -153,7 +159,7 @@ namespace GT
             {
                 // On a HTML log, we just move to the insertion position, write the new entry, and then write the tail again. We
                 // always need to make sure the tail is attached after each entry so that we have valid HTML.
-                Detail::LogMutex.Lock();
+                easyutil_lock_mutex(LogMutex);
                 {
 					//IO::Seek(this->file, this->currentHTMLPosition, SeekOrigin::Start);
                     //IO::WriteString(this->file, this->BuildHTMLEntry(value));
@@ -167,18 +173,18 @@ namespace GT
 
                     easyvfs_write_string(this->file, this->BuildHTMLTail());
                 }
-                Detail::LogMutex.Unlock();
+                easyutil_unlock_mutex(LogMutex);
 
                 easyvfs_flush(this->file);
             }
             else
             {
                 // All we need to do is build the text entry, throw it into the file and then flush.
-                Detail::LogMutex.Lock();
+                easyutil_lock_mutex(LogMutex);
                 {
                     easyvfs_write_string(this->file, this->BuildTextEntry(value));
                 }
-                Detail::LogMutex.Unlock();
+                easyutil_unlock_mutex(LogMutex);
 
                 easyvfs_flush(this->file);
             }
@@ -256,10 +262,10 @@ namespace GT
         head.Append(
             "        <table class=\"content\">\n");
 
-        Detail::LogTempBuffer.Allocate(head.BuildString(nullptr));
-        head.BuildString((char *)Detail::LogTempBuffer.GetDataPointer());
+        LogTempBuffer.Allocate(head.BuildString(nullptr));
+        head.BuildString((char *)LogTempBuffer.GetDataPointer());
 
-        return reinterpret_cast<const char*>(Detail::LogTempBuffer.GetDataPointer());
+        return reinterpret_cast<const char*>(LogTempBuffer.GetDataPointer());
     }
 
     const char * LogFile::BuildHTMLTail() const
@@ -271,17 +277,18 @@ namespace GT
     }
 
     // This is NOT THREAD-SAFE!. Needs to be locked at a higher level.
-    const char * Log_ToHTML(const char *value)
+    GT::String Log_ToHTML(const char *value)
     {
-        Detail::LogReplacer.SetBase(value);
-        Detail::LogReplacer.Replace("<",    "&lt;");
-        Detail::LogReplacer.Replace(">",    "&gt;");
-        Detail::LogReplacer.Replace(" ",    "&nbsp;");
-        Detail::LogReplacer.Replace("\n\r", "<br />");
-        Detail::LogReplacer.Replace("\n",   "<br />");
-        Detail::LogReplacer.Replace("\t",   "&nbsp&nbsp&nbsp&nbsp");
+        Strings::Replacer LogReplacer;
+        LogReplacer.SetBase(value);
+        LogReplacer.Replace("<",    "&lt;");
+        LogReplacer.Replace(">",    "&gt;");
+        LogReplacer.Replace(" ",    "&nbsp;");
+        LogReplacer.Replace("\n\r", "<br />");
+        LogReplacer.Replace("\n",   "<br />");
+        LogReplacer.Replace("\t",   "&nbsp&nbsp&nbsp&nbsp");
 
-        return Detail::LogReplacer.GetBase();
+        return LogReplacer.GetBase();
     }
 
     const char * LogFile::BuildHTMLEntry(const char *value) const
@@ -298,14 +305,14 @@ namespace GT
             "                <tr >\n"
             "                    <td class=\"row-left\">"); output.Append(date.c_str()); output.Append("</td>\n");
         output.Append(
-            "                    <td class=\"row-right\">"); output.Append(Log_ToHTML(value)); output.Append("</td>\n");
+            "                    <td class=\"row-right\">"); output.Append(Log_ToHTML(value).c_str()); output.Append("</td>\n");
         output.Append(
             "                </tr>\n");
 
-        Detail::LogTempBuffer.Allocate(output.BuildString(nullptr));
-        output.BuildString((char *)Detail::LogTempBuffer.GetDataPointer());
+        LogTempBuffer.Allocate(output.BuildString(nullptr));
+        output.BuildString((char *)LogTempBuffer.GetDataPointer());
 
-        return reinterpret_cast<const char*>(Detail::LogTempBuffer.GetDataPointer());
+        return reinterpret_cast<const char*>(LogTempBuffer.GetDataPointer());
     }
 
     const char * LogFile::BuildTextEntry(const char *value) const
@@ -320,10 +327,10 @@ namespace GT
         output.Append(value);
         output.Append(newline);
 
-        Detail::LogTempBuffer.Allocate(output.BuildStringSize());
-        output.BuildString((char *)Detail::LogTempBuffer.GetDataPointer());
+        LogTempBuffer.Allocate(output.BuildStringSize());
+        output.BuildString((char *)LogTempBuffer.GetDataPointer());
 
-        return (const char *)Detail::LogTempBuffer.GetDataPointer();
+        return (const char *)LogTempBuffer.GetDataPointer();
     }
 
 

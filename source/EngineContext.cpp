@@ -102,7 +102,7 @@ namespace GT
             m_executableDirectoryAbsolutePath(),
             m_pVFS(nullptr),
             m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
-            m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
+            m_activeThreads(), m_dormantThreads(), m_threadManagementLock(NULL),
             m_assetLibrary()
     {
         // We need to initialize the virtual file system early so we can do things like create logs and cache files.
@@ -183,6 +183,14 @@ namespace GT
         }
 
         m_soundWorld.Startup();
+
+
+
+
+        //////////////////////////////////////////
+        // Thread Management
+
+        m_threadManagementLock = easyutil_create_mutex();
     }
 
     EngineContext::~EngineContext()
@@ -195,11 +203,11 @@ namespace GT
         this->UnacquireAllThreads();
 
         Vector<Thread*> threadsToDelete;
-        m_threadManagementLock.Lock();
+        easyutil_lock_mutex(m_threadManagementLock);
         {
             threadsToDelete = m_dormantThreads;
         }
-        m_threadManagementLock.Unlock();
+        easyutil_unlock_mutex(m_threadManagementLock);
 
         for (size_t iThread = 0; iThread < threadsToDelete.GetCount(); ++iThread)
         {
@@ -212,6 +220,8 @@ namespace GT
                 delete thread;
             }
         }
+
+        easyutil_delete_mutex(m_threadManagementLock);
 
 
 
@@ -259,7 +269,7 @@ namespace GT
     {
         Thread* thread = nullptr;
 
-        m_threadManagementLock.Lock();
+        easyutil_lock_mutex(m_threadManagementLock);
         {
             // First try getting a dormant thread. Technically, there's a small chance a dormant thread is still running, in which case we don't
             // want to consider those for the sake of efficiency.
@@ -292,7 +302,7 @@ namespace GT
                 m_activeThreads.PushBack(thread);
             }
         }
-        m_threadManagementLock.Unlock();
+        easyutil_unlock_mutex(m_threadManagementLock);
 
 
         return thread;
@@ -302,11 +312,11 @@ namespace GT
     {
         if (thread != nullptr)
         {
-            m_threadManagementLock.Lock();
+            easyutil_lock_mutex(m_threadManagementLock);
             {
                 this->UnacquireThreadNoLock(thread);
             }
-            m_threadManagementLock.Unlock();
+            easyutil_unlock_mutex(m_threadManagementLock);
         }
     }
 
@@ -328,14 +338,14 @@ namespace GT
 
     void EngineContext::UnacquireAllThreads()
     {
-        m_threadManagementLock.Lock();
+        easyutil_lock_mutex(m_threadManagementLock);
         {
             while (m_activeThreads.GetCount() > 0)
             {
                 this->UnacquireThreadNoLock(m_activeThreads.GetBack());
             }
         }
-        m_threadManagementLock.Unlock();
+        easyutil_unlock_mutex(m_threadManagementLock);
     }
 
 

@@ -3,6 +3,7 @@
 #include <GTGE/ThreadCache.hpp>
 #include <GTGE/Core/Map.hpp>
 #include <GTGE/Core/System.hpp>
+#include <easy_util/easy_util.h>
 
 
 // Globals.
@@ -15,7 +16,7 @@ namespace GT
     static Map<Thread*, bool>* ForcedThreads;
 
     /// The lock we'll use to guard AcquireThread() and UnacquireThread().
-    static Mutex AcquireLock;
+    static easyutil_mutex AcquireLock = NULL;
 }
 
 /// Startup/Shutdown.
@@ -23,6 +24,8 @@ namespace GT
 {
     bool ThreadCache::Startup(size_t minThreadCount)
     {
+        AcquireLock = easyutil_create_mutex();
+
         Threads       = new Map<Thread*, bool>;
         ForcedThreads = new Map<Thread*, bool>;
 
@@ -37,6 +40,8 @@ namespace GT
 
     void ThreadCache::Shutdown()
     {
+        easyutil_delete_mutex(AcquireLock);
+
         if (Threads != nullptr)
         {
             for (size_t i = 0; i < Threads->count; ++i)
@@ -65,7 +70,7 @@ namespace GT
 
         Thread* thread = nullptr;
 
-        AcquireLock.Lock();
+        easyutil_lock_mutex(AcquireLock);
         {
             // NOTE: I don't like this linear loop. Might do an optimized map later on, depending on how bad this is in practice.
             for (size_t i = 0; i < Threads->count; ++i)
@@ -87,14 +92,14 @@ namespace GT
                 ForcedThreads->Add(thread, true);
             }
         }
-        AcquireLock.Unlock();
+        easyutil_unlock_mutex(AcquireLock);
 
         return thread;
     }
 
     void ThreadCache::UnacquireThread(Thread* thread)
     {
-        AcquireLock.Lock();
+        easyutil_lock_mutex(AcquireLock);
         {
             auto iThread = Threads->Find(thread);
             if (iThread != nullptr)
@@ -111,6 +116,6 @@ namespace GT
                 }
             }
         }
-        AcquireLock.Unlock();
+        easyutil_unlock_mutex(AcquireLock);
     }
 }

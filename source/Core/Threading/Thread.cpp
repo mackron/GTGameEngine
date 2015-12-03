@@ -1,8 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTGE/Core/Threading/Thread.hpp>
-#include <GTGE/Core/Threading/Semaphore.hpp>
-#include <GTGE/Core/Threading/Mutex.hpp>
+#include <easy_util/easy_util.h>
 
 namespace GT
 {
@@ -12,10 +11,14 @@ namespace GT
         _ThreadData()
             : entryProc(nullptr), entryData(nullptr), busy(false), alive(true), wantsToStop(false), entrySemaphore(0), endMutex()
         {
+            entrySemaphore = easyutil_create_semaphore(0);
+            endMutex = easyutil_create_mutex();
         }
 
         virtual ~_ThreadData()
         {
+            easyutil_delete_semaphore(this->entrySemaphore);
+            easyutil_delete_mutex(this->endMutex);
         }
 
         // The entry point to execute.
@@ -34,10 +37,10 @@ namespace GT
         bool wantsToStop;
 
         // The semaphore to wait on before executing the function. Used by the internal thread procedure.
-        Semaphore entrySemaphore;
+        easyutil_semaphore entrySemaphore;
 
         // The mutex that controls when we can start another function.
-        Mutex endMutex;
+        easyutil_mutex endMutex;
 
     private:    // No copying.
         _ThreadData(const _ThreadData &);
@@ -56,7 +59,7 @@ namespace GT
             {
                 // We need to wait for a semaphore before executing the function. We don't just want to keep looping. Once
                 // we have passed the semaphore gate we can assume the start procedure is valid and data is valid.
-                data->entrySemaphore.Wait();
+                easyutil_wait_semaphore(data->entrySemaphore);
 
                 // The thread is busy.
                 data->busy = true;
@@ -72,7 +75,7 @@ namespace GT
                 data->busy      = false;
 
                 // We are no longer running the function.
-                data->endMutex.Unlock();
+                easyutil_unlock_mutex(data->endMutex);
             }
         }
     }
@@ -144,14 +147,14 @@ namespace GT
 
         // We always need to do a lock since we're now running the function. If we get here in non-blocking mode (block == false),
         // this lock will return immediately.
-        selfData->endMutex.Lock();
+        easyutil_lock_mutex(selfData->endMutex);
 
         selfData->entryProc   = entryProc;
         selfData->entryData   = entryData;
         selfData->busy        = true;
         selfData->wantsToStop = false;
 
-        selfData->entrySemaphore.Release();
+        easyutil_release_semaphore(selfData->entrySemaphore);
 
         return true;
     }
@@ -177,8 +180,8 @@ namespace GT
         if (this->Busy())
         {
             // We wait, and then release straight away.
-            reinterpret_cast<_ThreadData*>(this->data)->endMutex.Lock();
-            reinterpret_cast<_ThreadData*>(this->data)->endMutex.Unlock();
+            easyutil_lock_mutex(reinterpret_cast<_ThreadData*>(this->data)->endMutex);
+            easyutil_unlock_mutex(reinterpret_cast<_ThreadData*>(this->data)->endMutex);
         }
     }
 

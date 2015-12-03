@@ -94,10 +94,10 @@ namespace GT
 
 
     /// The mutex for synching applicable resource creation operations.
-    static Mutex ResourceCreationLock;
+    static easyutil_mutex ResourceCreationLock = NULL;
 
     /// The mutex for synching applicable resource deletion operations.
-    static Mutex ResourceDeletionLock;
+    static easyutil_mutex ResourceDeletionLock = NULL;
 
 
     /// The caches for individual commands. There are two of each - one for the back and one for the front.
@@ -154,7 +154,7 @@ namespace GT
 
             if (clearResources)
             {
-                ResourceCreationLock.Lock();
+                easyutil_lock_mutex(ResourceCreationLock);
                 {
                     this->RCCreateVertexArrayCache.Reset();
                     this->RCCreateTextureCache.Reset();
@@ -162,10 +162,10 @@ namespace GT
                     this->RCCreateFramebufferCacheEXT.Reset();
                     this->RCCreateFramebufferCacheARB.Reset();
                 }
-                ResourceCreationLock.Unlock();
+                easyutil_unlock_mutex(ResourceCreationLock);
 
 
-                ResourceDeletionLock.Lock();
+                easyutil_lock_mutex(ResourceDeletionLock);
                 {
                     this->RCDeleteVertexArrayCache.Reset();
                     this->RCDeleteTextureCache.Reset();
@@ -173,7 +173,7 @@ namespace GT
                     this->RCDeleteFramebufferCacheEXT.Reset();
                     this->RCDeleteFramebufferCacheARB.Reset();
                 }
-                ResourceDeletionLock.Unlock();
+                easyutil_unlock_mutex(ResourceDeletionLock);
             }
         }
 
@@ -185,6 +185,9 @@ namespace GT
     {
         assert(!IsInitialised);
         {
+            ResourceCreationLock = easyutil_create_mutex();
+            ResourceDeletionLock = easyutil_create_mutex();
+
             size_t contextAttribs[] =
             {
                 GTGL_CONTEXT_MAJOR_VERSION,      2,
@@ -306,6 +309,14 @@ namespace GT
             OpenGLContext = nullptr;
 
 
+            // Mutexes need to be deleted.
+            easyutil_delete_mutex(ResourceCreationLock);
+            ResourceCreationLock = NULL;
+
+            easyutil_delete_mutex(ResourceDeletionLock);
+            ResourceDeletionLock = NULL;
+
+
             // Finally, we need to mark the renderer as uninitialised.
             IsInitialised = false;
         }
@@ -372,13 +383,13 @@ namespace GT
         //    call caches here. The reason is because they are cleared in ExecuteCallCache().
         CallCaches[BackCallCacheIndex].Clear();
 
-        ResourceCreationLock.Lock();
+        easyutil_lock_mutex(ResourceCreationLock);
         ResourceCreationCallCaches[BackCallCacheIndex].Clear();
-        ResourceCreationLock.Unlock();
+        easyutil_unlock_mutex(ResourceCreationLock);
 
-        ResourceDeletionLock.Lock();
+        easyutil_lock_mutex(ResourceDeletionLock);
         ResourceDeletionCallCaches[BackCallCacheIndex].Clear();
-        ResourceDeletionLock.Unlock();
+        easyutil_unlock_mutex(ResourceDeletionLock);
 
 
 
@@ -403,19 +414,17 @@ namespace GT
     void Renderer::ExecuteCallCache()
     {
         // 1) Create resources. We want to lock and clear this all at the same time.
-        ResourceCreationLock.Lock();
+        easyutil_lock_mutex(ResourceCreationLock);
         ResourceCreationCallCaches[!BackCallCacheIndex].Execute();
-        //ResourceCreationCallCaches[!BackCallCacheIndex].Clear();
-        ResourceCreationLock.Unlock();
+        easyutil_unlock_mutex(ResourceCreationLock);
 
         // 2) Normal calls.
         CallCaches[!BackCallCacheIndex].Execute();
 
         // 3) Delete resources. We want to lock, execute and clear this all at the same time.
-        ResourceDeletionLock.Lock();
+        easyutil_lock_mutex(ResourceDeletionLock);
         ResourceDeletionCallCaches[!BackCallCacheIndex].Execute();
-        //ResourceDeletionCallCaches[!BackCallCacheIndex].Clear();
-        ResourceDeletionLock.Unlock();
+        easyutil_unlock_mutex(ResourceDeletionLock);
     }
 
     void Renderer::SwapBuffers()
@@ -1087,14 +1096,14 @@ namespace GT
         GLuint* indexBufferObject  = State.instantiatedBufferObjects.GetBack();
 
 
-        ResourceCreationLock.Lock();
+        easyutil_lock_mutex(ResourceCreationLock);
         {
             auto &command = RCCaches[BackCallCacheIndex].RCCreateVertexArrayCache.Acquire();
             command.CreateVertexArray(vertexBufferObject, indexBufferObject, format);
 
             ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
         }
-        ResourceCreationLock.Unlock();
+        easyutil_unlock_mutex(ResourceCreationLock);
 
 
         return new VertexArray_OpenGL21(usage, format, vertexBufferObject, indexBufferObject);
@@ -1112,14 +1121,14 @@ namespace GT
             assert(vertexBufferObject != nullptr);
             assert(indexBufferObject  != nullptr);
             {
-                ResourceDeletionLock.Lock();
+                easyutil_lock_mutex(ResourceDeletionLock);
                 {
                     auto &command = RCCaches[BackCallCacheIndex].RCDeleteVertexArrayCache.Acquire();
                     command.DeleteVertexArray(vertexBufferObject, indexBufferObject);
 
                     ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
                 }
-                ResourceDeletionLock.Unlock();
+                easyutil_unlock_mutex(ResourceDeletionLock);
 
 
 
@@ -1215,14 +1224,14 @@ namespace GT
         State.instantiatedTextureObjects.PushBack(new TextureState_OpenGL21);
         TextureState_OpenGL21* textureState  = State.instantiatedTextureObjects.GetBack();
 
-        ResourceCreationLock.Lock();
+        easyutil_lock_mutex(ResourceCreationLock);
         {
             auto &command = RCCaches[BackCallCacheIndex].RCCreateTextureCache.Acquire();
             command.CreateTexture(textureState);
 
             ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
         }
-        ResourceCreationLock.Unlock();
+        easyutil_unlock_mutex(ResourceCreationLock);
 
         assert(textureState != nullptr);
         return textureState;
@@ -1232,14 +1241,14 @@ namespace GT
     {
         assert(textureStateToDelete  != nullptr);
         {
-            ResourceDeletionLock.Lock();
+            easyutil_lock_mutex(ResourceDeletionLock);
             {
                 auto &command = RCCaches[BackCallCacheIndex].RCDeleteTextureCache.Acquire();
                 command.DeleteTexture(textureStateToDelete);
 
                 ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
             }
-            ResourceDeletionLock.Unlock();
+            easyutil_unlock_mutex(ResourceDeletionLock);
 
 
 
@@ -1590,14 +1599,14 @@ namespace GT
         auto programState = State.instantiatedProgramObjects.GetBack();
 
 
-        ResourceCreationLock.Lock();
+        easyutil_lock_mutex(ResourceCreationLock);
         {
             auto &command = RCCaches[BackCallCacheIndex].RCCreateShaderCache.Acquire();
             command.CreateShader(programState, vertexShaderSource, fragmentShaderSource, geometryShaderSource);
 
             ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
         }
-        ResourceCreationLock.Unlock();
+        easyutil_unlock_mutex(ResourceCreationLock);
 
 
 
@@ -1614,14 +1623,14 @@ namespace GT
 
             assert(programState  != nullptr);
             {
-                ResourceDeletionLock.Lock();
+                easyutil_lock_mutex(ResourceDeletionLock);
                 {
                     auto &command = RCCaches[BackCallCacheIndex].RCDeleteShaderCache.Acquire();
                     command.DeleteShader(programState);
 
                     ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
                 }
-                ResourceDeletionLock.Unlock();
+                easyutil_unlock_mutex(ResourceDeletionLock);
 
 
 
@@ -1675,7 +1684,7 @@ namespace GT
         auto framebufferState = State.instantiatedFramebufferObjects.GetBack();
 
 
-        ResourceCreationLock.Lock();
+        easyutil_lock_mutex(ResourceCreationLock);
         {
             RCCreateFramebuffer* command = nullptr;
 
@@ -1696,7 +1705,7 @@ namespace GT
                 ResourceCreationCallCaches[BackCallCacheIndex].Append(*command);
             }
         }
-        ResourceCreationLock.Unlock();
+        easyutil_unlock_mutex(ResourceCreationLock);
 
 
 
@@ -1713,7 +1722,7 @@ namespace GT
 
             assert(framebufferState  != nullptr);
             {
-                ResourceDeletionLock.Lock();
+                easyutil_lock_mutex(ResourceDeletionLock);
                 {
                     RCDeleteFramebuffer* command = nullptr;
 
@@ -1734,7 +1743,7 @@ namespace GT
                         ResourceDeletionCallCaches[BackCallCacheIndex].Append(*command);
                     }
                 }
-                ResourceDeletionLock.Unlock();
+                easyutil_unlock_mutex(ResourceDeletionLock);
 
 
 
