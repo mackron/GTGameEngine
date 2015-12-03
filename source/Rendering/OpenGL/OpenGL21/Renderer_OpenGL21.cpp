@@ -298,12 +298,6 @@ namespace GT
             State.Shutdown();
 
 
-            // Delete the default VAO.
-            //glDeleteBuffers(1, &ServerState_DefaultIBO);
-            //glDeleteBuffers(1, &ServerState_DefaultVBO);
-            //glDeleteVertexArrays(1, &ServerState_DefaultVAO);
-
-
             // GTGL needs to be shutdown.
             gtglShutdown();
             OpenGLContext = nullptr;

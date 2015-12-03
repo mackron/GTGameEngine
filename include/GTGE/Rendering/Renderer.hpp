@@ -24,7 +24,7 @@ namespace GT
     /// Static class for performing rendering operations.
     ///
     /// This is built as a static class to make things a bit easier to use. To switch implementations (OpenGL 3.3, D3D10, etc), just build
-    /// the appropriate source file. This will be controlled with a pre-processor.
+    /// the appropriate source file. This will be controlled with the pre-processor.
     ///
     /// There are two general parts to the renderer. The single-threaded part and the multi-threaded part. The single-threaded part calls
     /// the rendering API functions directly. In this case of OpenGL, it will call the gl*() functions directly, for example. These all
