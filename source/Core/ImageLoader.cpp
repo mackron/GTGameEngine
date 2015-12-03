@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTGE/Core/ImageLoader.hpp>
-#include <GTGE/Core/Log.hpp>
 #include <GTGE/Core/Strings/Equal.hpp>
 #include <GTGE/Core/Strings/Create.hpp>
 #include <GTGE/GTEngine.hpp>
@@ -78,13 +77,12 @@ namespace GT
             }
             else
             {
-                GlobalLog.Write("GTLib - Failed to open image file: %s", filename);
                 delete loader;
+                return nullptr;
             }
         }
 
         // If we made it here, we have no loader.
-        GlobalLog.Write("GTLib - Failed to load image: %s. Unsupported file type.", filename);
         return nullptr;
     }
 

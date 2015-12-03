@@ -4,7 +4,6 @@
 #define GT_EngineContext
 
 #include "MessageDispatcher.hpp"
-#include "DefaultMessageHandler.hpp"
 #include "Audio/SoundWorld.hpp"
 #include "Assets/AssetLibrary.hpp"
 #include <GTGE/Core/Vector.hpp>
@@ -162,8 +161,8 @@ namespace GT
         /// A pointer to the object representing the virtual file system. This is where base directories are added.
         easyvfs_context* m_pVFS;
 
-        /// The logging object.
-        LogFile m_logFile;
+        /// The log file.
+        easyvfs_file* m_pLogFile;
 
 
         /// The list of every active thread that is owned by the engine. When a thread is created, it'll be added to this list. When a thread is

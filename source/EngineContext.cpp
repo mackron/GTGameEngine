@@ -101,6 +101,7 @@ namespace GT
         : m_cmdline(),
             m_executableDirectoryAbsolutePath(),
             m_pVFS(nullptr),
+            m_pLogFile(nullptr),
             m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
             m_activeThreads(), m_dormantThreads(), m_threadManagementLock(NULL),
             m_assetLibrary()
@@ -111,7 +112,7 @@ namespace GT
 
         // Parse the command line.
         CommandLineData cmdlineData;
-        strcpy_s(cmdlineData.relativeLogPath, sizeof(cmdlineData.relativeLogPath), "var/logs/engine.html");
+        strcpy_s(cmdlineData.relativeLogPath, sizeof(cmdlineData.relativeLogPath), "var/logs/engine.txt");
 
         if (easyutil_init_cmdline(&m_cmdline, argc, argv))
         {
@@ -130,7 +131,13 @@ namespace GT
         // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
         char logpath[EASYVFS_MAX_PATH];
         easypath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
-        m_logFile.Open(m_pVFS, logpath, "GTGE");  
+
+        m_pLogFile = easyvfs_open(m_pVFS, logpath, EASYVFS_WRITE, 0);
+        if (m_pLogFile == NULL) {
+            printf("WARNING: Failed to open log file.\n");
+        }
+
+
 
 
         // After moving into the application directory, we need to load up the config file and move into the data directory. From
@@ -356,8 +363,16 @@ namespace GT
     void EngineContext::Log(const char* message)
     {
         // Write to the log file.
-        if (m_logFile.IsOpen()) {
-            m_logFile.Write(message);
+        if (m_pLogFile != NULL)
+        {
+            char dateTime[64];
+            easyutil_datetime_short(easyutil_now(), dateTime, sizeof(dateTime));
+
+            easyvfs_write_string(m_pLogFile, "[");
+            easyvfs_write_string(m_pLogFile, dateTime);
+            easyvfs_write_string(m_pLogFile, "]");
+            easyvfs_write_line  (m_pLogFile, message);
+            easyvfs_flush(m_pLogFile);
         }
 
         // Post to the terminal.
