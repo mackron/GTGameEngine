@@ -67,8 +67,42 @@ namespace GT
 
     int Game::Run()
     {
-        // All we do now is enter the game loop... Once this returns, we're finished with the game and we can clean up.
-        this->Loop();
+        while (!this->closing)
+        {
+            // If the profiler is enabled, we're going to post some events to it.
+            if (this->profiler.IsEnabled())
+            {
+                this->profiler.OnBeginFrame();
+            }
+
+
+
+            // First we need to handle any pending window messages. We do not want to wait here (first argument).
+            while (PumpNextWindowEvent(false));
+
+
+            // We want our events to be handled synchronously on the main thread.
+            this->HandleEvents();
+
+
+            // TODO: Remove this little section when the new GUI event handling system is in place.
+            // The GUI events can be handled here. If it turns out that they're best handled on the update thread, all we need
+            // to do is remove this line - GUIServer::Step() will also handle any pending events. I like to handle the GUI
+            // events from here because it's nice to have GUI events handled at the same time as window events, since they're
+            // kind of related.
+            //this->gui.HandleEvents();
+
+
+            // Here we want to start the next frame.
+            this->DoFrame();
+
+
+            // Here we need to update the profiler.
+            if (this->profiler.IsEnabled())
+            {
+                this->profiler.OnEndFrame();
+            }
+        }
 
         // If we made it here, it means the game was run and closed normally.
         return 0;
@@ -742,52 +776,7 @@ namespace GT
         delete this->window;
     }
 
-    void Game::Loop()
-    {
-        while (!this->closing)
-        {
-            // If the profiler is enabled, we're going to post some events to it.
-            if (this->profiler.IsEnabled())
-            {
-                this->profiler.OnBeginFrame();
-            }
-
-
-
-            // First we need to handle any pending window messages. We do not want to wait here (first argument).
-            while (PumpNextWindowEvent(false));
-
-
-            // We want our events to be handled synchronously on the main thread.
-            this->HandleEvents();
-
-
-            // TODO: Remove this little section when the new GUI event handling system is in place.
-            // The GUI events can be handled here. If it turns out that they're best handled on the update thread, all we need
-            // to do is remove this line - GUIServer::Step() will also handle any pending events. I like to handle the GUI
-            // events from here because it's nice to have GUI events handled at the same time as window events, since they're
-            // kind of related.
-            //this->gui.HandleEvents();
-
-
-            // Here we want to start the next frame. Everything between StartFrame() and EndFrame() will be executed at the same
-            // time as the update thread.
-            this->StartFrame();     // <-- starts any applicable threads.
-            {
-                this->Draw();
-            }
-            this->EndFrame();       // <-- blocks until all threads are finished.
-
-
-            // Here we need to update the profiler.
-            if (this->profiler.IsEnabled())
-            {
-                this->profiler.OnEndFrame();
-            }
-        }
-    }
-
-    void Game::StartFrame() // [Main Thread]
+    void Game::DoFrame()
     {
         // The first thing we do is retrieve the delta time...
         this->deltaTimeInSeconds = Min(this->updateTimer.Update(), 1.0);
@@ -809,12 +798,14 @@ namespace GT
         // Now we let the game know that we're starting the frame.
         m_gameStateManager.OnStartFrame(*this);
 
+
         // Now we just run the job without attempting to block (second argument).
         this->Update();
-    }
 
-    void Game::EndFrame() // [Main Thread]
-    {
+        // Draw the frame after updating.
+        this->Draw();
+
+
         // Now we can let the game know that we've finished the frame...
         m_gameStateManager.OnEndFrame(*this);
     }

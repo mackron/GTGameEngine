@@ -533,30 +533,9 @@ namespace GT
         *       This should be called after InitialiseFonts() because the GUI depends on the font server.
         */
         bool InitialiseGUI();
-        
-        /**
-        *   \brief  Performs the main game loop.
-        *
-        *   \remarks
-        *       This function asserts that the game has been initialised.
-        */
-        void Loop();
 
-        /**
-        *   \brief  Starts the next frame.
-        *
-        *   \remarks
-        *       This will start any applicable threads.
-        */
-        void StartFrame();
-
-        /**
-        *   \brief  Ends the current frame.
-        *
-        *   \remarks
-        *       This will block until all threads have finished.
-        */
-        void EndFrame();
+        /// Updates a renders a single frame.
+        void DoFrame();
 
         /**
         *   \brief  Updates the game. This is run on the update thread.
