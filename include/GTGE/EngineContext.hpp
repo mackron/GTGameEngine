@@ -7,7 +7,6 @@
 #include "Audio/SoundWorld.hpp"
 #include "Assets/AssetLibrary.hpp"
 #include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/Threading/Thread.hpp>
 #include <easy_util/easy_util.h>
 #include <easy_fs/easy_vfs.h>
 
@@ -55,46 +54,6 @@ namespace GT
 
         /// Adds a base directory relative to the executable.
         void AddBaseDirectoryRelativeToExe(const char* relativePath);
-
-
-
-        ////////////////////////////////////////////////////
-        // Threading
-
-        /// Retrieves a thread.
-        ///
-        /// @return A pointer to the new thread.
-        ///
-        /// @remarks
-        ///     The returned thread should be unacquired when it is no longer in use.
-        ///     @par
-        ///     This function is thread-safe.
-        Thread* AcquireThread();
-
-        /// Unacquires a thread that will previously acquired with AcquireThread().
-        ///
-        /// @param thread [in] A pointer to the thread to unacquire.
-        ///
-        /// @remarks
-        ///     This function will not wait until the thread is finished executing it's current function.
-        ///     @par
-        ///     This function is thread-safe.
-        void UnacquireThread(Thread* thread);
-        void UnacquireThread(Thread &thread) { this->UnacquireThread(&thread); }
-
-        /// Unacquires a thread without locking.
-        ///
-        /// @param thread [in] A pointer to the thread to unacquire.
-        ///
-        /// @remarks
-        ///     This function is the same as UnacquireThread(), except that it is not thread safe.
-        void UnacquireThreadNoLock(Thread* thread);
-
-        /// Unacquires every acquired thread.
-        ///
-        /// @remarks
-        ///     This is mainly intended for the shutdown process so that threads can complete execution before the engine is shutdown.
-        void UnacquireAllThreads();
 
 
 
@@ -163,18 +122,6 @@ namespace GT
 
         /// The log file.
         easyvfs_file* m_pLogFile;
-
-
-        /// The list of every active thread that is owned by the engine. When a thread is created, it'll be added to this list. When a thread is
-        /// deleted, it will not actually be destructed - instead it will be added to the dormant thread list for re-use. This is done this way
-        /// so that rapid thread creation and deletion is efficient.
-        Vector<Thread*> m_activeThreads;
-
-        /// The list of every dormant thread that can be reused.
-        Vector<Thread*> m_dormantThreads;
-
-        /// The mutex for controlling access to the thread acquiring/unacquiring procedures.
-        easyutil_mutex m_threadManagementLock;
 
 
         /// A pointer to the easy_audio context for audio playback.

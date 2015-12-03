@@ -103,7 +103,6 @@ namespace GT
             m_pVFS(nullptr),
             m_pLogFile(nullptr),
             m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
-            m_activeThreads(), m_dormantThreads(), m_threadManagementLock(NULL),
             m_assetLibrary()
     {
         // We need to initialize the virtual file system early so we can do things like create logs and cache files.
@@ -190,48 +189,10 @@ namespace GT
         }
 
         m_soundWorld.Startup();
-
-
-
-
-        //////////////////////////////////////////
-        // Thread Management
-
-        m_threadManagementLock = easyutil_create_mutex();
     }
 
     EngineContext::~EngineContext()
     {
-        //////////////////////////////////////////
-        // Threading
-        //
-        // All threads need to be unacquired, and we need to wait for them all to finish executing.
-
-        this->UnacquireAllThreads();
-
-        Vector<Thread*> threadsToDelete;
-        easyutil_lock_mutex(m_threadManagementLock);
-        {
-            threadsToDelete = m_dormantThreads;
-        }
-        easyutil_unlock_mutex(m_threadManagementLock);
-
-        for (size_t iThread = 0; iThread < threadsToDelete.GetCount(); ++iThread)
-        {
-            auto thread = threadsToDelete[iThread];
-            assert(thread != nullptr);
-            {
-                thread->Stop();
-                thread->Wait();
-
-                delete thread;
-            }
-        }
-
-        easyutil_delete_mutex(m_threadManagementLock);
-
-
-
         //////////////////////////////////////////
         // Audio System
 
@@ -271,7 +232,7 @@ namespace GT
 
     ////////////////////////////////////////////////////
     // Threading
-
+#if 0
     Thread* EngineContext::AcquireThread()
     {
         Thread* thread = nullptr;
@@ -354,7 +315,7 @@ namespace GT
         }
         easyutil_unlock_mutex(m_threadManagementLock);
     }
-
+#endif
 
 
     ////////////////////////////////////////////////////

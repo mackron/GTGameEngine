@@ -13,7 +13,6 @@
 #include "DefaultGUIImageManager.hpp"
 #include "Rendering/DefaultGUIRenderer.hpp"
 #include "GameStateManager.hpp"
-#include <GTGE/Core/Threading/Thread.hpp>
 #include <GTGE/Core/Timing.hpp>
 #include <GTGE/Core/FontServer.hpp>
 #include <GTGE/GUI/GUIServer.hpp>
