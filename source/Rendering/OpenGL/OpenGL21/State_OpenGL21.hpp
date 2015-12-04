@@ -52,18 +52,6 @@ namespace GT
         int stencilMask;
 
 
-        
-        // Pointers to the current render command for a particular operation. When null, a new one needs to be created and set.
-        //RCSetGlobalState*      currentRCSetGlobalState;
-        //RCSetVertexArrayState* currentRCSetVertexArrayState;
-        //RCSetTextureState*     currentRCSetTextureState;
-        //RCSetShaderState*      currentRCSetShaderState;
-        //RCSetFramebufferState* currentRCSetFramebufferState;
-        //RCClear*               currentRCClear;
-        //RCDraw*                currentRCDraw;
-
-
-
         /// The list of currently instantiated textures. This includes all texture types.
         Vector<TextureState_OpenGL21*> instantiatedTextureObjects;
 

@@ -790,9 +790,6 @@ namespace GT
         // We need to cache the current position of the mouse. We need to do this in order to get smooth mouse movement.
         this->CacheMousePosition();
 
-        // Here is where we swap rendering command queues in preperation for the scene update, which is about to re-fill the back queue.
-        this->SwapRCQueues();
-
 
         // Now we let the game know that we're starting the frame.
         m_gameStateManager.OnStartFrame(*this);
@@ -809,7 +806,7 @@ namespace GT
         m_gameStateManager.OnEndFrame(*this);
     }
 
-    void Game::Update() //[Update Thread]
+    void Game::Update()
     {
         if (this->profiler.IsEnabled())
         {
@@ -845,7 +842,7 @@ namespace GT
         }
     }
 
-    void Game::Draw() //[Main Thread]
+    void Game::Draw()
     {
         if (this->profiler.IsEnabled())
         {
@@ -858,16 +855,6 @@ namespace GT
         // We're not currently calling any OnDraw events. The problem is with the multi-threading nature of the engine. Events here are called from a different thread
         // to other events, so it's not a trivial matter of simply calling the function without any synchronization.
 
-
-        //this->OnDraw();
-        //this->script.Execute("Game.OnDraw();");
-
-        Renderer::ExecuteCallCache();
-
-        //this->OnPostDraw();
-        //this->script.Execute("Game.OnPostDraw();");
-
-
         // At this point we can finally swap the buffers.
         Renderer::SwapBuffers();
 
@@ -876,11 +863,6 @@ namespace GT
         {
             this->profiler.OnEndRendering();
         }
-    }
-
-    void Game::SwapRCQueues()           // TODO: Consider renaming this to SwapCallCaches() to match the new renderer.
-    {
-        Renderer::SwapCallCaches();
     }
 
 

@@ -27,46 +27,8 @@
 #include "Shader_OpenGL21.hpp"
 #include "Framebuffer_OpenGL21.hpp"
 
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This is a general explanation on how the caching system works.
-//
-// Conceptually, the idea is that each individual call has it's own cachable version. In reality this is too inefficient because there exists
-// overhead when performing the actual caching. Instead, calls are batched based on their general type. For example, many state changes don't
-// affect other state changes. Thus, state changes can often be performed in any order. If two state changes occur straight after each other,
-// they can be batched into a single call instead of being separated into separate calls.
-//
-// Here are the different categories of calls.
-//      Global State (glClearColor, glEnable/glDisable, bindings, etc)
-//      Texture State
-//      Buffer State
-//      Shader State
-//      Framebuffer State
-//      Drawing (glClear, glDrawElements, etc)
-//
-// You will see how many categories don't actually affect each other. For example, texture bindings will never be affected by basic state
-// changes. What we do is keep track of a pointer to a cached call that can be used for a call that falls into that same category. When that
-// pointer is null, we just create a new cached call. It will be set to null when another call is performed where it can not longer be used
-// with batching.
-//
-// The state of the renderer is only relevant for the construction of the cached calls. When calls are actually getting executed, they won't
-// ever care about state. Thus, we use a State object that will contain the state at the time in which a cached call is created. This state
-// object is used in determine when a particular operation actually needs to be performed. For example, if the current texture is the same as
-// the one getting bound, it'll just skip over the call.
-//
-// The aforementioned state object will also contain pointers to the different cached calls where an individual call can be cached. These
-// pointers will be cleared to null when the call caches are swapped. When the pointers a null, it means the call can not be batched and a
-// new call will need to be created and cached.
-
-
-
-
 namespace GT
 {
-    /////////////////////////////////////////////////////////////
-    // Direct Calls
-
     /// Keeps track of whether or not the renderer is initialised.
     static bool IsInitialised = false;
 
@@ -80,109 +42,7 @@ namespace GT
     static State_OpenGL21 State;
 
 
-    /// The two call caches. The back call back is identified with BackCallCacheIndex.
-    //static RCQueue CallCaches[2];
-
-    /// The two call caches for creating resources.
-    //static RCQueue ResourceCreationCallCaches[2];
-
-    /// The two call caches for deleting resources.
-    //static RCQueue ResourceDeletionCallCaches[2];
-
-    /// The index identifying the back call cache.
-    //static unsigned int BackCallCacheIndex = 0;
-
-
-    /// The mutex for synching applicable resource creation operations.
-    static easyutil_mutex ResourceCreationLock = NULL;
-
-    /// The mutex for synching applicable resource deletion operations.
-    static easyutil_mutex ResourceDeletionLock = NULL;
-
-
-    /// The caches for individual commands. There are two of each - one for the back and one for the front.
-#if 0
-    static struct _RCCaches
-    {
-        // State RCs.
-        RCCache<RCSetGlobalState>         RCSetGlobalStateCache;
-        RCCache<RCSetVertexArrayState>    RCSetVertexArrayStateCache;
-        RCCache<RCSetTextureState>        RCSetTextureStateCache;
-        RCCache<RCSetShaderState>         RCSetShaderStateCache;
-        RCCache<RCSetFramebufferStateEXT> RCSetFramebufferStateCacheEXT;
-        RCCache<RCSetFramebufferStateARB> RCSetFramebufferStateCacheARB;
-
-        // Drawing RCs.
-        RCCache<RCClear>               RCClearCache;
-        RCCache<RCDraw>                RCDrawCache;
-
-        // Create and Delete RCs.
-        RCCache<RCCreateVertexArray>    RCCreateVertexArrayCache;
-        RCCache<RCDeleteVertexArray>    RCDeleteVertexArrayCache;
-        RCCache<RCCreateTexture>        RCCreateTextureCache;
-        RCCache<RCDeleteTexture>        RCDeleteTextureCache;
-        RCCache<RCCreateShader>         RCCreateShaderCache;
-        RCCache<RCDeleteShader>         RCDeleteShaderCache;
-        RCCache<RCCreateFramebufferEXT> RCCreateFramebufferCacheEXT;
-        RCCache<RCCreateFramebufferARB> RCCreateFramebufferCacheARB;
-        RCCache<RCDeleteFramebufferEXT> RCDeleteFramebufferCacheEXT;
-        RCCache<RCDeleteFramebufferARB> RCDeleteFramebufferCacheARB;
-
-
-        _RCCaches()
-            : RCSetGlobalStateCache(), RCSetVertexArrayStateCache(), RCSetTextureStateCache(), RCSetShaderStateCache(), RCSetFramebufferStateCacheEXT(), RCSetFramebufferStateCacheARB(),
-              RCClearCache(), RCDrawCache(),
-              RCCreateVertexArrayCache(), RCDeleteVertexArrayCache(),
-              RCCreateTextureCache(),     RCDeleteTextureCache(),
-              RCCreateShaderCache(),      RCDeleteShaderCache(),
-              RCCreateFramebufferCacheEXT(), RCCreateFramebufferCacheARB(), RCDeleteFramebufferCacheEXT(), RCDeleteFramebufferCacheARB()
-        {
-        }
-
-        void Clear(bool clearResources = false)
-        {
-            this->RCSetGlobalStateCache.Reset();
-            this->RCSetVertexArrayStateCache.Reset();
-            this->RCSetTextureStateCache.Reset();
-            this->RCSetShaderStateCache.Reset();
-            this->RCSetFramebufferStateCacheEXT.Reset();
-            this->RCSetFramebufferStateCacheARB.Reset();
-
-
-            this->RCClearCache.Reset();
-            this->RCDrawCache.Reset();
-
-
-            if (clearResources)
-            {
-                easyutil_lock_mutex(ResourceCreationLock);
-                {
-                    this->RCCreateVertexArrayCache.Reset();
-                    this->RCCreateTextureCache.Reset();
-                    this->RCCreateShaderCache.Reset();
-                    this->RCCreateFramebufferCacheEXT.Reset();
-                    this->RCCreateFramebufferCacheARB.Reset();
-                }
-                easyutil_unlock_mutex(ResourceCreationLock);
-
-
-                easyutil_lock_mutex(ResourceDeletionLock);
-                {
-                    this->RCDeleteVertexArrayCache.Reset();
-                    this->RCDeleteTextureCache.Reset();
-                    this->RCDeleteShaderCache.Reset();
-                    this->RCDeleteFramebufferCacheEXT.Reset();
-                    this->RCDeleteFramebufferCacheARB.Reset();
-                }
-                easyutil_unlock_mutex(ResourceDeletionLock);
-            }
-        }
-
-    }RCCaches[2];
-#endif
-
-
-    void SetVertexAttribState(const VertexFormat &format, const float* vertices)
+    void SetOpenGL21VertexAttribState(const VertexFormat &format, const float* vertices)
     {
         // Set the vertex state.
         uint32_t  newVertexAttribEnableBits = 0x0;
@@ -466,9 +326,6 @@ namespace GT
     {
         assert(!IsInitialised);
         {
-            ResourceCreationLock = easyutil_create_mutex();
-            ResourceDeletionLock = easyutil_create_mutex();
-
             size_t contextAttribs[] =
             {
                 GTGL_CONTEXT_MAJOR_VERSION,      2,
@@ -561,36 +418,12 @@ namespace GT
     {
         assert(IsInitialised);
         {
-            // Objects created by the renderer need to be deleted. If this doesn't happen, Intel drivers will sometimes have a whinge after shutdown.
-            //ResourceDeletionCallCaches[ BackCallCacheIndex].Execute();
-            //ResourceDeletionCallCaches[!BackCallCacheIndex].Execute();
-
-            // Both caches should be cleared.
-            //CallCaches[0].Clear();
-            //CallCaches[1].Clear();
-
-            //ResourceCreationCallCaches[0].Clear();
-            //ResourceCreationCallCaches[1].Clear();
-            //ResourceDeletionCallCaches[0].Clear();
-            //ResourceDeletionCallCaches[1].Clear();
-
-
             // The client-side state needs to be shutdown.
             State.Shutdown();
-
 
             // GTGL needs to be shutdown.
             gtglShutdown();
             OpenGLContext = nullptr;
-
-
-            // Mutexes need to be deleted.
-            easyutil_delete_mutex(ResourceCreationLock);
-            ResourceCreationLock = NULL;
-
-            easyutil_delete_mutex(ResourceDeletionLock);
-            ResourceDeletionLock = NULL;
-
 
             // Finally, we need to mark the renderer as uninitialised.
             IsInitialised = false;
@@ -649,61 +482,13 @@ namespace GT
     #endif
     }
 
-    void Renderer::SwapCallCaches()
-    {
-        // 1) Swap the back call cache index.
-        //BackCallCacheIndex = !BackCallCacheIndex;
-
-        // 2) Clear the new back cache in preparation for filling by another thread. Note how we don't clear the resource creation and deletion
-        //    call caches here. The reason is because they are cleared in ExecuteCallCache().
-        //CallCaches[BackCallCacheIndex].Clear();
-
-        easyutil_lock_mutex(ResourceCreationLock);
-        //ResourceCreationCallCaches[BackCallCacheIndex].Clear();
-        easyutil_unlock_mutex(ResourceCreationLock);
-
-        easyutil_lock_mutex(ResourceDeletionLock);
-        //ResourceDeletionCallCaches[BackCallCacheIndex].Clear();
-        easyutil_unlock_mutex(ResourceDeletionLock);
-
-
-
-        // 3) Clear the sub-caches.
-        //RCCaches[BackCallCacheIndex].Clear();
-
-
-        // 4) Cleanup deleted objects.
-        State.ClearDeletedOpenGLObjects();
-
-
-        // 5) Reset all of the "current" commands in order to force new ones in preparation for the new frame.
-        //State.currentRCSetGlobalState      = nullptr;
-        //State.currentRCSetVertexArrayState = nullptr;
-        //State.currentRCSetTextureState     = nullptr;
-        //State.currentRCSetShaderState      = nullptr;
-        //State.currentRCSetFramebufferState = nullptr;
-        //State.currentRCClear               = nullptr;
-        //State.currentRCDraw                = nullptr;
-    }
-
-    void Renderer::ExecuteCallCache()
-    {
-        // 1) Create resources. We want to lock and clear this all at the same time.
-        easyutil_lock_mutex(ResourceCreationLock);
-        //ResourceCreationCallCaches[!BackCallCacheIndex].Execute();
-        easyutil_unlock_mutex(ResourceCreationLock);
-
-        // 2) Normal calls.
-        //CallCaches[!BackCallCacheIndex].Execute();
-
-        // 3) Delete resources. We want to lock, execute and clear this all at the same time.
-        easyutil_lock_mutex(ResourceDeletionLock);
-        //ResourceDeletionCallCaches[!BackCallCacheIndex].Execute();
-        easyutil_unlock_mutex(ResourceDeletionLock);
-    }
 
     void Renderer::SwapBuffers()
     {
+        // Cleanup deleted objects.
+        State.ClearDeletedOpenGLObjects();
+
+
         if (State.swapIntervalNeedsUpdate)
         {
             gtglSwapInterval(State.swapInterval);
@@ -715,97 +500,32 @@ namespace GT
 
 
 
-
-
-    /////////////////////////////////////////////////////////////
-    // Cached Calls
-
-#if 0
-    #define UPDATE_CURRENT_RC(renderCommandName) \
-        if (State.current##renderCommandName == nullptr) \
-        { \
-            State.current##renderCommandName = &RCCaches[BackCallCacheIndex].renderCommandName##Cache.Acquire(); \
-            CallCaches[BackCallCacheIndex].Append(*State.current##renderCommandName); \
-        }
-#endif
-
-
     ///////////////////////////
     // Simple State Changes
 
     void Renderer::SetViewport(int x, int y, unsigned int width, unsigned int height)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetViewport(x, y, width, height);
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glViewport(x, y, width, height);
     }
 
     void Renderer::SetScissor(int x, int y, unsigned int width, unsigned int height)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetScissor(x, y, width, height);
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glScissor(x, y, width, height);
     }
 
 
     void Renderer::SetClearColour(float r, float g, float b, float a)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetClearColour(r, g, b, a);
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glClearColor(r, g, b, a);
     }
 
     void Renderer::SetClearDepth(float depth)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetClearDepth(depth);
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glClearDepth(depth);
     }
 
     void Renderer::SetClearStencil(int stencil)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetClearStencil(stencil);
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glClearStencil(stencil);
     }
 
@@ -817,15 +537,6 @@ namespace GT
             auto programStateToMakeCurrent = static_cast<Shader_OpenGL21*>(programToMakeCurrent)->GetOpenGLState();
             if (programStateToMakeCurrent != State.currentProgramState)
             {
-#if 0
-                UPDATE_CURRENT_RC(RCSetGlobalState);
-                assert(State.currentRCSetGlobalState != nullptr);
-                {
-                    State.currentRCSetGlobalState->SetCurrentShader(programStateToMakeCurrent);
-                    State.currentProgramState = programStateToMakeCurrent;
-                }
-#endif
-
                 // 1) Bind the program.
                 glUseProgram(programStateToMakeCurrent->programObject);
 
@@ -873,23 +584,6 @@ namespace GT
 
         if (framebufferState != State.currentFramebufferState)
         {
-#if 0
-            UPDATE_CURRENT_RC(RCSetGlobalState);
-            assert(State.currentRCSetGlobalState != nullptr);
-            {
-                if (GTGL_ARB_framebuffer_object)
-                {
-                    // Primary (ARB_framebuffer_object).
-                    State.currentRCSetGlobalState->SetCurrentFramebufferARB(framebufferState);
-                }
-                else
-                {
-                    // Secondary (EXT_framebuffer_object).
-                    State.currentRCSetGlobalState->SetCurrentFramebufferEXT(framebufferState);
-                }
-            }
-#endif
-
             if (GTGL_ARB_framebuffer_object)
             {
                 // Primary (ARB_framebuffer_object).
@@ -927,238 +621,90 @@ namespace GT
 
     void Renderer::EnableScissorTest()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Enable(GL_SCISSOR_TEST);
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glEnable(GL_SCISSOR_TEST);
     }
 
     void Renderer::DisableScissorTest()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Disable(GL_SCISSOR_TEST);
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glDisable(GL_SCISSOR_TEST);
     }
 
 
     void Renderer::EnableBlending()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Enable(GL_BLEND);
-        }
-#endif
-
         glEnable(GL_BLEND);
     }
 
     void Renderer::DisableBlending()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Disable(GL_BLEND);
-        }
-#endif
-
         glDisable(GL_BLEND);
     }
 
     void Renderer::SetBlendFunction(BlendFunc sfactor, BlendFunc dfactor)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetBlendFunction(ToOpenGLBlendFunc(sfactor), ToOpenGLBlendFunc(dfactor));
-        }
-#endif
-
         glBlendFunc(ToOpenGLBlendFunc(sfactor), ToOpenGLBlendFunc(dfactor));
     }
 
     void Renderer::SetBlendEquation(BlendEquation equation)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetBlendEquation(ToOpenGLBlendEquation(equation));
-        }
-#endif
-
         glBlendEquation(ToOpenGLBlendEquation(equation));
     }
 
     void Renderer::SetBlendColour(float r, float g, float b, float a)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetBlendColour(r, g, b, a);
-        }
-#endif
-
         glBlendColor(r, g, b, a);
     }
 
 
     void Renderer::EnableAlphaTest()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Enable(GL_ALPHA_TEST);
-        }
-#endif
-
         glEnable(GL_ALPHA_TEST);
     }
 
     void Renderer::DisableAlphaTest()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Disable(GL_ALPHA_TEST);
-        }
-#endif
-
         glDisable(GL_ALPHA_TEST);
     }
 
     void Renderer::SetAlphaTestFunction(RendererFunction function, float ref)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetAlphaTestFunction(ToOpenGLFunc(function), static_cast<GLclampf>(ref));
-        }
-#endif
-
         glAlphaFunc(ToOpenGLFunc(function), static_cast<GLclampf>(ref));
     }
 
 
     void Renderer::EnableColourWrites()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->EnableColourWrites();
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     }
 
     void Renderer::DisableColourWrites()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->DisableColourWrites();
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     }
 
     void Renderer::EnableDepthWrites()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->EnableDepthWrites();
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glDepthMask(GL_TRUE);
     }
 
     void Renderer::DisableDepthWrites()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->DisableDepthWrites();
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         glDepthMask(GL_FALSE);
     }
 
 
     void Renderer::EnableDepthTest()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Enable(GL_DEPTH_TEST);
-        }
-#endif
-
         glEnable(GL_DEPTH_TEST);
     }
 
     void Renderer::DisableDepthTest()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Disable(GL_DEPTH_TEST);
-        }
-#endif
-
         glDisable(GL_DEPTH_TEST);
     }
 
     void Renderer::SetDepthFunction(RendererFunction function)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetDepthFunction(ToOpenGLFunc(function));
-        }
-#endif
-
         glDepthFunc(ToOpenGLFunc(function));
     }
 
@@ -1166,27 +712,11 @@ namespace GT
 
     void Renderer::EnableStencilTest()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Enable(GL_STENCIL_TEST);
-        }
-#endif
-
         glEnable(GL_STENCIL_TEST);
     }
 
     void Renderer::DisableStencilTest()
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Disable(GL_STENCIL_TEST);
-        }
-#endif
-
         glDisable(GL_STENCIL_TEST);
     }
 
@@ -1208,14 +738,6 @@ namespace GT
                 face = GL_BACK;
             }
         }
-
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetStencilMask(face, static_cast<GLuint>(mask));
-        }
-#endif
 
         glStencilMaskSeparate(face, mask);
     }
@@ -1239,14 +761,6 @@ namespace GT
             }
         }
 
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetStencilFunc(face, ToOpenGLFunc(func), static_cast<GLint>(ref), static_cast<GLuint>(mask));
-        }
-#endif
-
         glStencilFuncSeparate(face, ToOpenGLFunc(func), static_cast<GLint>(ref), static_cast<GLuint>(mask));
     }
 
@@ -1268,14 +782,6 @@ namespace GT
                 face = GL_BACK;
             }
         }
-
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetStencilOp(face, ToOpenGLStencilOp(stencilFail), ToOpenGLStencilOp(depthFail), ToOpenGLStencilOp(pass));
-        }
-#endif
 
         glStencilOpSeparate(face, ToOpenGLStencilOp(stencilFail), ToOpenGLStencilOp(depthFail), ToOpenGLStencilOp(pass));
     }
@@ -1300,14 +806,6 @@ namespace GT
                 face = GL_BACK;
             }
         }
-
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetFaceCulling(face);
-        }
-#endif
 
         if (face == GL_NONE)
         {
@@ -1337,14 +835,6 @@ namespace GT
             modeGL = GL_POLYGON_OFFSET_POINT;
         }
 
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Enable(modeGL);
-        }
-#endif
-
         glEnable(modeGL);
     }
 
@@ -1363,14 +853,6 @@ namespace GT
         {
             modeGL = GL_POLYGON_OFFSET_POINT;
         }
-
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->Disable(modeGL);
-        }
-#endif
 
         glDisable(modeGL);
     }
@@ -1410,43 +892,17 @@ namespace GT
             modeGL = GL_LINE;
         }
 
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetPolygonMode(faceGL, modeGL);
-        }
-#endif
-
         glPolygonMode(faceGL, modeGL);
     }
 
     void Renderer::SetPolygonOffset(float factor, float units)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetPolygonOffset(static_cast<GLfloat>(factor), static_cast<GLfloat>(units));
-        }
-#endif
-
         glPolygonOffset(static_cast<GLfloat>(factor), static_cast<GLfloat>(units));
     }
 
 
     void Renderer::SetDrawBuffers(size_t count, const int* buffers)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCSetGlobalState);
-        assert(State.currentRCSetGlobalState != nullptr);
-        {
-            State.currentRCSetGlobalState->SetDrawBuffers(count, buffers);
-        }
-
-        State.currentRCClear = nullptr;
-#endif
-
         // TODO: Remove this malloc().
         GLenum* buffersGL = (GLenum*)malloc(sizeof(GLenum) * count);
         for (size_t i = 0; i < count; ++i)
@@ -1487,18 +943,6 @@ namespace GT
             glmask |= GL_STENCIL_BUFFER_BIT;
         }
 
-
-#if 0
-        UPDATE_CURRENT_RC(RCClear);
-        assert(State.currentRCClear != nullptr);
-        {
-            State.currentRCClear->Clear(glmask);
-        }
-
-        State.currentRCSetGlobalState      = nullptr;
-        State.currentRCSetFramebufferState = nullptr;
-#endif
-
         glClear(glmask);
     }
 
@@ -1517,28 +961,12 @@ namespace GT
         }
 
 
-#if 0
-        UPDATE_CURRENT_RC(RCDraw);
-        assert(State.currentRCDraw != nullptr);
-        {
-            State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLVertexObjectPtr(), vertexArrayGL33.GetOpenGLIndexObjectPtr(), static_cast<GLsizei>(vertexArrayGL33.GetIndexCount()), vertexArrayGL33.GetFormat(), ToOpenGLDrawMode(mode));
-        }
-
-        State.currentRCSetGlobalState      = nullptr;
-        State.currentRCSetVertexArrayState = nullptr;
-        State.currentRCSetTextureState     = nullptr;
-        State.currentRCSetShaderState      = nullptr;
-        State.currentRCSetFramebufferState = nullptr;
-        State.currentRCClear               = nullptr;
-        State.currentRCDraw                = nullptr;
-#endif
-
         // Bind the vertex array.
         glBindBuffer(GL_ARRAY_BUFFER,         *vertexArrayGL33.GetOpenGLVertexObjectPtr());
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *vertexArrayGL33.GetOpenGLIndexObjectPtr());
 
         // Set the vertex state from the given format.
-        SetVertexAttribState(vertexArrayGL33.GetFormat(), nullptr);
+        SetOpenGL21VertexAttribState(vertexArrayGL33.GetFormat(), nullptr);
 
 
         // Draw.
@@ -1552,22 +980,6 @@ namespace GT
 
     void Renderer::Draw(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
     {
-#if 0
-        UPDATE_CURRENT_RC(RCDraw);
-        assert(State.currentRCDraw != nullptr);
-        {
-            State.currentRCDraw->Draw(vertices, static_cast<GLsizei>(vertexCount), indices, static_cast<GLsizei>(indexCount), format, ToOpenGLDrawMode(mode));
-        }
-
-        State.currentRCSetGlobalState      = nullptr;
-        State.currentRCSetVertexArrayState = nullptr;
-        State.currentRCSetTextureState     = nullptr;
-        State.currentRCSetShaderState      = nullptr;
-        State.currentRCSetFramebufferState = nullptr;
-        State.currentRCClear               = nullptr;
-        State.currentRCDraw                = nullptr;
-#endif
-
         (void)vertexCount;
 
 
@@ -1576,7 +988,7 @@ namespace GT
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
         // Set the vertex state from the given format.
-        SetVertexAttribState(format, vertices);
+        SetOpenGL21VertexAttribState(format, vertices);
 
 
         // Draw.
@@ -1624,19 +1036,8 @@ namespace GT
         GLuint* indexBufferObject  = State.instantiatedBufferObjects.GetBack();
 
 
-        easyutil_lock_mutex(ResourceCreationLock);
-        {
-#if 0
-            auto &command = RCCaches[BackCallCacheIndex].RCCreateVertexArrayCache.Acquire();
-            command.CreateVertexArray(vertexBufferObject, indexBufferObject, format);
-
-            ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
-#endif
-
-            glGenBuffers(1, vertexBufferObject);
-            glGenBuffers(1, indexBufferObject);
-        }
-        easyutil_unlock_mutex(ResourceCreationLock);
+        glGenBuffers(1, vertexBufferObject);
+        glGenBuffers(1, indexBufferObject);
 
 
         return new VertexArray_OpenGL21(usage, format, vertexBufferObject, indexBufferObject);
@@ -1654,20 +1055,8 @@ namespace GT
             assert(vertexBufferObject != nullptr);
             assert(indexBufferObject  != nullptr);
             {
-                easyutil_lock_mutex(ResourceDeletionLock);
-                {
-#if 0
-                    auto &command = RCCaches[BackCallCacheIndex].RCDeleteVertexArrayCache.Acquire();
-                    command.DeleteVertexArray(vertexBufferObject, indexBufferObject);
-
-                    ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
-#endif
-
-                    glDeleteBuffers(1, vertexBufferObject);
-                    glDeleteBuffers(1, indexBufferObject);
-                }
-                easyutil_unlock_mutex(ResourceDeletionLock);
-
+                glDeleteBuffers(1, vertexBufferObject);
+                glDeleteBuffers(1, indexBufferObject);
 
 
                 // The objects need to be marked for deletion, but not actually deleted yet.
@@ -1688,20 +1077,6 @@ namespace GT
             GLuint* vertexBufferObject = vertexArrayGL33.GetOpenGLVertexObjectPtr();
             assert(vertexBufferObject != nullptr);
             {
-#if 0
-                //if (State.currentRCSetVertexArrayState == nullptr)
-                {
-                    State.currentRCSetVertexArrayState = &RCCaches[BackCallCacheIndex].RCSetVertexArrayStateCache.Acquire();
-                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetVertexArrayState);
-                }
-
-                assert(State.currentRCSetVertexArrayState != nullptr);
-                {
-                    State.currentRCSetVertexArrayState->SetVertexData(vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
-                    vertexArrayGL33.MarkVertexDataAsUpdated();
-                }
-#endif
-
                 if (ServerState_GL_ARRAY_BUFFER_BINDING != *vertexBufferObject)
                 {
                     glBindBuffer(GL_ARRAY_BUFFER, *vertexBufferObject);
@@ -1726,20 +1101,6 @@ namespace GT
             GLuint* indexBufferObject = vertexArrayGL33.GetOpenGLIndexObjectPtr();
             assert(indexBufferObject != nullptr);
             {
-#if 0
-                //if (State.currentRCSetVertexArrayState == nullptr)
-                {
-                    State.currentRCSetVertexArrayState = &RCCaches[BackCallCacheIndex].RCSetVertexArrayStateCache.Acquire();
-                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetVertexArrayState);
-                }
-
-                assert(State.currentRCSetVertexArrayState != nullptr);
-                {
-                    State.currentRCSetVertexArrayState->SetIndexData(indexBufferObject, vertexArray.GetIndexDataPtr(), vertexArray.GetIndexCount(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
-                    vertexArrayGL33.MarkIndexDataAsUpdated();
-                }
-#endif
-
                 if (ServerState_GL_ELEMENT_ARRAY_BUFFER_BINDING != *indexBufferObject)
                 {
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *indexBufferObject);
@@ -1767,23 +1128,6 @@ namespace GT
             assert(vertexBufferObject != nullptr);
             assert(indexBufferObject  != nullptr);
             {
-#if 0
-                //if (State.currentRCSetVertexArrayState == nullptr)
-                {
-                    State.currentRCSetVertexArrayState = &RCCaches[BackCallCacheIndex].RCSetVertexArrayStateCache.Acquire();
-                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetVertexArrayState);
-                }
-
-                assert(State.currentRCSetVertexArrayState != nullptr);
-                {
-                    State.currentRCSetVertexArrayState->SetVertexData(vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
-                    State.currentRCSetVertexArrayState->SetIndexData( indexBufferObject,  vertexArray.GetIndexDataPtr(),  vertexArray.GetIndexCount(),  ToOpenGLBufferUsage(vertexArray.GetUsage()));
-
-                    vertexArrayGL33.MarkVertexDataAsUpdated();
-                    vertexArrayGL33.MarkIndexDataAsUpdated();
-                }
-#endif
-
                 // Vertex data.
                 {
                     if (ServerState_GL_ARRAY_BUFFER_BINDING != *vertexBufferObject)
@@ -1828,18 +1172,7 @@ namespace GT
         State.instantiatedTextureObjects.PushBack(new TextureState_OpenGL21);
         TextureState_OpenGL21* textureState  = State.instantiatedTextureObjects.GetBack();
 
-        easyutil_lock_mutex(ResourceCreationLock);
-        {
-#if 0
-            auto &command = RCCaches[BackCallCacheIndex].RCCreateTextureCache.Acquire();
-            command.CreateTexture(textureState);
-
-            ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
-#endif
-
-            glGenTextures(1, &textureState->objectGL);
-        }
-        easyutil_unlock_mutex(ResourceCreationLock);
+        glGenTextures(1, &textureState->objectGL);
 
         assert(textureState != nullptr);
         return textureState;
@@ -1849,20 +1182,7 @@ namespace GT
     {
         assert(textureStateToDelete  != nullptr);
         {
-            easyutil_lock_mutex(ResourceDeletionLock);
-            {
-#if 0
-                auto &command = RCCaches[BackCallCacheIndex].RCDeleteTextureCache.Acquire();
-                command.DeleteTexture(textureStateToDelete);
-
-                ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
-#endif
-
-                glDeleteTextures(1, &textureStateToDelete->objectGL);
-            }
-            easyutil_unlock_mutex(ResourceDeletionLock);
-
-
+            glDeleteTextures(1, &textureStateToDelete->objectGL);
 
             // The objects need to be marked for deletion, but not actually deleted yet.
             State.MarkTextureObjectAsDeleted(textureStateToDelete);
@@ -1872,22 +1192,6 @@ namespace GT
     void Renderer_SetOpenGL21TextureFilter(TextureState_OpenGL21* textureState, GLenum textureTarget, TextureFilter minification, TextureFilter magnification)
     {
         assert(textureState != nullptr);
-#if 0
-        assert(State.currentRCSetTextureState == nullptr);
-        {
-
-            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-
-            assert(State.currentRCSetTextureState != nullptr);
-            {
-                State.currentRCSetTextureState->SetTextureFilter(textureState, textureTarget, ToOpenGLTextureFilter(minification), ToOpenGLTextureFilter(magnification));
-            }
-        }
-
-        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
-#endif
-
 
         GLuint prevTexture = BindOpenGL21Texture(textureTarget, textureState->objectGL);
         {
@@ -1900,21 +1204,6 @@ namespace GT
     void Renderer_SetOpenGL21TextureAnisotropy(TextureState_OpenGL21* textureState, GLenum textureTarget, unsigned int anisotropy)
     {
         assert(textureState != nullptr);
-#if 0
-        assert(State.currentRCSetTextureState == nullptr);
-        {
-            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-
-            assert(State.currentRCSetTextureState != nullptr);
-            {
-                State.currentRCSetTextureState->SetTextureAnisotropy(textureState, textureTarget, static_cast<GLint>(anisotropy));
-            }
-        }
-
-        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
-#endif
-
 
         if (GTGL_EXT_texture_filter_anisotropic)
         {
@@ -1929,20 +1218,6 @@ namespace GT
     void Renderer_SetOpenGL21TextureWrapMode(TextureState_OpenGL21* textureState, GLenum textureTarget, TextureWrapMode wrapMode)
     {
         assert(textureState != nullptr);
-#if 0
-        assert(State.currentRCSetTextureState == nullptr);
-        {
-            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-
-            assert(State.currentRCSetTextureState != nullptr);
-            {
-                State.currentRCSetTextureState->SetTextureWrapMode(textureState, textureTarget, ToOpenGLWrapMode(wrapMode));
-            }
-        }
-
-        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
-#endif
 
         GLuint prevTexture = BindOpenGL21Texture(textureTarget, textureState->objectGL);
         {
@@ -1955,20 +1230,6 @@ namespace GT
     void Renderer_SetOpenGL21TextureMipmapLevels(TextureState_OpenGL21* textureState, GLenum textureTarget, unsigned int baseLevel, unsigned int maxLevel)
     {
         assert(textureState != nullptr);
-#if 0
-        assert(State.currentRCSetTextureState == nullptr);
-        {
-            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-
-            assert(State.currentRCSetTextureState != nullptr);
-            {
-                State.currentRCSetTextureState->SetTextureMipmapLevels(textureState, textureTarget, static_cast<GLint>(baseLevel), static_cast<GLint>(maxLevel));
-            }
-        }
-
-        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
-#endif
 
         GLuint prevTexture = BindOpenGL21Texture(textureTarget, textureState->objectGL);
         {
@@ -1981,20 +1242,6 @@ namespace GT
     void Renderer_GenerateOpenGL21TextureMipmaps(TextureState_OpenGL21* textureState, GLenum textureTarget)
     {
         assert(textureState != nullptr);
-#if 0
-        assert(State.currentRCSetTextureState == nullptr);
-        {
-            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-
-            assert(State.currentRCSetTextureState != nullptr);
-            {
-                State.currentRCSetTextureState->GenerateTextureMipmaps(textureState, textureTarget);
-            }
-        }
-
-        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
-#endif
 
         GLuint prevTexture = BindOpenGL21Texture(textureTarget, textureState->objectGL);
         {
@@ -2090,21 +1337,6 @@ namespace GT
             auto   textureState  = textureGL21.GetOpenGLState();
 
             assert(textureState != nullptr);
-#if 0
-            assert(State.currentRCSetTextureState == nullptr);
-            {
-                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-
-                assert(State.currentRCSetTextureState != nullptr);
-                assert(mipmapIndex >= 0);
-                {
-                    State.currentRCSetTextureState->SetTexture2DData(textureState, textureTarget, mipmapIndex, format, width, height, data, ImageUtils::CalculateDataSize(width, height, format), flip);
-                }
-            }
-
-            State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
-#endif
 
             GLuint prevTexture = BindOpenGL21Texture(textureTarget, textureState->objectGL);
             {
@@ -2132,21 +1364,6 @@ namespace GT
             auto   textureState  = textureGL21.GetOpenGLState();
 
             assert(textureState != nullptr);
-#if 0
-            assert(State.currentRCSetTextureState == nullptr);
-            {
-                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-
-                assert(State.currentRCSetTextureState != nullptr);
-                assert(mipmapIndex >= 0);
-                {
-                    State.currentRCSetTextureState->SetTexture2DSubData(textureState, textureTarget, mipmapIndex, format, xOffset, yOffset, width, height, data, ImageUtils::CalculateDataSize(width, height, format), flip);
-                }
-            }
-
-            State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
-#endif
 
             GLuint prevTexture = BindOpenGL21Texture(textureTarget, textureState->objectGL);
             {
@@ -2180,29 +1397,8 @@ namespace GT
             auto &positiveZ = static_cast<const Texture2D_OpenGL21*>(texture.PositiveZ)->GetMipmap(0);
             auto &negativeZ = static_cast<const Texture2D_OpenGL21*>(texture.NegativeZ)->GetMipmap(0);
 
-            auto width           = positiveX.width;
-            auto height          = positiveX.height;
-            //auto format          = positiveX.format;
-            //auto dataSizeInBytes = positiveX.GetDataSizeInBytes();
-
-#if 0
-            assert(State.currentRCSetTextureState == nullptr);
-            {
-                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-
-                assert(State.currentRCSetTextureState != nullptr);
-                {
-                    State.currentRCSetTextureState->SetTextureCubeData(textureState, format, width, height, dataSizeInBytes,
-                        positiveX.data, negativeX.data,
-                        positiveY.data, negativeY.data,
-                        positiveZ.data, negativeZ.data);
-                }
-            }
-
-            State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
-#endif
-
+            GLsizei width         = positiveX.width;
+            GLsizei height        = positiveX.height;
             GLenum internalFormat = ToOpenGLInternalFormat(positiveX.format);
             GLenum format         = ToOpenGLFormat(positiveX.format);
             GLenum type           = ToOpenGLType(positiveX.format);
@@ -2317,140 +1513,129 @@ namespace GT
         auto programState = State.instantiatedProgramObjects.GetBack();
 
 
-        easyutil_lock_mutex(ResourceCreationLock);
+        // 1) Create the shader objects (vertex, fragment and geometry shader objects).
+        GLuint vertexShaderObject   = CreateOpenGL21Shader(GL_VERTEX_SHADER,   vertexShaderSource);
+        GLuint fragmentShaderObject = CreateOpenGL21Shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+        GLuint geometryShaderObject = 0;
+        if (geometryShaderSource != NULL && geometryShaderSource[0] != '\0')
         {
-#if 0
-            auto &command = RCCaches[BackCallCacheIndex].RCCreateShaderCache.Acquire();
-            command.CreateShader(programState, vertexShaderSource, fragmentShaderSource, geometryShaderSource);
+            geometryShaderObject = CreateOpenGL21Shader(GL_GEOMETRY_SHADER, geometryShaderSource);
+        }
 
-            ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
-#endif
 
-            // 1) Create the shader objects (vertex, fragment and geometry shader objects).
-            GLuint vertexShaderObject   = CreateOpenGL21Shader(GL_VERTEX_SHADER,   vertexShaderSource);
-            GLuint fragmentShaderObject = CreateOpenGL21Shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-            GLuint geometryShaderObject = 0;
-            if (geometryShaderSource != NULL && geometryShaderSource[0] != '\0')
+        // 2) Link the program.
+        GLuint programObject = LinkOpenGL21Program(vertexShaderObject, fragmentShaderObject, geometryShaderObject);
+
+
+        // 3) Grab the uniforms.
+        if (programObject != 0)
+        {
+            GLint uniformCount = 0;
+            glGetProgramiv(programObject, GL_ACTIVE_UNIFORMS, &uniformCount);
+
+
+            for (GLint iUniform = 0; iUniform < uniformCount; ++iUniform)
             {
-                geometryShaderObject = CreateOpenGL21Shader(GL_GEOMETRY_SHADER, geometryShaderSource);
-            }
+                GLint  uniformSize;
+                GLenum uniformType;
+                char   uniformName[100];
+                glGetActiveUniform(programObject, iUniform, sizeof(uniformName) - 1, nullptr, &uniformSize, &uniformType, uniformName);
 
+                GLint uniformLocation = glGetUniformLocation(programObject, uniformName);
 
-            // 2) Link the program.
-            GLuint programObject = LinkOpenGL21Program(vertexShaderObject, fragmentShaderObject, geometryShaderObject);
-
-
-            // 3) Grab the uniforms.
-            if (programObject != 0)
-            {
-                GLint uniformCount = 0;
-                glGetProgramiv(programObject, GL_ACTIVE_UNIFORMS, &uniformCount);
-
-
-                for (GLint iUniform = 0; iUniform < uniformCount; ++iUniform)
+                switch (uniformType)
                 {
-                    GLint  uniformSize;
-                    GLenum uniformType;
-                    char   uniformName[100];
-                    glGetActiveUniform(programObject, iUniform, sizeof(uniformName) - 1, nullptr, &uniformSize, &uniformType, uniformName);
-
-                    GLint uniformLocation = glGetUniformLocation(programObject, uniformName);
-
-                    switch (uniformType)
+                case GL_FLOAT:
                     {
-                    case GL_FLOAT:
-                        {
-                            programState->floatUniformLocations.Add(uniformName, uniformLocation);
-                            break;
-                        }
+                        programState->floatUniformLocations.Add(uniformName, uniformLocation);
+                        break;
+                    }
 
-                    case GL_FLOAT_VEC2:
-                        {
-                            programState->float2UniformLocations.Add(uniformName, uniformLocation);
-                            break;
-                        }
+                case GL_FLOAT_VEC2:
+                    {
+                        programState->float2UniformLocations.Add(uniformName, uniformLocation);
+                        break;
+                    }
 
-                    case GL_FLOAT_VEC3:
-                        {
-                            programState->float3UniformLocations.Add(uniformName, uniformLocation);
-                            break;
-                        }
+                case GL_FLOAT_VEC3:
+                    {
+                        programState->float3UniformLocations.Add(uniformName, uniformLocation);
+                        break;
+                    }
 
-                    case GL_FLOAT_VEC4:
-                        {
-                            programState->float4UniformLocations.Add(uniformName, uniformLocation);
-                            break;
-                        }
+                case GL_FLOAT_VEC4:
+                    {
+                        programState->float4UniformLocations.Add(uniformName, uniformLocation);
+                        break;
+                    }
 
 
-                    case GL_FLOAT_MAT2:
-                        {
-                            programState->float2x2UniformLocations.Add(uniformName, uniformLocation);
-                            break;
-                        }
+                case GL_FLOAT_MAT2:
+                    {
+                        programState->float2x2UniformLocations.Add(uniformName, uniformLocation);
+                        break;
+                    }
 
-                    case GL_FLOAT_MAT3:
-                        {
-                            programState->float3x3UniformLocations.Add(uniformName, uniformLocation);
-                            break;
-                        }
+                case GL_FLOAT_MAT3:
+                    {
+                        programState->float3x3UniformLocations.Add(uniformName, uniformLocation);
+                        break;
+                    }
 
-                    case GL_FLOAT_MAT4:
-                        {
-                            programState->float4x4UniformLocations.Add(uniformName, uniformLocation);
-                            break;
-                        }
-
-
-                    case GL_SAMPLER_1D:
-                    case GL_SAMPLER_1D_ARRAY:
-                    case GL_SAMPLER_2D:
-                    case GL_SAMPLER_2D_ARRAY:
-                    case GL_SAMPLER_3D:
-                    case GL_SAMPLER_CUBE:
-                    case GL_SAMPLER_2D_MULTISAMPLE:
-                    case GL_SAMPLER_2D_MULTISAMPLE_ARRAY:
-                    case GL_SAMPLER_BUFFER:
-                    case GL_INT_SAMPLER_1D:
-                    case GL_INT_SAMPLER_1D_ARRAY:
-                    case GL_INT_SAMPLER_2D:
-                    case GL_INT_SAMPLER_2D_ARRAY:
-                    case GL_INT_SAMPLER_3D:
-                    case GL_INT_SAMPLER_CUBE:
-                    case GL_INT_SAMPLER_BUFFER:
-                    case GL_UNSIGNED_INT_SAMPLER_1D:
-                    case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY:
-                    case GL_UNSIGNED_INT_SAMPLER_2D:
-                    case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY:
-                    case GL_UNSIGNED_INT_SAMPLER_3D:
-                    case GL_UNSIGNED_INT_SAMPLER_CUBE:
-                    case GL_UNSIGNED_INT_SAMPLER_BUFFER:
-                        {
-                            programState->textureUniformLocations.Add(uniformName, uniformLocation);
-                            break;
-                        }
+                case GL_FLOAT_MAT4:
+                    {
+                        programState->float4x4UniformLocations.Add(uniformName, uniformLocation);
+                        break;
+                    }
 
 
-                    default:
-                        {
-                            break;
-                        }
+                case GL_SAMPLER_1D:
+                case GL_SAMPLER_1D_ARRAY:
+                case GL_SAMPLER_2D:
+                case GL_SAMPLER_2D_ARRAY:
+                case GL_SAMPLER_3D:
+                case GL_SAMPLER_CUBE:
+                case GL_SAMPLER_2D_MULTISAMPLE:
+                case GL_SAMPLER_2D_MULTISAMPLE_ARRAY:
+                case GL_SAMPLER_BUFFER:
+                case GL_INT_SAMPLER_1D:
+                case GL_INT_SAMPLER_1D_ARRAY:
+                case GL_INT_SAMPLER_2D:
+                case GL_INT_SAMPLER_2D_ARRAY:
+                case GL_INT_SAMPLER_3D:
+                case GL_INT_SAMPLER_CUBE:
+                case GL_INT_SAMPLER_BUFFER:
+                case GL_UNSIGNED_INT_SAMPLER_1D:
+                case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY:
+                case GL_UNSIGNED_INT_SAMPLER_2D:
+                case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY:
+                case GL_UNSIGNED_INT_SAMPLER_3D:
+                case GL_UNSIGNED_INT_SAMPLER_CUBE:
+                case GL_UNSIGNED_INT_SAMPLER_BUFFER:
+                    {
+                        programState->textureUniformLocations.Add(uniformName, uniformLocation);
+                        break;
+                    }
+
+
+                default:
+                    {
+                        break;
                     }
                 }
             }
-
-
-            // It's important that this is set AFTER creating the uniform locations. Reason for this is that the other thread uses the program object in
-            // determining whether or not to search for uniform locations.
-            programState->programObject = programObject;
-
-
-            // 4) Delete the shader objects.
-            if (vertexShaderObject   != 0) glDeleteShader(vertexShaderObject);
-            if (fragmentShaderObject != 0) glDeleteShader(fragmentShaderObject);
-            if (geometryShaderObject != 0) glDeleteShader(geometryShaderObject);
         }
-        easyutil_unlock_mutex(ResourceCreationLock);
+
+
+        // It's important that this is set AFTER creating the uniform locations. Reason for this is that the other thread uses the program object in
+        // determining whether or not to search for uniform locations.
+        programState->programObject = programObject;
+
+
+        // 4) Delete the shader objects.
+        if (vertexShaderObject   != 0) glDeleteShader(vertexShaderObject);
+        if (fragmentShaderObject != 0) glDeleteShader(fragmentShaderObject);
+        if (geometryShaderObject != 0) glDeleteShader(geometryShaderObject);
 
 
 
@@ -2467,20 +1652,7 @@ namespace GT
 
             assert(programState  != nullptr);
             {
-                easyutil_lock_mutex(ResourceDeletionLock);
-                {
-#if 0
-                    auto &command = RCCaches[BackCallCacheIndex].RCDeleteShaderCache.Acquire();
-                    command.DeleteShader(programState);
-
-                    ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
-#endif
-
-                    glDeleteProgram(programState->programObject);
-                }
-                easyutil_unlock_mutex(ResourceDeletionLock);
-
-
+                glDeleteProgram(programState->programObject);
 
                 // The objects need to be marked for deletion, but not actually deleted yet.
                 State.MarkProgramObjectAsDeleted(programState);
@@ -2500,29 +1672,6 @@ namespace GT
             auto programState = shaderGL33.GetOpenGLState();
             assert(programState != nullptr);
             {
-#if 0
-                if (State.currentRCSetShaderState == nullptr || State.currentRCSetShaderState->GetProgramState() != programState)
-                {
-                    State.currentRCSetShaderState = &RCCaches[BackCallCacheIndex].RCSetShaderStateCache.Acquire();
-                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetShaderState);
-                }
-
-                assert(State.currentRCSetShaderState != nullptr);
-                {
-                    State.currentRCSetShaderState->SetFloatUniforms(programState);
-                    State.currentRCSetShaderState->SetFloat2Uniforms(programState);
-                    State.currentRCSetShaderState->SetFloat3Uniforms(programState);
-                    State.currentRCSetShaderState->SetFloat4Uniforms(programState);
-                    State.currentRCSetShaderState->SetFloat2x2Uniforms(programState);
-                    State.currentRCSetShaderState->SetFloat3x3Uniforms(programState);
-                    State.currentRCSetShaderState->SetFloat4x4Uniforms(programState);
-                    State.currentRCSetShaderState->SetTextureUniforms(programState);
-
-                    programState->ClearPendingUniforms();
-                }
-#endif
-
-
                 if (ServerState_GL_CURRENT_PROGRAM != programState->programObject)
                 {
                     glUseProgram(programState->programObject);
@@ -2692,45 +1841,16 @@ namespace GT
         State.instantiatedFramebufferObjects.PushBack(new FramebufferState_OpenGL21);
         auto framebufferState = State.instantiatedFramebufferObjects.GetBack();
 
-
-        easyutil_lock_mutex(ResourceCreationLock);
+        if (GTGL_ARB_framebuffer_object)
         {
-#if 0
-            RCCreateFramebuffer* command = nullptr;
-
-            if (GTGL_ARB_framebuffer_object)
-            {
-                // Primary (ARB_framebuffer_object).
-                command = &RCCaches[BackCallCacheIndex].RCCreateFramebufferCacheARB.Acquire();
-            }
-            else
-            {
-                // Secondary (EXT_framebuffer_object).
-                command = &RCCaches[BackCallCacheIndex].RCCreateFramebufferCacheEXT.Acquire();
-            }
-
-            assert(command != nullptr);
-            {
-                command->CreateFramebuffer(framebufferState);
-                ResourceCreationCallCaches[BackCallCacheIndex].Append(*command);
-            }
-#endif
-
-            if (GTGL_ARB_framebuffer_object)
-            {
-                // Primary (ARB_framebuffer_object).
-                glGenFramebuffers(1, &framebufferState->framebufferObject);
-            }
-            else
-            {
-                // Secondary (EXT_framebuffer_object).
-                glGenFramebuffersEXT(1, &framebufferState->framebufferObject);
-            }
-            
+            // Primary (ARB_framebuffer_object).
+            glGenFramebuffers(1, &framebufferState->framebufferObject);
         }
-        easyutil_unlock_mutex(ResourceCreationLock);
-
-
+        else
+        {
+            // Secondary (EXT_framebuffer_object).
+            glGenFramebuffersEXT(1, &framebufferState->framebufferObject);
+        }
 
         return new Framebuffer_OpenGL21(framebufferState);
     }
@@ -2745,56 +1865,29 @@ namespace GT
 
             assert(framebufferState  != nullptr);
             {
-                easyutil_lock_mutex(ResourceDeletionLock);
+                if (GTGL_ARB_framebuffer_object)
                 {
-#if 0
-                    RCDeleteFramebuffer* command = nullptr;
-
-                    if (GTGL_ARB_framebuffer_object)
+                    // Primary (ARB_framebuffer_object).
+                    glDeleteFramebuffers(1, &framebufferState->framebufferObject);
+                    if (framebufferState->depthStencilRenderbuffer != 0)
                     {
-                        // Primary (ARB_framebuffer_object).
-                        command = &RCCaches[BackCallCacheIndex].RCDeleteFramebufferCacheARB.Acquire();
+                        glDeleteRenderbuffers(1, &framebufferState->depthStencilRenderbuffer);
                     }
-                    else
-                    {
-                        // Secondary (EXT_framebuffer_object).
-                        command = &RCCaches[BackCallCacheIndex].RCDeleteFramebufferCacheEXT.Acquire();
-                    }
-
-                    assert(command != nullptr);
-                    {
-                        command->DeleteFramebuffer(framebufferState);
-                        ResourceDeletionCallCaches[BackCallCacheIndex].Append(*command);
-                    }
-#endif
-
-                    if (GTGL_ARB_framebuffer_object)
-                    {
-                        // Primary (ARB_framebuffer_object).
-                        glDeleteFramebuffers(1, &framebufferState->framebufferObject);
-                        if (framebufferState->depthStencilRenderbuffer != 0)
-                        {
-                            glDeleteRenderbuffers(1, &framebufferState->depthStencilRenderbuffer);
-                        }
-                    }
-                    else
-                    {
-                        // Secondary (EXT_framebuffer_object).
-                        glDeleteFramebuffersEXT(1, &framebufferState->framebufferObject);
-                        if (framebufferState->depthStencilRenderbuffer != 0)
-                        {
-                            glDeleteRenderbuffersEXT(1, &framebufferState->depthStencilRenderbuffer);
-                        }
-                    }
-
-                    framebufferState->framebufferObject = 0;
-                    framebufferState->depthStencilRenderbuffer = 0;
-                    framebufferState->depthStencilRenderbufferWidth  = 0;
-                    framebufferState->depthStencilRenderbufferHeight = 0;
                 }
-                easyutil_unlock_mutex(ResourceDeletionLock);
+                else
+                {
+                    // Secondary (EXT_framebuffer_object).
+                    glDeleteFramebuffersEXT(1, &framebufferState->framebufferObject);
+                    if (framebufferState->depthStencilRenderbuffer != 0)
+                    {
+                        glDeleteRenderbuffersEXT(1, &framebufferState->depthStencilRenderbuffer);
+                    }
+                }
 
-
+                framebufferState->framebufferObject = 0;
+                framebufferState->depthStencilRenderbuffer = 0;
+                framebufferState->depthStencilRenderbufferWidth  = 0;
+                framebufferState->depthStencilRenderbufferHeight = 0;
 
                 // The objects need to be marked for deletion, but not actually deleted yet.
                 State.MarkFramebufferObjectAsDeleted(framebufferState);
@@ -2814,62 +1907,6 @@ namespace GT
             auto framebufferState = framebufferGL33.GetOpenGLState();
             assert(framebufferState != nullptr);
             {
-#if 0
-                if (State.currentRCSetFramebufferState == nullptr || State.currentRCSetFramebufferState->GetFramebufferState() != framebufferState)
-                {
-                    if (GTGL_ARB_framebuffer_object)
-                    {
-                        // Primary (ARB_framebuffer_object).
-                        State.currentRCSetFramebufferState = &RCCaches[BackCallCacheIndex].RCSetFramebufferStateCacheARB.Acquire();
-                    }
-                    else
-                    {
-                        // Secondary (EXT_framebuffer_object).
-                        State.currentRCSetFramebufferState = &RCCaches[BackCallCacheIndex].RCSetFramebufferStateCacheEXT.Acquire();
-                    }
-
-                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetFramebufferState);
-                }
-
-
-                assert(State.currentRCSetFramebufferState != nullptr);
-                {
-                    // We just notify the render command of the currently attached buffers. It will detach and switch stuff around appropriately when it's
-                    // executed. We can't know at this point which attachments should be attached or detached because the server-side state may be in the
-                    // middle of changing on another thread.
-
-                    // Colour Buffers.
-                    auto &colourAttachments = framebufferGL33.GetAttachedColourBuffers();
-                    for (size_t i = 0; i < colourAttachments.count; ++i)
-                    {
-                        auto index   = static_cast<GLuint>(colourAttachments.buffer[i]->key);
-                        auto texture = static_cast<Texture2D_OpenGL21*>(colourAttachments.buffer[i]->value);
-
-                        assert(texture != nullptr);
-                        {
-                            State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_COLOR_ATTACHMENT0_EXT + index, texture->GetTarget(), texture->GetOpenGLState());
-                        }
-                    }
-
-                    // Depth/Stencil Texture.
-                    auto depthStencilAttachment = static_cast<const Texture2D_OpenGL21*>(framebufferGL33.GetDepthStencilBuffer());
-                    if (depthStencilAttachment != nullptr && GTGL_ARB_framebuffer_object)
-                    {
-                        State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_STENCIL_ATTACHMENT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
-
-                        // This technique causes a crash on Intel's Windows drivers (not tested with Linux drivers). Leaving this here for future reference.
-                        //State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_ATTACHMENT_EXT,   depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
-                        //State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_STENCIL_ATTACHMENT_EXT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
-                    }
-
-                    // Write-Only Depth/Stencil Renderbuffer.
-                    GLboolean writeOnlyDepthStencilAttached = framebufferGL33.IsWriteOnlyDepthStencilBufferAttached();
-                    GLsizei   writeOnlyDepthStencilWidth    = framebufferGL33.GetWriteOnlyDepthStencilBufferWidth();
-                    GLsizei   writeOnlyDepthStencilHeight   = framebufferGL33.GetWriteOnlyDepthStencilBufferHeight();
-                    State.currentRCSetFramebufferState->SetWriteOnlyDepthStencilBuffer(framebufferState, writeOnlyDepthStencilAttached, writeOnlyDepthStencilWidth, writeOnlyDepthStencilHeight);
-                }
-#endif
-
                 // We just notify the render command of the currently attached buffers. It will detach and switch stuff around appropriately when it's
                 // executed. We can't know at this point which attachments should be attached or detached because the server-side state may be in the
                 // middle of changing on another thread.
@@ -2882,9 +1919,6 @@ namespace GT
                     }
                 }
 
-
-                // Colour Buffers.
-                
 
                 GT::Map<GLenum, FramebufferState_OpenGL21::Attachment> attachments;
 
@@ -3029,34 +2063,6 @@ namespace GT
                     }
                 }
 
-                //State.currentRCSetFramebufferState->SetWriteOnlyDepthStencilBuffer(framebufferState, writeOnlyDepthStencilAttached, writeOnlyDepthStencilWidth, writeOnlyDepthStencilHeight);
-
-#if 0
-                auto &colourAttachments = framebufferGL33.GetAttachedColourBuffers();
-                for (size_t i = 0; i < colourAttachments.count; ++i)
-                {
-                    auto index   = static_cast<GLuint>(colourAttachments.buffer[i]->key);
-                    auto texture = static_cast<Texture2D_OpenGL21*>(colourAttachments.buffer[i]->value);
-
-                    assert(texture != nullptr);
-                    {
-                        State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_COLOR_ATTACHMENT0_EXT + index, texture->GetTarget(), texture->GetOpenGLState());
-                    }
-                }
-
-                // Depth/Stencil Texture.
-                auto depthStencilAttachment = static_cast<const Texture2D_OpenGL21*>(framebufferGL33.GetDepthStencilBuffer());
-                if (depthStencilAttachment != nullptr && GTGL_ARB_framebuffer_object)
-                {
-                    State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_STENCIL_ATTACHMENT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
-                }
-
-                // Write-Only Depth/Stencil Renderbuffer.
-                GLboolean writeOnlyDepthStencilAttached = framebufferGL33.IsWriteOnlyDepthStencilBufferAttached();
-                GLsizei   writeOnlyDepthStencilWidth    = framebufferGL33.GetWriteOnlyDepthStencilBufferWidth();
-                GLsizei   writeOnlyDepthStencilHeight   = framebufferGL33.GetWriteOnlyDepthStencilBufferHeight();
-                State.currentRCSetFramebufferState->SetWriteOnlyDepthStencilBuffer(framebufferState, writeOnlyDepthStencilAttached, writeOnlyDepthStencilWidth, writeOnlyDepthStencilHeight);
-#endif
 
                 // Global state needs to be restored.
                 if (ServerState_GL_FRAMEBUFFER_BINDING != framebufferState->framebufferObject)

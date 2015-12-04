@@ -546,15 +546,6 @@ namespace GT
         */
         void Draw();
 
-        /**
-        *   \brief  Swaps the RC queues of various objects, including the renderer and GUI.
-        *
-        *   \remarks
-        *       This will call the OnSwapRCQueues() event AFTER the other queues have been swapped (Renderer, etc).
-        */
-        void SwapRCQueues();
-
-
 
         /// Determines whether or not all of the keys in the given key combination are down.
         bool IsKeyCombinationDown(const KeyCombination &combination) const;
