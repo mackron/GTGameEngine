@@ -54,7 +54,7 @@ namespace GT
     typedef struct
     {
         /// A pointer to the main context.
-        EngineContext* pContext;
+        Context* pContext;
 
         /// A pointer to the file to read the config data from.
         easyvfs_file* pFile;
@@ -97,7 +97,7 @@ namespace GT
 
 
 
-    EngineContext::EngineContext(int argc, char** argv)
+    Context::Context(int argc, char** argv)
         : m_cmdline(),
             m_executableDirectoryAbsolutePath(),
             m_pVFS(nullptr),
@@ -191,7 +191,7 @@ namespace GT
         m_soundWorld.Startup();
     }
 
-    EngineContext::~EngineContext()
+    Context::~Context()
     {
         //////////////////////////////////////////
         // Audio System
@@ -210,17 +210,17 @@ namespace GT
     ////////////////////////////////////////////////////
     // File System Management
 
-    const char* EngineContext::GetExecutableAbsolutePath() const
+    const char* Context::GetExecutableAbsolutePath() const
     {
         return m_executableAbsolutePath;
     }
 
-    const char* EngineContext::GetExecutableDirectoryAbsolutePath() const
+    const char* Context::GetExecutableDirectoryAbsolutePath() const
     {
         return m_executableDirectoryAbsolutePath;
     }
 
-    void EngineContext::AddBaseDirectoryRelativeToExe(const char* relativePath)
+    void Context::AddBaseDirectoryRelativeToExe(const char* relativePath)
     {
         char absolutePath[EASYVFS_MAX_PATH];
         easypath_to_absolute(relativePath, this->GetExecutableDirectoryAbsolutePath(), absolutePath, sizeof(absolutePath));
@@ -233,7 +233,7 @@ namespace GT
     ////////////////////////////////////////////////////
     // Threading
 #if 0
-    Thread* EngineContext::AcquireThread()
+    Thread* Context::AcquireThread()
     {
         Thread* thread = nullptr;
 
@@ -276,7 +276,7 @@ namespace GT
         return thread;
     }
 
-    void EngineContext::UnacquireThread(Thread* thread)
+    void Context::UnacquireThread(Thread* thread)
     {
         if (thread != nullptr)
         {
@@ -288,7 +288,7 @@ namespace GT
         }
     }
 
-    void EngineContext::UnacquireThreadNoLock(Thread* thread)
+    void Context::UnacquireThreadNoLock(Thread* thread)
     {
         assert(thread != nullptr);
 
@@ -304,7 +304,7 @@ namespace GT
         }
     }
 
-    void EngineContext::UnacquireAllThreads()
+    void Context::UnacquireAllThreads()
     {
         easyutil_lock_mutex(m_threadManagementLock);
         {
@@ -321,7 +321,7 @@ namespace GT
     ////////////////////////////////////////////////////
     // Messages
 
-    void EngineContext::Log(const char* message)
+    void Context::Log(const char* message)
     {
         // Write to the log file.
         if (m_pLogFile != NULL)
@@ -340,7 +340,7 @@ namespace GT
         printf("%s\n", message);
     }
 
-    void EngineContext::Logf(const char* format, ...)
+    void Context::Logf(const char* format, ...)
     {
         va_list args;
         va_start(args, format);
@@ -353,12 +353,12 @@ namespace GT
         va_end(args);
     }
 
-    void EngineContext::LogMessage(const char* message)
+    void Context::LogMessage(const char* message)
     {
         this->Logf("[MESSAGE] %s", message);
     }
 
-    void EngineContext::LogMessagef(const char* format, ...)
+    void Context::LogMessagef(const char* format, ...)
     {
         va_list args;
         va_start(args, format);
@@ -371,12 +371,12 @@ namespace GT
         va_end(args);
     }
 
-    void EngineContext::LogWarning(const char* message)
+    void Context::LogWarning(const char* message)
     {
         this->Logf("[ERROR] %s", message);
     }
 
-    void EngineContext::LogWarningf(const char* format, ...)
+    void Context::LogWarningf(const char* format, ...)
     {
         va_list args;
         va_start(args, format);
@@ -389,12 +389,12 @@ namespace GT
         va_end(args);
     }
 
-    void EngineContext::LogError(const char* message)
+    void Context::LogError(const char* message)
     {
         this->Logf("[ERROR] %s", message);
     }
 
-    void EngineContext::LogErrorf(const char* format, ...)
+    void Context::LogErrorf(const char* format, ...)
     {
         va_list args;
         va_start(args, format);
@@ -412,17 +412,17 @@ namespace GT
     ////////////////////////////////////////////////////
     // Audio
 
-    easyaudio_context* EngineContext::GetAudioContext()
+    easyaudio_context* Context::GetAudioContext()
     {
         return m_pAudioContext;
     }
         
-    easyaudio_device* EngineContext::GetAudioPlaybackDevice()
+    easyaudio_device* Context::GetAudioPlaybackDevice()
     {
         return m_pAudioPlaybackDevice;
     }
 
-    GT::SoundWorld & EngineContext::GetSoundWorld()
+    GT::SoundWorld & Context::GetSoundWorld()
     {
         return m_soundWorld;
     }
@@ -432,7 +432,7 @@ namespace GT
     ////////////////////////////////////////////////////
     // Assets
 
-    AssetLibrary & EngineContext::GetAssetLibrary()
+    AssetLibrary & Context::GetAssetLibrary()
     {
         return m_assetLibrary;
     }

@@ -17,17 +17,17 @@ namespace GT
 
     void GUIEventHandler::OnError(const char* msg)
     {
-        g_EngineContext->LogErrorf("%s", msg);
+        g_Context->LogErrorf("%s", msg);
     }
 
     void GUIEventHandler::OnWarning(const char* msg)
     {
-        g_EngineContext->Logf("%s", msg);
+        g_Context->Logf("%s", msg);
     }
 
     void GUIEventHandler::OnLog(const char* msg)
     {
-        g_EngineContext->Logf("%s", msg);
+        g_Context->Logf("%s", msg);
     }
 
     void GUIEventHandler::OnChangeCursor(Cursor cursor)

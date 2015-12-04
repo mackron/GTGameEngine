@@ -223,34 +223,34 @@ namespace GT
                                     }
                                     else
                                     {
-                                        g_EngineContext->LogErrorf("NavigationMesh: Failed to init nav mesh query object.");
+                                        g_Context->LogErrorf("NavigationMesh: Failed to init nav mesh query object.");
                                     }
                                 }
                                 else
                                 {
                                     dtFree(navData);
-                                    g_EngineContext->LogErrorf("NavigationMesh: Failed to init detail nav mesh.");
+                                    g_Context->LogErrorf("NavigationMesh: Failed to init detail nav mesh.");
                                 }
                             }
                             else
                             {
                                 dtFree(navData);
-                                g_EngineContext->LogErrorf("NavigationMesh: Error creating Detour nav mesh data.");
+                                g_Context->LogErrorf("NavigationMesh: Error creating Detour nav mesh data.");
                             }
                         }
                         else
                         {
-                            g_EngineContext->LogErrorf("NavigationMesh: Error creating detail mesh.");
+                            g_Context->LogErrorf("NavigationMesh: Error creating detail mesh.");
                         }
                     }
                     else
                     {
-                        g_EngineContext->LogErrorf("NavigationMesh: Error creating main navigation mesh.");
+                        g_Context->LogErrorf("NavigationMesh: Error creating main navigation mesh.");
                     }
                 }
                 else
                 {
-                    g_EngineContext->LogErrorf("NavigationMesh: Error creating contours.");
+                    g_Context->LogErrorf("NavigationMesh: Error creating contours.");
                 }
 
 
@@ -258,14 +258,14 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("NavigationMesh: Error creating compact heightfield.");
+                g_Context->LogErrorf("NavigationMesh: Error creating compact heightfield.");
             }
 
             rcFreeCompactHeightfield(compactHeightfield);
         }
         else
         {
-            g_EngineContext->LogErrorf("NavigationMesh: Error creating heightfield.");
+            g_Context->LogErrorf("NavigationMesh: Error creating heightfield.");
         }
 
         rcFreeHeightField(heightfield);
@@ -662,7 +662,7 @@ namespace GT
                     }
                     else
                     {
-                        g_EngineContext->Logf("Error deserializing main chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        g_Context->Logf("Error deserializing main chunk of navigation mesh. Unsupported version (%d).", header.version);
                         successful = false;
                     }
 
@@ -764,7 +764,7 @@ namespace GT
                     }
                     else
                     {
-                        g_EngineContext->Logf("Error deserializing Recast Poly Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        g_Context->Logf("Error deserializing Recast Poly Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
                         successful = false;
                     }
 
@@ -833,7 +833,7 @@ namespace GT
                     }
                     else
                     {
-                        g_EngineContext->Logf("Error deserializing Detour Nav Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        g_Context->Logf("Error deserializing Detour Nav Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
                         successful = false;
                     }
 

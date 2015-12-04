@@ -668,7 +668,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->LogErrorf("Failed to deserialize ShaderParameterCache. Unknown version (%d).", header.version);
+                    g_Context->LogErrorf("Failed to deserialize ShaderParameterCache. Unknown version (%d).", header.version);
                     break;
                 }
             }

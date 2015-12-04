@@ -414,7 +414,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("DynamicsComponent deserialization error. The main chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
+                    g_Context->Logf("DynamicsComponent deserialization error. The main chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
                     break;
                 }
             }

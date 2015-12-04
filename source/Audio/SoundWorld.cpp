@@ -12,7 +12,7 @@ namespace GT
     struct EA_SoundData
     {
         // A pointer to the engine context.
-        GT::EngineContext* pEngineContext;
+        GT::Context* pContext;
 
         // The asset that was used to create the streamer.
         GT::Asset* pAsset;
@@ -30,7 +30,7 @@ namespace GT
         SoundStreamer::Delete(pSoundData->pStreamer);
         pSoundData->pStreamer = NULL;
 
-        pSoundData->pEngineContext->GetAssetLibrary().Unload(pSoundData->pAsset);
+        pSoundData->pContext->GetAssetLibrary().Unload(pSoundData->pAsset);
         pSoundData->pAsset = NULL;
     }
 
@@ -60,7 +60,7 @@ namespace GT
 
 
 
-    SoundWorld::SoundWorld(GT::EngineContext &engineContext)
+    SoundWorld::SoundWorld(GT::Context &engineContext)
         : m_engineContext(engineContext),
           m_pWorld(nullptr)
     {
@@ -101,7 +101,7 @@ namespace GT
             if (pStreamer != nullptr && pStreamer->Initialize())
             {
                 EA_SoundData extraData;
-                extraData.pEngineContext = &m_engineContext;
+                extraData.pContext = &m_engineContext;
                 extraData.pAsset         = pAsset;
                 extraData.pStreamer      = pStreamer;
 

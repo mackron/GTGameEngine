@@ -55,20 +55,20 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                g_Context->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return nullptr;
             }
         }
 
 
         char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             auto iLoadedPrefab = LoadedPrefabs.Find(absolutePath);
             if (iLoadedPrefab == nullptr)
             {
                 // Does not exist. Needs to be loaded.
-                easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), absolutePath, EASYVFS_READ, 0);
+                easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), absolutePath, EASYVFS_READ, 0);
                 if (pFile != nullptr)
                 {
                     FileDeserializer deserializer(pFile);
@@ -83,7 +83,7 @@ namespace GT
                 }
                 else
                 {
-                    g_EngineContext->LogErrorf("Can not find file: %s", fileName);
+                    g_Context->LogErrorf("Can not find file: %s", fileName);
                 }
             }
             else
@@ -96,7 +96,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->LogErrorf("Can not find file: %s", fileName);
+            g_Context->LogErrorf("Can not find file: %s", fileName);
         }
 
 

@@ -167,7 +167,7 @@ namespace GT
     {
         // We need to check with the absolute path.
         char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filename, absolutePath, sizeof(absolutePath)))
+        if (easyvfs_find_absolute_path(GT::g_Context->GetVFS(), filename, absolutePath, sizeof(absolutePath)))
         {
             return this->markupLoader.IsFileLoaded(absolutePath);
         }

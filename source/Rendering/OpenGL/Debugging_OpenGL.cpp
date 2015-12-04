@@ -7,6 +7,6 @@ namespace GT
 {
     void OpenGLDebugMessageHandler(const char* message)
     {
-        g_EngineContext->Logf("%s", message);
+        g_Context->Logf("%s", message);
     }
 }

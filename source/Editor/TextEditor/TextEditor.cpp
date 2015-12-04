@@ -23,7 +23,7 @@ namespace GT
           compilationScript(nullptr),
           isScriptFile(false)
     {
-        char* fileContent = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), absolutePath, nullptr);
+        char* fileContent = easyvfs_open_and_read_text_file(g_Context->GetVFS(), absolutePath, nullptr);
         if (fileContent != nullptr)
         {
             auto &gui    = this->GetGUI();
@@ -176,11 +176,11 @@ namespace GT
         auto text = this->textArea->GetText();
         if (text != nullptr)
         {
-            wasSaved = easyvfs_open_and_write_text_file(g_EngineContext->GetVFS(), this->GetAbsolutePath(), text);
+            wasSaved = easyvfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), text);
         }
         else
         {
-            wasSaved = easyvfs_open_and_write_text_file(g_EngineContext->GetVFS(), this->GetAbsolutePath(), "");
+            wasSaved = easyvfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), "");
         }
 
         if (wasSaved)

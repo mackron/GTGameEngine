@@ -816,7 +816,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing EditorMetadataComponent. Main chunk has an unsupported version (%d).", header.version);
+                    g_Context->Logf("Error deserializing EditorMetadataComponent. Main chunk has an unsupported version (%d).", header.version);
                     break;
                 }
             }

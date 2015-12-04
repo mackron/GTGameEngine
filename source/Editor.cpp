@@ -149,7 +149,7 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("Error initializing editor: Failed to load editor/main.xml. Ensure the 'editor' directory exists. %s.", script.ToString(-1));
+                g_Context->LogErrorf("Error initializing editor: Failed to load editor/main.xml. Ensure the 'editor' directory exists. %s.", script.ToString(-1));
                 return false;
             }
         }
@@ -168,9 +168,9 @@ namespace GT
             this->StartupFileSystemWatcher();
 
             // We need to iterate over every file and folder in each base directory and make the editor aware of it.
-            for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()); ++iBaseDir)
+            for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_Context->GetVFS()); ++iBaseDir)
             {
-                const char* baseDir = easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBaseDir);
+                const char* baseDir = easyvfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir);
                 assert(baseDir != nullptr);
 
                 this->InsertDirectoryChildren_Recursive(baseDir);
@@ -223,7 +223,7 @@ namespace GT
             else
             {
                 // The file needs to exist. If it doesn't, we need to return false.
-                if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), path, absolutePath, sizeof(absolutePath)))
+                if (easyvfs_find_absolute_path(g_Context->GetVFS(), path, absolutePath, sizeof(absolutePath)))
                 {
                     strcpy_s(relativePath, sizeof(relativePath), path);
                 }
@@ -235,13 +235,13 @@ namespace GT
                         char pathWithExt[EASYVFS_MAX_PATH];
                         easypath_copy_and_append_extension(pathWithExt, sizeof(pathWithExt), path, "gtmodel");
 
-                        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), pathWithExt, absolutePath, sizeof(absolutePath))) {
+                        if (easyvfs_find_absolute_path(g_Context->GetVFS(), pathWithExt, absolutePath, sizeof(absolutePath))) {
                             strcpy_s(relativePath, sizeof(relativePath), path);
                         }
                     }
                     else
                     {
-                        g_EngineContext->LogErrorf("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
+                        g_Context->LogErrorf("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
                         return nullptr;
                     }
                 }
@@ -264,7 +264,7 @@ namespace GT
             if (!isSpecialEditor)
             {
                 // We'll check if the file exists from here.
-                if (!easyvfs_is_existing_file(g_EngineContext->GetVFS(), absolutePath))
+                if (!easyvfs_is_existing_file(g_Context->GetVFS(), absolutePath))
                 {
                     // The file doesn't exist, but it might be a model so we'll need to check if it's got an associated .gtmodel file.
                     if (GT::IsSupportedModelExtension(absolutePath))
@@ -272,15 +272,15 @@ namespace GT
                         char absolutePathWithExt[EASYVFS_MAX_PATH];
                         easypath_copy_and_append_extension(absolutePathWithExt, sizeof(absolutePathWithExt), absolutePath, "gtmodel");
 
-                        if (!easyvfs_is_existing_file(g_EngineContext->GetVFS(), absolutePathWithExt))
+                        if (!easyvfs_is_existing_file(g_Context->GetVFS(), absolutePathWithExt))
                         {
-                            g_EngineContext->LogErrorf("Editor: Can not open model file '%s'. Associated .gtmodel file does not exist.\n", path);
+                            g_Context->LogErrorf("Editor: Can not open model file '%s'. Associated .gtmodel file does not exist.\n", path);
                             return nullptr;
                         }
                     }
                     else
                     {
-                        g_EngineContext->LogErrorf("Editor: Can not open file '%s'. Does not exist.\n", path);
+                        g_Context->LogErrorf("Editor: Can not open file '%s'. Does not exist.\n", path);
                         return nullptr;
                     }
                 }
@@ -337,7 +337,7 @@ namespace GT
                     {
                         // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
                         // a SubEditor object for it.
-                        g_EngineContext->Logf("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
+                        g_Context->Logf("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
                         newSubEditor = new SubEditor(*this, absolutePath, relativePath);
                     }
                 }
@@ -1063,7 +1063,7 @@ namespace GT
     void Editor::OnFileUpdate(const char* absolutePath)
     {
         // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
-        if (!easyvfs_is_existing_directory(g_EngineContext->GetVFS(), absolutePath))
+        if (!easyvfs_is_existing_directory(g_Context->GetVFS(), absolutePath))
         {
             // It's not a directory.
 
@@ -1093,7 +1093,7 @@ namespace GT
                 // If we have a script file we will reload it if applicable.
                 if (this->GetGame().GetScript().HasFileBeenLoaded(absolutePath))
                 {
-                    this->GetGame().GetScript().ExecuteFile(g_EngineContext->GetVFS(), absolutePath);
+                    this->GetGame().GetScript().ExecuteFile(g_Context->GetVFS(), absolutePath);
                 }
             }
         }
@@ -1212,15 +1212,15 @@ namespace GT
 
     void Editor::InsertDirectoryChildren_Recursive(const char* baseDir)
     {
-        assert(easyvfs_is_existing_directory(g_EngineContext->GetVFS(), baseDir));
+        assert(easyvfs_is_existing_directory(g_Context->GetVFS(), baseDir));
 
         easyvfs_iterator iFile;
-        if (easyvfs_begin_iteration(g_EngineContext->GetVFS(), baseDir, &iFile))
+        if (easyvfs_begin_iteration(g_Context->GetVFS(), baseDir, &iFile))
         {
             easyvfs_file_info fi;
-            while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
+            while (easyvfs_next_iteration(g_Context->GetVFS(), &iFile, &fi))
             {
-                if (!easyvfs_is_base_directory(g_EngineContext->GetVFS(), fi.absolutePath))
+                if (!easyvfs_is_base_directory(g_Context->GetVFS(), fi.absolutePath))
                 {
                     this->OnFileInsert(fi.absolutePath);
 
@@ -1269,9 +1269,9 @@ namespace GT
             m_pFSW = easyfsw_create_context();
 
             // We add the base directories based ont he virtual file system.
-            for (unsigned int i = 0; i < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()); ++i)
+            for (unsigned int i = 0; i < easyvfs_get_base_directory_count(g_Context->GetVFS()); ++i)
             {
-                easyfsw_add_directory(m_pFSW, easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), i));
+                easyfsw_add_directory(m_pFSW, easyvfs_get_base_directory_by_index(g_Context->GetVFS(), i));
             }
 
 

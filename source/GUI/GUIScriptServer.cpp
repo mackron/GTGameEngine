@@ -36,7 +36,7 @@ namespace GT
 
     bool GUIScriptServer::ExecuteFromFile(const char *filename, int returnValueCount)
     {
-        char* pFileData = easyvfs_open_and_read_text_file(GT::g_EngineContext->GetVFS(), filename, nullptr);
+        char* pFileData = easyvfs_open_and_read_text_file(GT::g_Context->GetVFS(), filename, nullptr);
         if (pFileData != nullptr)
         {
             bool successful = this->Execute(pFileData, returnValueCount);

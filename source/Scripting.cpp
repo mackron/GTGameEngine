@@ -2136,10 +2136,10 @@ namespace GT
                 query.Append(".*");
 
                 easyvfs_iterator iFile;
-                if (easyvfs_begin_iteration(g_EngineContext->GetVFS(), directoryName, &iFile))
+                if (easyvfs_begin_iteration(g_Context->GetVFS(), directoryName, &iFile))
                 {
                     easyvfs_file_info fi;
-                    while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
+                    while (easyvfs_next_iteration(g_Context->GetVFS(), &iFile, &fi))
                     {
                         if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                         {
@@ -2191,7 +2191,7 @@ namespace GT
 
         int GetExecutableDirectory(GT::Script &script)
         {
-            script.Push(g_EngineContext->GetExecutableDirectoryAbsolutePath());
+            script.Push(g_Context->GetExecutableDirectoryAbsolutePath());
             return 1;
         }
 
@@ -2280,7 +2280,7 @@ namespace GT
 
         int ExecuteFile(GT::Script &script)
         {
-            script.Push(GameFFI::GetGame(script).GetScript().ExecuteFile(g_EngineContext->GetVFS(), script.ToString(1)));
+            script.Push(GameFFI::GetGame(script).GetScript().ExecuteFile(g_Context->GetVFS(), script.ToString(1)));
             return 1;
         }
 
@@ -2318,7 +2318,7 @@ namespace GT
             int __GetFileInfo(Script &script)
             {
                 easyvfs_file_info info;
-                if (easyvfs_get_file_info(g_EngineContext->GetVFS(), script.ToString(1), &info))
+                if (easyvfs_get_file_info(g_Context->GetVFS(), script.ToString(1), &info))
                 {
                     script.Push(script.ToString(1));
                     script.Push(info.absolutePath);
@@ -2365,20 +2365,20 @@ namespace GT
 
             int FileExists(Script &script)
             {
-                script.Push(easyvfs_exists(g_EngineContext->GetVFS(), script.ToString(1)));
+                script.Push(easyvfs_exists(g_Context->GetVFS(), script.ToString(1)));
                 return 1;
             }
 
             int CreateDirectory(Script &script)
             {
-                easyvfs_mkdir_recursive(g_EngineContext->GetVFS(), script.ToString(1));
+                easyvfs_mkdir_recursive(g_Context->GetVFS(), script.ToString(1));
                 return 0;
             }
 
             int DeleteDirectory(Script &script)
             {
-                if (easyvfs_is_existing_directory(g_EngineContext->GetVFS(), script.ToString(1))) {
-                    easyvfs_delete_file(g_EngineContext->GetVFS(), script.ToString(1));
+                if (easyvfs_is_existing_directory(g_Context->GetVFS(), script.ToString(1))) {
+                    easyvfs_delete_file(g_Context->GetVFS(), script.ToString(1));
                 }
 
                 return 0;
@@ -2386,7 +2386,7 @@ namespace GT
 
             int CreateEmptyFile(Script &script)
             {
-                easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
+                easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), script.ToString(1), EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
                 if (pFile != nullptr)
                 {
                     easyvfs_close(pFile);
@@ -2397,20 +2397,20 @@ namespace GT
 
             int DeleteFile(Script &script)
             {
-                easyvfs_delete_file(g_EngineContext->GetVFS(), script.ToString(1));
+                easyvfs_delete_file(g_Context->GetVFS(), script.ToString(1));
                 return 0;
             }
 
             int IsDirectory(Script &script)
             {
-                script.Push(easyvfs_is_existing_directory(g_EngineContext->GetVFS(), script.ToString(1)));
+                script.Push(easyvfs_is_existing_directory(g_Context->GetVFS(), script.ToString(1)));
                 return 1;
             }
 
             int FindAbsolutePath(Script &script)
             {
                 char absolutePath[EASYVFS_MAX_PATH];
-                if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), script.ToString(1), absolutePath, sizeof(absolutePath))) {
+                if (easyvfs_find_absolute_path(g_Context->GetVFS(), script.ToString(1), absolutePath, sizeof(absolutePath))) {
                     script.Push(absolutePath);
                 } else {
                     script.PushNil();
@@ -2538,7 +2538,7 @@ namespace GT
         {
             int CreateFromFile(Script &script)
             {
-                easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_READ, 0);
+                easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), script.ToString(1), EASYVFS_READ, 0);
                 if (pFile != nullptr)
                 {
                     auto deserializer = new FileDeserializer(pFile);

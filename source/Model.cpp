@@ -472,7 +472,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing model. Meshes chunk has an unsupported version (%d).", header.version);
+                            g_Context->Logf("Error deserializing model. Meshes chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -518,7 +518,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing model. Bones chunk has an unsupported version (%d).", header.version);
+                            g_Context->Logf("Error deserializing model. Bones chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -546,7 +546,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing model. Animation chunk has an unsupported version (%d).", header.version);
+                            g_Context->Logf("Error deserializing model. Animation chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }

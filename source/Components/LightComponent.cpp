@@ -100,7 +100,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing PointLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
+                    g_Context->Logf("Error deserializing PointLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
 
                     deserializer.Seek(header.sizeInBytes);
                     break;
@@ -109,7 +109,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->Logf("Error deserializing PointLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
+            g_Context->Logf("Error deserializing PointLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
 
             deserializer.Seek(header.sizeInBytes);
         }
@@ -231,7 +231,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing SpotLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
+                    g_Context->Logf("Error deserializing SpotLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
 
                     deserializer.Seek(header.sizeInBytes);
                     break;
@@ -240,7 +240,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->Logf("Error deserializing SpotLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
+            g_Context->Logf("Error deserializing SpotLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
 
             deserializer.Seek(header.sizeInBytes);
         }
@@ -317,7 +317,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing DirectionalLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
+                    g_Context->Logf("Error deserializing DirectionalLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
 
                     deserializer.Seek(header.sizeInBytes);
                     break;
@@ -326,7 +326,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->Logf("Error deserializing DirectionalLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
+            g_Context->Logf("Error deserializing DirectionalLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
 
             deserializer.Seek(header.sizeInBytes);
         }
@@ -385,7 +385,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing AmbientLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
+                    g_Context->Logf("Error deserializing AmbientLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
 
                     deserializer.Seek(header.sizeInBytes);
                     break;
@@ -394,7 +394,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->Logf("Error deserializing AmbientLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
+            g_Context->Logf("Error deserializing AmbientLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
 
             deserializer.Seek(header.sizeInBytes);
         }

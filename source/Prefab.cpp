@@ -263,7 +263,7 @@ namespace GT
 
                 default:
                     {
-                        g_EngineContext->Logf("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
+                        g_Context->Logf("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
@@ -292,7 +292,7 @@ namespace GT
         }
 #endif
 
-        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
+        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
             FileSerializer serializer(pFile);
@@ -303,7 +303,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->Logf("Can not open file: '%s'.", this->absolutePath.c_str());
+            g_Context->Logf("Can not open file: '%s'.", this->absolutePath.c_str());
         }
 
         return false;

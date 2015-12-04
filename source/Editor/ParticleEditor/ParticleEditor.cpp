@@ -257,7 +257,7 @@ namespace GT
 
         this->isSaving = true;
         {
-            auto file = easyvfs_open(g_EngineContext->GetVFS(), this->GetAbsolutePath(), EASYVFS_WRITE, 0);
+            auto file = easyvfs_open(g_Context->GetVFS(), this->GetAbsolutePath(), EASYVFS_WRITE, 0);
             if (file != nullptr)
             {
                 FileSerializer serializer(file);

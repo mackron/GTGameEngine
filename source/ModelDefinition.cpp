@@ -46,7 +46,7 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
+                g_Context->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
                 return false;
             }
         }
@@ -54,7 +54,7 @@ namespace GT
         {
             strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
+            if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
@@ -80,10 +80,10 @@ namespace GT
         // We need file info of both the foreign and native files. If the foreign file is different to the file that would used to generate
         // the existing native file, it will be reloaded.
         easyvfs_file_info foreignFileInfo;
-        bool foreignFileExists = easyvfs_get_file_info(g_EngineContext->GetVFS(), newAbsolutePath, &foreignFileInfo);
+        bool foreignFileExists = easyvfs_get_file_info(g_Context->GetVFS(), newAbsolutePath, &foreignFileInfo);
 
         easyvfs_file_info nativeFileInfo;
-        bool nativeFileExists = easyvfs_get_file_info(g_EngineContext->GetVFS(), nativeAbsolutePath, &nativeFileInfo);
+        bool nativeFileExists = easyvfs_get_file_info(g_Context->GetVFS(), nativeAbsolutePath, &nativeFileInfo);
 
         if (!foreignFileExists && !nativeFileExists)
         {
@@ -1141,7 +1141,7 @@ namespace GT
         // When loading from a native file, all we need to do is deserialize.
         bool successful = false;
 
-        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), absolutePathIn.c_str(), EASYVFS_READ, 0);
+        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), absolutePathIn.c_str(), EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
             FileDeserializer deserializer(pFile);

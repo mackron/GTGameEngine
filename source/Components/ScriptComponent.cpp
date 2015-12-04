@@ -122,7 +122,7 @@ namespace GT
     ScriptDefinition* ScriptComponent::GetScriptDefinitionByRelativePath(const char* relativePath, size_t &indexOut)
     {
         char absolutePath[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
+        if (!easyvfs_find_absolute_path(g_Context->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
             return nullptr;
         }
 
@@ -1059,7 +1059,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
+                    g_Context->Logf("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
 
                     deserializer.Seek(header.sizeInBytes);
                     break;

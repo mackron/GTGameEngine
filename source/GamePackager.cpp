@@ -37,10 +37,10 @@ namespace GT
 
 
         easyvfs_iterator iFile;
-        if (easyvfs_begin_iteration(g_EngineContext->GetVFS(), sourceAbsolutePath, &iFile))
+        if (easyvfs_begin_iteration(g_Context->GetVFS(), sourceAbsolutePath, &iFile))
         {
             easyvfs_file_info fi;
-            while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
+            while (easyvfs_next_iteration(g_Context->GetVFS(), &iFile, &fi))
             {
                 const char* fileAbsolutePath = fi.absolutePath;
                 const char* fileName         = easypath_file_name(fileAbsolutePath);
@@ -63,10 +63,10 @@ namespace GT
                     {
                         // It's a non-gtmodel file. We need to look for an associated .gtmodel file.
                         easyvfs_file_info gtmodelInfo;
-                        if (easyvfs_get_file_info(g_EngineContext->GetVFS(), (String(fileAbsolutePath) + ".gtmodel").c_str(), &gtmodelInfo))
+                        if (easyvfs_get_file_info(g_Context->GetVFS(), (String(fileAbsolutePath) + ".gtmodel").c_str(), &gtmodelInfo))
                         {
                             easyvfs_file_info originalInfo;
-                            if (easyvfs_get_file_info(g_EngineContext->GetVFS(), fileAbsolutePath, &originalInfo))
+                            if (easyvfs_get_file_info(g_Context->GetVFS(), fileAbsolutePath, &originalInfo))
                             {
                                 if (gtmodelInfo.lastModifiedTime > originalInfo.lastModifiedTime)
                                 {
@@ -108,7 +108,7 @@ namespace GT
             destinationRelativePath = easypath_file_name(sourceAbsolutePath);
         }
 
-        return easyvfs_copy_file(g_EngineContext->GetVFS(), sourceAbsolutePath, (this->outputDirectoryAbsolutePath + "/" + destinationRelativePath).c_str(), false);
+        return easyvfs_copy_file(g_Context->GetVFS(), sourceAbsolutePath, (this->outputDirectoryAbsolutePath + "/" + destinationRelativePath).c_str(), false);
     }
 
 
@@ -149,7 +149,7 @@ namespace GT
             char configPath[EASYVFS_MAX_PATH];
             easypath_copy_and_append(configPath, sizeof(configPath), executableDirectory, "config.cfg");
 
-            easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), configPath, EASYVFS_WRITE, 0);
+            easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), configPath, EASYVFS_WRITE, 0);
             if (pFile != nullptr)
             {
                 for (size_t iDataDirectory = 0; iDataDirectory < dataDirectoryConfigPaths.count; ++iDataDirectory)

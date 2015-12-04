@@ -34,7 +34,7 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
+                g_Context->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
                 return false;
             }
         }
@@ -42,14 +42,14 @@ namespace GT
         {
             strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
+            if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), newAbsolutePath, EASYVFS_READ, 0);
+        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), newAbsolutePath, EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
             FileDeserializer deserializer(pFile);
@@ -170,7 +170,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->LogErrorf("Error deserializing particle system definition. Unknown chunk ID (%d).", header.id);
+            g_Context->LogErrorf("Error deserializing particle system definition. Unknown chunk ID (%d).", header.id);
         }
     }
 

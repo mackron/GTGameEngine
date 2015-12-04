@@ -984,7 +984,7 @@ namespace GT
                         {
                             assert(false);
                                 
-                            g_EngineContext->Logf("You've forgotten to add the particle function to the scripting environment!");
+                            g_Context->Logf("You've forgotten to add the particle function to the scripting environment!");
                             break;
                         }
                     }
@@ -1057,7 +1057,7 @@ namespace GT
                             {
                                 assert(false);
                                     
-                                g_EngineContext->Logf("You've forgotten to handle the particle function in the SetFunctionRangeByIndex() scripting function!");
+                                g_Context->Logf("You've forgotten to handle the particle function in the SetFunctionRangeByIndex() scripting function!");
                                 break;
                             }
                         }

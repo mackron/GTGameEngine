@@ -10,7 +10,7 @@
 #include <GTGE/Scripting.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GamePackager.hpp>
-#include <GTGE/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
+#include <GTGE/GTEngine.hpp>           // For g_Context. Remove this when the global context is removed.
 #include <GTGE/Core/System.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
 #include <GTGE/Core/String.hpp>
@@ -553,12 +553,12 @@ namespace GT
     bool Game::PackageForDistribution(const char* outputDirectory, const char* executableName)
     {
         char absoluteOutputDirectory[EASYVFS_MAX_PATH];
-        easypath_copy_and_append(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), g_EngineContext->GetExecutableDirectoryAbsolutePath(), outputDirectory);
+        easypath_copy_and_append(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), g_Context->GetExecutableDirectoryAbsolutePath(), outputDirectory);
 
         // We will start by creating the output directory.
-        if (!easyvfs_is_existing_directory(g_EngineContext->GetVFS(), absoluteOutputDirectory))
+        if (!easyvfs_is_existing_directory(g_Context->GetVFS(), absoluteOutputDirectory))
         {
-            if (!easyvfs_mkdir(g_EngineContext->GetVFS(), absoluteOutputDirectory))
+            if (!easyvfs_mkdir(g_Context->GetVFS(), absoluteOutputDirectory))
             {
                 // Failed to create the output directory.
                 return false;
@@ -569,27 +569,27 @@ namespace GT
 
 
         // We will start by copying over the data directories, not including the executable directory.
-        assert(easyvfs_get_base_directory_count(g_EngineContext->GetVFS()) > 0);
-        for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
+        assert(easyvfs_get_base_directory_count(g_Context->GetVFS()) > 0);
+        for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_Context->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
         {
-            packager.CopyDataDirectory(easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBaseDir));
+            packager.CopyDataDirectory(easyvfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir));
         }
 
 
-        if (easypath_extension_equal(g_EngineContext->GetExecutableAbsolutePath(), "exe"))
+        if (easypath_extension_equal(g_Context->GetExecutableAbsolutePath(), "exe"))
         {
             if (easypath_extension_equal(executableName, "exe"))
             {
-                packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), executableName);
+                packager.CopyExecutable(g_Context->GetExecutableAbsolutePath(), executableName);
             }
             else
             {
-                packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), (String(executableName) + ".exe").c_str());
+                packager.CopyExecutable(g_Context->GetExecutableAbsolutePath(), (String(executableName) + ".exe").c_str());
             }
         }
         else
         {
-            packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), executableName);
+            packager.CopyExecutable(g_Context->GetExecutableAbsolutePath(), executableName);
         }
 
         packager.WriteConfig();
@@ -646,7 +646,7 @@ namespace GT
 
     bool Game::SaveGameState(const char* destinationFilePath)
     {
-        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), destinationFilePath, EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
+        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), destinationFilePath, EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
         if (pFile != nullptr)
         {
             FileSerializer serializer(pFile);
@@ -661,7 +661,7 @@ namespace GT
 
     bool Game::LoadGameState(const char* sourceFilePath)
     {
-        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), sourceFilePath, EASYVFS_READ, 0);
+        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), sourceFilePath, EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
             FileDeserializer deserializer(pFile);
@@ -686,7 +686,7 @@ namespace GT
         assert(pGame != nullptr);
 
         if (strcmp(key, "config") == 0) {
-            pGame->GetScript().ExecuteFile(g_EngineContext->GetVFS(), value);
+            pGame->GetScript().ExecuteFile(g_Context->GetVFS(), value);
             return true;
         }
 
@@ -704,7 +704,7 @@ namespace GT
             m_gameStateManager.OnLoadConfigs(*this);
 
             // This is where the user config scripts are loaded.
-            easyutil_parse_cmdline(&g_EngineContext->GetCommandLine(), GameCommandLineProc, this);
+            easyutil_parse_cmdline(&g_Context->GetCommandLine(), GameCommandLineProc, this);
 
 
             // Here we will set the default anistropy for textures via the texture library.
@@ -726,10 +726,10 @@ namespace GT
 
 
                 // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
-                g_EngineContext->Logf("Loading GUI...");
+                g_Context->Logf("Loading GUI...");
                 if (!this->InitialiseGUI())
                 {
-                    g_EngineContext->Logf("Error loading GUI.");
+                    g_Context->Logf("Error loading GUI.");
                 }
 
 
@@ -746,12 +746,12 @@ namespace GT
             else
             {
                 // We couldn't create a window, which means the renderer is not usable...
-                g_EngineContext->LogErrorf("Error initialising renderer.");
+                g_Context->LogErrorf("Error initialising renderer.");
             }
         }
         else
         {
-            g_EngineContext->LogErrorf("Error initialising scripting environment.");
+            g_Context->LogErrorf("Error initialising scripting environment.");
         }
 
         return false;

@@ -34,8 +34,8 @@ namespace GT
     void PrefabComponent::SetPrefabRelativePath(const char* relativePath)
     {
         char absolutePath[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
-            g_EngineContext->LogWarning("Could not find absolute path of prefab.");
+        if (!easyvfs_find_absolute_path(g_Context->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
+            g_Context->LogWarning("Could not find absolute path of prefab.");
         }
 
         this->prefabAbsolutePath = absolutePath;
@@ -112,7 +112,7 @@ namespace GT
             }
             else
             {
-                g_EngineContext->Logf("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
+                g_Context->Logf("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
                 deserializer.Seek(header.sizeInBytes);
             }
         }

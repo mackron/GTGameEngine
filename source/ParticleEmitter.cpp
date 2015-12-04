@@ -150,7 +150,7 @@ namespace GT
                     {
                         assert(false);
                         
-                        g_EngineContext->Logf("You've forgotten to handle the particle function in the ParticleEmitter copy constructor!");
+                        g_Context->Logf("You've forgotten to handle the particle function in the ParticleEmitter copy constructor!");
                         break;
                     }
                 }
@@ -927,7 +927,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->LogErrorf("Error deserializing particle emitter. Unknown chunk ID (%d).", header.id);
+            g_Context->LogErrorf("Error deserializing particle emitter. Unknown chunk ID (%d).", header.id);
             return;
         }
     }

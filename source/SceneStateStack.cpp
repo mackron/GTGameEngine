@@ -272,7 +272,7 @@ namespace GT
 
                 default:
                     {
-                        g_EngineContext->Logf("Error deserializing SceneStateStack. The main chunk is an unsupported version (%d).", header.version);
+                        g_Context->Logf("Error deserializing SceneStateStack. The main chunk is an unsupported version (%d).", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         break;

@@ -159,7 +159,7 @@ namespace GT
             }
             else
             {
-                g_EngineContext->Logf("Error deserializing AnimationTrack. Chunk version is unsupported (%d).", header.version);
+                g_Context->Logf("Error deserializing AnimationTrack. Chunk version is unsupported (%d).", header.version);
             }
         }
     }

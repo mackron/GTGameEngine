@@ -61,14 +61,14 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                g_Context->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return nullptr;
             }
         }
 
 
         char absFileName[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absFileName, sizeof(absFileName)))
+        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absFileName, sizeof(absFileName)))
         {
             auto iTexture = LoadedTextures.Find(absFileName);
             if (iTexture == nullptr)
@@ -99,7 +99,7 @@ namespace GT
                 }
                 else
                 {
-                    g_EngineContext->LogErrorf("Can not find file: %s", fileName);
+                    g_Context->LogErrorf("Can not find file: %s", fileName);
                     return nullptr;
                 }
             }
@@ -152,7 +152,7 @@ namespace GT
     bool Texture2DLibrary::Reload(const char* fileName)
     {
         char absFileName[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absFileName, sizeof(absFileName)))
+        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absFileName, sizeof(absFileName)))
         {
             auto iTexture = LoadedTextures.Find(absFileName);
             if (iTexture != nullptr)

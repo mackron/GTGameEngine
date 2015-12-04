@@ -1148,7 +1148,7 @@ namespace GT
         assert(sc != nullptr);
        
         char absoluteURL[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), imageURL, absoluteURL, sizeof(absoluteURL)))
+        if (!easyvfs_find_absolute_path(GT::g_Context->GetVFS(), imageURL, absoluteURL, sizeof(absoluteURL)))
         {
             strcpy_s(absoluteURL, sizeof(absoluteURL), imageURL);
         }

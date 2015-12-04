@@ -401,7 +401,7 @@ namespace GT
     bool DefaultGameStateManager::OnStartup(Game &game)
     {
         auto &script = game.GetScript();
-        script.ExecuteFile(g_EngineContext->GetVFS(), "game-config.lua");
+        script.ExecuteFile(g_Context->GetVFS(), "game-config.lua");
 
 
         // First we'll configure the window...
@@ -565,7 +565,7 @@ namespace GT
 
         auto newScene = new Scene(game);
 
-        // The scene should be registered to the script immediately. No real reason it shouldn't be. Later on, scenes will take an EngineContext object in their
+        // The scene should be registered to the script immediately. No real reason it shouldn't be. Later on, scenes will take an Context object in their
         // constructors which will then allow us to register it with the script in the constructor.
         newScene->RegisterToScript(game.GetScript());
         

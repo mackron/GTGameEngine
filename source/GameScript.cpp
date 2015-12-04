@@ -2,7 +2,7 @@
 
 #include <GTGE/Scripting.hpp>
 #include <GTGE/Game.hpp>
-#include <GTGE/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
+#include <GTGE/GTEngine.hpp>           // For g_Context. Remove this when the global context is removed.
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -41,10 +41,10 @@ namespace GT
                 this->GetTableValue(-2);
                 if (this->IsTable(-1))
                 {
-                    assert(easyvfs_get_base_directory_count(g_EngineContext->GetVFS()) > 0);
-                    for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
+                    assert(easyvfs_get_base_directory_count(g_Context->GetVFS()) > 0);
+                    for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_Context->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
                     {
-                        this->SetTableValue(-1, iBaseDir + 1, easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBaseDir));
+                        this->SetTableValue(-1, iBaseDir + 1, easyvfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir));
                     }
                 }
                 this->Pop(1);
@@ -64,7 +64,7 @@ namespace GT
         if (!this->HasFileBeenLoaded(fileName))
         {
             char absolutePath[EASYVFS_MAX_PATH];
-            if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+            if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
             {
                 this->loadedFiles.PushBack(absolutePath);
             }
@@ -78,7 +78,7 @@ namespace GT
     bool GameScript::HasFileBeenLoaded(const char* fileName) const
     {
         char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             return this->loadedFiles.Exists(absolutePath);
         }
@@ -99,7 +99,7 @@ namespace GT
     void GameScript::ErrorHandler::OnError(GT::Script &, const char* message)
     {
         this->script.SetLastError(message);
-        g_EngineContext->LogErrorf("Script Error: %s", message);
+        g_Context->LogErrorf("Script Error: %s", message);
     }
 }
 

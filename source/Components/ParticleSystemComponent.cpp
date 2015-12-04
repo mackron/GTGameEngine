@@ -202,7 +202,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->LogErrorf("Error deserializing particle system component. Unknown chunk ID (%d).", header.id);
+            g_Context->LogErrorf("Error deserializing particle system component. Unknown chunk ID (%d).", header.id);
         }
     }
 

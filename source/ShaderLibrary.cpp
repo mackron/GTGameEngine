@@ -2,7 +2,7 @@
 
 #include <GTGE/ShaderLibrary.hpp>
 #include <GTGE/Rendering/Renderer.hpp>
-#include <GTGE/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
+#include <GTGE/GTEngine.hpp>           // For g_Context. Remove this when the global context is removed.
 #include <GTGE/Core/Dictionary.hpp>
 #include <GTGE/Core/Vector.hpp>
 #include <GTGE/Core/String.hpp>
@@ -271,7 +271,7 @@ namespace GT
 {
     bool ShaderLibrary::LoadFromDirectory(const char* directory, bool recursive)
     {
-        easyvfs_context* pVFS = g_EngineContext->GetVFS();
+        easyvfs_context* pVFS = g_Context->GetVFS();
         assert(pVFS != nullptr);
 
         if (easypath_is_absolute(directory))
@@ -324,7 +324,7 @@ namespace GT
 
         if (!Path::IsAbsolute(directory))
         {
-            g_EngineContext->GetApplicationConfig().GetDataDirectories(baseDirectories);
+            g_Context->GetApplicationConfig().GetDataDirectories(baseDirectories);
         }
 
 
@@ -389,7 +389,7 @@ namespace GT
         return false;
 #endif
 
-        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), fileName, EASYVFS_READ, 0);
+        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), fileName, EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
             // We need to read the content of the file and then load it as XML. We cast the size to a size_t to
@@ -494,12 +494,12 @@ namespace GT
                 }
                 else
                 {
-                    g_EngineContext->LogError("ShaderLibrary - There was an unknown error loading a <shader> tag. This shader will be ignored.");
+                    g_Context->LogError("ShaderLibrary - There was an unknown error loading a <shader> tag. This shader will be ignored.");
                 }
             }
             else
             {
-                g_EngineContext->LogError("ShaderLibrary - <shader> tags must have an 'id' attribute.");
+                g_Context->LogError("ShaderLibrary - <shader> tags must have an 'id' attribute.");
             }
         }
 
@@ -528,7 +528,7 @@ namespace GT
             }
             catch (rapidxml::parse_error &e)
             {
-                g_EngineContext->LogErrorf("ShaderLibrary: %s", e.what());
+                g_Context->LogErrorf("ShaderLibrary: %s", e.what());
                 return false;
             }
             

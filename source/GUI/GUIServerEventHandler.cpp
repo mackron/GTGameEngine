@@ -9,12 +9,12 @@ namespace GT
     
     void GUIServerEventHandler::OnError(const char *msg)
     {
-        g_EngineContext->LogErrorf("%s", msg);
+        g_Context->LogErrorf("%s", msg);
     }
     
     void GUIServerEventHandler::OnWarning(const char *msg)
     {
-        g_EngineContext->LogErrorf("%s", msg);
+        g_Context->LogErrorf("%s", msg);
     }
     
     void GUIServerEventHandler::OnLog(const char *)

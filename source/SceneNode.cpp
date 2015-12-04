@@ -929,7 +929,7 @@ namespace GT
             }
             else
             {
-                g_EngineContext->Logf("Warning: Failed to add component '%s' to scene node.", componentName);
+                g_Context->Logf("Warning: Failed to add component '%s' to scene node.", componentName);
             }
         }
 
@@ -1320,7 +1320,7 @@ namespace GT
 
                 default:
                     {
-                        g_EngineContext->Logf("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
+                        g_Context->Logf("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         break;

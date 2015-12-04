@@ -88,7 +88,7 @@ namespace GT
         }
         catch (rapidxml::parse_error &e)
         {
-            g_EngineContext->LogErrorf("Material: %s", e.what());
+            g_Context->LogErrorf("Material: %s", e.what());
             return false;
         }
 
@@ -134,7 +134,7 @@ namespace GT
                     else
                     {
                         // It is an error for a <channel> tag to not have a name.
-                        g_EngineContext->LogErrorf("Material: Warning: Missing 'name' attribute from a <channel> tag. Ignoring.");
+                        g_Context->LogErrorf("Material: Warning: Missing 'name' attribute from a <channel> tag. Ignoring.");
                     }
                 }
 
@@ -264,7 +264,7 @@ namespace GT
             return true;
         }
 
-        g_EngineContext->LogErrorf("Material: Missing <material> node.");
+        g_Context->LogErrorf("Material: Missing <material> node.");
         return false;
     }
 
@@ -295,7 +295,7 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
+                g_Context->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
                 return false;
             }
         }
@@ -303,14 +303,14 @@ namespace GT
         {
             strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
+            if (!easyvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-        char* pFileData = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), newAbsolutePath, NULL);
+        char* pFileData = easyvfs_open_and_read_text_file(g_Context->GetVFS(), newAbsolutePath, NULL);
         if (pFileData != nullptr)
         {
             bool result = this->LoadFromXML(pFileData);

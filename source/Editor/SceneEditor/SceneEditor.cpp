@@ -80,7 +80,7 @@ namespace GT
         auto &script = this->GetScript();
 
         // We need to load the scene.
-        easyvfs_file* file = easyvfs_open(g_EngineContext->GetVFS(), absolutePath, EASYVFS_READ, 0);
+        easyvfs_file* file = easyvfs_open(g_Context->GetVFS(), absolutePath, EASYVFS_READ, 0);
         if (file != nullptr)
         {
             // We need to now create the GUI elements for this particular file. We start with the main element.
@@ -2501,7 +2501,7 @@ namespace GT
 
     bool SceneEditor::Save()
     {
-        easyvfs_file* file = easyvfs_open(g_EngineContext->GetVFS(), this->GetAbsolutePath(), EASYVFS_WRITE, 0);
+        easyvfs_file* file = easyvfs_open(g_Context->GetVFS(), this->GetAbsolutePath(), EASYVFS_WRITE, 0);
         if (file != nullptr)
         {
             // If the physics simulation is running or the game is playing, it needs to be stopped first.
@@ -2824,9 +2824,9 @@ namespace GT
             // we will find the most likely base path and use that to derive a relative path. This is not a robust way of doing this and
             // will be updated when the asset management system is updated.
             const char* mostLikelyBasePath = nullptr;
-            for (unsigned int iBasePath = 0; iBasePath < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()); ++iBasePath)
+            for (unsigned int iBasePath = 0; iBasePath < easyvfs_get_base_directory_count(g_Context->GetVFS()); ++iBasePath)
             {
-                const char* basePath = easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBasePath);
+                const char* basePath = easyvfs_get_base_directory_by_index(g_Context->GetVFS(), iBasePath);
                 if (easypath_is_descendant(absolutePath, basePath))
                 {
                     mostLikelyBasePath = basePath;
@@ -3606,7 +3606,7 @@ namespace GT
     void SceneEditor::UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath)
     {
         char scriptAbsolutePath[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), scriptRelativePath, scriptAbsolutePath, sizeof(scriptAbsolutePath))) {
+        if (!easyvfs_find_absolute_path(g_Context->GetVFS(), scriptRelativePath, scriptAbsolutePath, sizeof(scriptAbsolutePath))) {
             return;
         }
 

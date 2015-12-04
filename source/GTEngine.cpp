@@ -18,7 +18,7 @@
 namespace GT
 {
     /// The global engine context. TODO: Remove this and have applications create this themselves. This global object is only used during the transition phase.
-    GT::EngineContext* g_EngineContext = nullptr;
+    GT::Context* g_Context = nullptr;
 }
 
 namespace GT
@@ -30,15 +30,15 @@ namespace GT
 
 
         // With the log file created, we can startup all of our other sub-systems.
-        g_EngineContext->Logf("Starting Rendering Sub-System...");
+        g_Context->Logf("Starting Rendering Sub-System...");
         if (Renderer::Startup())
         {
-            g_EngineContext->Logf("Renderer Caps:");
-            g_EngineContext->Logf("    Max Colour Attachments: %d", Renderer::GetMaxColourAttachments());
-            g_EngineContext->Logf("    Max Draw Buffers:       %d", Renderer::GetMaxDrawBuffers());
-            g_EngineContext->Logf("    Max Texture Units:      %d", Renderer::GetMaxTextureUnits());
+            g_Context->Logf("Renderer Caps:");
+            g_Context->Logf("    Max Colour Attachments: %d", Renderer::GetMaxColourAttachments());
+            g_Context->Logf("    Max Draw Buffers:       %d", Renderer::GetMaxDrawBuffers());
+            g_Context->Logf("    Max Texture Units:      %d", Renderer::GetMaxTextureUnits());
 
-            g_EngineContext->Logf("Loading Shaders...");
+            g_Context->Logf("Loading Shaders...");
             ShaderLibrary::LoadFromDirectory("engine/shaders/glsl");
             ShaderLibrary::LoadFromDirectory("shaders/glsl");
         }
@@ -49,22 +49,22 @@ namespace GT
 
 
         // With sub-systems started up, we can startup our resource libraries.
-        g_EngineContext->Logf("Initializing Texture Library...");
+        g_Context->Logf("Initializing Texture Library...");
         Texture2DLibrary::Startup();
 
-        g_EngineContext->Logf("Initializing Material Library...");
+        g_Context->Logf("Initializing Material Library...");
         MaterialLibrary::Startup();
 
-        g_EngineContext->Logf("Initializing Vertex Array Library...");
+        g_Context->Logf("Initializing Vertex Array Library...");
         VertexArrayLibrary::Startup();
 
-        g_EngineContext->Logf("Initializing Model Library...");
+        g_Context->Logf("Initializing Model Library...");
         ModelLibrary::Startup();
 
-        g_EngineContext->Logf("Initializing Prefab Library...");
+        g_Context->Logf("Initializing Prefab Library...");
         PrefabLibrary::Startup();
 
-        g_EngineContext->Logf("Initializing Particle System Library...");
+        g_Context->Logf("Initializing Particle System Library...");
         ParticleSystemLibrary::Startup();
 
 
@@ -73,7 +73,7 @@ namespace GT
 
     bool _PreStartup2(Game* pGame)
     {
-        g_EngineContext->Logf("Initializing Script Library...");
+        g_Context->Logf("Initializing Script Library...");
         return ScriptLibrary::Startup(pGame);
     }
 
@@ -106,7 +106,7 @@ namespace GT
         
 
         /// The engine context.
-        delete g_EngineContext;
-        g_EngineContext = nullptr;
+        delete g_Context;
+        g_Context = nullptr;
     }
 }

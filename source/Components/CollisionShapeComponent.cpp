@@ -995,7 +995,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->LogErrorf("Error deserializing  CollisionShapeComponent. Main chunk version (%d) is unknown. This chunk has been skipped. Nothing has been modified.", header.version);
+                    g_Context->LogErrorf("Error deserializing  CollisionShapeComponent. Main chunk version (%d) is unknown. This chunk has been skipped. Nothing has been modified.", header.version);
 
                     deserializer.Seek(header.sizeInBytes);
                     return;
@@ -1004,7 +1004,7 @@ namespace GT
         }
         else
         {
-            g_EngineContext->LogErrorf("Error deserializing CollisionShapeComponent. The first chunk must the main chunk, but instead it is (%d). This chunk has been skipped. Nothing has been modified.", header.id);
+            g_Context->LogErrorf("Error deserializing CollisionShapeComponent. The first chunk must the main chunk, but instead it is (%d). This chunk has been skipped. Nothing has been modified.", header.id);
 
             deserializer.Seek(header.sizeInBytes);
             return;
@@ -1050,7 +1050,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+                            g_Context->Logf("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1088,7 +1088,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing CollisionShapeComponent. Sphere shape chunk version (%d) is unknown. Skipping.", header.version);
+                            g_Context->Logf("Error deserializing CollisionShapeComponent. Sphere shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1126,7 +1126,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing CollisionShapeComponent. Ellipsoid shape chunk version (%d) is unknown. Skipping.", header.version);
+                            g_Context->Logf("Error deserializing CollisionShapeComponent. Ellipsoid shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1183,7 +1183,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+                            g_Context->Logf("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1242,7 +1242,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+                            g_Context->Logf("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1280,7 +1280,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing CollisionShapeComponent. Convex hull chunk version (%d) is unknown. Skipping.", header.version);
+                            g_Context->Logf("Error deserializing CollisionShapeComponent. Convex hull chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
@@ -1307,7 +1307,7 @@ namespace GT
                     }
                     else
                     {
-                        g_EngineContext->Logf("Error deserializing CollisionShapeComponent. Model convex hull chunk version (%d) is unknown. Skipping.", header.version);
+                        g_Context->Logf("Error deserializing CollisionShapeComponent. Model convex hull chunk version (%d) is unknown. Skipping.", header.version);
                         deserializer.Seek(header.sizeInBytes);
                     }
 
@@ -1317,7 +1317,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing CollisionShapeComponent. Unknown shape chunk (%d). Skipping.", header.id);
+                    g_Context->Logf("Error deserializing CollisionShapeComponent. Unknown shape chunk (%d). Skipping.", header.id);
 
                     deserializer.Seek(header.sizeInBytes);
                     break;

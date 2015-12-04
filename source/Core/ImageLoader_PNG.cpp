@@ -81,7 +81,7 @@ namespace GT
     bool ImageLoader_PNG::Open()
     {
         //FILE* pFile = IO::Open(this->absolutePath.c_str(), IO::OpenMode::Read);
-        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
+        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
             STBICallbackData callbackData;
@@ -97,7 +97,7 @@ namespace GT
             m_pImageData = stbi_load_from_callbacks(&stbiCallbacks, &callbackData, &imageWidth, &imageHeight, &m_channelCount, 0);
             if (m_pImageData != nullptr)
             {
-                easyvfs_get_file_info(g_EngineContext->GetVFS(), this->absolutePath.c_str(), &m_info);
+                easyvfs_get_file_info(g_Context->GetVFS(), this->absolutePath.c_str(), &m_info);
 
                 m_info.format = GetImageFormatFromSTBChannels(m_channelCount);
                 m_info.width  = static_cast<unsigned int>(imageWidth);
@@ -141,7 +141,7 @@ namespace GT
     {
         // We just need to check the last modified data. If it's different, the file has changed.
         easyvfs_file_info tempInfo;
-        easyvfs_get_file_info(g_EngineContext->GetVFS(), this->absolutePath.c_str(), &tempInfo);
+        easyvfs_get_file_info(g_Context->GetVFS(), this->absolutePath.c_str(), &tempInfo);
 
         if (tempInfo.lastModifiedTime != m_info.lastModifiedTime)
         {

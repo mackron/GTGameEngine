@@ -107,7 +107,7 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                g_Context->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return nullptr;
             }
         }
@@ -277,7 +277,7 @@ namespace GT
             fileName += ".gtmodel";
         }
 
-        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), fileName.c_str(), EASYVFS_WRITE, 0);
+        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), fileName.c_str(), EASYVFS_WRITE, 0);
         if (pFile != nullptr)
         {
             FileSerializer serializer(pFile);
@@ -354,7 +354,7 @@ namespace GT
     bool ModelLibrary::FindAbsolutePath(const char* relativePath, String &absolutePath)
     {
         char absolutePathTemp[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), relativePath, absolutePathTemp, sizeof(absolutePathTemp)))
+        if (!easyvfs_find_absolute_path(g_Context->GetVFS(), relativePath, absolutePathTemp, sizeof(absolutePathTemp)))
         {
             char adjustedRelativePath[EASYVFS_MAX_PATH];
             strcpy_s(adjustedRelativePath, sizeof(adjustedRelativePath), relativePath);
@@ -365,7 +365,7 @@ namespace GT
                 easypath_append_extension(adjustedRelativePath, sizeof(adjustedRelativePath), "gtmodel");
             }
 
-            if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), adjustedRelativePath, absolutePathTemp, sizeof(absolutePathTemp))) {
+            if (!easyvfs_find_absolute_path(g_Context->GetVFS(), adjustedRelativePath, absolutePathTemp, sizeof(absolutePathTemp))) {
                 return false;
             }
         }

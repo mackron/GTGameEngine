@@ -219,7 +219,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing Mesh. Material chunk is an unsupported version (%d).", header.version);
+                            g_Context->Logf("Error deserializing Mesh. Material chunk is an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -250,7 +250,7 @@ namespace GT
 
                     default:
                         {
-                            g_EngineContext->Logf("Error deserializing Mesh. Geometry chunk is an unsupported version (%d).", header.version);
+                            g_Context->Logf("Error deserializing Mesh. Geometry chunk is an unsupported version (%d).", header.version);
                             break;
                         }
                     }

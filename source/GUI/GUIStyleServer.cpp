@@ -189,11 +189,11 @@ namespace GT
 
     bool GUIStyleServer::LoadFromFile(const char* filePath)
     {
-        char* pFileData = easyvfs_open_and_read_text_file(GT::g_EngineContext->GetVFS(), filePath, nullptr);
+        char* pFileData = easyvfs_open_and_read_text_file(GT::g_Context->GetVFS(), filePath, nullptr);
         if (pFileData != nullptr)
         {
             char absolutePath[EASYVFS_MAX_PATH];
-            if (!easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
+            if (!easyvfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
             {
                 // Failed to retrieve the absolute path. Just use the original path.
                 strcpy_s(absolutePath, sizeof(absolutePath), filePath);
@@ -227,7 +227,7 @@ namespace GT
         char absolutePath[EASYVFS_MAX_PATH];
         if (!easypath_is_absolute(filePath))
         {
-            if (!easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath))) {
+            if (!easyvfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath))) {
                 strcpy_s(absolutePath, sizeof(absolutePath), filePath);
             }
         }

@@ -76,20 +76,20 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                g_Context->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return nullptr;
             }
         }
 
 
         char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             auto iLoadedClass = LoadedDefinitions.Find(absolutePath);
             if (iLoadedClass == nullptr)
             {
                 // Does not exist. Needs to be loaded.
-                char* scriptString = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), absolutePath, nullptr);
+                char* scriptString = easyvfs_open_and_read_text_file(g_Context->GetVFS(), absolutePath, nullptr);
                 if (scriptString != nullptr)
                 {
                     auto newDefinition = new ScriptDefinition(absolutePath, scriptString);
@@ -104,7 +104,7 @@ namespace GT
                 {
                     if (!silenceMissingFileWarning)
                     {
-                        g_EngineContext->LogErrorf("Can not find file: %s", fileName);
+                        g_Context->LogErrorf("Can not find file: %s", fileName);
                     }
                 }
             }
@@ -120,7 +120,7 @@ namespace GT
         {
             if (!silenceMissingFileWarning)
             {
-                g_EngineContext->LogErrorf("Can not find file: %s", fileName);
+                g_Context->LogErrorf("Can not find file: %s", fileName);
             }
         }
 
@@ -160,7 +160,7 @@ namespace GT
     {
         // We key the definitions by their absolute path, so we'll need to retrieve that.
         char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             return LoadedDefinitions.Exists(absolutePath);
         }
@@ -172,7 +172,7 @@ namespace GT
     {
         // We key the definitions by their absolute path, so we'll need to retrieve that.
         char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             auto iDefinition = LoadedDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
@@ -182,7 +182,7 @@ namespace GT
                 {
                     // This next part is easy. We just destruct and reconstruct, while leaving the pointer as-is. It's important that we keep the same pointer because
                     // other objects may be referencing it.
-                    char* scriptString = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), absolutePath, nullptr);
+                    char* scriptString = easyvfs_open_and_read_text_file(g_Context->GetVFS(), absolutePath, nullptr);
                     if (scriptString != nullptr)
                     {
                         definition->~ScriptDefinition();

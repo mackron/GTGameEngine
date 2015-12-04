@@ -557,13 +557,13 @@ namespace GT
             }
             else
             {
-                g_EngineContext->LogErrorf("Error creating model info for %s: %s", absolutePath.c_str(), importer.GetErrorString());
+                g_Context->LogErrorf("Error creating model info for %s: %s", absolutePath.c_str(), importer.GetErrorString());
                 return false;
             }
         }
         else
         {
-            g_EngineContext->LogErrorf("Error importing %s: %s", absolutePath.c_str(), importer.GetErrorString());
+            g_Context->LogErrorf("Error importing %s: %s", absolutePath.c_str(), importer.GetErrorString());
             return false;
         }
     }

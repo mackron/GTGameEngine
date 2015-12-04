@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef GT_EngineContext
-#define GT_EngineContext
+#ifndef GT_Context
+#define GT_Context
 
 #include "MessageDispatcher.hpp"
 #include "Audio/SoundWorld.hpp"
@@ -15,15 +15,15 @@
 namespace GT
 {
     /// Class representing the engine context.
-    class EngineContext
+    class Context
     {
     public:
 
         /// Constructor.
-        EngineContext(int argc, char** argv);
+        Context(int argc, char** argv);
 
         /// Destructor.
-        ~EngineContext();
+        ~Context();
 
 
 
@@ -139,8 +139,8 @@ namespace GT
 
 
     private:    // No copying.
-        EngineContext(const EngineContext &);
-        EngineContext & operator=(const EngineContext &);
+        Context(const Context &);
+        Context & operator=(const Context &);
     };
 }
 

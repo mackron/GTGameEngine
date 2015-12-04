@@ -9,7 +9,7 @@
 
 namespace GT
 {
-    class EngineContext;
+    class Context;
 
     /// Class representing the virtual world where sounds will be played.
     class SoundWorld
@@ -17,7 +17,7 @@ namespace GT
     public:
 
         /// Constructor.
-        SoundWorld(GT::EngineContext &engineContext);
+        SoundWorld(GT::Context &engineContext);
 
         /// Destructor.
         ~SoundWorld();
@@ -55,7 +55,7 @@ namespace GT
     private:
 
         /// A reference to the engine context.
-        GT::EngineContext &m_engineContext;
+        GT::Context &m_engineContext;
 
         /// A pointer to the easy_audio world.
         easyaudio_world* m_pWorld;

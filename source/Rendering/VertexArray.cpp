@@ -217,7 +217,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing VertexArray. Info chunk is an unsupported version (%d).", header.version);
+                    g_Context->Logf("Error deserializing VertexArray. Info chunk is an unsupported version (%d).", header.version);
                     break;
                 }
             }
@@ -244,7 +244,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing VertexArray. Vertices chunk is an unsupported version (%d).", header.version);
+                    g_Context->Logf("Error deserializing VertexArray. Vertices chunk is an unsupported version (%d).", header.version);
                     break;
                 }
             }
@@ -271,7 +271,7 @@ namespace GT
 
             default:
                 {
-                    g_EngineContext->Logf("Error deserializing VertexArray. Indices chunk is an unsupported version (%d).", header.version);
+                    g_Context->Logf("Error deserializing VertexArray. Indices chunk is an unsupported version (%d).", header.version);
                     break;
                 }
             }
