@@ -2,7 +2,7 @@
 
 #include <GTGE/Audio/SoundWorld.hpp>
 #include <GTGE/Assets/SoundAsset.hpp>
-#include <GTGE/EngineContext.hpp>
+#include <GTGE/Context.hpp>
 
 #include "../Audio/Streamers/SoundStreamer_WAV.hpp"
 #include "../Audio/Streamers/SoundStreamer_Vorbis.hpp"

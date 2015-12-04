@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTGE/EngineContext.hpp>
+#include <GTGE/Context.hpp>
 #include <easy_path/easy_path.h>
 #include <easy_fs/easy_vfs.h>
 

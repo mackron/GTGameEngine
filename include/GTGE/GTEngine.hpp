@@ -27,7 +27,7 @@ THE SOFTWARE.
 #define GTGE
 
 #include "Game.hpp"
-#include "EngineContext.hpp"
+#include "Context.hpp"
 
 #define GTENGINE_VERSION_STRING "0.0.4"
 
