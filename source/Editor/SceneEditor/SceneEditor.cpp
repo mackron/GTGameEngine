@@ -39,7 +39,7 @@ namespace GT
         : SubEditor(ownerEditor, absolutePath, relativePath),
           camera(), cameraEventHandler(*this), m_cameraXRotation(0.0f), m_cameraYRotation(0.0f),
           updateManager(camera), physicsManager(), cullingManager(),
-          m_scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
+          m_scene(ownerEditor.GetGame(), updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
           playbackEventFilter(), eventFilterBeforePlaying(nullptr),
           selectedNodes(), selectedNodesBeforePlaying(), selectedNodesBeforePhysicsSimulation(),
           pickingWorld(),

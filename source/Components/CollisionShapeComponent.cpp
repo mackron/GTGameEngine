@@ -611,6 +611,11 @@ namespace GT
 
     void CollisionShapeComponent::UpdateCollisionFilter()
     {
+        Game* pGame = this->GetGame();
+        if (pGame == NULL) {
+            return;
+        }
+
         short newCollisionGroup = 0;
         short newCollisionMask  = 0;
         
@@ -618,7 +623,7 @@ namespace GT
         
         for (size_t iGroup = 0; iGroup < this->collisionGroupStrings.count; ++iGroup)
         {
-            int group = GlobalGame->GetScript().GetInteger((base + this->collisionGroupStrings[iGroup]).c_str());
+            int group = pGame->GetScript().GetInteger((base + this->collisionGroupStrings[iGroup]).c_str());
             if (group == -1)
             {
                 newCollisionGroup = static_cast<short>(-1);
@@ -635,7 +640,7 @@ namespace GT
         
         for (size_t iMask = 0; iMask < this->collisionGroupMaskStrings.count; ++iMask)
         {
-            int group = GlobalGame->GetScript().GetInteger((base + this->collisionGroupMaskStrings[iMask]).c_str());
+            int group = pGame->GetScript().GetInteger((base + this->collisionGroupMaskStrings[iMask]).c_str());
             if (group == -1)
             {
                 newCollisionMask = -1;

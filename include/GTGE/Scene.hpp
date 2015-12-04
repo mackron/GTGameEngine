@@ -200,6 +200,8 @@ namespace GT
 
 namespace GT
 {
+    class Game;
+
     // TODO: Document the state stack.
 
     /// A class representing a scene.
@@ -228,20 +230,24 @@ namespace GT
         ///
         /// @remarks
         ///     This constructor will use default managers.
-        Scene();
+        Scene(Game &game);
 
         /// Constructor.
         ///
         /// @param updateManager  [in] A reference to the update manager that will manage the updating of scene objects.
         /// @param physicsManager [in] A reference to the physics manager that will manage the physics of the scene.
         /// @param cullingManager [in] A reference to the culling manager that will manage the culling of objects in the scene.
-        Scene(SceneUpdateManager &updateManager, ScenePhysicsManager &physicsManager, SceneCullingManager &cullingManager);
+        Scene(Game &game, SceneUpdateManager &updateManager, ScenePhysicsManager &physicsManager, SceneCullingManager &cullingManager);
 
         /// Destructor.
         ///
         /// @remarks
         ///     The destructor of derived classes will <b>not</b> delete attached objects.
         virtual ~Scene();
+
+
+        /// Retrieves a reference to the game object that owns this scene.
+        Game & GetGame() { return m_game; }
 
 
         /// Loads a file into the scene.
@@ -1002,6 +1008,10 @@ namespace GT
 
 
     private:
+
+        /// A reference to the game object that owns this scene.
+        Game &m_game;
+
 
         /// A pointer to the scene's renderer. This will never actually be null, but it can be changed dynamically. Thus, it needs to be a pointer instead
         /// of a reference. This will default to a heap-allocated DefaultSceneRenderer.

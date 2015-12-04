@@ -620,6 +620,10 @@ namespace GT
         void RemoveFromScene();
 
 
+        /// Retrieves a pointer to the game that owns this scene node.
+        Game* GetGame();
+
+
 
         /// Sets whether or not the scene node is static.
         void SetStatic(bool isStatic);

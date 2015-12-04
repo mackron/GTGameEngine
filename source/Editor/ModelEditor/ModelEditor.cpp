@@ -16,7 +16,7 @@ namespace GT
     ModelEditor::ModelEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           modelDefinition(), m_model(modelDefinition),
-          scene(), camera(),
+          scene(ownerEditor.GetGame()), camera(),
           modelNode(), convexHullParentNode(), convexHullNodes(),
           mainElement(nullptr), viewportElement(nullptr), timelineElement(nullptr),
           viewportEventHandler(ownerEditor.GetGame(), scene.GetDefaultViewport()),

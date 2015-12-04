@@ -563,7 +563,7 @@ namespace GT
         // Here we'll load the scene, but we don't actually do the switch until the next frame. The reason for this is that the current scene may be in
         // the middle of updating, so we don't want any mixups there. The actual switch will be done in OnStartFrame(), which is a synchronized call.
 
-        auto newScene = new Scene;
+        auto newScene = new Scene(game);
 
         // The scene should be registered to the script immediately. No real reason it shouldn't be. Later on, scenes will take an EngineContext object in their
         // constructors which will then allow us to register it with the script in the constructor.

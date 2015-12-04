@@ -14,6 +14,19 @@ namespace GT
     {
     }
 
+
+    Game* Component::GetGame()
+    {
+        Scene* pScene = this->node.GetScene();
+        if (pScene != nullptr)
+        {
+            return &pScene->GetGame();
+        }
+
+        return nullptr;
+    }
+
+
     void Component::Serialize(Serializer &) const
     {
     }
@@ -48,7 +61,7 @@ namespace GT
         }
     }
 
-    Component* CreateComponentByName(const char* componentName, SceneNode &hostSceneNode)
+    Component* CreateComponentByName(Game* pGame, const char* componentName, SceneNode &hostSceneNode)
     {
         if (Strings::Equal(componentName, ModelComponent::Name))
         {
@@ -116,7 +129,12 @@ namespace GT
         }
         else
         {
-            return GlobalGame->CreateCustomComponent(componentName, hostSceneNode);
+            if (pGame != NULL)
+            {
+                return pGame->CreateCustomComponent(componentName, hostSceneNode);
+            }
         }
+
+        return NULL;
     }
 }

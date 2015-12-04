@@ -15,7 +15,7 @@ namespace GT
 {
     MaterialEditor::MaterialEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          scene(), camera(), modelNode(),
+          scene(ownerEditor.GetGame()), camera(), modelNode(),
           mainElement(nullptr), scriptTextBoxElement(nullptr), scriptTextBoxEventHandler(*this), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f), material(nullptr),
           isSaving(false), isReloading(false)
