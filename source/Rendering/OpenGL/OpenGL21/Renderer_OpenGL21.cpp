@@ -900,16 +900,18 @@ namespace GT
 
     void Renderer::SetDrawBuffers(size_t count, const int* buffers)
     {
-        // TODO: Remove this malloc().
-        GLenum* buffersGL = (GLenum*)malloc(sizeof(GLenum) * count);
+        // Clamp the number of render targets for now.
+        if (count > 16) {
+            count = 16;
+        }
+
+        GLenum buffersGL[16];
         for (size_t i = 0; i < count; ++i)
         {
             buffersGL[i] = GL_COLOR_ATTACHMENT0_EXT + buffers[i];
         }
 
         glDrawBuffers(static_cast<size_t>(count), buffersGL);
-
-        free(buffersGL);
     }
 
 
