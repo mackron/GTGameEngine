@@ -54,13 +54,13 @@ namespace GT
 
         
         // Pointers to the current render command for a particular operation. When null, a new one needs to be created and set.
-        RCSetGlobalState*      currentRCSetGlobalState;
-        RCSetVertexArrayState* currentRCSetVertexArrayState;
-        RCSetTextureState*     currentRCSetTextureState;
-        RCSetShaderState*      currentRCSetShaderState;
-        RCSetFramebufferState* currentRCSetFramebufferState;
-        RCClear*               currentRCClear;
-        RCDraw*                currentRCDraw;
+        //RCSetGlobalState*      currentRCSetGlobalState;
+        //RCSetVertexArrayState* currentRCSetVertexArrayState;
+        //RCSetTextureState*     currentRCSetTextureState;
+        //RCSetShaderState*      currentRCSetShaderState;
+        //RCSetFramebufferState* currentRCSetFramebufferState;
+        //RCClear*               currentRCClear;
+        //RCDraw*                currentRCDraw;
 
 
 
