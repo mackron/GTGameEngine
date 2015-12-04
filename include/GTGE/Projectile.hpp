@@ -19,9 +19,9 @@ namespace GT
     /// This class is designed to be inherited. An inherited class can customize the projectile to their liking, such as for
     /// attaching a scene node for visual representation or whatnot.
     ///
-    /// A note of probable importance is that this class is NOT implemented as a SceneNode or GameObject. If this functionality
-    /// is desired, a sub-class should be created with the appropriate virtual method implementations. The base Projectile class
-    /// works completely independantly. This allows the greatest flexibility.
+    /// A note of probable importance is that this class is NOT implemented as a SceneNode. If this functionality is desired,
+    /// a sub-class should be created with the appropriate virtual method implementations. The base Projectile class works
+    /// completely independantly. This allows the greatest flexibility.
     ///
     /// Since gravity is mostly constant for each projectile, there is not much point in storing a vector for gravity. Instead,
     /// the gravity is controlled with a virtual getter method called GetGravity(). This returns (0.0, -9.81, 0.0) by default.
