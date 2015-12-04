@@ -8,6 +8,8 @@
 
 namespace GT
 {
+    class Game;
+
     /// Static class for managing the loading and unloading of scripts.
     ///
     /// Although this loads script that will eventually find their way into higher-level script objects, the library is not responsible
@@ -20,7 +22,7 @@ namespace GT
         // Startup/Shutdown
 
         /// Starts up the script library.
-        static bool Startup();
+        static bool Startup(Game* pGame);
 
         /// Shuts down the script library.
         static void Shutdown();

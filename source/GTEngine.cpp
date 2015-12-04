@@ -17,9 +17,6 @@
 // Basic globals.
 namespace GT
 {
-    /// A pointer to the global game object.
-    Game* GlobalGame = nullptr;
-
     /// The global engine context. TODO: Remove this and have applications create this themselves. This global object is only used during the transition phase.
     GT::EngineContext* g_EngineContext = nullptr;
 }
@@ -70,26 +67,24 @@ namespace GT
         g_EngineContext->Logf("Initializing Particle System Library...");
         ParticleSystemLibrary::Startup();
 
-        g_EngineContext->Logf("Initializing Script Library...");
-        ScriptLibrary::Startup();
-
-
 
         return true;
     }
+
+    bool _PreStartup2(Game* pGame)
+    {
+        g_EngineContext->Logf("Initializing Script Library...");
+        return ScriptLibrary::Startup(pGame);
+    }
+
 
     void Shutdown(Game* game)
     {
         if (game != nullptr)
         {
-            assert(game == GlobalGame);
-
             game->Shutdown();
             delete game;
-
-            GlobalGame = nullptr;
         }
-
 
 
         // We kill our libraries before the major sub-systems.
@@ -108,7 +103,7 @@ namespace GT
 
         // GTLib's window management module.
         ShutdownWindowManager();
-
+        
 
         /// The engine context.
         delete g_EngineContext;

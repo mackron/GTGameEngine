@@ -20,13 +20,22 @@ namespace GT
     /// A pointer to the working script. This is instantiated in Startup() and deleted in Shutdown().
     static GT::Script* WorkingScript = nullptr;
 
+    /// A pointer to the main game object. This is passed into the Startup() routine.
+    static Game* g_pGame = nullptr;
+
 
 
     /////////////////////////////////////////////////
     // Startup/Shutdown
 
-    bool ScriptLibrary::Startup()
+    bool ScriptLibrary::Startup(Game* pGame)
     {
+        if (pGame == nullptr) {
+            return false;
+        }
+
+        g_pGame = pGame;
+
         WorkingScript = new GT::Script;
         if (!GT::LoadExtendedMathLibrary(*WorkingScript))
         {
@@ -86,11 +95,7 @@ namespace GT
                     auto newDefinition = new ScriptDefinition(absolutePath, scriptString);
                     LoadedDefinitions.Add(absolutePath, ScriptDefinitionReference(newDefinition, 1));
 
-
-                    assert(GlobalGame != nullptr);
-                    {
-                        GT::LoadScriptDefinition(GlobalGame->GetScript(), absolutePath, scriptString);
-                    }
+                    GT::LoadScriptDefinition(g_pGame->GetScript(), absolutePath, scriptString);
 
                     easyvfs_free(scriptString);
                     return newDefinition;
@@ -138,10 +143,7 @@ namespace GT
 
                         if (value.second == 0)
                         {
-                            assert(GlobalGame != nullptr);
-                            {
-                                GT::UnloadScriptDefinition(GlobalGame->GetScript(), scriptDefinitionToUnacquire->GetAbsolutePath());
-                            }
+                            GT::UnloadScriptDefinition(g_pGame->GetScript(), scriptDefinitionToUnacquire->GetAbsolutePath());
 
                             delete value.first;
                             LoadedDefinitions.RemoveByIndex(i);
@@ -186,11 +188,7 @@ namespace GT
                         definition->~ScriptDefinition();
                         new (definition) ScriptDefinition(absolutePath, scriptString);
 
-
-                        assert(GlobalGame != nullptr);
-                        {
-                            GT::LoadScriptDefinition(GlobalGame->GetScript(), definition->GetAbsolutePath(), scriptString);
-                        }
+                        GT::LoadScriptDefinition(g_pGame->GetScript(), definition->GetAbsolutePath(), scriptString);
 
                         easyvfs_free(scriptString);
                         return true;
