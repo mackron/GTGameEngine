@@ -8,6 +8,7 @@
 #include "../Config.hpp"
 #include "AssetTypes.hpp"
 #include <easy_fs/easy_vfs.h>
+#include <easy_util/easy_util.h>
 
 namespace GT
 {
@@ -111,6 +112,8 @@ namespace GT
         /// The list of loaded assets, by absolute file path.
         Dictionary<Asset*> m_loadedAssets;
 
+        /// The mutex for loading and unloading assets.
+        easyutil_mutex m_mutex;
 
         
 #if defined(GT_BUILD_DEFAULT_ASSETS)

@@ -14,7 +14,8 @@ namespace GT
     AssetLibrary::AssetLibrary()
         : m_pVFS(nullptr),
           m_allocators(),
-          m_loadedAssets()
+          m_loadedAssets(),
+          m_mutex()
 #if defined(GT_BUILD_DEFAULT_ASSETS)
         , m_pDefaultAssetAllocator(nullptr)
 #endif
@@ -31,7 +32,8 @@ namespace GT
         // Don't do anything if it's already been initialized.
         if (m_pVFS == nullptr)
         {
-            m_pVFS = pVFS;
+            m_pVFS  = pVFS;
+            m_mutex = easyutil_create_mutex();
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
             // Create and register the default allocator.
@@ -67,6 +69,9 @@ namespace GT
         delete m_pDefaultAssetAllocator;
         m_pDefaultAssetAllocator = nullptr;
 #endif
+
+        easyutil_delete_mutex(m_mutex);
+        m_mutex = nullptr;
 
         m_pVFS = nullptr;
     }
@@ -104,75 +109,85 @@ namespace GT
         }
 
 
-        auto iExistingAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
-        if (iExistingAsset == nullptr)
+        Asset* pAsset = nullptr;
+        easyutil_lock_mutex(m_mutex);
         {
-            AssetAllocator* pAllocator = nullptr;
-
-            AssetType assetType = explicitAssetType;
-            if (assetType == AssetType_Unknown)
+            auto iExistingAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
+            if (iExistingAsset == nullptr)
             {
-                pAllocator = this->FindAllocatorAndTypeByPath(absolutePathOrIdentifier, assetType);
-            }
-            else
-            {
-                pAllocator = this->FindAllocatorByType(assetType);
-            }
+                AssetAllocator* pAllocator = nullptr;
 
-
-            if (pAllocator != nullptr)
-            {
-                auto pAsset = pAllocator->CreateAsset(absolutePathOrIdentifier, assetType);
-                if (pAsset != nullptr)
+                AssetType assetType = explicitAssetType;
+                if (assetType == AssetType_Unknown)
                 {
-                    // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
-                    char metadataAbsolutePath[EASYVFS_MAX_PATH];
-                    easypath_copy_and_append_extension(metadataAbsolutePath, EASYVFS_MAX_PATH, absolutePathOrIdentifier, "gtdata");
-                    pAsset->LoadMetadata(metadataAbsolutePath, m_pVFS);
+                    pAllocator = this->FindAllocatorAndTypeByPath(absolutePathOrIdentifier, assetType);
+                }
+                else
+                {
+                    pAllocator = this->FindAllocatorByType(assetType);
+                }
 
 
-                    // Load the asset after the metadata.
-                    if (pAsset->Load(absolutePathOrIdentifier, m_pVFS))
+                if (pAllocator != nullptr)
+                {
+                    pAsset = pAllocator->CreateAsset(absolutePathOrIdentifier, assetType);
+                    if (pAsset != nullptr)
                     {
-                        m_loadedAssets.Add(absolutePathOrIdentifier, pAsset);
-                        return pAsset;
+                        // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
+                        char metadataAbsolutePath[EASYVFS_MAX_PATH];
+                        easypath_copy_and_append_extension(metadataAbsolutePath, EASYVFS_MAX_PATH, absolutePathOrIdentifier, "gtdata");
+                        pAsset->LoadMetadata(metadataAbsolutePath, m_pVFS);
+
+
+                        // Load the asset after the metadata.
+                        if (pAsset->Load(absolutePathOrIdentifier, m_pVFS))
+                        {
+                            m_loadedAssets.Add(absolutePathOrIdentifier, pAsset);
+                        }
+                        else
+                        {
+                            // Failed to load the asset.
+                            pAllocator->DeleteAsset(pAsset);
+                            pAsset = nullptr;
+                        }
                     }
                     else
                     {
-                        // Failed to load the asset.
-                        pAllocator->DeleteAsset(pAsset);
-                        return nullptr;
+                        // Failed to create an asset of the given type.
+                        pAsset = nullptr;
                     }
                 }
                 else
                 {
-                    // Failed to create an asset of the given type.
-                    return nullptr;
+                    // Could not find a supported allocator.
+                    pAsset = nullptr;
                 }
             }
             else
             {
-                // Could not find a supported allocator.
-                return nullptr;
-            }
-        }
-        else
-        {
-            auto pExistingAsset = iExistingAsset->value;
-            assert(pExistingAsset != nullptr);
-            {
-                pExistingAsset->IncrementReferenceCount();
-            }
+                auto pExistingAsset = iExistingAsset->value;
+                assert(pExistingAsset != nullptr);
+                {
+                    pExistingAsset->IncrementReferenceCount();
+                }
 
-            return iExistingAsset->value;
+                pAsset = iExistingAsset->value;
+            }
         }
+        easyutil_unlock_mutex(m_mutex);
+
+        return pAsset;
     }
 
     Asset* AssetLibrary::Load(Asset* pAsset)
     {
         if (pAsset != nullptr)
         {
-            pAsset->IncrementReferenceCount();
+            easyutil_lock_mutex(m_mutex);
+            {
+                pAsset->IncrementReferenceCount();
+            }
+            easyutil_unlock_mutex(m_mutex);
         }
 
         return pAsset;
@@ -182,28 +197,32 @@ namespace GT
     {
         if (pAsset != nullptr)
         {
-            if (pAsset->DecrementReferenceCount() == 0)
+            easyutil_lock_mutex(m_mutex);
             {
-                for (size_t iAsset = 0; iAsset < m_loadedAssets.count; ++iAsset)
+                if (pAsset->DecrementReferenceCount() == 0)
                 {
-                    if (m_loadedAssets.buffer[iAsset]->value == pAsset)
+                    for (size_t iAsset = 0; iAsset < m_loadedAssets.count; ++iAsset)
                     {
-                        // Remove from the cache.
-                        m_loadedAssets.RemoveByIndex(iAsset);
+                        if (m_loadedAssets.buffer[iAsset]->value == pAsset)
+                        {
+                            // Remove from the cache.
+                            m_loadedAssets.RemoveByIndex(iAsset);
 
                         
-                        // Delete the asset object.
-                        auto pAllocator = this->FindAllocatorByType(pAsset->GetType());
-                        assert(pAllocator != nullptr);
-                        {
-                            pAllocator->DeleteAsset(pAsset);
+                            // Delete the asset object.
+                            auto pAllocator = this->FindAllocatorByType(pAsset->GetType());
+                            assert(pAllocator != nullptr);
+                            {
+                                pAllocator->DeleteAsset(pAsset);
+                            }
+
+
+                            break;
                         }
-
-
-                        break;
                     }
                 }
             }
+            easyutil_unlock_mutex(m_mutex);
         }
     }
 
@@ -222,27 +241,31 @@ namespace GT
             }
         }
 
-        auto iAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
-        if (iAsset != nullptr)
+        easyutil_lock_mutex(m_mutex);
         {
-            auto pAsset = iAsset->value;
-            assert(pAsset != nullptr);
+            auto iAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
+            if (iAsset != nullptr)
             {
-                // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
-                char metadataAbsolutePath[EASYVFS_MAX_PATH];
-                easypath_copy_and_append_extension(metadataAbsolutePath, EASYVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
-                pAsset->LoadMetadata(metadataAbsolutePath, m_pVFS);
+                auto pAsset = iAsset->value;
+                assert(pAsset != nullptr);
+                {
+                    // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
+                    char metadataAbsolutePath[EASYVFS_MAX_PATH];
+                    easypath_copy_and_append_extension(metadataAbsolutePath, EASYVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
+                    pAsset->LoadMetadata(metadataAbsolutePath, m_pVFS);
 
-                // Load the asset after the metadata.
-                if (pAsset->Load(absolutePathOrIdentifier, m_pVFS))
-                {
-                }
-                else
-                {
-                    // Failed to reload asset.
+                    // Load the asset after the metadata.
+                    if (pAsset->Load(absolutePathOrIdentifier, m_pVFS))
+                    {
+                    }
+                    else
+                    {
+                        // Failed to reload asset.
+                    }
                 }
             }
         }
+        easyutil_unlock_mutex(m_mutex);
     }
 
 
