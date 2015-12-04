@@ -1,11 +1,11 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/GameWindowEventHandler.hpp>
-#include <GTGE/Game.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
-    GameWindowEventHandler::GameWindowEventHandler(Game &game)
+    GameWindowEventHandler::GameWindowEventHandler(Context &game)
         : game(game)
     {
     }

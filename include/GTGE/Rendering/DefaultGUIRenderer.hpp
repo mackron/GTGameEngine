@@ -20,6 +20,10 @@ namespace GT
         virtual ~DefaultGUIRenderer();
 
 
+        /// Initializes the renderer.
+        bool Startup();
+
+
         /// Renderer::Begin()
         void Begin(const GUIServer &guiServer);
 

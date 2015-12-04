@@ -2,7 +2,6 @@
 
 #include <GTGE/GameStateManager.hpp>
 #include <GTGE/Scene.hpp>
-#include <GTGE/Game.hpp>
 #include <GTGE/GTEngine.hpp>
 
 namespace GT
@@ -12,133 +11,133 @@ namespace GT
     }
 
 
-    void GameStateManager::OnLoadConfigs(Game &)
+    void GameStateManager::OnLoadConfigs(Context &)
     {
     }
 
-    bool GameStateManager::OnStartup(Game &)
-    {
-        return true;
-    }
-
-    void GameStateManager::OnShutdown(Game &)
-    {
-    }
-
-
-    void GameStateManager::OnUpdate(Game &, double)
-    {
-    }
-
-    void GameStateManager::OnStartFrame(Game &)
-    {
-    }
-
-    void GameStateManager::OnEndFrame(Game &)
-    {
-    }
-
-
-    void GameStateManager::OnSize(Game &, unsigned int, unsigned int)
-    {
-    }
-
-
-    void GameStateManager::OnMouseMove(Game &, int, int)
-    {
-    }
-
-    void GameStateManager::OnMouseWheel(Game &, int, int, int)
-    {
-    }
-
-    void GameStateManager::OnMouseButtonDown(Game &, int, int, int)
-    {
-    }
-
-    void GameStateManager::OnMouseButtonUp(Game &, int, int, int)
-    {
-    }
-
-    void GameStateManager::OnMouseButtonDoubleClick(Game &, int, int, int)
-    {
-    }
-
-
-    void GameStateManager::OnKeyPress(Game &, Key)
-    {
-    }
-
-    void GameStateManager::OnKeyRelease(Game &, Key)
-    {
-    }
-
-    void GameStateManager::OnKeyDown(Game &, Key)
-    {
-    }
-
-    void GameStateManager::OnKeyUp(Game &, Key)
-    {
-    }
-
-
-    void GameStateManager::OnReceiveFocus(Game &)
-    {
-    }
-
-    void GameStateManager::OnLoseFocus(Game &)
-    {
-    }
-
-
-    void GameStateManager::OnHandleEvent(Game &, GameEvent &)
-    {
-    }
-
-
-    void GameStateManager::OnPause(Game &)
-    {
-    }
-
-    void GameStateManager::OnResume(Game &)
-    {
-    }
-
-
-    bool GameStateManager::OnEditorOpening(Game &)
+    bool GameStateManager::OnStartup(Context &)
     {
         return true;
     }
 
-    bool GameStateManager::OnEditorClosing(Game &)
+    void GameStateManager::OnShutdown(Context &)
+    {
+    }
+
+
+    void GameStateManager::OnUpdate(Context &, double)
+    {
+    }
+
+    void GameStateManager::OnStartFrame(Context &)
+    {
+    }
+
+    void GameStateManager::OnEndFrame(Context &)
+    {
+    }
+
+
+    void GameStateManager::OnSize(Context &, unsigned int, unsigned int)
+    {
+    }
+
+
+    void GameStateManager::OnMouseMove(Context &, int, int)
+    {
+    }
+
+    void GameStateManager::OnMouseWheel(Context &, int, int, int)
+    {
+    }
+
+    void GameStateManager::OnMouseButtonDown(Context &, int, int, int)
+    {
+    }
+
+    void GameStateManager::OnMouseButtonUp(Context &, int, int, int)
+    {
+    }
+
+    void GameStateManager::OnMouseButtonDoubleClick(Context &, int, int, int)
+    {
+    }
+
+
+    void GameStateManager::OnKeyPress(Context &, Key)
+    {
+    }
+
+    void GameStateManager::OnKeyRelease(Context &, Key)
+    {
+    }
+
+    void GameStateManager::OnKeyDown(Context &, Key)
+    {
+    }
+
+    void GameStateManager::OnKeyUp(Context &, Key)
+    {
+    }
+
+
+    void GameStateManager::OnReceiveFocus(Context &)
+    {
+    }
+
+    void GameStateManager::OnLoseFocus(Context &)
+    {
+    }
+
+
+    void GameStateManager::OnHandleEvent(Context &, GameEvent &)
+    {
+    }
+
+
+    void GameStateManager::OnPause(Context &)
+    {
+    }
+
+    void GameStateManager::OnResume(Context &)
+    {
+    }
+
+
+    bool GameStateManager::OnEditorOpening(Context &)
     {
         return true;
     }
 
-    void GameStateManager::OnEditorOpen(Game &)
+    bool GameStateManager::OnEditorClosing(Context &)
+    {
+        return true;
+    }
+
+    void GameStateManager::OnEditorOpen(Context &)
     {
     }
 
-    void GameStateManager::OnEditorClose(Game &)
+    void GameStateManager::OnEditorClose(Context &)
     {
     }
 
 
 
-    bool GameStateManager::LoadScene(Game &, const char*)
+    bool GameStateManager::LoadScene(Context &, const char*)
     {
         return false;
     }
 
 
 
-    bool GameStateManager::Serialize(Game &, Serializer &)
+    bool GameStateManager::Serialize(Context &, Serializer &)
     {
         return false;
     }
 
     
-    bool GameStateManager::Deserialize(Game &, Deserializer &)
+    bool GameStateManager::Deserialize(Context &, Deserializer &)
     {
         return false;
     }
@@ -209,7 +208,7 @@ namespace GT
 
 
 
-    bool GenericGameStateManager::Serialize(Game &game, Serializer &serializer)
+    bool GenericGameStateManager::Serialize(Context &context, Serializer &serializer)
     {
         // Three chunks:
         //   1 - Header data
@@ -221,7 +220,7 @@ namespace GT
         // 1 - Header data.
         {
             BasicSerializer headerSerializer;
-            uint32_t version = this->SerializeHeaderData(game, headerSerializer);
+            uint32_t version = this->SerializeHeaderData(context, headerSerializer);
 
             header.id          = Serialization::ChunkID_GameStateHeader;
             header.sizeInBytes = headerSerializer.GetBufferSizeInBytes();
@@ -262,7 +261,7 @@ namespace GT
         // 3 - Global data.
         {
             BasicSerializer globalSerializer;
-            uint32_t version = this->SerializeGlobalData(game, globalSerializer);
+            uint32_t version = this->SerializeGlobalData(context, globalSerializer);
 
             header.id          = Serialization::ChunkID_GameStateGlobal;
             header.sizeInBytes = globalSerializer.GetBufferSizeInBytes();
@@ -278,19 +277,19 @@ namespace GT
         return true;
     }
 
-    uint32_t GenericGameStateManager::SerializeHeaderData(Game &, Serializer &)
+    uint32_t GenericGameStateManager::SerializeHeaderData(Context &, Serializer &)
     {
         return 0;
     }
 
-    uint32_t GenericGameStateManager::SerializeGlobalData(Game &, Serializer &)
+    uint32_t GenericGameStateManager::SerializeGlobalData(Context &, Serializer &)
     {
         return 0;
     }
 
 
 
-    bool GenericGameStateManager::Deserialize(Game &game, Deserializer &deserializer)
+    bool GenericGameStateManager::Deserialize(Context &context, Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
 
@@ -305,7 +304,7 @@ namespace GT
                 {
                     if (header.id == Serialization::ChunkID_GameStateHeader)
                     {
-                        this->DeserializeHeaderData(game, deserializer, header.version);
+                        this->DeserializeHeaderData(context, deserializer, header.version);
                     }
                 }
                 deserializer.EndChunk();
@@ -353,7 +352,7 @@ namespace GT
                 {
                     if (header.id == Serialization::ChunkID_GameStateGlobal)
                     {
-                        this->DeserializeGlobalData(game, deserializer, header.version);
+                        this->DeserializeGlobalData(context, deserializer, header.version);
                     }
                 }
                 deserializer.EndChunk();
@@ -364,12 +363,12 @@ namespace GT
         return true;
     }
 
-    bool GenericGameStateManager::DeserializeHeaderData(Game &, Deserializer &, uint32_t)
+    bool GenericGameStateManager::DeserializeHeaderData(Context &, Deserializer &, uint32_t)
     {
         return true;
     }
 
-    bool GenericGameStateManager::DeserializeGlobalData(Game &, Deserializer &, uint32_t)
+    bool GenericGameStateManager::DeserializeGlobalData(Context &, Deserializer &, uint32_t)
     {
         return true;
     }
@@ -398,7 +397,7 @@ namespace GT
     }
 
 
-    bool DefaultGameStateManager::OnStartup(Game &game)
+    bool DefaultGameStateManager::OnStartup(Context &game)
     {
         auto &script = game.GetScript();
         script.ExecuteFile(g_Context->GetVFS(), "game-config.lua");
@@ -462,9 +461,9 @@ namespace GT
     }
 
 
-    void DefaultGameStateManager::OnShutdown(Game &game)
+    void DefaultGameStateManager::OnShutdown(Context &context)
     {
-        (void)game;
+        (void)context;
 
         delete m_currentScene;
         m_currentScene = nullptr;
@@ -472,9 +471,9 @@ namespace GT
         m_nextScene = nullptr;
     }
 
-    void DefaultGameStateManager::OnUpdate(Game &game, double deltaTimeInSeconds)
+    void DefaultGameStateManager::OnUpdate(Context &context, double deltaTimeInSeconds)
     {
-        if (!game.IsEditorOpen())      // <-- Don't bother updating the scene if the editor is open.
+        if (!context.IsEditorOpen())      // <-- Don't bother updating the scene if the editor is open.
         {
             if (m_currentScene != nullptr)
             {
@@ -493,7 +492,7 @@ namespace GT
         //CALLGRIND_STOP_INSTRUMENTATION;
     }
 
-    void DefaultGameStateManager::OnStartFrame(Game &game)
+    void DefaultGameStateManager::OnStartFrame(Context &context)
     {
         // If a scene needs to be switched, it needs to be done so now.
         if (m_nextScene != nullptr)
@@ -505,8 +504,8 @@ namespace GT
             // The default viewport needs to have it's size updated. We're going to simulate an OnSize event to handle this.
             unsigned int viewportWidth;
             unsigned int viewportHeight;
-            game.GetWindow()->GetSize(viewportWidth, viewportHeight);
-            this->OnSize(game, viewportWidth, viewportHeight);
+            context.GetWindow()->GetSize(viewportWidth, viewportHeight);
+            this->OnSize(context, viewportWidth, viewportHeight);
 
             // In order for scripting to work we need to register it.
             m_currentScene->PostSceneNodeScriptEvent_OnStartup();
@@ -518,9 +517,9 @@ namespace GT
     }
 
 
-    void DefaultGameStateManager::OnSize(Game &game, unsigned int newWidth, unsigned int newHeight)
+    void DefaultGameStateManager::OnSize(Context &context, unsigned int newWidth, unsigned int newHeight)
     {
-        (void)game;
+        (void)context;
 
         if (m_currentScene != nullptr)
         {
@@ -548,9 +547,9 @@ namespace GT
         }
     }
 
-    bool DefaultGameStateManager::OnEditorClosing(Game &game)
+    bool DefaultGameStateManager::OnEditorClosing(Context &context)
     {
-        (void)game;
+        (void)context;
 
         return m_currentScene != nullptr;
     }
@@ -558,16 +557,16 @@ namespace GT
 
 
 
-    bool DefaultGameStateManager::LoadScene(Game &game, const char* sceneRelativePath)
+    bool DefaultGameStateManager::LoadScene(Context &context, const char* sceneRelativePath)
     {
         // Here we'll load the scene, but we don't actually do the switch until the next frame. The reason for this is that the current scene may be in
         // the middle of updating, so we don't want any mixups there. The actual switch will be done in OnStartFrame(), which is a synchronized call.
 
-        auto newScene = new Scene(game);
+        auto newScene = new Scene(context);
 
         // The scene should be registered to the script immediately. No real reason it shouldn't be. Later on, scenes will take an Context object in their
         // constructors which will then allow us to register it with the script in the constructor.
-        newScene->RegisterToScript(game.GetScript());
+        newScene->RegisterToScript(context.GetScript());
         
         // Only after registering the scene with the script should we do the load.
         if (newScene->LoadFromFile(sceneRelativePath))
@@ -614,7 +613,7 @@ namespace GT
     ///////////////////////////////////////
     // Serialization
 
-    bool DefaultGameStateManager::Serialize(Game &game, Serializer &serializer)
+    bool DefaultGameStateManager::Serialize(Context &context, Serializer &serializer)
     {
         // We need to update the current scene state so that it can be restored properly later.
         if (m_currentScene != nullptr)
@@ -623,12 +622,12 @@ namespace GT
         }
 
         // Now we just call the base implementation of Serialize() like normal.
-        return GenericGameStateManager::Serialize(game, serializer);
+        return GenericGameStateManager::Serialize(context, serializer);
     }
 
-    uint32_t DefaultGameStateManager::SerializeHeaderData(Game &game, Serializer &serializer)
+    uint32_t DefaultGameStateManager::SerializeHeaderData(Context &context, Serializer &serializer)
     {
-        (void)game;
+        (void)context;
 
 
         // The name of the current scene - we're going to load this when we deserialize.
@@ -637,9 +636,9 @@ namespace GT
         return 1;
     }
 
-    uint32_t DefaultGameStateManager::SerializeGlobalData(Game &game, Serializer &serializer)
+    uint32_t DefaultGameStateManager::SerializeGlobalData(Context &context, Serializer &serializer)
     {
-        (void)game;
+        (void)context;
 
 
         if (m_currentScene != nullptr)
@@ -655,7 +654,7 @@ namespace GT
     ///////////////////////////////////////
     // Deserialization
 
-    bool DefaultGameStateManager::Deserialize(Game &game, Deserializer &deserializer)
+    bool DefaultGameStateManager::Deserialize(Context &context, Deserializer &deserializer)
     {
         bool result;
 
@@ -663,7 +662,7 @@ namespace GT
         m_isDeserializing = true;
         {
             // Call the base implementation of Deserialize(). This will call DeserializeHeaderData() and DeserializeGlobalData().
-            result = GenericGameStateManager::Deserialize(game, deserializer);
+            result = GenericGameStateManager::Deserialize(context, deserializer);
         }
         m_isDeserializing = wasDeserializing;
 
@@ -671,9 +670,9 @@ namespace GT
         return result;
     }
 
-    bool DefaultGameStateManager::DeserializeHeaderData(Game &game, Deserializer &deserializer, uint32_t version)
+    bool DefaultGameStateManager::DeserializeHeaderData(Context &context, Deserializer &deserializer, uint32_t version)
     {
-        (void)game;
+        (void)context;
 
         if (version == 1)
         {
@@ -685,15 +684,15 @@ namespace GT
         return false;
     }
 
-    bool DefaultGameStateManager::DeserializeGlobalData(Game &game, Deserializer &deserializer, uint32_t version)
+    bool DefaultGameStateManager::DeserializeGlobalData(Context &context, Deserializer &deserializer, uint32_t version)
     {
-        (void)game;
+        (void)context;
         (void)deserializer;
 
         if (version == 1)
         {
             // In order to deserialize the global game data, there needs to be a scene ready to go. We do this by loading the scene here.
-            if (this->LoadScene(game, m_nextSceneRelativePath.c_str()))
+            if (this->LoadScene(context, m_nextSceneRelativePath.c_str()))
             {
                 assert(m_nextScene != nullptr);
                 {

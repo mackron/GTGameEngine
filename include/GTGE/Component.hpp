@@ -27,7 +27,7 @@
 
 namespace GT
 {
-    class Game;
+    class Context;
     class SceneNode;
     class Serializer;
     class Deserializer;
@@ -62,7 +62,7 @@ namespace GT
 
 
         /// Retrieves a pointer to the game that owns this component.
-        Game* GetGame();
+        Context* GetContext();
 
 
         /// Serializes the component.
@@ -136,7 +136,7 @@ namespace GT
     ///     The component will be created with 'new'. Delete it with 'delete'
     ///     @par
     ///     If 'name' does not correspond to a component defined by the engine, this will call Game::CreateCustomComponent().
-    Component* CreateComponentByName(Game* pGame, const char* componentName, SceneNode &hostSceneNode);
+    Component* CreateComponentByName(Context* pContext, const char* componentName, SceneNode &hostSceneNode);
 }
 
 #endif

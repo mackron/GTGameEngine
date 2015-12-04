@@ -5,7 +5,7 @@
 
 namespace GT
 {
-    bool LoadGameLibrary(GT::Script &script, Game &game)
+    bool LoadGameLibrary(GT::Script &script, Context &game)
     {
         bool successful = true;
 
@@ -184,10 +184,10 @@ namespace GT
 
     namespace GameFFI
     {
-        Game & GetGame(GT::Script &script)
+        Context & GetGame(GT::Script &script)
         {
             script.GetGlobal("__GamePtr");
-            auto game = static_cast<Game*>(script.ToPointer(-1));
+            auto game = static_cast<Context*>(script.ToPointer(-1));
             script.Pop(1);
 
             assert(game != nullptr);

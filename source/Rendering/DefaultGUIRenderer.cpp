@@ -9,12 +9,26 @@
 namespace GT
 {
     DefaultGUIRenderer::DefaultGUIRenderer()
-        : shader(ShaderLibrary::GetGUIShader()), shaderA8(ShaderLibrary::GetGUIShaderA8()),
+        : shader(nullptr), shaderA8(nullptr),
           defaultTexture(nullptr),
           viewportWidth(0), viewportHeight(0), projection(0),
           currentOffsetX(0.0f), currentOffsetY(0.0f), currentShader(nullptr), currentTexture(nullptr), isBlendingEnabled(false),
           uniformsRequirePush(true)
     {
+        
+    }
+
+    DefaultGUIRenderer::~DefaultGUIRenderer()
+    {
+        GT::Renderer::DeleteTexture2D(this->defaultTexture);
+    }
+
+
+    bool DefaultGUIRenderer::Startup()
+    {
+        this->shader = ShaderLibrary::GetGUIShader();
+        this->shaderA8 = ShaderLibrary::GetGUIShaderA8();
+
         assert(shader   != nullptr);
         assert(shaderA8 != nullptr);
         
@@ -27,11 +41,8 @@ namespace GT
 
         GT::Renderer::PushTexture2DData(this->defaultTexture);
         GT::Renderer::SetTexture2DFilter(this->defaultTexture, TextureFilter_Nearest, TextureFilter_Nearest);
-    }
 
-    DefaultGUIRenderer::~DefaultGUIRenderer()
-    {
-        GT::Renderer::DeleteTexture2D(this->defaultTexture);
+        return true;
     }
 
 

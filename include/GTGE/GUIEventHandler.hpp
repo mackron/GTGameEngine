@@ -7,13 +7,13 @@
 
 namespace GT
 {
-    class Game;
+    class Context;
 
     class GUIEventHandler : public GUIServerEventHandler
     {
     public:
 
-        GUIEventHandler(Game &game);
+        GUIEventHandler(Context &context);
         ~GUIEventHandler();
 
         void OnError(const char *msg);
@@ -24,7 +24,7 @@ namespace GT
     public:
 
         /// A reference to the Game object that owns the GUI that this event handler is attached to.
-        Game &game;
+        Context &context;
 
 
     private:    // No copying.

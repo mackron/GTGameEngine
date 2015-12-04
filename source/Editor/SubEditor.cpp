@@ -2,7 +2,7 @@
 
 #include <GTGE/Editor/SubEditor.hpp>
 #include <GTGE/Editor.hpp>
-#include <GTGE/Game.hpp>
+#include <GTGE/Context.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)
@@ -214,28 +214,28 @@ namespace GT
 
     GameScript & SubEditor::GetScript()
     {
-        return m_ownerEditor.GetGame().GetScript();
+        return m_ownerEditor.GetContext().GetScript();
     }
 
     const GameScript & SubEditor::GetScript() const
     {
-        return m_ownerEditor.GetGame().GetScript();
+        return m_ownerEditor.GetContext().GetScript();
     }
 
     GUIServer & SubEditor::GetGUI()
     {
-        return m_ownerEditor.GetGame().GetGUI();
+        return m_ownerEditor.GetContext().GetGUI();
     }
 
     
-    Game & SubEditor::GetGame()
+    Context & SubEditor::GetContext()
     {
-        return m_ownerEditor.GetGame();
+        return m_ownerEditor.GetContext();
     }
     
-    const Game & SubEditor::GetGame() const
+    const Context & SubEditor::GetContext() const
     {
-        return m_ownerEditor.GetGame();
+        return m_ownerEditor.GetContext();
     }
 
 

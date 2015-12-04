@@ -21,20 +21,20 @@ namespace GT
     static GT::Script* WorkingScript = nullptr;
 
     /// A pointer to the main game object. This is passed into the Startup() routine.
-    static Game* g_pGame = nullptr;
+    static Context* g_pContext = nullptr;
 
 
 
     /////////////////////////////////////////////////
     // Startup/Shutdown
 
-    bool ScriptLibrary::Startup(Game* pGame)
+    bool ScriptLibrary::Startup(Context* pContext)
     {
-        if (pGame == nullptr) {
+        if (pContext == nullptr) {
             return false;
         }
 
-        g_pGame = pGame;
+        g_pContext = pContext;
 
         WorkingScript = new GT::Script;
         if (!GT::LoadExtendedMathLibrary(*WorkingScript))
@@ -95,7 +95,7 @@ namespace GT
                     auto newDefinition = new ScriptDefinition(absolutePath, scriptString);
                     LoadedDefinitions.Add(absolutePath, ScriptDefinitionReference(newDefinition, 1));
 
-                    GT::LoadScriptDefinition(g_pGame->GetScript(), absolutePath, scriptString);
+                    GT::LoadScriptDefinition(g_pContext->GetScript(), absolutePath, scriptString);
 
                     easyvfs_free(scriptString);
                     return newDefinition;
@@ -143,7 +143,7 @@ namespace GT
 
                         if (value.second == 0)
                         {
-                            GT::UnloadScriptDefinition(g_pGame->GetScript(), scriptDefinitionToUnacquire->GetAbsolutePath());
+                            GT::UnloadScriptDefinition(g_pContext->GetScript(), scriptDefinitionToUnacquire->GetAbsolutePath());
 
                             delete value.first;
                             LoadedDefinitions.RemoveByIndex(i);
@@ -188,7 +188,7 @@ namespace GT
                         definition->~ScriptDefinition();
                         new (definition) ScriptDefinition(absolutePath, scriptString);
 
-                        GT::LoadScriptDefinition(g_pGame->GetScript(), definition->GetAbsolutePath(), scriptString);
+                        GT::LoadScriptDefinition(g_pContext->GetScript(), definition->GetAbsolutePath(), scriptString);
 
                         easyvfs_free(scriptString);
                         return true;

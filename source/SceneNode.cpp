@@ -914,7 +914,7 @@ namespace GT
             }
             else
             {
-                component = CreateComponentByName(this->GetGame(), componentName, *this);
+                component = CreateComponentByName(this->GetContext(), componentName, *this);
                 this->components.Add(componentName, component);
             }
 
@@ -1036,10 +1036,10 @@ namespace GT
     }
     
 
-    Game* SceneNode::GetGame()
+    Context* SceneNode::GetContext()
     {
         if (this->scene != nullptr) {
-            return &this->scene->GetGame();
+            return &this->scene->GetContext();
         }
 
         return nullptr;

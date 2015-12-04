@@ -52,15 +52,7 @@ namespace GT
           elementsNeedingOnShow(), elementsNeedingOnHide(),
           autoElementCounter(0)
     {
-        this->eventLock = easyutil_create_mutex();
-
-
-        // Load the defaults after setting the event handlers.
-        this->LoadDefaults();
-
-        // TODO: Consider whether or not this should be called manually by the application. Perhaps they won't want the standard library?
-        // Here we load the standard library.
-        this->LoadStandardLibrary();
+        
     }
 
     GUIServer::~GUIServer()
@@ -100,6 +92,22 @@ namespace GT
 
 
         easyutil_delete_mutex(this->eventLock);
+    }
+
+    bool GUIServer::Startup()
+    {
+        this->eventLock = easyutil_create_mutex();
+
+
+        // Load the defaults after setting the event handlers.
+        this->LoadDefaults();
+
+        // TODO: Consider whether or not this should be called manually by the application. Perhaps they won't want the standard library?
+        // Here we load the standard library.
+        this->LoadStandardLibrary();
+
+
+        return true;
     }
 
     bool GUIServer::IsInitialised() const

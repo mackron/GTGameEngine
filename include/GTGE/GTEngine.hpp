@@ -26,7 +26,6 @@ THE SOFTWARE.
 #ifndef GTGE
 #define GTGE
 
-#include "Game.hpp"
 #include "Context.hpp"
 
 #define GTENGINE_VERSION_STRING "0.0.5"
@@ -40,10 +39,7 @@ namespace GT
     /// Starts up the engine.
     ///
     /// @return True if the engine is initialised successfully; false otherwise.
-    bool _PreStartup();
-
-    /// Temporary function while working on resolving issue #74.
-    bool _PreStartup2(Game* pGame);
+    bool _PreStartup(Context* pContext);
 
 
     /// Starts up the engine, returning an instance of the given game class (T).
@@ -59,6 +55,19 @@ namespace GT
     template <typename T>
     T* Startup(int argc, char** argv, GameStateManager &gameStateManager)
     {
+        g_Context = new T(argc, argv, gameStateManager);
+        if (_PreStartup(g_Context))
+        {
+            if (!g_Context->Startup())
+            {
+                delete g_Context;
+                g_Context = nullptr;
+            }
+        }
+
+        return g_Context;
+
+#if 0
         Game* pGame = nullptr;
         if (g_Context == nullptr)
         {
@@ -78,12 +87,13 @@ namespace GT
         }
 
         return static_cast<T*>(pGame);
+#endif
     }
 
     /// Shuts down the engine, deleting the given game object returned by Startup().
     ///
     /// @param game [in] The game object returned by Startup().
-    void Shutdown(Game* game);
+    void Shutdown(Context* context);
 }
 
 #endif

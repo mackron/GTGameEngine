@@ -945,8 +945,8 @@ namespace GT
         struct ViewportEventHandler : public Editor3DViewportEventHandler
         {
             /// Constructor.
-            ViewportEventHandler(SceneEditor &ownerIn, Game &game, SceneViewport &viewport)
-                : Editor3DViewportEventHandler(game, viewport), owner(ownerIn)
+            ViewportEventHandler(SceneEditor &ownerIn, Context &context, SceneViewport &viewport)
+                : Editor3DViewportEventHandler(context, viewport), owner(ownerIn)
             {
             }
 

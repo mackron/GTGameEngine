@@ -83,6 +83,10 @@ namespace GT
         *   \brief  Destructor.
         */
         ~GUIServer();
+
+
+        /// Initializes the GUI server.
+        bool Startup();
     
         /**
         *   \brief  Determines if the server is initialised.

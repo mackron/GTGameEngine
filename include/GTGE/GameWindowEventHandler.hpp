@@ -7,7 +7,7 @@
 
 namespace GT
 {
-    class Game;
+    class Context;
 
     class GameWindowEventHandler : public WindowEventHandler
     {
@@ -47,13 +47,13 @@ namespace GT
     public:
 
         /// Constructor.
-        GameWindowEventHandler(Game &game);
+        GameWindowEventHandler(Context &game);
 
 
     private:
 
         /// The game whose window this event handler is attached to.
-        Game &game;
+        Context &game;
 
 
     private:    // No copying.

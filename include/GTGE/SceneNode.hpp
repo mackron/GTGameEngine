@@ -621,7 +621,7 @@ namespace GT
 
 
         /// Retrieves a pointer to the game that owns this scene node.
-        Game* GetGame();
+        Context* GetContext();
 
 
 

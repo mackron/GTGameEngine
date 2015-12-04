@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/GTEngine.hpp>
-#include <GTGE/Game.hpp>
 #include <GTGE/Rendering.hpp>
 #include <GTGE/ShaderLibrary.hpp>
 #include <GTGE/Texture2DLibrary.hpp>
@@ -14,16 +13,14 @@
 #include <GTGE/MessageDispatcher.hpp>
 #include <GTGE/Core/WindowManagement.hpp>
 
-// Basic globals.
+
 namespace GT
 {
     /// The global engine context. TODO: Remove this and have applications create this themselves. This global object is only used during the transition phase.
     GT::Context* g_Context = nullptr;
-}
 
-namespace GT
-{
-    bool _PreStartup()
+
+    bool _PreStartup(Context* pContext)
     {
         // Before we can do any windowing operations we will need to initialise the window management module of GTLib.
         StartupWindowManager();
@@ -67,23 +64,19 @@ namespace GT
         g_Context->Logf("Initializing Particle System Library...");
         ParticleSystemLibrary::Startup();
 
+        g_Context->Logf("Initializing Script Library...");
+        ScriptLibrary::Startup(pContext);
+
 
         return true;
     }
 
-    bool _PreStartup2(Game* pGame)
-    {
-        g_Context->Logf("Initializing Script Library...");
-        return ScriptLibrary::Startup(pGame);
-    }
 
-
-    void Shutdown(Game* game)
+    void Shutdown(Context* pContext)
     {
-        if (game != nullptr)
+        if (pContext != nullptr)
         {
-            game->Shutdown();
-            delete game;
+            pContext->Shutdown();
         }
 
 
@@ -105,7 +98,7 @@ namespace GT
         ShutdownWindowManager();
         
 
-        /// The engine context.
+        /// Delete the engine context for real.
         delete g_Context;
         g_Context = nullptr;
     }

@@ -2,7 +2,6 @@
 
 #include <GTGE/Editor/TextEditor/TextEditor.hpp>
 #include <GTGE/Editor.hpp>
-#include <GTGE/Game.hpp>
 #include <GTGE/Scripting.hpp>
 #include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
@@ -19,7 +18,7 @@ namespace GT
           mainElement(nullptr), textArea(nullptr), panelElement(nullptr), errorListElement(nullptr),
           textAreaEventHandler(new TextAreaEventHandler(this)),
           compilationErrorHandler(*this),
-          proxyGame(nullptr),
+          proxyContext(nullptr),
           compilationScript(nullptr),
           isScriptFile(false)
     {
@@ -99,11 +98,11 @@ namespace GT
             if (this->IsScriptFile())
             {
                 GameStateManager nullGameStateManager;
-                this->proxyGame = new Game(nullGameStateManager);
-                if (this->proxyGame->GetScript().Startup())
+                this->proxyContext = new Context(0, nullptr, nullGameStateManager);     // <-- TODO: This needs to be optimized. It will do things like initialize the graphics and audio sub-systems which we don't really want. Use the notion of a sub-context.
+                if (this->proxyContext->GetScript().Startup())
                 {
                     // We need to setup a few things with the scripting.
-                    this->compilationScript = &this->proxyGame->GetScript();
+                    this->compilationScript = &this->proxyContext->GetScript();
                     this->compilationScript->AttachErrorHandler(this->compilationErrorHandler);
 
                     this->CompileAndUpdateErrorOutput();
@@ -120,7 +119,7 @@ namespace GT
         this->GetGUI().DeleteElement(this->mainElement);
         delete this->textAreaEventHandler;
 
-        delete this->proxyGame;
+        delete this->proxyContext;
     }
 
 
@@ -133,7 +132,7 @@ namespace GT
     {
         if (this->IsScriptFile())
         {
-            assert(this->proxyGame         != nullptr);
+            assert(this->proxyContext      != nullptr);
             assert(this->compilationScript != nullptr);
 
 

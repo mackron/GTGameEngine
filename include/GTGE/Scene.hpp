@@ -200,7 +200,7 @@ namespace GT
 
 namespace GT
 {
-    class Game;
+    class Context;
 
     // TODO: Document the state stack.
 
@@ -230,14 +230,14 @@ namespace GT
         ///
         /// @remarks
         ///     This constructor will use default managers.
-        Scene(Game &game);
+        Scene(Context &context);
 
         /// Constructor.
         ///
         /// @param updateManager  [in] A reference to the update manager that will manage the updating of scene objects.
         /// @param physicsManager [in] A reference to the physics manager that will manage the physics of the scene.
         /// @param cullingManager [in] A reference to the culling manager that will manage the culling of objects in the scene.
-        Scene(Game &game, SceneUpdateManager &updateManager, ScenePhysicsManager &physicsManager, SceneCullingManager &cullingManager);
+        Scene(Context &context, SceneUpdateManager &updateManager, ScenePhysicsManager &physicsManager, SceneCullingManager &cullingManager);
 
         /// Destructor.
         ///
@@ -247,7 +247,7 @@ namespace GT
 
 
         /// Retrieves a reference to the game object that owns this scene.
-        Game & GetGame() { return m_game; }
+        Context & GetContext() { return m_context; }
 
 
         /// Loads a file into the scene.
@@ -1010,7 +1010,7 @@ namespace GT
     private:
 
         /// A reference to the game object that owns this scene.
-        Game &m_game;
+        Context &m_context;
 
 
         /// A pointer to the scene's renderer. This will never actually be null, but it can be changed dynamically. Thus, it needs to be a pointer instead

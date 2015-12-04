@@ -232,8 +232,8 @@ namespace GT
     static const bool DoNotPostEvents = false;              // <-- For Scene::OnSceneNodeComponentAdded() and Scene::OnSceneNodeComponentRemoved().
 
 
-    Scene::Scene(Game &game)
-        : m_game(game),
+    Scene::Scene(Context &context)
+        : m_context(context),
           renderer(new DefaultSceneRenderer),
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           prefabLinker(new DefaultPrefabLinker(*this)),
@@ -252,8 +252,8 @@ namespace GT
         this->AddViewport(this->defaultViewport);
     }
 
-    Scene::Scene(Game &game, SceneUpdateManager &updateManagerIn, ScenePhysicsManager &physicsManagerIn, SceneCullingManager &cullingManagerIn)
-        : m_game(game),
+    Scene::Scene(Context &context, SceneUpdateManager &updateManagerIn, ScenePhysicsManager &physicsManagerIn, SceneCullingManager &cullingManagerIn)
+        : m_context(context),
           renderer(new DefaultSceneRenderer),
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           prefabLinker(new DefaultPrefabLinker(*this)),

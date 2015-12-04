@@ -86,8 +86,8 @@ namespace GT
         
         
         /// A helper method for retrieving a reference to the game.
-              Game & GetGame();
-        const Game & GetGame() const;
+              Context & GetContext();
+        const Context & GetContext() const;
 
 
 

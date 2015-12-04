@@ -2,7 +2,6 @@
 
 #include <GTGE/Editor/ParticleEditor/ParticleEditor.hpp>
 #include <GTGE/Editor.hpp>
-#include <GTGE/Game.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GTEngine.hpp>
 
@@ -16,8 +15,8 @@ namespace GT
     ParticleEditor::ParticleEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           particleSystemDefinition(), particleSystem(particleSystemDefinition),
-          scene(ownerEditor.GetGame()), camera(), particleNode(),
-          mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
+          scene(ownerEditor.GetContext()), camera(), particleNode(),
+          mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(*this, ownerEditor.GetContext(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           grid(0.25f, 8, 32), axisArrows(),
           isSaving(false), isReloading(false),

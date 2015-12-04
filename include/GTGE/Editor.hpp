@@ -20,7 +20,7 @@ namespace GT
 
 namespace GT
 {
-    class Game;
+    class Context;
 
     /// Class representing the editor.
     ///
@@ -30,7 +30,7 @@ namespace GT
     public:
 
         /// Constructor.
-        Editor(Game &game);
+        Editor(Context &context);
 
         /// Destructor.
         ~Editor();
@@ -44,8 +44,8 @@ namespace GT
 
 
         /// Retrieves a reference to the game object that owns this editor.
-              Game & GetGame()       { return this->game; }
-        const Game & GetGame() const { return this->game; }
+              Context & GetContext()       { return this->context; }
+        const Context & GetContext() const { return this->context; }
 
 
         /// Opens the editor.
@@ -300,7 +300,7 @@ namespace GT
     private:
 
         /// The game that owns this editor object.
-        Game &game;
+        Context &context;
 
         /// A pointer to the file system watcher.
         easyfsw_context* m_pFSW;
@@ -357,7 +357,7 @@ namespace GT
         /// The scripting FFI.
         struct FFI
         {
-            static Game   & GetGame(GT::Script &script);
+            static Context & GetContext(GT::Script &script);
             static Editor & GetEditor(GT::Script &script);
 
             static void PushElement(GT::Script &script, GUIElement* element);

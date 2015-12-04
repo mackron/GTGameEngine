@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/Editor.hpp>
-#include <GTGE/Game.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GTEngine.hpp>
 #include <GTGE/ParticleSystemLibrary.hpp>
@@ -21,8 +20,8 @@ namespace GT
     static const char* PackagingToolPath = "@PackagingTool";
 
 
-    Editor::Editor(Game &game)
-        : game(game),
+    Editor::Editor(Context &context)
+        : context(context),
           m_pFSW(nullptr),// m_FSWThread(nullptr),
           openedFiles(), currentlyShownEditor(nullptr),
           GUI(),
@@ -158,7 +157,7 @@ namespace GT
     {
         if (!this->isOpen && this->GUI.EditorMain != nullptr)
         {
-            this->game.ShowCursor();
+            this->context.ShowCursor();
             this->GUI.EditorMain->Show();
 
             // We start up the file system watcher before doing the initial directory iteration.
@@ -523,7 +522,7 @@ namespace GT
 
                 // Now what we do is activate the tab. We do NOT want to post an OnTabActivated event from this, because otherwise
                 // we'll end up getting stuck recursively. To prevent this, we simple pass 'true' to the second argument of ActivateTab().
-                auto &script = this->GetGame().GetScript();
+                auto &script = this->GetContext().GetScript();
 
                 script.Get("GTGUI.Server.GetElementByID('Editor_TabBar')");
                 assert(script.IsTable(-1));
@@ -924,7 +923,7 @@ namespace GT
 
     void Editor::OnFileInsert(const char* absolutePath)
     {
-        auto &script = this->game.GetScript();
+        auto &script = this->context.GetScript();
 
         script.GetGlobal("Editor");
         assert(script.IsTable(-1));
@@ -960,7 +959,7 @@ namespace GT
 
     void Editor::OnFileRemove(const char* absolutePath)
     {
-        auto &script = this->game.GetScript();
+        auto &script = this->context.GetScript();
 
         script.GetGlobal("Editor");
         assert(script.IsTable(-1));
@@ -995,7 +994,7 @@ namespace GT
 
     void Editor::OnFileRename(const char* absolutePathOld, const char* absolutePathNew)
     {
-        auto &script = this->game.GetScript();
+        auto &script = this->context.GetScript();
 
         script.GetGlobal("Editor");
         assert(script.IsTable(-1));
@@ -1060,16 +1059,16 @@ namespace GT
                 ScriptLibrary::Reload(absolutePath);
 
                 // If we have a script file we will reload it if applicable.
-                if (this->GetGame().GetScript().HasFileBeenLoaded(absolutePath))
+                if (this->GetContext().GetScript().HasFileBeenLoaded(absolutePath))
                 {
-                    this->GetGame().GetScript().ExecuteFile(g_Context->GetVFS(), absolutePath);
+                    this->GetContext().GetScript().ExecuteFile(g_Context->GetVFS(), absolutePath);
                 }
             }
         }
 
 
 
-        auto &script = this->game.GetScript();
+        auto &script = this->context.GetScript();
 
         script.GetGlobal("Editor");
         assert(script.IsTable(-1));
@@ -1110,7 +1109,7 @@ namespace GT
     void Editor::ShowSaveFileDialog(const char* absolutePath)
     {
         // We let the scripting environment handle all of this.
-        auto &script = this->game.GetScript();
+        auto &script = this->context.GetScript();
 
         script.GetGlobal("Editor");
         assert(script.IsTable(-1));
@@ -1128,7 +1127,7 @@ namespace GT
 
     void Editor::StartupScripting()
     {
-        auto &script = this->game.GetScript();
+        auto &script = this->context.GetScript();
 
         script.Execute
         (
@@ -1269,10 +1268,10 @@ namespace GT
 
     /////////////////////////////////////////////
     // FFI.
-    Game & Editor::FFI::GetGame(GT::Script &script)
+    Context & Editor::FFI::GetContext(GT::Script &script)
     {
         script.GetGlobal("__GamePtr");
-        auto game = static_cast<Game*>(script.ToPointer(-1));
+        auto game = static_cast<Context*>(script.ToPointer(-1));
         script.Pop(1);
 
         assert(game != nullptr);
@@ -1281,7 +1280,7 @@ namespace GT
 
     Editor & Editor::FFI::GetEditor(GT::Script &script)
     {
-        return GetGame(script).GetEditor();
+        return GetContext(script).GetEditor();
     }
 
 
@@ -1319,13 +1318,13 @@ namespace GT
 
     int Editor::FFI::Open(GT::Script &script)
     {
-        GetGame(script).OpenEditor();
+        GetContext(script).OpenEditor();
         return 0;
     }
 
     int Editor::FFI::Close(GT::Script &script)
     {
-        GetGame(script).CloseEditor();
+        GetContext(script).CloseEditor();
         return 0;
     }
 

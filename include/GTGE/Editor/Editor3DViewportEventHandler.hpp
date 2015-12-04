@@ -8,7 +8,7 @@
 
 namespace GT
 {
-    class Game;
+    class Context;
     class SceneViewport;
 
     /// GUI element event handler for 3D viewports.
@@ -17,7 +17,7 @@ namespace GT
     public:
 
         /// Constructor.
-        Editor3DViewportEventHandler(Game &game, SceneViewport &viewport);
+        Editor3DViewportEventHandler(Context &context, SceneViewport &viewport);
 
         /// Destructor.
         ~Editor3DViewportEventHandler();
@@ -59,7 +59,7 @@ namespace GT
     private:
 
         /// A reference to the game object that viewport operations will be happening on.
-        Game &game;
+        Context &context;
 
         /// A reference ot the scene viewport that viewport operatiosn will be happening on.
         SceneViewport &viewport;

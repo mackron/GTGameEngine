@@ -2,7 +2,6 @@
 
 #include <GTGE/Editor/MaterialEditor/MaterialEditor.hpp>
 #include <GTGE/Editor.hpp>
-#include <GTGE/Game.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GTEngine.hpp>
 
@@ -15,8 +14,8 @@ namespace GT
 {
     MaterialEditor::MaterialEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          scene(ownerEditor.GetGame()), camera(), modelNode(),
-          mainElement(nullptr), scriptTextBoxElement(nullptr), scriptTextBoxEventHandler(*this), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), scene.GetDefaultViewport()),
+          scene(ownerEditor.GetContext()), camera(), modelNode(),
+          mainElement(nullptr), scriptTextBoxElement(nullptr), scriptTextBoxEventHandler(*this), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetContext(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f), material(nullptr),
           isSaving(false), isReloading(false)
     {

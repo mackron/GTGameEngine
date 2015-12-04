@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/Editor/ModelEditor/ModelEditor.hpp>
-#include <GTGE/Game.hpp>
+#include <GTGE/Context.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/MaterialLibrary.hpp>
 #include <easy_path/easy_path.h>
@@ -16,10 +16,10 @@ namespace GT
     ModelEditor::ModelEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           modelDefinition(), m_model(modelDefinition),
-          scene(ownerEditor.GetGame()), camera(),
+          scene(ownerEditor.GetContext()), camera(),
           modelNode(), convexHullParentNode(), convexHullNodes(),
           mainElement(nullptr), viewportElement(nullptr), timelineElement(nullptr),
-          viewportEventHandler(ownerEditor.GetGame(), scene.GetDefaultViewport()),
+          viewportEventHandler(ownerEditor.GetContext(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           grid(0.25f, 8, 32),
           random(),

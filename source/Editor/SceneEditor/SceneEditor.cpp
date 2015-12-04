@@ -2,7 +2,6 @@
 
 #include <GTGE/Editor/SceneEditor/SceneEditor.hpp>
 #include <GTGE/Editor.hpp>
-#include <GTGE/Game.hpp>
 #include <GTGE/PrefabLibrary.hpp>
 #include <GTGE/ScriptLibrary.hpp>
 #include <GTGE/IO.hpp>
@@ -39,7 +38,7 @@ namespace GT
         : SubEditor(ownerEditor, absolutePath, relativePath),
           camera(), cameraEventHandler(*this), m_cameraXRotation(0.0f), m_cameraYRotation(0.0f),
           updateManager(camera), physicsManager(), cullingManager(),
-          m_scene(ownerEditor.GetGame(), updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
+          m_scene(ownerEditor.GetContext(), updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
           playbackEventFilter(), eventFilterBeforePlaying(nullptr),
           selectedNodes(), selectedNodesBeforePlaying(), selectedNodesBeforePhysicsSimulation(),
           pickingWorld(),
@@ -51,7 +50,7 @@ namespace GT
           playbackState(PlaybackState_Stopped), wasPlayingBeforeHide(false), wasPlayingBeforeLosingFocus(false),
           isViewportMouseControlsEnabled(false),
           parentChangedLockCounter(0),
-          GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), m_scene.GetDefaultViewport()),
+          GUI(), viewportEventHandler(*this, ownerEditor.GetContext(), m_scene.GetDefaultViewport()),
           grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
           axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false),
           prefabLinker(m_scene, *this),
@@ -273,8 +272,8 @@ namespace GT
 
 
                 // We need to set the event filter
-                this->eventFilterBeforePlaying = this->GetGame().GetEventFilter();
-                this->GetGame().SetEventFilter(this->playbackEventFilter);
+                this->eventFilterBeforePlaying = this->GetContext().GetEventFilter();
+                this->GetContext().SetEventFilter(this->playbackEventFilter);
 
 
                 // We want to restore the selected nodes when we stop playing.
@@ -378,7 +377,7 @@ namespace GT
                 this->physicsManager.ActivateAllRigidBodies();
 
 
-                this->GetGame().GetGUI().BlurFocusedElement();
+                this->GetContext().GetGUI().BlurFocusedElement();
             }
 
 
@@ -398,7 +397,7 @@ namespace GT
 
             this->CapturePauseState();
 
-            this->GetOwnerEditor().GetGame().ReleaseMouse();
+            this->GetOwnerEditor().GetContext().ReleaseMouse();
             this->EnableViewportMouseControls();
 
             this->SetViewportCameraToDefault();
@@ -454,7 +453,7 @@ namespace GT
                 this->SetViewportCameraToDefault();
 
                 // A game may have captured the mouse. We'll force a release just in case it doesn't handle it correctly.
-                this->GetOwnerEditor().GetGame().ReleaseMouse();
+                this->GetOwnerEditor().GetContext().ReleaseMouse();
 
                 // We will also want to make sure mouse capture is re-enabled.
                 this->EnableViewportMouseControls();
@@ -492,7 +491,7 @@ namespace GT
 
 
                 // The event filter needs to be restored.
-                this->GetGame().SetEventFilter(this->eventFilterBeforePlaying);
+                this->GetContext().SetEventFilter(this->eventFilterBeforePlaying);
 
 
                 // The playback state should be set after everything has changed. The state will be set to 'Transitioning' during the transition phase.
@@ -1088,7 +1087,7 @@ namespace GT
 
                     // The way we do the selection depends on what we're doing. If shift is being held down, we don't want to deselect anything and instead just add
                     // or remove the node to the selection. If the selected node is already selected, it needs to be deselected. Otherwise it needs to be selected.
-                    if (this->GetOwnerEditor().GetGame().IsKeyDown(Keys::Shift))
+                    if (this->GetOwnerEditor().GetContext().IsKeyDown(Keys::Shift))
                     {
                         if (this->IsSceneNodeSelected(selectedNode))
                         {
@@ -2532,7 +2531,7 @@ namespace GT
     {
         if (this->GUI.Main->IsVisible())
         {
-            auto &game = this->GetOwnerEditor().GetGame();
+            auto &game = this->GetOwnerEditor().GetContext();
 
             // If the mouse is captured we may need to move the screen around.
             if (game.IsMouseCaptured())
@@ -3720,7 +3719,7 @@ namespace GT
 
     void SceneEditor::CapturePauseState()
     {
-        this->pauseState.wasMouseCaptured = this->GetOwnerEditor().GetGame().IsMouseCaptured();
+        this->pauseState.wasMouseCaptured = this->GetOwnerEditor().GetContext().IsMouseCaptured();
         this->pauseState.cameraNode       = m_scene.GetDefaultViewport().GetCameraNode();
     }
 
@@ -3729,11 +3728,11 @@ namespace GT
         // Mouse capture
         if (this->pauseState.wasMouseCaptured)
         {
-            this->GetOwnerEditor().GetGame().CaptureMouse();
+            this->GetOwnerEditor().GetContext().CaptureMouse();
         }
         else
         {
-            this->GetOwnerEditor().GetGame().ReleaseMouse();
+            this->GetOwnerEditor().GetContext().ReleaseMouse();
         }
 
         // Camera

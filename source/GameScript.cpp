@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/Scripting.hpp>
-#include <GTGE/Game.hpp>
 #include <GTGE/GTEngine.hpp>           // For g_Context. Remove this when the global context is removed.
 
 #if defined(_MSC_VER)
@@ -11,8 +10,8 @@
 
 namespace GT
 {
-    GameScript::GameScript(Game &game)
-        : game(game), lastError(), loadedFiles(), errorHandler(*this)
+    GameScript::GameScript(Context &context)
+        : context(context), lastError(), loadedFiles(), errorHandler(*this)
     {
         this->AttachErrorHandler(errorHandler);
 
@@ -30,7 +29,7 @@ namespace GT
     bool GameScript::Startup()
     {
         // First we load the GTEngine scripting stuff.
-        if (GT::LoadGTEngineScriptLibrary(*this) && GT::LoadGameLibrary(*this, this->game))
+        if (GT::LoadGTEngineScriptLibrary(*this) && GT::LoadGameLibrary(*this, this->context))
         {
             // Here we load the data directories from the application config. We need to do this so that the editor has access to them. Might also come
             // in handy for game code, too. Who knows.

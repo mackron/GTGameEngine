@@ -15,12 +15,12 @@ namespace GT
     }
 
 
-    Game* Component::GetGame()
+    Context* Component::GetContext()
     {
         Scene* pScene = this->node.GetScene();
         if (pScene != nullptr)
         {
-            return &pScene->GetGame();
+            return &pScene->GetContext();
         }
 
         return nullptr;
@@ -61,7 +61,7 @@ namespace GT
         }
     }
 
-    Component* CreateComponentByName(Game* pGame, const char* componentName, SceneNode &hostSceneNode)
+    Component* CreateComponentByName(Context* pContext, const char* componentName, SceneNode &hostSceneNode)
     {
         if (Strings::Equal(componentName, ModelComponent::Name))
         {
@@ -129,9 +129,9 @@ namespace GT
         }
         else
         {
-            if (pGame != NULL)
+            if (pContext != NULL)
             {
-                return pGame->CreateCustomComponent(componentName, hostSceneNode);
+                return pContext->CreateCustomComponent(componentName, hostSceneNode);
             }
         }
 

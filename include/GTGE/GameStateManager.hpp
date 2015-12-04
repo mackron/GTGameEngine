@@ -10,7 +10,7 @@
 
 namespace GT
 {
-    class  Game;
+    class  Context;
     class  Scene;
     struct SceneStateStackRestoreCommands;
 
@@ -46,7 +46,7 @@ namespace GT
         ///     This is the best place to load configs. However, since this function is called before everything is initialised,
         ///     the configs should only use simple functionality like simple variable assignment. Complex scripts should be run
         ///     in OnStartup() or later.
-        virtual void OnLoadConfigs(Game &game);
+        virtual void OnLoadConfigs(Context &context);
 
         /// Called when a game is first started.
         ///
@@ -57,7 +57,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is called after OnLoadConfigs() and after the window has been created and shown.
-        virtual bool OnStartup(Game &game);
+        virtual bool OnStartup(Context &context);
 
         /// Called when the game is shutting down.
         ///
@@ -65,7 +65,7 @@ namespace GT
         ///
         /// @remarks
         ///     This the last event to ever be called. It is called before the engine's context is destroyed.
-        virtual void OnShutdown(Game &game);
+        virtual void OnShutdown(Context &context);
 
 
         /// Called when the game is updated.
@@ -75,7 +75,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is called from the update thread, once per frame. This is were you'll want to step the current scene.
-        virtual void OnUpdate(Game &game, double deltaTimeInSeconds);
+        virtual void OnUpdate(Context &context, double deltaTimeInSeconds);
 
         /// Called just before the next frame has started.
         ///
@@ -84,7 +84,7 @@ namespace GT
         /// @remarks
         ///     This function is completely synchronised. Neither the update nor the rendering thread is running at this point. It will be
         ///     executed on the main thread.
-        virtual void OnStartFrame(Game &game);
+        virtual void OnStartFrame(Context &context);
 
         /// Called after the current frame has finished.
         ///
@@ -93,7 +93,7 @@ namespace GT
         /// @remarks
         ///     This function is completely synchronised. Neither the update nor the rendering thread is running at this point. It will be
         ///     executed on the main thread.
-        virtual void OnEndFrame(Game &game);
+        virtual void OnEndFrame(Context &context);
 
 
         /// Called when the game window is resized.
@@ -104,7 +104,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is called from the update thread.
-        virtual void OnSize(Game &game, unsigned int newWidth, unsigned int newHeight);
+        virtual void OnSize(Context &context, unsigned int newWidth, unsigned int newHeight);
 
 
         /// Called when the mouse is moved.
@@ -115,7 +115,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is called from the update thread.
-        virtual void OnMouseMove(Game &game, int xPos, int yPos);
+        virtual void OnMouseMove(Context &context, int xPos, int yPos);
 
         /// Called when the mouse wheel is turned.
         ///
@@ -126,7 +126,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is called from the update thread.
-        virtual void OnMouseWheel(Game &game, int delta, int xPos, int yPos);
+        virtual void OnMouseWheel(Context &context, int delta, int xPos, int yPos);
 
         /// Called when a mouse button is pressed.
         ///
@@ -142,7 +142,7 @@ namespace GT
         ///       - Left = 1
         ///       - Right = 2
         ///       - Middle = 3
-        virtual void OnMouseButtonDown(Game &game, int button, int xPos, int yPos);
+        virtual void OnMouseButtonDown(Context &context, int button, int xPos, int yPos);
 
         /// Called when a mouse button is raised.
         ///
@@ -158,7 +158,7 @@ namespace GT
         ///       - Left = 1
         ///       - Right = 2
         ///       - Middle = 3
-        virtual void OnMouseButtonUp(Game &game, int button, int xPos, int yPos);
+        virtual void OnMouseButtonUp(Context &context, int button, int xPos, int yPos);
 
         /// Called when a mouse button is double-clicked.
         ///
@@ -174,7 +174,7 @@ namespace GT
         ///       - Left = 1
         ///       - Right = 2
         ///       - Middle = 3
-        virtual void OnMouseButtonDoubleClick(Game &game, int button, int xPos, int yPos);
+        virtual void OnMouseButtonDoubleClick(Context &context, int button, int xPos, int yPos);
 
 
         /// Called when a key is initially pressed.
@@ -188,7 +188,7 @@ namespace GT
         ///     The difference between this and OnKeyDown is that OnKeyDown will handle auto-repeat, whereas OnKeyPressed will only
         ///     consider the initial press. OnKeyDown will also be called on the initial press, in which case it will be called after
         ///     OnKeyPressed.
-        virtual void OnKeyPress(Game &game, Key key);
+        virtual void OnKeyPress(Context &context, Key key);
 
         /// Called when a key is released.
         ///
@@ -199,7 +199,7 @@ namespace GT
         ///     This is called from the update thread.
         ///     @par
         ///     There is no difference between this and OnKeyUp, except that OnKeyUp will be called after OnKeyReleased.
-        virtual void OnKeyRelease(Game &game, Key key);
+        virtual void OnKeyRelease(Context &context, Key key);
 
         /// Called when a key is pressed or auto-repeated.
         ///
@@ -211,7 +211,7 @@ namespace GT
         ///     @par
         ///     The difference between this and OnKeyPressed is that OnKeyPressed does not handle auto-repeat, whereas OnKeyDown
         ///     does. Both OnKeyDown and OnKeyPressed will be called on the initial press.
-        virtual void OnKeyDown(Game &game, Key key);
+        virtual void OnKeyDown(Context &context, Key key);
 
         /// Called when a key is released.
         ///
@@ -222,7 +222,7 @@ namespace GT
         ///     This is called from the update thread.
         ///     @par
         ///     There is no difference between this and OnKeyReleased, except that OnKeyUp will be called after OnKeyReleased.
-        virtual void OnKeyUp(Game &game, Key key);
+        virtual void OnKeyUp(Context &context, Key key);
 
 
         /// Called when the game window receives focus.
@@ -231,7 +231,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is called from the update thread.
-        virtual void OnReceiveFocus(Game &game);
+        virtual void OnReceiveFocus(Context &context);
 
         /// Called when the game window loses focus.
         ///
@@ -239,7 +239,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is called from the update thread.
-        virtual void OnLoseFocus(Game &game);
+        virtual void OnLoseFocus(Context &context);
 
 
         /// Called when an event unknown to the engine is handled.
@@ -251,18 +251,18 @@ namespace GT
         ///     This is called from the update thread.
         ///     @par
         ///     You will most likely never need to implement this function.
-        virtual void OnHandleEvent(Game &game, GameEvent &e);
+        virtual void OnHandleEvent(Context &context, GameEvent &e);
 
 
         /// Called when the game is paused.
         ///
         /// @param game [in] A reference to the applicable game object.
-        virtual void OnPause(Game &game);
+        virtual void OnPause(Context &context);
 
         /// Called when the game is resumed from a paused state.
         ///
         /// @param game [in] A reference to the applicable game object.
-        virtual void OnResume(Game &game);
+        virtual void OnResume(Context &context);
 
 
         /// Called just before the editor is opened.
@@ -270,24 +270,24 @@ namespace GT
         /// @param game [in] A reference to the applicable game object.
         ///
         /// @return True to allow the editor to continue opening; false to prevent the editor from opening.
-        virtual bool OnEditorOpening(Game &game);
+        virtual bool OnEditorOpening(Context &context);
 
         /// Called just before the editor is closed.
         ///
         /// @param game [in] A reference to the applicable game object.
         ///
         /// @return True to allow the editor to continue closing; false to prevent the editor from closing.
-        virtual bool OnEditorClosing(Game &game);
+        virtual bool OnEditorClosing(Context &context);
 
         /// Called just after the editor is opened.
         ///
         /// @param game [in] A reference to the applicable game object.
-        virtual void OnEditorOpen(Game &game);
+        virtual void OnEditorOpen(Context &context);
 
         /// Called just after the editor is closed.
         ///
         /// @param game [in] A reference to the applicable game object.
-        virtual void OnEditorClose(Game &game);
+        virtual void OnEditorClose(Context &context);
 
 
 
@@ -300,7 +300,7 @@ namespace GT
         /// @param sceneRelativePath [in] The relative path of the scene file to load.
         ///
         /// @return True if the scene is loaded successfully; false otherwise.
-        virtual bool LoadScene(Game &game, const char* sceneRelativePath);
+        virtual bool LoadScene(Context &context, const char* sceneRelativePath);
 
         
 
@@ -311,7 +311,7 @@ namespace GT
         ///
         /// @param game       [in] A reference to the applicable game object.
         /// @param serializer [in] The serializer to write the data to.
-        virtual bool Serialize(Game &game, Serializer &serializer);
+        virtual bool Serialize(Context &context, Serializer &serializer);
 
 
         ///////////////////////////////////////
@@ -321,7 +321,7 @@ namespace GT
         ///
         /// @param game       [in] A reference to the applicable game object.
         /// @param deserializer [in] The deserializer to write the data to.
-        virtual bool Deserialize(Game &game, Deserializer &deserializer);
+        virtual bool Deserialize(Context &context, Deserializer &deserializer);
     };
 
 
@@ -382,7 +382,7 @@ namespace GT
         // Serialization
 
         /// GameStateManager::Serialize()
-        virtual bool Serialize(Game &game, Serializer &serializer);
+        virtual bool Serialize(Context &context, Serializer &serializer);
 
         /// Serializes the header information.
         ///
@@ -393,7 +393,7 @@ namespace GT
         ///
         /// @remarks
         ///     The return value will be passed to DeserializeHeaderData().
-        virtual uint32_t SerializeHeaderData(Game &game, Serializer &serializer);
+        virtual uint32_t SerializeHeaderData(Context &context, Serializer &serializer);
 
         /// Serializes the global data.
         ///
@@ -404,7 +404,7 @@ namespace GT
         ///
         /// @remarks
         ///     The return value will be passed to DeserializeGlobalData().
-        virtual uint32_t SerializeGlobalData(Game &game, Serializer &serializer);
+        virtual uint32_t SerializeGlobalData(Context &context, Serializer &serializer);
 
 
 
@@ -412,19 +412,19 @@ namespace GT
         // Deserialization
 
         /// GameStateManager::Deserialize()
-        virtual bool Deserialize(Game &game, Deserializer &deserializer);
+        virtual bool Deserialize(Context &context, Deserializer &deserializer);
 
         /// Deserializes the header information.
         ///
         /// @param game       [in] A reference to the applicable game object.
         /// @param deserializer [in] The deserializer to read the data from.
-        virtual bool DeserializeHeaderData(Game &game, Deserializer &deserializer, uint32_t version);
+        virtual bool DeserializeHeaderData(Context &context, Deserializer &deserializer, uint32_t version);
 
         /// Deserializes the global game data.
         ///
         /// @param game       [in] A reference to the applicable game object.
         /// @param deserializer [in] The deserializer to read the data from.
-        virtual bool DeserializeGlobalData(Game &game, Deserializer &deserializer, uint32_t version);
+        virtual bool DeserializeGlobalData(Context &context, Deserializer &deserializer, uint32_t version);
 
 
     private:
@@ -455,27 +455,27 @@ namespace GT
         // Events
 
         /// GameStateManager::OnStartup().
-        virtual bool OnStartup(Game &game);
+        virtual bool OnStartup(Context &context);
 
         /// GameStateManager::OnShutdown().
-        virtual void OnShutdown(Game &game);
+        virtual void OnShutdown(Context &context);
 
         /// GameStateManager::OnUpdate().
-        virtual void OnUpdate(Game &game, double deltaTimeInSeconds);
+        virtual void OnUpdate(Context &context, double deltaTimeInSeconds);
 
         /// GameStateManager::OnStartFrame().
-        virtual void OnStartFrame(Game &game);
+        virtual void OnStartFrame(Context &context);
 
         /// GameStateManager::OnSize().
-        virtual void OnSize(Game &game, unsigned int newWidth, unsigned int newHeight);
+        virtual void OnSize(Context &context, unsigned int newWidth, unsigned int newHeight);
 
         /// GameStateManager::OnEditorClosing().
-        virtual bool OnEditorClosing(Game &game);
+        virtual bool OnEditorClosing(Context &context);
 
 
 
         /// GameStateManager::LoadScene().
-        virtual bool LoadScene(Game &game, const char* sceneRelativePath);
+        virtual bool LoadScene(Context &context, const char* sceneRelativePath);
 
 
 
@@ -483,26 +483,26 @@ namespace GT
         // Serialization
 
         /// GenericGameStateManager::Serialize()
-        virtual bool Serialize(Game &game, Serializer &serializer);
+        virtual bool Serialize(Context &context, Serializer &serializer);
 
         /// GenericGameStateManager::SerializeHeaderData()
-        virtual uint32_t SerializeHeaderData(Game &game, Serializer &serializer);
+        virtual uint32_t SerializeHeaderData(Context &context, Serializer &serializer);
 
         /// GenericGameStateManager::SerializeGlobalData()
-        virtual uint32_t SerializeGlobalData(Game &game, Serializer &serializer);
+        virtual uint32_t SerializeGlobalData(Context &context, Serializer &serializer);
 
 
         ///////////////////////////////////////
         // Deserialization
 
         /// GenericGameStateManager::Deserialize()
-        virtual bool Deserialize(Game &game, Deserializer &deserializer);
+        virtual bool Deserialize(Context &context, Deserializer &deserializer);
 
         /// GenericGameStateManager::DeserializeHeaderData()
-        virtual bool DeserializeHeaderData(Game &game, Deserializer &deserializer, uint32_t version);
+        virtual bool DeserializeHeaderData(Context &context, Deserializer &deserializer, uint32_t version);
 
         /// GenericGameStateManager::DeserializeGlobalData()
-        virtual bool DeserializeGlobalData(Game &game, Deserializer &deserializer, uint32_t version);
+        virtual bool DeserializeGlobalData(Context &context, Deserializer &deserializer, uint32_t version);
 
 
 

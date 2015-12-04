@@ -1,6 +1,5 @@
 
 #include <GTGE/GTEngine.hpp>
-#include <GTGE/Game.hpp>
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -28,15 +27,15 @@ int main(int argc, char** argv)
     // First we start up the engine, specifying the Game class we want to instantiate. This uses the default constructor.
     GT::DefaultGameStateManager gameStateManager;
 
-    auto game = GT::Startup<GT::Game>(argc, argv, gameStateManager);
-    if (game != nullptr)
+    auto pContext = GT::Startup<GT::Context>(argc, argv, gameStateManager);
+    if (pContext != nullptr)
     {
         // Now we run the game, keeping track of the return value.
-        retValue = game->Run();
+        retValue = pContext->Run();
     }
 
     // And now we shut down the engine, passing the game object returned by Startup().
-    GT::Shutdown(game);
+    GT::Shutdown(pContext);
 
 
     return retValue;

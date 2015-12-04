@@ -1,14 +1,14 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/Editor/Editor3DViewportEventHandler.hpp>
-#include <GTGE/Game.hpp>
+#include <GTGE/Context.hpp>
 #include <GTGE/SceneViewport.hpp>
 #include <GTGE/ShaderLibrary.hpp>
 
 namespace GT
 {
-    Editor3DViewportEventHandler::Editor3DViewportEventHandler(Game &game, SceneViewport &viewport)
-        : game(game), viewport(viewport),
+    Editor3DViewportEventHandler::Editor3DViewportEventHandler(Context &context, SceneViewport &viewport)
+        : context(context), viewport(viewport),
           mousePosX(0), mousePosY(0),
           isMouseControlsEnabled(true)
     {
@@ -91,7 +91,7 @@ namespace GT
 
     void Editor3DViewportEventHandler::OnMouseMove(GUIElement &, int x, int y)
     {
-        if (!this->game.IsMouseCaptured())
+        if (!this->context.IsMouseCaptured())
         {
             this->mousePosX = x;
             this->mousePosY = y;
