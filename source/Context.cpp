@@ -6,9 +6,6 @@
 
 namespace GT
 {
-    static const size_t MaxDormantThreads = 64;     ///< The maximum number of threads to allow to lie around dormant.
-
-
     typedef struct
     {
         /// The absolute path of the executable's directory.
