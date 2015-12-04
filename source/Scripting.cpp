@@ -2280,19 +2280,19 @@ namespace GT
 
         int ExecuteFile(GT::Script &script)
         {
-            script.Push(GameFFI::GetGame(script).GetScript().ExecuteFile(g_Context->GetVFS(), script.ToString(1)));
+            script.Push(GameFFI::GetContext(script).GetScript().ExecuteFile(g_Context->GetVFS(), script.ToString(1)));
             return 1;
         }
 
         int ExecuteScript(GT::Script &script)
         {
-            script.Push(GameFFI::GetGame(script).ExecuteScript(script.ToString(1)));
+            script.Push(GameFFI::GetContext(script).ExecuteScript(script.ToString(1)));
             return 1;
         }
 
         int GetLastScriptError(GT::Script &script)
         {
-            script.Push(GameFFI::GetGame(script).GetScript().GetLastError());
+            script.Push(GameFFI::GetContext(script).GetScript().GetLastError());
             return 1;
         }
 

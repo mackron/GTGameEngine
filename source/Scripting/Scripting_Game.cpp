@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/Scripting/Scripting_Game.hpp>
-#include <GTGE/GTEngine.hpp>    // For g_Context
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
@@ -184,7 +184,7 @@ namespace GT
 
     namespace GameFFI
     {
-        Context & GetGame(GT::Script &script)
+        Context & GetContext(GT::Script &script)
         {
             script.GetGlobal("__GamePtr");
             auto game = static_cast<Context*>(script.ToPointer(-1));
@@ -197,100 +197,100 @@ namespace GT
 
         int GetExecutableDirectoryAbsolutePath(GT::Script &script)
         {
-            script.Push(g_Context->GetExecutableDirectoryAbsolutePath());
+            script.Push(GetContext(script).GetExecutableDirectoryAbsolutePath());
             return 1;
         }
 
         int GetExecutableAbsolutePath(GT::Script &script)
         {
-            script.Push(g_Context->GetExecutableAbsolutePath());
+            script.Push(GetContext(script).GetExecutableAbsolutePath());
             return 1;
         }
 
 
         int Close(GT::Script &script)
         {
-            GetGame(script).Close();
+            GetContext(script).Close();
             return 0;
         }
 
         int Pause(GT::Script &script)
         {
-            GetGame(script).Pause();
+            GetContext(script).Pause();
             return 0;
         }
 
         int Resume(GT::Script &script)
         {
-            GetGame(script).Resume();
+            GetContext(script).Resume();
             return 0;
         }
 
         int IsPaused(GT::Script &script)
         {
-            script.Push(GetGame(script).IsPaused());
+            script.Push(GetContext(script).IsPaused());
             return 1;
         }
 
         int EnableFullscreen(GT::Script &script)
         {
-            GetGame(script).EnableFullscreen();
+            GetContext(script).EnableFullscreen();
             return 0;
         }
 
         int DisableFullscreen(GT::Script &script)
         {
-            GetGame(script).DisableFullscreen();
+            GetContext(script).DisableFullscreen();
             return 0;
         }
 
 
         int OpenEditor(GT::Script &script)
         {
-            GetGame(script).OpenEditor();
+            GetContext(script).OpenEditor();
             return 0;
         }
 
         int CloseEditor(GT::Script &script)
         {
-            GetGame(script).CloseEditor();
+            GetContext(script).CloseEditor();
             return 0;
         }
 
 
         int IsKeyDown(GT::Script &script)
         {
-            script.Push(GetGame(script).IsKeyDown(static_cast<Key>(script.ToInteger(1))));
+            script.Push(GetContext(script).IsKeyDown(static_cast<Key>(script.ToInteger(1))));
             return 1;
         }
 
         int IsMouseButtonDown(GT::Script &script)
         {
-            script.Push(GetGame(script).IsMouseButtonDown(static_cast<MouseButton>(script.ToInteger(1))));
+            script.Push(GetContext(script).IsMouseButtonDown(static_cast<MouseButton>(script.ToInteger(1))));
             return 1;
         }
 
         int CaptureMouse(GT::Script &script)
         {
-            GetGame(script).CaptureMouse();
+            GetContext(script).CaptureMouse();
             return 0;
         }
 
         int ReleaseMouse(GT::Script &script)
         {
-            GetGame(script).ReleaseMouse();
+            GetContext(script).ReleaseMouse();
             return 0;
         }
 
         int IsMouseCaptured(GT::Script &script)
         {
-            script.Push(GetGame(script).IsMouseCaptured());
+            script.Push(GetContext(script).IsMouseCaptured());
             return 1;
         }
 
         int GetMouseOffset(GT::Script &script)
         {
-            auto &game = GetGame(script);
+            auto &game = GetContext(script);
 
             if (game.IsMouseCaptured())
             {
@@ -311,26 +311,26 @@ namespace GT
 
         int EnableMouseSmoothing(GT::Script &script)
         {
-            GetGame(script).EnableMouseSmoothing();
+            GetContext(script).EnableMouseSmoothing();
             return 0;
         }
 
         int DisableMouseSmoothing(GT::Script &script)
         {
-            GetGame(script).DisableMouseSmoothing();
+            GetContext(script).DisableMouseSmoothing();
             return 0;
         }
 
         int IsMouseSmoothingEnabled(GT::Script &script)
         {
-            script.Push(GetGame(script).IsMouseSmoothingEnabled());
+            script.Push(GetContext(script).IsMouseSmoothingEnabled());
             return 1;
         }
 
 
         int GetGameWindowGUIElement(GT::Script &script)
         {
-            auto element = GetGame(script).GetGameWindowGUIElement();
+            auto element = GetContext(script).GetGameWindowGUIElement();
             if (element != nullptr)
             {
                 script.Get(String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", element->id).c_str());
@@ -346,26 +346,26 @@ namespace GT
 
         int SaveGameState(GT::Script &script)
         {
-            script.Push(GetGame(script).SaveGameState(script.ToString(1)));
+            script.Push(GetContext(script).SaveGameState(script.ToString(1)));
             return 1;
         }
 
         int LoadGameState(GT::Script &script)
         {
-            script.Push(GetGame(script).LoadGameState(script.ToString(1)));
+            script.Push(GetContext(script).LoadGameState(script.ToString(1)));
             return 1;
         }
 
         int LoadScene(GT::Script &script)
         {
-            script.Push(GetGame(script).LoadScene(script.ToString(1)));
+            script.Push(GetContext(script).LoadScene(script.ToString(1)));
             return 1;
         }
 
 
         int PackageForDistribution(GT::Script &script)
         {
-            script.Push(GetGame(script).PackageForDistribution(script.ToString(1), script.ToString(2)));
+            script.Push(GetContext(script).PackageForDistribution(script.ToString(1), script.ToString(2)));
             return 1;
         }
     }

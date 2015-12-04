@@ -24,7 +24,7 @@ namespace GT
     namespace GameFFI
     {
         /// Retrieves a reference to the global game object.
-        Context & GetGame(GT::Script &script);
+        Context & GetContext(GT::Script &script);
 
 
         /// Retrieves the absolute path of the directory containing the game executable.
