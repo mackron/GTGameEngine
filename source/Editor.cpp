@@ -26,7 +26,6 @@ namespace GT
           m_pFSW(nullptr),// m_FSWThread(nullptr),
           openedFiles(), currentlyShownEditor(nullptr),
           GUI(),
-          lastProfilingUpdateTime(0.0),
           isStarted(false), isOpen(false)
     {
     }
@@ -53,8 +52,6 @@ namespace GT
                 this->GUI.EditorMain                  = guiServer.GetElementByID("EditorMain");
                 this->GUI.EditorCenterCenterPanel     = guiServer.GetElementByID("EditorCenterCenterPanel");
                 this->GUI.EditorCenterCenterPanelHelp = guiServer.GetElementByID("EditorCenterCenterPanelHelp");
-                this->GUI.Editor_Delta                = guiServer.GetElementByID("Editor_Delta");
-                this->GUI.Editor_FPS                  = guiServer.GetElementByID("Editor_FPS");
 
                 // We need to grab the GUI elements for the menu buttons.
                 script.Get("GTGUI.Server.GetElementByID('Editor_MenuBar')");
@@ -873,34 +870,6 @@ namespace GT
         if (this->currentlyShownEditor != nullptr)
         {
             this->currentlyShownEditor->OnUpdate(deltaTimeInSeconds);
-        }
-
-
-
-        // We need to update the profiling GUI.
-        if (Timing::GetTimeInSeconds() - this->lastProfilingUpdateTime > 1.0)
-        {
-            this->lastProfilingUpdateTime = Timing::GetTimeInSeconds();
-
-
-            double delta = this->game.GetProfiler().GetAverageFrameTime();
-            double fps   = 0.0;
-
-            if (delta > 0.0)
-            {
-                fps = 1.0 / delta;
-            }
-
-
-            char deltaStr[64];
-            IO::snprintf(deltaStr, 64, "%f", delta);
-
-            char fpsStr[64];
-            IO::snprintf(fpsStr, 64, "%.1f", fps);
-
-
-            this->GUI.Editor_Delta->SetText(deltaStr);
-            this->GUI.Editor_FPS->SetText(fpsStr);
         }
     }
 

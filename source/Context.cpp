@@ -96,11 +96,11 @@ namespace GT
 
     Context::Context(int argc, char** argv)
         : m_cmdline(),
-            m_executableDirectoryAbsolutePath(),
-            m_pVFS(nullptr),
-            m_pLogFile(nullptr),
-            m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
-            m_assetLibrary()
+          m_executableDirectoryAbsolutePath(),
+          m_pVFS(nullptr),
+          m_pLogFile(nullptr),
+          m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
+          m_assetLibrary()
     {
         // We need to initialize the virtual file system early so we can do things like create logs and cache files.
         m_pVFS = easyvfs_create_context();

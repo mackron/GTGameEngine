@@ -146,8 +146,6 @@ namespace GT
             script.SetTableFunction(-1, "DisableFullscreen",                  GameFFI::DisableFullscreen);
             script.SetTableFunction(-1, "OpenEditor",                         GameFFI::OpenEditor);
             script.SetTableFunction(-1, "CloseEditor",                        GameFFI::CloseEditor);
-            script.SetTableFunction(-1, "ShowDebug",                          GameFFI::ShowDebug);
-            script.SetTableFunction(-1, "HideDebug",                          GameFFI::HideDebug);
             script.SetTableFunction(-1, "IsKeyDown",                          GameFFI::IsKeyDown);
             script.SetTableFunction(-1, "IsMouseButtonDown",                  GameFFI::IsMouseButtonDown);
             script.SetTableFunction(-1, "CaptureMouse",                       GameFFI::CaptureMouse);
@@ -259,18 +257,6 @@ namespace GT
             return 0;
         }
 
-
-        int ShowDebug(GT::Script &script)
-        {
-            GetGame(script).ShowDebugging();
-            return 0;
-        }
-
-        int HideDebug(GT::Script &script)
-        {
-            GetGame(script).HideDebugging();
-            return 0;
-        }
 
         int IsKeyDown(GT::Script &script)
         {

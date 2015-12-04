@@ -411,12 +411,6 @@ hidden by default.
             <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px;" />
             <div id="CommandErrorBox" style="height:100%; width:auto; margin-left:8px; vertical-align:center;" />
         </div>
-        <div style="child-plane:horizontal; vertical-align:center; horizontal-align:right; width:auto;">
-            <div styleclass="profiling-entry-title">Delta:</div>
-            <div styleclass="profiling-entry-value" id="Editor_Delta" />
-            <div styleclass="profiling-entry-title">FPS:</div>
-            <div styleclass="profiling-entry-value" id="Editor_FPS" />
-        </div>
     </div>
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->

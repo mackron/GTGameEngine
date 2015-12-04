@@ -60,12 +60,6 @@ namespace GT
         int CloseEditor(GT::Script &script);
 
 
-        /// Shows the debugging information.
-        int ShowDebug(GT::Script &script);
-
-        /// Hides the debugging information.
-        int HideDebug(GT::Script &script);
-
         /// Determines if the given key is down.
         ///
         /// @remarks

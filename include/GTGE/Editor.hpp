@@ -323,8 +323,7 @@ namespace GT
         {
             _GUI()
                 : EditorMain(nullptr), EditorCenterCenterPanel(nullptr), EditorCenterCenterPanelHelp(nullptr),
-                  File_Save(nullptr), File_SaveAll(nullptr), File_Close(nullptr), File_CloseAll(nullptr),
-                  Editor_Delta(nullptr), Editor_FPS(nullptr)
+                  File_Save(nullptr), File_SaveAll(nullptr), File_Close(nullptr), File_CloseAll(nullptr)
             {
             }
 
@@ -344,17 +343,8 @@ namespace GT
             GUIElement* File_Close;
             GUIElement* File_CloseAll;
 
-
-            // GUI elements for the profiling information.
-            GUIElement* Editor_Delta;
-            GUIElement* Editor_FPS;
-
         }GUI;
 
-
-
-        /// The last time the profiling elements were updated.
-        double lastProfilingUpdateTime;
 
 
         /// Whether or not the editor has be started up.

@@ -138,6 +138,13 @@ namespace GT
         AssetLibrary m_assetLibrary;
 
 
+
+
+        
+
+
+
+
     private:    // No copying.
         Context(const Context &);
         Context & operator=(const Context &);

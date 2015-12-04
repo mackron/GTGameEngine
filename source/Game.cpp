@@ -40,8 +40,6 @@ namespace GT
           isAutoScriptReloadEnabled(false),
           keyDownMap(), mouseButtonDownMap(),
           editor(*this),
-          profiler(),
-          DebuggingGUI(*this),
           isMouseSmoothingEnabled(false),
           mouseCaptured(false), captureMouseOnReceiveFocus(false), captureMouseOnEditorClose(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
@@ -68,14 +66,6 @@ namespace GT
     {
         while (!this->closing)
         {
-            // If the profiler is enabled, we're going to post some events to it.
-            if (this->profiler.IsEnabled())
-            {
-                this->profiler.OnBeginFrame();
-            }
-
-
-
             // First we need to handle any pending window messages. We do not want to wait here (first argument).
             while (PumpNextWindowEvent(false));
 
@@ -94,13 +84,6 @@ namespace GT
 
             // Here we want to start the next frame.
             this->DoFrame();
-
-
-            // Here we need to update the profiler.
-            if (this->profiler.IsEnabled())
-            {
-                this->profiler.OnEndFrame();
-            }
         }
 
         // If we made it here, it means the game was run and closed normally.
@@ -417,18 +400,10 @@ namespace GT
 
     void Game::OpenEditor()
     {
-        //CALLGRIND_ZERO_STATS;
         if (m_gameStateManager.OnEditorOpening(*this))
         {
             // The main game window GUI element needs to be hidden.
             this->gameWindowGUIElement->Hide();
-
-
-            // The in-game profiling GUI needs to be hidden when the editor is open.
-            this->DebuggingGUI.Hide();
-
-            // We will also enable the profiler when the editor is open, because why not?
-            this->profiler.Enable();
 
 
             // The game is always paused while the editor is running.
@@ -448,7 +423,6 @@ namespace GT
 
             m_gameStateManager.OnEditorOpen(*this);
         }
-        //CALLGRIND_STOP_INSTRUMENTATION;
     }
 
     void Game::CloseEditor()
@@ -469,17 +443,6 @@ namespace GT
                 this->CaptureMouse();
             }
 
-
-            if (this->DebuggingGUI.isShowing)
-            {
-                this->profiler.Enable();
-                this->DebuggingGUI.Show();
-            }
-            else
-            {
-                this->profiler.Disable();
-            }
-
             m_gameStateManager.OnEditorClose(*this);
         }
     }
@@ -487,46 +450,6 @@ namespace GT
     bool Game::IsEditorOpen() const
     {
         return this->editor.IsOpen();
-    }
-
-
-    void Game::ShowDebugging()
-    {
-        // If we haven't yet initialised the debugging GUI, we need to do it.
-        if (!this->IsEditorOpen())
-        {
-            if (!DebuggingGUI.isInitialised)
-            {
-                this->DebuggingGUI.Initialise(this->gui);
-            }
-
-            if (this->DebuggingGUI.DebuggingMain != nullptr)
-            {
-                this->DebuggingGUI.DebuggingMain->Show();
-                this->DebuggingGUI.isShowing = true;
-            }
-
-            this->profiler.Enable();
-        }
-    }
-
-    void Game::HideDebugging()
-    {
-        if (!this->IsEditorOpen())
-        {
-            if (this->DebuggingGUI.DebuggingMain != nullptr)
-            {
-                this->DebuggingGUI.DebuggingMain->Hide();
-                this->DebuggingGUI.isShowing = false;
-            }
-
-            this->profiler.Disable();
-        }
-    }
-
-    bool Game::IsDebuggingOpen() const
-    {
-        return this->DebuggingGUI.isShowing;
     }
 
 
@@ -808,19 +731,6 @@ namespace GT
 
     void Game::Update()
     {
-        if (this->profiler.IsEnabled())
-        {
-            this->profiler.OnBeginUpdate();
-        }
-
-
-        // If the debugging overlay is open, we need to show the debugging information.
-        if (this->IsDebuggingOpen())
-        {
-            this->DebuggingGUI.Update(this->profiler);
-        }
-
-
         // If the editor is open it also needs to be updated.
         if (this->editor.IsOpen())
         {
@@ -834,22 +744,10 @@ namespace GT
 
         // We will step the GUI after updating the game. This will call rendering functions.
         this->StepGUI(this->deltaTimeInSeconds);
-
-
-        if (this->profiler.IsEnabled())
-        {
-            this->profiler.OnEndUpdate();
-        }
     }
 
     void Game::Draw()
     {
-        if (this->profiler.IsEnabled())
-        {
-            this->profiler.OnBeginRendering();
-        }
-
-
         // NOTE:
         //
         // We're not currently calling any OnDraw events. The problem is with the multi-threading nature of the engine. Events here are called from a different thread
@@ -857,12 +755,6 @@ namespace GT
 
         // At this point we can finally swap the buffers.
         Renderer::SwapBuffers();
-
-
-        if (this->profiler.IsEnabled())
-        {
-            this->profiler.OnEndRendering();
-        }
     }
 
 
@@ -1069,19 +961,6 @@ namespace GT
             else
             {
                 this->CloseEditor();
-            }
-        }
-
-        // Profiler.
-        if (e.keypressed.key == this->profilerToggleKey)
-        {
-            if (!this->IsDebuggingOpen())
-            {
-                this->ShowDebugging();
-            }
-            else
-            {
-                this->HideDebugging();
             }
         }
     }

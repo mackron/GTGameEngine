@@ -259,16 +259,6 @@ namespace GT
         bool IsEditorOpen() const;
 
 
-        /// Shows the debugging overlay.
-        void ShowDebugging();
-
-        /// Hides the debugging overlay.
-        void HideDebugging();
-
-        /// Determines whether or now the debugging overlay is shown.
-        bool IsDebuggingOpen() const;
-
-
         /// Executes the given script on the central game script.
         ///
         /// @param script [in] The script string to execute. <b>This is not a file name</b>
@@ -289,12 +279,6 @@ namespace GT
 
         /// Determines whether or not automatic script reloading is enabled.
         bool IsScriptAutoReloadEnabled() const { return this->isAutoScriptReloadEnabled; }
-
-
-
-        /// Retrieves the profiler.
-              Profiler & GetProfiler()       { return this->profiler; }
-        const Profiler & GetProfiler() const { return this->profiler; }
 
 
 
@@ -389,138 +373,10 @@ namespace GT
         bool LoadScene(const char* sceneRelativePath);
 
 
-        ////////////////////////////////////
-        // Public Game State Management Events.
-
-        /// Called when a scene is loaded via the scripting environment.
-        ///
-        /// @param sceneRelativePath [in] The relative path of the scene that wants to load.
-        ///
-        /// @return True if the scene is loaded and switched successfully; false otherwise.
-        ///
-        /// @remarks
-        ///     Games should handle this themselves to enable support for loading scenes via the scripting environment.
-        ///     @par
-        ///     Do not call this directly.
-        //virtual bool OnLoadScene(const char* sceneRelativePath);
-
-        
-
-
     protected:
 
         void CacheMousePosition();
 
-
-#if 0
-    protected:  // Event handlers.
-
-
-        /// Called when the config scripts are being loaded.
-        ///
-        /// @remarks
-        ///     This is called right at the start of initialisation just before the --config arguments are processed. This is the
-        ///     first event to be called, before OnStartup() and before anything else is initialised.
-        ///     @par
-        ///     This is the best place to load configs. However, since this function is called before everything is initialised,
-        ///     the configs should only use simple script-side stuff. Complex scripts should be run in OnStartup().
-        virtual void OnLoadConfigs();
-
-
-        /// Called when the game is just finishing up starting up.
-        ///
-        /// @remarks
-        ///     This is called after the window has been created and shown.
-        ///     @par
-        ///     The return value is true if the startup is successful; false otherwise.
-        virtual bool OnStartup(const CommandLine &commandLine);
-
-        /// Called when the game is shutting down.
-        virtual void OnShutdown();
-
-
-        /// Called when the game is updated. This is called from the update thread.
-        ///
-        /// @param deltaTimeInSeconds [in] The time since the last frame, in seconds.
-        virtual void OnUpdate(double deltaTimeInSeconds);
-
-        /**
-        *   \brief  Called on the rendering thread just before the main scene is drawn.
-        */
-        virtual void OnDraw();
-
-        /**
-        *   \brief  Called on the rendering thread after the main rendering commands have been drawn, and just before swapping the buffers.
-        */
-        virtual void OnPostDraw();
-
-        /**
-        *   \brief  Called just before the next frame has started.
-        *
-        *   \remarks
-        *       This function is completely synchronised. Neither the update nor the rendering thread is running at this point. It will be
-        *       executed on the main thread.
-        */
-        virtual void OnStartFrame();
-
-        /**
-        *   \brief  Called after the current frame has finished.
-        *
-        *   \remarks
-        *       This function is completely synchronised. Neither the update nor the rendering thread is running at this point. It will be
-        *       executed on the main thread.
-        */
-        virtual void OnEndFrame();
-
-
-        // All of the events below are called on the update thread. It is safe to do draw calls on the renderer's back draw-call cache.
-        virtual void OnSize(unsigned int width, unsigned int height);
-        virtual void OnMouseMove(int x, int y);
-        virtual void OnMouseWheel(int delta, int x, int y);
-        virtual void OnMouseButtonDown(MouseButton button, int x, int y);
-        virtual void OnMouseButtonUp(MouseButton button, int x, int y);
-        virtual void OnMouseButtonDoubleClick(MouseButton button, int x, int y);
-        virtual void OnKeyPressed(Key key);
-        virtual void OnKeyReleased(Key key);
-        virtual void OnKeyDown(Key key);
-        virtual void OnKeyUp(Key key);
-        virtual void OnReceiveFocus();
-        virtual void OnLoseFocus();
-
-
-        /**
-        *   \brief         Called when an event with an event code unknown to GTEngine is handled.
-        *   \param  e [in] A reference to the event that needs to be handled.
-        */
-        virtual void OnHandleEvent(GameEvent &e);
-
-        /**
-        *   \brief  Called when the game is paused.
-        */
-        virtual void OnPause();
-
-        /**
-        *   \brief  Called when the game is resumed.
-        */
-        virtual void OnResume();
-
-
-        /// Called just before the editor is trying to be opened.
-        ///
-        /// @return True to let the editor continue opening; false otherwise. Returns true by default.
-        virtual bool OnEditorOpening();
-
-        /// Called just before the editor is closing.
-        ///
-        /// @return True to let the editor continue closing; false otherwise. Returns true by default.
-        virtual bool OnEditorClosing();
-
-        /// Called just after the editor has been opened.
-        virtual void OnEditorOpen();
-
-        /// Called just after the editor has been closed.
-        virtual void OnEditorClose();
-#endif
 
     private:
 
@@ -682,140 +538,6 @@ namespace GT
 
         /// Class representing the editor.
         Editor editor;
-
-
-        /// The profiler.
-        Profiler profiler;
-
-
-        /// Structure containing the debuggin GUI elements.
-        struct _DebuggingGUI
-        {
-            _DebuggingGUI(Game &gameIn)
-                : game(gameIn), gui(nullptr),
-                  DebuggingMain(nullptr),
-                  FPSValue(nullptr), UpdateTime(nullptr), RenderTime(nullptr),
-                  updateIntervalInSeconds(0.5), lastUpdateTime(0.0),
-                  isInitialised(false), isShowing(false)
-            {
-            }
-
-            bool Initialise(GUIServer &guiIn)
-            {
-                if (!this->isInitialised)
-                {
-                    this->gui = &guiIn;
-
-                    if (this->gui->LoadFromFile("engine/gui/debugging.xml"))
-                    {
-                        this->DebuggingMain = this->gui->GetElementByID("DebuggingMain");
-                        this->FPSValue      = this->gui->GetElementByID("FPSValue");
-                        this->UpdateTime    = this->gui->GetElementByID("Profiler_UpdateTime");
-                        this->RenderTime    = this->gui->GetElementByID("Profiler_RenderTime");
-
-                        this->isInitialised = true;
-                    }
-                }
-
-                return this->isInitialised;
-            }
-
-            // Updates the debugging information. This should be called once per frame.
-            void Update(Profiler &profilerIn)
-            {
-                if (Timing::GetTimeInSeconds() - this->lastUpdateTime >= this->updateIntervalInSeconds)
-                {
-                    this->lastUpdateTime = Timing::GetTimeInSeconds();
-
-                    double delta = profilerIn.GetAverageFrameTime();
-                    double fps   = 0.0;
-
-                    if (delta > 0.0)
-                    {
-                        fps = 1.0 / profilerIn.GetAverageFrameTime();
-                    }
-
-                    char valueStr[64];
-                    IO::snprintf(valueStr, 64, "%.1f / %.4f", fps, delta * 1000.0);
-
-                    if (this->FPSValue != nullptr)
-                    {
-                        this->FPSValue->SetText(valueStr);
-                    }
-
-
-
-                    // Update and Render time.
-                    double updateTime = profilerIn.GetAverageUpdateTime();
-                    double renderTime = profilerIn.GetAverageRenderingTime();
-
-                    IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", updateTime * 1000, updateTime / delta * 100.0);
-                    this->UpdateTime->SetText(valueStr);
-
-                    IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", renderTime * 1000, renderTime / delta * 100.0);
-                    this->RenderTime->SetText(valueStr);
-                }
-            }
-
-
-            /// Shows the debugging GUI.
-            void Show()
-            {
-                if (this->DebuggingMain != nullptr)
-                {
-                    this->DebuggingMain->Show();
-                }
-            }
-
-            /// Hides the debugging GUI.
-            void Hide()
-            {
-                if (this->DebuggingMain != nullptr)
-                {
-                    this->DebuggingMain->Hide();
-                }
-            }
-
-
-            /// The game that owns this structure.
-            Game &game;
-
-
-            /// A pointer to the main GUI server this debugging GUI is part of. This is set in Initialise().
-            GUIServer* gui;
-
-            /// The main editor element. Every single element used by the editor is a child of this element.
-            GUIElement* DebuggingMain;
-
-            /// The FPSValue element.
-            GUIElement* FPSValue;
-
-            /// The update time element.
-            GUIElement* UpdateTime;
-
-            /// The render time element.
-            GUIElement* RenderTime;
-
-
-            /// The amount of time to wait to update the debug information, in seconds.
-            double updateIntervalInSeconds;
-
-            /// The last time the GUI was updated.
-            double lastUpdateTime;
-
-
-            /// Whether or not the debugging GUI has been initialised.
-            bool isInitialised;
-
-            /// Whether or not the debugging GUI is currently showing.
-            bool isShowing;
-
-
-        private:
-            _DebuggingGUI(const _DebuggingGUI &);
-            _DebuggingGUI & operator=(const _DebuggingGUI &);
-
-        }DebuggingGUI;
 
 
         bool isMouseSmoothingEnabled;
