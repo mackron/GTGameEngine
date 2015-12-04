@@ -53,7 +53,7 @@ namespace GT
     private:
 
         /// The game whose window this event handler is attached to.
-        Context &game;
+        Context &context;
 
 
     private:    // No copying.

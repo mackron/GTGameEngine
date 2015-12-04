@@ -5,8 +5,8 @@
 
 namespace GT
 {
-    GameWindowEventHandler::GameWindowEventHandler(Context &game)
-        : game(game)
+    GameWindowEventHandler::GameWindowEventHandler(Context &context)
+        : context(context)
     {
     }
 
@@ -15,7 +15,7 @@ namespace GT
         GameEvent e;
         e.code = EventCodes::OnClose;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnSize(unsigned int width, unsigned int height)
@@ -25,7 +25,7 @@ namespace GT
         e.size.width  = width;
         e.size.height = height;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnMouseMove(int x, int y)
@@ -35,7 +35,7 @@ namespace GT
         e.mousemove.x = x;
         e.mousemove.y = y;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnMouseWheel(int delta, int x, int y)
@@ -46,7 +46,7 @@ namespace GT
         e.mousewheel.x     = x;
         e.mousewheel.y     = y;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnMouseButtonDown(MouseButton button, int x, int y)
@@ -57,7 +57,7 @@ namespace GT
         e.mousedown.x      = x;
         e.mousedown.y      = y;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnMouseButtonUp(MouseButton button, int x, int y)
@@ -68,7 +68,7 @@ namespace GT
         e.mouseup.x      = x;
         e.mouseup.y      = y;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnMouseButtonDoubleClick(MouseButton button, int x, int y)
@@ -79,7 +79,7 @@ namespace GT
         e.mousedoubleclick.x      = x;
         e.mousedoubleclick.y      = y;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnKeyPressed(Key key)
@@ -88,7 +88,7 @@ namespace GT
         e.code           = EventCodes::OnKeyPressed;
         e.keypressed.key = key;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnKeyReleased(Key key)
@@ -97,7 +97,7 @@ namespace GT
         e.code           = EventCodes::OnKeyReleased;
         e.keyreleased.key = key;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnKeyDown(Key key, unsigned int repeatCount)
@@ -108,7 +108,7 @@ namespace GT
 
         for (unsigned int i = 0; i < repeatCount; ++i)
         {
-            this->game.SendEvent(e);
+            this->context.SendEvent(e);
         }
     }
 
@@ -118,7 +118,7 @@ namespace GT
         e.code = EventCodes::OnKeyUp;
         e.keyup.key = key;
 
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnReceiveFocus()
@@ -126,7 +126,7 @@ namespace GT
         GameEvent e;
         e.code = EventCodes::OnReceiveFocus;
         
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 
     void GameWindowEventHandler::OnLoseFocus()
@@ -134,6 +134,6 @@ namespace GT
         GameEvent e;
         e.code = EventCodes::OnLoseFocus;
         
-        this->game.SendEvent(e);
+        this->context.SendEvent(e);
     }
 }
