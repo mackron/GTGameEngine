@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "Game.hpp"
 #include "Context.hpp"
 
-#define GTENGINE_VERSION_STRING "0.0.4"
+#define GTENGINE_VERSION_STRING "0.0.5"
 
 namespace GT
 {
