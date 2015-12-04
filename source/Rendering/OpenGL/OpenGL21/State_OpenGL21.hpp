@@ -3,22 +3,6 @@
 #ifndef GT_Rendering_State_OpenGL21
 #define GT_Rendering_State_OpenGL21
 
-#include "RCSetGlobalState_OpenGL21.hpp"
-#include "RCClear_OpenGL21.hpp"
-#include "RCDraw_OpenGL21.hpp"
-#include "RCCreateVertexArray_OpenGL21.hpp"
-#include "RCDeleteVertexArray_OpenGL21.hpp"
-#include "RCSetVertexArrayState_OpenGL21.hpp"
-#include "RCCreateTexture_OpenGL21.hpp"
-#include "RCDeleteTexture_OpenGL21.hpp"
-#include "RCSetTextureState_OpenGL21.hpp"
-#include "RCCreateShader_OpenGL21.hpp"
-#include "RCDeleteShader_OpenGL21.hpp"
-#include "RCSetShaderState_OpenGL21.hpp"
-#include "RCCreateFramebuffer_OpenGL21.hpp"
-#include "RCDeleteFramebuffer_OpenGL21.hpp"
-#include "RCSetFramebufferState_OpenGL21.hpp"
-
 #include "../CapabilityBits.hpp"
 #include "TextureState_OpenGL21.hpp"
 #include "ShaderState_OpenGL21.hpp"

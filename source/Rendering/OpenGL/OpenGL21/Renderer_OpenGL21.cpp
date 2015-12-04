@@ -13,9 +13,6 @@
 #include <GTGE/Core/Windowing/X11/X11.hpp>
 #endif
 
-
-#include "../../RCCache.hpp"
-#include "../../RCQueue.hpp"
 #include "../RendererCaps.hpp"
 #include "../Debugging_OpenGL.hpp"
 #include "../TypeConversion.hpp"
