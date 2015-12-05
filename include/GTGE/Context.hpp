@@ -6,6 +6,7 @@
 #include "MessageDispatcher.hpp"
 #include "Audio/SoundWorld.hpp"
 #include "Assets/AssetLibrary.hpp"
+#include "ScriptLibrary.hpp"
 #include "GameEventQueue.hpp"
 #include "GameEventFilter.hpp"
 #include "GameWindowEventHandler.hpp"
@@ -23,7 +24,9 @@
 #include <easy_util/easy_util.h>
 #include <easy_fs/easy_vfs.h>
 
+#ifdef _WIN32
 #undef GetCommandLine
+#endif
 
 namespace GT
 {
@@ -36,10 +39,27 @@ namespace GT
     public:
 
         /// Constructor.
-        Context(int argc, char** argv, GameStateManager &gameStateManager);
+        Context(GameStateManager &gameStateManager);
 
         /// Destructor.
         ~Context();
+
+
+        /// Starts up the context from a command line object.
+        bool Startup(easyutil_cmdline &cmdline);
+
+        /// Starts up the context from an argv style command line.
+        bool Startup(int argc, char** argv);
+
+        /// Starts up the context from a Win32 style command line.
+        bool Startup(const char* cmdline);
+
+        /// Starts up the context without a command line.
+        bool Startup();
+
+
+        /// Shuts down the game.
+        void Shutdown();
 
 
 
@@ -119,27 +139,12 @@ namespace GT
         /// Returns a reference to the internal asset library.
         AssetLibrary & GetAssetLibrary();
 
-
+        /// Retrieves a reference to the internal script library.
+        ScriptLibrary & GetScriptLibrary() { return m_scriptLibrary; }
 
 
 
         //// FROM GAME ////
-
-
-        /// Starts up the game.
-        ///
-        /// @remarks
-        ///     This will call OnLoadConfigs() and OnStartup().
-        ///     @par
-        ///     Client application should not call this method directly. It will instead be called internally by Startup().
-        bool Startup();
-
-        /// Shuts down the game.
-        ///
-        /// @remark
-        ///     Client applications should not call this method directly. It will instead be called internally by Shutdown().
-        void Shutdown();
-
 
         /// Runs the game.
         ///
@@ -526,7 +531,6 @@ namespace GT
 
     private:
 
-
         /// The command line object.
         easyutil_cmdline m_cmdline;
 
@@ -557,6 +561,9 @@ namespace GT
         /// The asset library.
         AssetLibrary m_assetLibrary;
 
+
+        /// The script library.
+        ScriptLibrary m_scriptLibrary;
 
 
 

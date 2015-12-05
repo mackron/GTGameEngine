@@ -5,6 +5,7 @@
 #include <GTGE/Script.hpp>
 #include <GTGE/Core/Strings/LineIterator.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
+#include <GTGE/GTEngine.hpp>
 
 namespace GT
 {
@@ -24,7 +25,7 @@ namespace GT
 
 
         // The script library will contain a working script object for loading stuff like this.
-        auto &workingScript = ScriptLibrary::GetWorkingScript();
+        auto &workingScript = g_Context->GetScriptLibrary().GetWorkingScript();
 
 
         // We now need to determine if various events are defined in the script. To do this, we'll need to parse it. For now what we'll do

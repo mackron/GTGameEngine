@@ -1056,7 +1056,7 @@ namespace GT
             else
             {
                 // It might be a script file. We'll try reloading.
-                ScriptLibrary::Reload(absolutePath);
+                this->GetContext().GetScriptLibrary().Reload(absolutePath);
 
                 // If we have a script file we will reload it if applicable.
                 if (this->GetContext().GetScript().HasFileBeenLoaded(absolutePath))

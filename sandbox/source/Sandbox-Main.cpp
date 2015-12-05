@@ -22,10 +22,19 @@ int main(int argc, char** argv)
 #endif
 
 
-    int retValue = 1;
+    int retValue = -1;
 
     // First we start up the engine, specifying the Game class we want to instantiate. This uses the default constructor.
     GT::DefaultGameStateManager gameStateManager;
+
+#if 0
+    GT::Context context(gameStateManager);
+    if (context.Startup(argc, argv))
+    {
+        retValue = context.Run();
+        context.Shutdown();
+    }
+#endif
 
     auto pContext = GT::Startup<GT::Context>(argc, argv, gameStateManager);
     if (pContext != nullptr)

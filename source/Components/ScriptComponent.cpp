@@ -30,22 +30,25 @@ namespace GT
         {
             // If we get here it means the script does not already exist and needs to be added. Note that we want to add these even
             // if we get a null pointer. We do this so the names remain persistant for things like editting tools.
-            definition = ScriptLibrary::Acquire(relativePath, nullptr, true);
-            if (definition != nullptr)
+            if (this->GetContext() != NULL)
             {
-                this->scripts.PushBack(definition);
-                this->scriptRelativePaths.PushBack(relativePath);
-
-                // We need to merge the variables from the new definition into our own. The definition is allowed to be null here, so
-                // that'll also need to be checked.
+                definition = this->GetContext()->GetScriptLibrary().Acquire(relativePath, nullptr, true);
                 if (definition != nullptr)
                 {
-                    this->MergePublicVariables(*definition);
-                }
+                    this->scripts.PushBack(definition);
+                    this->scriptRelativePaths.PushBack(relativePath);
 
-                if (!dontPostOnChange)
-                {
-                    this->OnChanged();
+                    // We need to merge the variables from the new definition into our own. The definition is allowed to be null here, so
+                    // that'll also need to be checked.
+                    if (definition != nullptr)
+                    {
+                        this->MergePublicVariables(*definition);
+                    }
+
+                    if (!dontPostOnChange)
+                    {
+                        this->OnChanged();
+                    }
                 }
             }
         }
@@ -70,7 +73,10 @@ namespace GT
         {
             // We need to remove the variables defined in the definition being removed.
             this->RemovePublicVariables(*definition);
-            ScriptLibrary::Unacquire(definition);
+
+            if (this->GetContext() != NULL) {
+                this->GetContext()->GetScriptLibrary().Unacquire(definition);
+            }
         }
 
 
@@ -542,7 +548,9 @@ namespace GT
     {
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
-            ScriptLibrary::Unacquire(this->scripts[i]);
+            if (this->GetContext() != NULL) {
+                this->GetContext()->GetScriptLibrary().Unacquire(this->scripts[i]);
+            }
         }
         this->scripts.Clear();
 

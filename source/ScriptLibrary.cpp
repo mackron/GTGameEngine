@@ -3,43 +3,27 @@
 #include <GTGE/GTEngine.hpp>
 #include <GTGE/ScriptLibrary.hpp>
 #include <GTGE/Scripting.hpp>
-#include <GTGE/Core/Dictionary.hpp>
 #include <easy_path/easy_path.h>
-#include <utility>
 
 namespace GT
 {
-    //////////////////////////////////////
-    // Globals.
+    ScriptLibrary::ScriptLibrary(Context &context)
+        : m_context(context), m_workingScript(), m_loadedDefinitions()
+    {
+    }
 
-    typedef std::pair<ScriptDefinition*, size_t> ScriptDefinitionReference;
-
-    /// The list of loaded classes, indexed by the absolute path.
-    static Dictionary<ScriptDefinitionReference> LoadedDefinitions;
-
-    /// A pointer to the working script. This is instantiated in Startup() and deleted in Shutdown().
-    static GT::Script* WorkingScript = nullptr;
-
-    /// A pointer to the main game object. This is passed into the Startup() routine.
-    static Context* g_pContext = nullptr;
-
+    ScriptLibrary::~ScriptLibrary()
+    {
+    }
 
 
     /////////////////////////////////////////////////
     // Startup/Shutdown
 
-    bool ScriptLibrary::Startup(Context* pContext)
+    bool ScriptLibrary::Startup()
     {
-        if (pContext == nullptr) {
-            return false;
-        }
-
-        g_pContext = pContext;
-
-        WorkingScript = new GT::Script;
-        if (!GT::LoadExtendedMathLibrary(*WorkingScript))
+        if (!GT::LoadExtendedMathLibrary(m_workingScript))
         {
-            delete WorkingScript;
             return false;
         }
 
@@ -48,15 +32,11 @@ namespace GT
 
     void ScriptLibrary::Shutdown()
     {
-        for (size_t i = 0; i < LoadedDefinitions.count; ++i)
+        for (size_t i = 0; i < m_loadedDefinitions.count; ++i)
         {
-            delete LoadedDefinitions.buffer[i]->value.first;
+            delete m_loadedDefinitions.buffer[i]->value.first;
         }
-        LoadedDefinitions.Clear();
-
-
-        delete WorkingScript;
-        WorkingScript = nullptr;
+        m_loadedDefinitions.Clear();
     }
 
 
@@ -85,7 +65,7 @@ namespace GT
         char absolutePath[EASYVFS_MAX_PATH];
         if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iLoadedClass = LoadedDefinitions.Find(absolutePath);
+            auto iLoadedClass = m_loadedDefinitions.Find(absolutePath);
             if (iLoadedClass == nullptr)
             {
                 // Does not exist. Needs to be loaded.
@@ -93,9 +73,9 @@ namespace GT
                 if (scriptString != nullptr)
                 {
                     auto newDefinition = new ScriptDefinition(absolutePath, scriptString);
-                    LoadedDefinitions.Add(absolutePath, ScriptDefinitionReference(newDefinition, 1));
+                    m_loadedDefinitions.Add(absolutePath, ScriptDefinitionReference(newDefinition, 1));
 
-                    GT::LoadScriptDefinition(g_pContext->GetScript(), absolutePath, scriptString);
+                    GT::LoadScriptDefinition(m_context.GetScript(), absolutePath, scriptString);
 
                     easyvfs_free(scriptString);
                     return newDefinition;
@@ -132,9 +112,9 @@ namespace GT
         if (scriptDefinitionToUnacquire != nullptr)
         {
             // We need to search by value.
-            for (size_t i = 0; i < LoadedDefinitions.count; ++i)
+            for (size_t i = 0; i < m_loadedDefinitions.count; ++i)
             {
-                auto &value = LoadedDefinitions.buffer[i]->value;
+                auto &value = m_loadedDefinitions.buffer[i]->value;
                 if (value.first == scriptDefinitionToUnacquire)
                 {
                     assert(value.second > 0);
@@ -143,10 +123,10 @@ namespace GT
 
                         if (value.second == 0)
                         {
-                            GT::UnloadScriptDefinition(g_pContext->GetScript(), scriptDefinitionToUnacquire->GetAbsolutePath());
+                            GT::UnloadScriptDefinition(m_context.GetScript(), scriptDefinitionToUnacquire->GetAbsolutePath());
 
                             delete value.first;
-                            LoadedDefinitions.RemoveByIndex(i);
+                            m_loadedDefinitions.RemoveByIndex(i);
                         }
 
                         break;
@@ -162,7 +142,7 @@ namespace GT
         char absolutePath[EASYVFS_MAX_PATH];
         if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            return LoadedDefinitions.Exists(absolutePath);
+            return m_loadedDefinitions.Exists(absolutePath);
         }
 
         return false;
@@ -174,7 +154,7 @@ namespace GT
         char absolutePath[EASYVFS_MAX_PATH];
         if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iDefinition = LoadedDefinitions.Find(absolutePath);
+            auto iDefinition = m_loadedDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
             {
                 auto definition = iDefinition->value.first;
@@ -188,7 +168,7 @@ namespace GT
                         definition->~ScriptDefinition();
                         new (definition) ScriptDefinition(absolutePath, scriptString);
 
-                        GT::LoadScriptDefinition(g_pContext->GetScript(), definition->GetAbsolutePath(), scriptString);
+                        GT::LoadScriptDefinition(m_context.GetScript(), definition->GetAbsolutePath(), scriptString);
 
                         easyvfs_free(scriptString);
                         return true;
@@ -209,12 +189,12 @@ namespace GT
 
     size_t ScriptLibrary::GetLoadedDefinitionCount()
     {
-        return LoadedDefinitions.count;
+        return m_loadedDefinitions.count;
     }
 
     const ScriptDefinition* ScriptLibrary::GetLoadedDefinitionByIndex(size_t index)
     {
-        return LoadedDefinitions.buffer[index]->value.first;
+        return m_loadedDefinitions.buffer[index]->value.first;
     }
 
 
@@ -225,7 +205,6 @@ namespace GT
 
     GT::Script & ScriptLibrary::GetWorkingScript()
     {
-        assert(WorkingScript != nullptr);
-        return *WorkingScript;
+        return m_workingScript;
     }
 }

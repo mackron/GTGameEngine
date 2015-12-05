@@ -98,8 +98,8 @@ namespace GT
             if (this->IsScriptFile())
             {
                 GameStateManager nullGameStateManager;
-                this->proxyContext = new Context(0, nullptr, nullGameStateManager);     // <-- TODO: This needs to be optimized. It will do things like initialize the graphics and audio sub-systems which we don't really want. Use the notion of a sub-context.
-                if (this->proxyContext->GetScript().Startup())
+                this->proxyContext = new Context(nullGameStateManager);     // <-- TODO: This needs to be optimized. It will do things like initialize the graphics and audio sub-systems which we don't really want. Use the notion of a sub-context.
+                if (this->proxyContext->Startup() && this->proxyContext->GetScript().Startup())
                 {
                     // We need to setup a few things with the scripting.
                     this->compilationScript = &this->proxyContext->GetScript();

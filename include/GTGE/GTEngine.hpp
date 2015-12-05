@@ -35,13 +35,6 @@ namespace GT
     /// The global engine context. TODO: Remove this and have applications create this themselves. This global object is only used during the transition phase.
     extern GT::Context* g_Context;
 
-
-    /// Starts up the engine.
-    ///
-    /// @return True if the engine is initialised successfully; false otherwise.
-    bool _PreStartup(Context* pContext);
-
-
     /// Starts up the engine, returning an instance of the given game class (T).
     ///
     /// @param argc [in] The argument count from main().
@@ -55,39 +48,14 @@ namespace GT
     template <typename T>
     T* Startup(int argc, char** argv, GameStateManager &gameStateManager)
     {
-        g_Context = new T(argc, argv, gameStateManager);
-        if (_PreStartup(g_Context))
+        g_Context = new T(gameStateManager);
+        if (!g_Context->Startup(argc, argv))
         {
-            if (!g_Context->Startup())
-            {
-                delete g_Context;
-                g_Context = nullptr;
-            }
+            delete g_Context;
+            g_Context = nullptr;
         }
 
         return g_Context;
-
-#if 0
-        Game* pGame = nullptr;
-        if (g_Context == nullptr)
-        {
-            g_Context = new GT::Context(argc, argv);
-            if (_PreStartup())
-            {
-                pGame = new T(gameStateManager);
-                if (_PreStartup2(pGame))
-                {
-                    if (!pGame->Startup())
-                    {
-                        delete pGame;
-                        pGame = nullptr;
-                    }
-                }
-            }
-        }
-
-        return static_cast<T*>(pGame);
-#endif
     }
 
     /// Shuts down the engine, deleting the given game object returned by Startup().

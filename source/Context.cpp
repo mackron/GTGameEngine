@@ -7,6 +7,8 @@
 #include <GTGE/Texture2DLibrary.hpp>
 #include <GTGE/ParticleSystemLibrary.hpp>
 #include <GTGE/ScriptLibrary.hpp>
+#include <GTGE/VertexArrayLibrary.hpp>
+#include <GTGE/ShaderLibrary.hpp>
 #include <GTGE/Scripting.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GamePackager.hpp>
@@ -15,6 +17,7 @@
 #include <GTGE/Core/Strings/Tokenizer.hpp>
 #include <GTGE/Core/String.hpp>
 #include <GTGE/Core/Keyboard.hpp>
+#include <GTGE/Core/WindowManagement.hpp>
 #include <easy_path/easy_path.h>
 #include <easy_fs/easy_vfs.h>
 
@@ -108,13 +111,14 @@ namespace GT
 
 
 
-    Context::Context(int argc, char** argv, GameStateManager &gameStateManager)
+    Context::Context(GameStateManager &gameStateManager)
         : m_cmdline(),
           m_executableDirectoryAbsolutePath(),
           m_pVFS(nullptr),
           m_pLogFile(nullptr),
           m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
           m_assetLibrary(),
+          m_scriptLibrary(*this),
           m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
           eventQueue(), eventQueueLock(NULL),
@@ -136,6 +140,33 @@ namespace GT
           profilerToggleKey(Keys::F11),
           editorToggleKeyCombination(Keys::Shift, Keys::Tab)
     {
+    }
+
+    Context::~Context()
+    {
+    }
+
+
+
+    bool GameCommandLineProc(const char* key, const char* value, void* pUserData)
+    {
+        Context* pContext = reinterpret_cast<Context*>(pUserData);
+        assert(pContext != nullptr);
+
+        if (strcmp(key, "config") == 0) {
+            pContext->GetScript().ExecuteFile(pContext->GetVFS(), value);
+            return true;
+        }
+
+        return true;
+    }
+
+
+    bool Context::Startup(easyutil_cmdline &cmdline)
+    {
+        m_cmdline = cmdline;
+
+
         // We need to initialize the virtual file system early so we can do things like create logs and cache files.
         m_pVFS = easyvfs_create_context();
 
@@ -143,11 +174,8 @@ namespace GT
         // Parse the command line.
         CommandLineData cmdlineData;
         strcpy_s(cmdlineData.relativeLogPath, sizeof(cmdlineData.relativeLogPath), "var/logs/engine.txt");
+        easyutil_parse_cmdline(&m_cmdline, parse_cmdline_proc, &cmdlineData);
 
-        if (easyutil_init_cmdline(&m_cmdline, argc, argv))
-        {
-            easyutil_parse_cmdline(&m_cmdline, parse_cmdline_proc, &cmdlineData);
-        }
 
         // Make sure the executable's absolute path is clean for future things.
         easypath_clean(cmdlineData.absoluteExeDirPath, m_executableDirectoryAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
@@ -220,10 +248,183 @@ namespace GT
         }
 
         m_soundWorld.Startup();
+
+
+
+
+        // Before we can do any windowing operations we will need to initialise the window management module of GTLib.
+        StartupWindowManager();
+
+
+        // With the log file created, we can startup all of our other sub-systems.
+        g_Context->Logf("Starting Rendering Sub-System...");
+        if (Renderer::Startup())
+        {
+            g_Context->Logf("Renderer Caps:");
+            g_Context->Logf("    Max Color Attachments: %d", Renderer::GetMaxColourAttachments());
+            g_Context->Logf("    Max Draw Buffers:      %d", Renderer::GetMaxDrawBuffers());
+            g_Context->Logf("    Max Texture Units:     %d", Renderer::GetMaxTextureUnits());
+
+            g_Context->Logf("Loading Shaders...");
+            ShaderLibrary::LoadFromDirectory("engine/shaders/glsl");
+            ShaderLibrary::LoadFromDirectory("shaders/glsl");
+        }
+        else
+        {
+            return false;
+        }
+
+
+        // With sub-systems started up, we can startup our resource libraries.
+        g_Context->Logf("Initializing Texture Library...");
+        Texture2DLibrary::Startup();
+
+        g_Context->Logf("Initializing Material Library...");
+        MaterialLibrary::Startup();
+
+        g_Context->Logf("Initializing Vertex Array Library...");
+        VertexArrayLibrary::Startup();
+
+        g_Context->Logf("Initializing Model Library...");
+        ModelLibrary::Startup();
+
+        g_Context->Logf("Initializing Prefab Library...");
+        PrefabLibrary::Startup();
+
+        g_Context->Logf("Initializing Particle System Library...");
+        ParticleSystemLibrary::Startup();
+
+        g_Context->Logf("Initializing Script Library...");
+        m_scriptLibrary.Startup();
+        //ScriptLibrary::Startup(this);
+
+
+
+
+        // The first thing we do is load up the scripting environment. We do this first because it will contain configuration properties
+        // for things later on.
+        if (this->script.Startup())
+        {
+            this->gui.Startup();
+            this->guiRenderer.Startup();
+
+            //// FROM GAME ////
+            this->eventQueueLock = easyutil_create_mutex();
+
+            // The main game window GUI element needs to be created. It is just a 100% x 100% invisible element off the root element.
+            this->gui.Load("<div id='MainGameWindow' style='width:100%; height:100%' />");
+            this->gameWindowGUIElement = this->gui.GetElementByID("MainGameWindow");
+
+            this->gui.SetRenderer(this->guiRenderer);
+
+
+
+
+
+
+            // We give the game an opportunity to load configs before processing --config arguments.
+            m_gameStateManager.OnLoadConfigs(*this);
+
+            // This is where the user config scripts are loaded.
+            easyutil_parse_cmdline(&g_Context->GetCommandLine(), GameCommandLineProc, this);
+
+
+            // Here we will set the default anistropy for textures via the texture library.
+            Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("GTEngine.Display.Textures.Anisotropy")));
+
+
+            // First we need a window. Note that we don't show it straight away.
+            this->window = Renderer::CreateWindow();
+            if (this->window != nullptr)
+            {
+                // We'll want to set a few window properties before showing it... We want to show the window relatively early to make
+                // the game feel a little bit more speedy, even though it's not really.
+                this->window->SetTitle("GTEngine Game");
+                this->window->SetSize(this->script.GetInteger("GTEngine.Display.Width"), this->script.GetInteger("GTEngine.Display.Height"));
+
+                // Now we can set the window's event handler and show it.
+                this->window->SetEventHandler(this->windowEventHandler);
+                this->window->Show();
+
+
+                // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
+                g_Context->Logf("Loading GUI...");
+                if (!this->InitialiseGUI())
+                {
+                    g_Context->Logf("Error loading GUI.");
+                }
+
+
+                // Here is where we let the game object do some startup stuff.
+                if (m_gameStateManager.OnStartup(*this))
+                {
+                    this->script.Execute("Game.OnStartup();");
+                }
+                else
+                {
+                    // OnStartup() has returned false somewhere.
+                    return false;
+                }
+            }
+            else
+            {
+                // We couldn't create a window, which means the renderer is not usable...
+                g_Context->LogErrorf("Error initialising renderer.");
+                return false;
+            }
+        }
+        else
+        {
+            g_Context->LogErrorf("Error initialising scripting environment.");
+            return false;
+        }
+
+
+
+        return true;
     }
 
-    Context::~Context()
+    bool Context::Startup(int argc, char** argv)
     {
+        easyutil_cmdline cmdline;
+        if (easyutil_init_cmdline(&cmdline, argc, argv))
+        {
+            return this->Startup(cmdline);
+        }
+
+        return false;
+    }
+
+    bool Context::Startup(const char* cmdlineWin32)
+    {
+        easyutil_cmdline cmdline;
+        if (easyutil_init_cmdline_win32(&cmdline, cmdlineWin32))
+        {
+            return this->Startup(cmdline);
+        }
+
+        return false;
+    }
+
+    bool Context::Startup()
+    {
+        easyutil_cmdline cmdline;
+        memset(&cmdline, 0, sizeof(cmdline));
+
+        return this->Startup(cmdline);
+    }
+
+
+    void Context::Shutdown()
+    {
+        // We first let the game know that we are shutting down. It's important that we do this before killing anything.
+        m_gameStateManager.OnShutdown(*this);
+        this->script.Execute("Game.OnShutdown();");     // <-- TODO: Don't use this inline style calling. Instead, properly call it through the C++ API.
+
+        delete this->window;
+
+
+
         //////////////////////////////////////////
         // Audio System
 
@@ -236,9 +437,27 @@ namespace GT
         m_pAudioContext = nullptr;
 
 
-
-
         easyutil_delete_mutex(this->eventQueueLock);
+
+
+
+
+        // We kill our libraries before the major sub-systems.
+        ModelLibrary::Shutdown();
+        MaterialLibrary::Shutdown();
+        ShaderLibrary::Shutdown();
+        Texture2DLibrary::Shutdown();
+        VertexArrayLibrary::Shutdown();
+        PrefabLibrary::Shutdown();
+        ParticleSystemLibrary::Shutdown();
+        m_scriptLibrary.Shutdown();
+
+        // We shutdown major sub-systems before logging. This allows us to log shutdown info.
+        Renderer::Shutdown();
+
+
+        // GTLib's window management module.
+        ShutdownWindowManager();
     }
 
 
@@ -937,101 +1156,6 @@ namespace GT
     }
 
 
-    bool GameCommandLineProc(const char* key, const char* value, void* pUserData)
-    {
-        Context* pContext = reinterpret_cast<Context*>(pUserData);
-        assert(pContext != nullptr);
-
-        if (strcmp(key, "config") == 0) {
-            pContext->GetScript().ExecuteFile(pContext->GetVFS(), value);
-            return true;
-        }
-
-        return true;
-    }
-
-
-    bool Context::Startup()
-    {
-        // The first thing we do is load up the scripting environment. We do this first because it will contain configuration properties
-        // for things later on.
-        if (this->script.Startup())
-        {
-            this->gui.Startup();
-            this->guiRenderer.Startup();
-
-            //// FROM GAME ////
-            this->eventQueueLock = easyutil_create_mutex();
-
-            // The main game window GUI element needs to be created. It is just a 100% x 100% invisible element off the root element.
-            this->gui.Load("<div id='MainGameWindow' style='width:100%; height:100%' />");
-            this->gameWindowGUIElement = this->gui.GetElementByID("MainGameWindow");
-
-            this->gui.SetRenderer(this->guiRenderer);
-
-
-
-
-
-
-            // We give the game an opportunity to load configs before processing --config arguments.
-            m_gameStateManager.OnLoadConfigs(*this);
-
-            // This is where the user config scripts are loaded.
-            easyutil_parse_cmdline(&g_Context->GetCommandLine(), GameCommandLineProc, this);
-
-
-            // Here we will set the default anistropy for textures via the texture library.
-            Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("GTEngine.Display.Textures.Anisotropy")));
-
-
-            // First we need a window. Note that we don't show it straight away.
-            this->window = Renderer::CreateWindow();
-            if (this->window != nullptr)
-            {
-                // We'll want to set a few window properties before showing it... We want to show the window relatively early to make
-                // the game feel a little bit more speedy, even though it's not really.
-                this->window->SetTitle("GTEngine Game");
-                this->window->SetSize(this->script.GetInteger("GTEngine.Display.Width"), this->script.GetInteger("GTEngine.Display.Height"));
-
-                // Now we can set the window's event handler and show it.
-                this->window->SetEventHandler(this->windowEventHandler);
-                this->window->Show();
-
-
-                // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
-                g_Context->Logf("Loading GUI...");
-                if (!this->InitialiseGUI())
-                {
-                    g_Context->Logf("Error loading GUI.");
-                }
-
-
-                // Here is where we let the game object do some startup stuff.
-                if (m_gameStateManager.OnStartup(*this))
-                {
-                    this->script.Execute("Game.OnStartup();");
-                    return true;
-                }
-
-                // OnStartup() has returned false somewhere.
-                return false;
-            }
-            else
-            {
-                // We couldn't create a window, which means the renderer is not usable...
-                g_Context->LogErrorf("Error initialising renderer.");
-            }
-        }
-        else
-        {
-            g_Context->LogErrorf("Error initialising scripting environment.");
-        }
-
-        return false;
-    }
-
-
     bool Context::InitialiseGUI()
     {
         this->gui.SetEventHandler(this->guiEventHandler);
@@ -1039,15 +1163,7 @@ namespace GT
     }
 
 
-    void Context::Shutdown()
-    {
-        // We first let the game know that we are shutting down. It's important that we do this before killing anything.
-        m_gameStateManager.OnShutdown(*this);
-        this->script.Execute("Game.OnShutdown();");     // <-- TODO: Don't use this inline style calling. Instead, properly call it through the C++ API.
-
-
-        delete this->window;
-    }
+    
 
     void Context::DoFrame()
     {

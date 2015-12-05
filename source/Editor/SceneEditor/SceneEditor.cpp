@@ -3612,14 +3612,14 @@ namespace GT
         // If the scene is registered to the script we're going to reload the definition.
         if (m_scene.GetRegisteredScript() != nullptr)
         {
-            if (ScriptLibrary::IsLoaded(scriptAbsolutePath))
+            if (this->GetContext().GetScriptLibrary().IsLoaded(scriptAbsolutePath))
             {
-                auto definition = ScriptLibrary::Acquire(scriptRelativePath);
+                auto definition = this->GetContext().GetScriptLibrary().Acquire(scriptRelativePath);
                 assert(definition != nullptr);
                 {
                     GT::LoadScriptDefinition(*m_scene.GetRegisteredScript(), definition->GetAbsolutePath(), definition->GetScriptString());
                 }
-                ScriptLibrary::Unacquire(definition);
+                this->GetContext().GetScriptLibrary().Unacquire(definition);
             }
         }
 
