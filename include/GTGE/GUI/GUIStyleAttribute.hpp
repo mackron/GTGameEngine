@@ -348,16 +348,16 @@ namespace GT
 
 
     // Color
-    struct GUIStyleAttribute_Colour : public GUIStyleAttribute<GT::Colour>
+    struct GUIStyleAttribute_Colour : public GUIStyleAttribute<GT::ColorF>
     {
         GUIStyleAttribute_Colour()
-            : GUIStyleAttribute(GT::Colour::TransparentBlack), isnone(true)
+            : GUIStyleAttribute(GT::ColorF::TransparentBlack), isnone(true)
         {
         }
 
         bool SetFromString(const char* valueIn, ptrdiff_t valueSizeInBytes = -1)
         {
-            if (GT::Colour::TryParse(this->value, valueIn, valueSizeInBytes))
+            if (GT::ColorF::TryParse(this->value, valueIn, valueSizeInBytes))
             {
                 this->isset  = true;
                 this->isnone = false;
@@ -378,12 +378,12 @@ namespace GT
         GT::String GetValueAsString() const
         {
             char valueStr[8];
-            GT::Colour::ToString(valueStr, 8, this->value);
+            GT::ColorF::ToString(valueStr, 8, this->value);
 
             return valueStr;
         }
 
-        GUIStyleAttribute_Colour & operator= (const GT::Colour &valueIn)
+        GUIStyleAttribute_Colour & operator= (const GT::ColorF &valueIn)
         {
             this->value = valueIn;
             this->isset = true;

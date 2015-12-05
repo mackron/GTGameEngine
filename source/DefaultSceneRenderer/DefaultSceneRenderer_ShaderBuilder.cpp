@@ -780,12 +780,12 @@ namespace GT
             (
                 "struct AmbientLightFS\n"
                 "{\n"
-                "    vec3 Colour;\n"
+                "    vec3 ColorF;\n"
                 "};\n"
                 ""
                 "void AccumulateAmbientLighting(in AmbientLightFS light, inout vec3 diffuseOut)\n"
                 "{\n"
-                "    diffuseOut += light.Colour;\n"
+                "    diffuseOut += light.ColorF;\n"
                 "}\n"
             );
         }
@@ -799,7 +799,7 @@ namespace GT
                 (
                     "struct DirectionalLightFS\n"
                     "{\n"
-                    "    vec3 Colour;\n"
+                    "    vec3 ColorF;\n"
                     "    vec3 Direction;\n"
                     "};\n"
 
@@ -812,8 +812,8 @@ namespace GT
                     "    float diffuse  = DiffuseFactor(N, L);\n"
                     "    float specular = SpecularFactor(N, H, Specular());\n"
                     ""
-                    "    diffuseOut  += light.Colour * diffuse;\n"
-                    "    specularOut += light.Colour * specular;\n"
+                    "    diffuseOut  += light.ColorF * diffuse;\n"
+                    "    specularOut += light.ColorF * specular;\n"
                     "}\n"
                 );
             }
@@ -824,7 +824,7 @@ namespace GT
                 (
                     "struct ShadowDirectionalLightFS\n"
                     "{\n"
-                    "    vec3 Colour;\n"
+                    "    vec3 ColorF;\n"
                     "    vec3 Direction;\n"
                     "};\n"
 
@@ -854,8 +854,8 @@ namespace GT
                     "    float specular = SpecularFactor(N, H, Specular());\n"
                     "    float shadow   = CalculateDirectionalShadow(shadowMap, lightSpacePosition);\n"
                     ""
-                    "    diffuseOut  += light.Colour * (diffuse  * shadow);\n"
-                    "    specularOut += light.Colour * (specular * shadow);\n"
+                    "    diffuseOut  += light.ColorF * (diffuse  * shadow);\n"
+                    "    specularOut += light.ColorF * (specular * shadow);\n"
                     "}\n"
                 );
             }
@@ -870,7 +870,7 @@ namespace GT
                 (
                     "struct PointLightFS\n"
                     "{\n"
-                    "    vec3  Colour;\n"
+                    "    vec3  ColorF;\n"
                     "    float Radius;\n"
                     "    float Falloff;\n"
                     "};\n"
@@ -885,8 +885,8 @@ namespace GT
                     "    float specular    = SpecularFactor(N, H, Specular());\n"
                     "    float attenuation = AttenuationFactor(light.Radius, light.Falloff, length(lightVector));\n"
                     ""
-                    "    diffuseOut  += light.Colour * (diffuse  * attenuation);\n"
-                    "    specularOut += light.Colour * (specular * attenuation);\n"
+                    "    diffuseOut  += light.ColorF * (diffuse  * attenuation);\n"
+                    "    specularOut += light.ColorF * (specular * attenuation);\n"
                     "}\n"
                 );
             }
@@ -897,7 +897,7 @@ namespace GT
                 (
                     "struct ShadowPointLightFS\n"
                     "{\n"
-                    "    vec3  Colour;\n"
+                    "    vec3  ColorF;\n"
                     "    float Radius;\n"
                     "    float Falloff;\n"
                     "};\n"
@@ -927,8 +927,8 @@ namespace GT
                     "    float attenuation = AttenuationFactor(light.Radius, light.Falloff, length(lightVector));\n"
                     "    float shadow      = CalculatePointShadow(shadowMap, shadowCoord);\n"
                     ""
-                    "    diffuseOut  += light.Colour * (diffuse  * attenuation * shadow);\n"
-                    "    specularOut += light.Colour * (specular * attenuation * shadow);\n"
+                    "    diffuseOut  += light.ColorF * (diffuse  * attenuation * shadow);\n"
+                    "    specularOut += light.ColorF * (specular * attenuation * shadow);\n"
                     "}\n"
                 );
             }
@@ -944,7 +944,7 @@ namespace GT
                 (
                     "struct SpotLightFS\n"
                     "{\n"
-                    "    vec3  Colour;\n"
+                    "    vec3  ColorF;\n"
                     "    vec3  Position;\n"
                     "    vec3  Direction;\n"
                     "    float Length;\n"
@@ -964,8 +964,8 @@ namespace GT
                     "    float attenuation = AttenuationFactor(light.Length, light.Falloff, length(L));\n"
                     "    float spot        = SpotFactor(normalize(L), light.Direction, light.CosAngleInner, light.CosAngleOuter);\n"
                     ""
-                    "    diffuseOut  += light.Colour * (diffuse  * attenuation * spot);\n"
-                    "    specularOut += light.Colour * (specular * attenuation * spot);\n"
+                    "    diffuseOut  += light.ColorF * (diffuse  * attenuation * spot);\n"
+                    "    specularOut += light.ColorF * (specular * attenuation * spot);\n"
                     "}\n"
                 );
             }
@@ -976,7 +976,7 @@ namespace GT
                 (
                     "struct ShadowSpotLightFS\n"
                     "{\n"
-                    "    vec3  Colour;\n"
+                    "    vec3  ColorF;\n"
                     "    vec3  Position;\n"
                     "    vec3  Direction;\n"
                     "    float Length;\n"
@@ -1013,8 +1013,8 @@ namespace GT
                     "    float spot        = SpotFactor(normalize(L), light.Direction, light.CosAngleInner, light.CosAngleOuter);\n"
                     "    float shadow      = CalculateSpotShadow(shadowMap, lightSpacePosition);\n"
                     ""
-                    "    diffuseOut  += light.Colour * (diffuse  * attenuation * spot * shadow);\n"
-                    "    specularOut += light.Colour * (specular * attenuation * spot * shadow);\n"
+                    "    diffuseOut  += light.ColorF * (diffuse  * attenuation * spot * shadow);\n"
+                    "    specularOut += light.ColorF * (specular * attenuation * spot * shadow);\n"
                     "}\n"
                 );
             }

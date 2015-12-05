@@ -793,14 +793,14 @@ namespace GT
             innerEdgeMesh = new SceneRendererMesh;
             innerEdgeMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
             innerEdgeMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
-            innerEdgeMesh->material->SetParameter("Colour", glm::vec3(0.0f, 0.0f, 0.25f));
+            innerEdgeMesh->material->SetParameter("ColorF", glm::vec3(0.0f, 0.0f, 0.25f));
             innerEdgeMesh->material->SetParameter("Alpha",  0.05f);
             innerEdgeMesh->drawMode    = DrawMode_Lines;
 
             outerEdgeMesh = new SceneRendererMesh;
             outerEdgeMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
             outerEdgeMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
-            outerEdgeMesh->material->SetParameter("Colour", glm::vec3(0.0f, 0.0f, 0.25f));
+            outerEdgeMesh->material->SetParameter("ColorF", glm::vec3(0.0f, 0.0f, 0.25f));
             outerEdgeMesh->material->SetParameter("Alpha",  0.5f);
             outerEdgeMesh->drawMode    = DrawMode_Lines;
 

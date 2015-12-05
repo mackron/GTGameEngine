@@ -9,6 +9,8 @@
 #include <cstddef>
 #include <cassert>
 #include <new>
+#include <functional>
+#include <algorithm>
 
 namespace GT
 {
@@ -431,6 +433,17 @@ namespace GT
             return false;
         }
 
+
+        /// Sorts the vector based on the given comparison function.
+        ///
+        /// @param compareFunc [in] The function to use for comparisons.
+        ///
+        /// @remarks
+        ///     If compareFunc returns -1, a is assumed to be "lower" than b. If it return 0, it is assumed to be the same.
+        void Sort(std::function<bool (const T &a, const T &b)> compareFunc)
+        {
+            std::sort(this->buffer, this->buffer + this->count, compareFunc);
+        }
 
 
         /**

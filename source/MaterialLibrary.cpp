@@ -325,10 +325,10 @@ namespace GT
                     "</channel>"
 
                     "<channel name='emissive'>"
-                    "    uniform vec3 Colour;"
+                    "    uniform vec3 ColorF;"
                     "    vec3 Emissive()"
                     "    {"
-                    "        return Colour;"
+                    "        return ColorF;"
                     "    }"
                     "</channel>"
 
@@ -340,7 +340,7 @@ namespace GT
 
                     "<defaultproperties>"
                     "    <float  name='Alpha' >0.5</float>"
-                    "    <float3 name='Colour'>0.75 0.75 1.0</float3>"
+                    "    <float3 name='ColorF'>0.75 0.75 1.0</float3>"
                     "</defaultproperties>"
                 "</material>"
             );

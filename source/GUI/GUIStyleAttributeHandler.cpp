@@ -2179,13 +2179,13 @@ namespace GT
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GT::Colour colour;
+                GT::ColorF colour;
         
                 int i = 0;
                 GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::ColorF::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderLeftColour = colour;
                     }
@@ -2213,7 +2213,7 @@ namespace GT
             }
             else
             {
-                sc.borderLeftColour = GT::Colour::TransparentBlack;
+                sc.borderLeftColour = GT::ColorF::TransparentBlack;
                 sc.borderLeftWidth  = 0;
 
                 borderLeftWidth::Refresh(sc);
@@ -2253,13 +2253,13 @@ namespace GT
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GT::Colour colour;
+                GT::ColorF colour;
         
                 int i = 0;
                 GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::ColorF::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderRightColour = colour;
                     }
@@ -2288,7 +2288,7 @@ namespace GT
             }
             else
             {
-                sc.borderRightColour = GT::Colour::TransparentBlack;
+                sc.borderRightColour = GT::ColorF::TransparentBlack;
                 sc.borderRightWidth  = 0;
 
                 borderRightWidth::Refresh(sc);
@@ -2328,13 +2328,13 @@ namespace GT
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GT::Colour colour;
+                GT::ColorF colour;
         
                 int i = 0;
                 GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::ColorF::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderTopColour = colour;
                     }
@@ -2363,7 +2363,7 @@ namespace GT
             }
             else
             {
-                sc.borderTopColour = GT::Colour::TransparentBlack;
+                sc.borderTopColour = GT::ColorF::TransparentBlack;
                 sc.borderTopWidth  = 0;
 
                 borderTopWidth::Refresh(sc);
@@ -2403,13 +2403,13 @@ namespace GT
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GT::Colour colour;
+                GT::ColorF colour;
         
                 int i = 0;
                 GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::ColorF::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderBottomColour = colour;
                     }
@@ -2438,7 +2438,7 @@ namespace GT
             }
             else
             {
-                sc.borderBottomColour = GT::Colour::TransparentBlack;
+                sc.borderBottomColour = GT::ColorF::TransparentBlack;
                 sc.borderBottomWidth  = 0;
 
                 borderBottomWidth::Refresh(sc);
@@ -2478,10 +2478,10 @@ namespace GT
 
             if (GT::Strings::Equal(value, valueSize, "none"))
             {
-                sc.borderLeftColour   = GT::Colour::TransparentBlack;
-                sc.borderRightColour  = GT::Colour::TransparentBlack;
-                sc.borderTopColour    = GT::Colour::TransparentBlack;
-                sc.borderBottomColour = GT::Colour::TransparentBlack;
+                sc.borderLeftColour   = GT::ColorF::TransparentBlack;
+                sc.borderRightColour  = GT::ColorF::TransparentBlack;
+                sc.borderTopColour    = GT::ColorF::TransparentBlack;
+                sc.borderBottomColour = GT::ColorF::TransparentBlack;
             
                 sc.borderLeftWidth   = 0;
                 sc.borderRightWidth  = 0;
@@ -2494,13 +2494,13 @@ namespace GT
             {
                 // The border attribute is simple. It will take two parameters - the width and the colour. The values are
                 // applied to all borders.
-                GT::Colour colour;
+                GT::ColorF colour;
             
                 int i = 0;
                 GT::Strings::Tokenizer token(value, valueSize);
                 while (i < 2 && token)
                 {
-                    if (GT::Colour::TryParse(colour, token.start, token.end - token.start))
+                    if (GT::ColorF::TryParse(colour, token.start, token.end - token.start))
                     {
                         sc.borderLeftColour   = colour;
                         sc.borderRightColour  = colour;

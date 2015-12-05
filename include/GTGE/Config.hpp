@@ -76,7 +76,7 @@
 // D3D12 Support.
 //
 // Currently, only Visual C++ has been tested for D3D12, so this is restricted to VC compilers for now.
-#if (defined(GT_ENABLE_D3D12) && GT_ENABLE_D3D12 == 1) && defined(GT_PLATFORM_WINDOWS) && defined(GT_COMPILER_VC)
+#if (defined(GT_ENABLE_D3D12) && GT_ENABLE_D3D12 == 1) && defined(_WIN32) && defined(_MSC_VER)
 #define GT_BUILD_D3D12
 #endif
 

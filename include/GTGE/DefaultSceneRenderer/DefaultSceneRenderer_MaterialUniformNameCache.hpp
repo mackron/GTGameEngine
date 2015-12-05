@@ -81,21 +81,21 @@ namespace GT
                 names.Resize(MaterialUniform_LightNamesCount);
 
                 // Ambient.
-                names[MaterialUniform_AmbientLightFS_Colour]                   = String::CreateFormatted("AmbientLightFS%d.Colour",                   index);
+                names[MaterialUniform_AmbientLightFS_Colour]                   = String::CreateFormatted("AmbientLightFS%d.ColorF",                   index);
 
                 // Directional.
-                names[MaterialUniform_DirectionalLightFS_Colour]               = String::CreateFormatted("DirectionalLightFS%d.Colour",               index);
+                names[MaterialUniform_DirectionalLightFS_Colour]               = String::CreateFormatted("DirectionalLightFS%d.ColorF",               index);
                 names[MaterialUniform_DirectionalLightFS_Direction]            = String::CreateFormatted("DirectionalLightFS%d.Direction",            index);
 
                 // Point.
                 names[MaterialUniform_PointLightVS_PositionVS]                 = String::CreateFormatted("PointLightVS%d.PositionVS",                 index);
-                names[MaterialUniform_PointLightFS_Colour]                     = String::CreateFormatted("PointLightFS%d.Colour",                     index);
+                names[MaterialUniform_PointLightFS_Colour]                     = String::CreateFormatted("PointLightFS%d.ColorF",                     index);
                 names[MaterialUniform_PointLightFS_Radius]                     = String::CreateFormatted("PointLightFS%d.Radius",                     index);
                 names[MaterialUniform_PointLightFS_Falloff]                    = String::CreateFormatted("PointLightFS%d.Falloff",                    index);
 
                 // Spot.
                 names[MaterialUniform_SpotLightFS_Position]                    = String::CreateFormatted("SpotLightFS%d.Position",                    index);
-                names[MaterialUniform_SpotLightFS_Colour]                      = String::CreateFormatted("SpotLightFS%d.Colour",                      index);
+                names[MaterialUniform_SpotLightFS_Colour]                      = String::CreateFormatted("SpotLightFS%d.ColorF",                      index);
                 names[MaterialUniform_SpotLightFS_Direction]                   = String::CreateFormatted("SpotLightFS%d.Direction",                   index);
                 names[MaterialUniform_SpotLightFS_Length]                      = String::CreateFormatted("SpotLightFS%d.Length",                      index);
                 names[MaterialUniform_SpotLightFS_Falloff]                     = String::CreateFormatted("SpotLightFS%d.Falloff",                     index);
@@ -104,14 +104,14 @@ namespace GT
 
                 // Shadow Directional.
                 names[MaterialUniform_ShadowDirectionalLightVS_ProjectionView] = String::CreateFormatted("ShadowDirectionalLightVS%d.ProjectionView", index);
-                names[MaterialUniform_ShaderDirectionalLightFS_Colour]         = String::CreateFormatted("ShadowDirectionalLightFS%d.Colour",         index);
+                names[MaterialUniform_ShaderDirectionalLightFS_Colour]         = String::CreateFormatted("ShadowDirectionalLightFS%d.ColorF",         index);
                 names[MaterialUniform_ShaderDirectionalLightFS_Direction]      = String::CreateFormatted("ShadowDirectionalLightFS%d.Direction",      index);
                 names[MaterialUniform_ShaderDirectionalLightFS_ShadowMap]      = String::CreateFormatted("ShadowDirectionalLightFS%d_ShadowMap",      index);
 
                 // Shadow Point.
                 names[MaterialUniform_ShadowPointLightFS_PositionVS]           = String::CreateFormatted("ShadowPointLightVS%d.PositionVS",           index);
                 names[MaterialUniform_ShadowPointLightFS_PositionWS]           = String::CreateFormatted("ShadowPointLightVS%d.PositionWS",           index);
-                names[MaterialUniform_ShadowPointLightFS_Colour]               = String::CreateFormatted("ShadowPointLightFS%d.Colour",               index);
+                names[MaterialUniform_ShadowPointLightFS_Colour]               = String::CreateFormatted("ShadowPointLightFS%d.ColorF",               index);
                 names[MaterialUniform_ShadowPointLightFS_Radius]               = String::CreateFormatted("ShadowPointLightFS%d.Radius",               index);
                 names[MaterialUniform_ShadowPointLightFS_Falloff]              = String::CreateFormatted("ShadowPointLightFS%d.Falloff",              index);
                 names[MaterialUniform_ShadowPointLightFS_ShadowMap]            = String::CreateFormatted("ShadowPointLightFS%d_ShadowMap",            index);
@@ -119,7 +119,7 @@ namespace GT
                 // Shadow Spot.
                 names[MaterialUniforms_ShadowSpotLightVS_ProjectionView]       = String::CreateFormatted("ShadowSpotLightVS%d.ProjectionView",        index);
                 names[MaterialUniforms_ShadowSpotLightFS_Position]             = String::CreateFormatted("ShadowSpotLightFS%d.Position",              index);
-                names[MaterialUniforms_ShadowSpotLightFS_Colour]               = String::CreateFormatted("ShadowSpotLightFS%d.Colour",                index);
+                names[MaterialUniforms_ShadowSpotLightFS_Colour]               = String::CreateFormatted("ShadowSpotLightFS%d.ColorF",                index);
                 names[MaterialUniforms_ShadowSpotLightFS_Direction]            = String::CreateFormatted("ShadowSpotLightFS%d.Direction",             index);
                 names[MaterialUniforms_ShadowSpotLightFS_Length]               = String::CreateFormatted("ShadowSpotLightFS%d.Length",                index);
                 names[MaterialUniforms_ShadowSpotLightFS_Falloff]              = String::CreateFormatted("ShadowSpotLightFS%d.Falloff",               index);

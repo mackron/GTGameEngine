@@ -195,10 +195,10 @@ namespace GT
     int TempP3T2[]       = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::End};
     int TempP3T2N3[]     = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::Normal, 3, VertexAttribs::End};
     int TempP3T2N3T3B3[] = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::Normal, 3, VertexAttribs::Tangent, 3, VertexAttribs::Bitangent, 3, VertexAttribs::End};
-    int TempP2C4[]       = {VertexAttribs::Position, 2, VertexAttribs::Colour,   4, VertexAttribs::End};
-    int TempP2T2C4[]     = {VertexAttribs::Position, 2, VertexAttribs::TexCoord, 2, VertexAttribs::Colour, 4, VertexAttribs::End};
-    int TempP3T2N3C4[]   = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::Normal, 3, VertexAttribs::Colour, 4, VertexAttribs::End};
-    int TempP4T4N4C4[]   = {VertexAttribs::Position, 4, VertexAttribs::TexCoord, 4, VertexAttribs::Normal, 4, VertexAttribs::Colour, 4, VertexAttribs::End};
+    int TempP2C4[]       = {VertexAttribs::Position, 2, VertexAttribs::ColorF,   4, VertexAttribs::End};
+    int TempP2T2C4[]     = {VertexAttribs::Position, 2, VertexAttribs::TexCoord, 2, VertexAttribs::ColorF, 4, VertexAttribs::End};
+    int TempP3T2N3C4[]   = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::Normal, 3, VertexAttribs::ColorF, 4, VertexAttribs::End};
+    int TempP4T4N4C4[]   = {VertexAttribs::Position, 4, VertexAttribs::TexCoord, 4, VertexAttribs::Normal, 4, VertexAttribs::ColorF, 4, VertexAttribs::End};
 
     VertexFormat VertexFormat::P2(TempP2);
     VertexFormat VertexFormat::P3(TempP3);

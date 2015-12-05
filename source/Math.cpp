@@ -33,6 +33,14 @@ namespace GT
             result[2] *= scale.z;
         }
 
+        glm::mat4 CalculateTransformMatrix(const glm::vec4 &position, const glm::quat &rotation, const glm::vec4 &scale)
+        {
+            glm::mat4 result;
+            CalculateTransformMatrix(glm::vec3(position), rotation, glm::vec3(scale), result);
+
+            return result;
+        }
+
         void CalculateTransformMatrix(const glm::vec3 &position, const glm::quat &orientation, glm::mat4 &result)
         {
             // orientation.

@@ -61,7 +61,7 @@ namespace GT
     }
 
 
-    void GUIMesh::SetFromP2T2Colour(const float* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, const GT::Colour &colour)
+    void GUIMesh::SetFromP2T2Colour(const float* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount, const GT::ColorF &colour)
     {
         const size_t vertexComponentCount = 4;
 

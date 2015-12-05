@@ -1889,7 +1889,7 @@ namespace GT
                 // It's somewhere in the middle of the line, so now we need to correctly position it next to a character.
                 struct Callback : public FontEngine::MeasureStringCallback
                 {
-                    Callback(int tabSize, int startPosX, int startPosY, Font* font, const Colour &defaultTextColour, const TextManagerRenderingOptions &options, Map<GlyphMapHandle, ForegroundMesh*> &foregroundMeshes)
+                    Callback(int tabSize, int startPosX, int startPosY, Font* font, const ColorF &defaultTextColour, const TextManagerRenderingOptions &options, Map<GlyphMapHandle, ForegroundMesh*> &foregroundMeshes)
                         : m_tabSize(tabSize),
                           m_startPosX(startPosX), m_startPosY(startPosY),
                           m_font(font),

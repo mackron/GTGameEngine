@@ -31,7 +31,7 @@ namespace GT
         if (Renderer::Startup())
         {
             g_Context->Logf("Renderer Caps:");
-            g_Context->Logf("    Max Colour Attachments: %d", Renderer::GetMaxColourAttachments());
+            g_Context->Logf("    Max ColorF Attachments: %d", Renderer::GetMaxColourAttachments());
             g_Context->Logf("    Max Draw Buffers:       %d", Renderer::GetMaxDrawBuffers());
             g_Context->Logf("    Max Texture Units:      %d", Renderer::GetMaxTextureUnits());
 

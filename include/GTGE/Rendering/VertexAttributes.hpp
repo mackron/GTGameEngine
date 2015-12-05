@@ -12,7 +12,7 @@ namespace GT
         static const int Normal    = 2;
         static const int Tangent   = 3;
         static const int Bitangent = 4;
-        static const int Colour    = 5;
+        static const int ColorF    = 5;
 
         static const int End       = -1;
     }

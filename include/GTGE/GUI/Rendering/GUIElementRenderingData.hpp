@@ -57,7 +57,7 @@ namespace GT
         /// Update the colour of every text mesh.
         ///
         /// @param colour [in] The new text colour.
-        void UpdateTextMeshesColour(const GT::Colour &colour);
+        void UpdateTextMeshesColour(const GT::ColorF &colour);
 
 
         /// Updates the shadow mesh for the given element.

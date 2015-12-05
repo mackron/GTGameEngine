@@ -132,7 +132,7 @@ namespace GT
 
 
     ///////////////////////////////////////
-    // Colour over Time
+    // ColorF over Time
 
     void ParticleFunction_ColourOverTime::Execute(Particle &particle, float lifetimeRatio)
     {

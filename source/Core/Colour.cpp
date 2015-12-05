@@ -7,25 +7,25 @@
 
 namespace GT
 {
-    Colour Colour::Black(0.0f, 0.0f, 0.0f, 1.0f);
-    Colour Colour::White(1.0f, 1.0f, 1.0f, 1.0f);
-    Colour Colour::TransparentBlack(0.0f, 0.0f, 0.0f, 0.0f);
-    Colour Colour::TransparentWhite(1.0f, 1.0f, 1.0f, 0.0f);
-    Colour Colour::Red(1.0f, 0.0f, 0.0f, 1.0f);
-    Colour Colour::Green(0.0f, 1.0f, 0.0f, 1.0f);
-    Colour Colour::Blue(0.0f, 0.0f, 1.0f, 1.0f);
-    Colour Colour::Alpha(0.0f, 0.0f, 0.0f, 1.0f);
+    ColorF ColorF::Black(0.0f, 0.0f, 0.0f, 1.0f);
+    ColorF ColorF::White(1.0f, 1.0f, 1.0f, 1.0f);
+    ColorF ColorF::TransparentBlack(0.0f, 0.0f, 0.0f, 0.0f);
+    ColorF ColorF::TransparentWhite(1.0f, 1.0f, 1.0f, 0.0f);
+    ColorF ColorF::Red(1.0f, 0.0f, 0.0f, 1.0f);
+    ColorF ColorF::Green(0.0f, 1.0f, 0.0f, 1.0f);
+    ColorF ColorF::Blue(0.0f, 0.0f, 1.0f, 1.0f);
+    ColorF ColorF::Alpha(0.0f, 0.0f, 0.0f, 1.0f);
     
-    Colour Colour::DefaultBackground(0.16f, 0.164f, 0.20f, 1.0f);
+    ColorF ColorF::DefaultBackground(0.16f, 0.164f, 0.20f, 1.0f);
     
     
-    Colour::Colour(const char *value, ptrdiff_t valueSize)
+    ColorF::ColorF(const char *value, ptrdiff_t valueSize)
         : r(0.0f), g(0.0f), b(0.0f), a(0.0f)
     {
         TryParse(*this, value, valueSize);
     }
     
-    bool Colour::TryParse(Colour &colour, const char *value, ptrdiff_t valueSize)
+    bool ColorF::TryParse(ColorF &colour, const char *value, ptrdiff_t valueSize)
     {
         value     = Strings::TrimStart(value, valueSize);
         valueSize = Strings::TrimEnd(value, valueSize) - value;
@@ -81,7 +81,7 @@ namespace GT
         return false;
     }
 
-    void Colour::ToString(char *dest, size_t destSize, const Colour &colour)
+    void ColorF::ToString(char *dest, size_t destSize, const ColorF &colour)
     {
         char r[3];
         IO::snprintf(r, 3, "%.2x", static_cast<uint32_t>(colour.r * 255.0f));

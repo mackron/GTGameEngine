@@ -67,7 +67,7 @@ namespace GT
         /// Sets the colour of every vertex
         void SetVertexColours(float r, float g, float b);
         void SetVertexColours(float r, float g, float b, float a);
-        void SetVertexColours(const GT::Colour &colour) { this->SetVertexColours(colour.r, colour.g, colour.b, colour.a); }
+        void SetVertexColours(const GT::ColorF &colour) { this->SetVertexColours(colour.r, colour.g, colour.b, colour.a); }
 
         /// Sets the alpha component of every vertex.
         void SetVertexAlpha(float a);
@@ -81,7 +81,7 @@ namespace GT
         /// @param indicesIn    [in] A pointer to the buffer containing the new indices.
         /// @param indicesCount [in] The number of indices.
         /// @param colour       [in] The colour of the vertices.
-        void SetFromP2T2Colour(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, const GT::Colour &colour);
+        void SetFromP2T2Colour(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, const GT::ColorF &colour);
 
 
 

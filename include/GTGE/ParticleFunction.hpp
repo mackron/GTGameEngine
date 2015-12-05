@@ -245,7 +245,7 @@ namespace GT
     };
 
 
-    /// The Colour over Time particle function.
+    /// The ColorF over Time particle function.
     class ParticleFunction_ColourOverTime : public ParticleFunction_Vector3
     {
     public:

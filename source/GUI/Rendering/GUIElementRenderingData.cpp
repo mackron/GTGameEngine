@@ -67,7 +67,7 @@ namespace GT
         }
     }
 
-    void GUIElementRenderingData::UpdateTextMeshesColour(const GT::Colour &colour)
+    void GUIElementRenderingData::UpdateTextMeshesColour(const GT::ColorF &colour)
     {
         for (size_t i = 0; i < this->textMeshes.count; ++i)
         {
@@ -424,7 +424,7 @@ namespace GT
     {
         this->DeleteBackgroundMeshes();
 
-        // Background Colour.
+        // Background ColorF.
         if (!element.style.backgroundColour->isnone)
         {
             // For now we will do a quad covering the whole element, letting the scissor test take care of clipping. We don't want to draw anything

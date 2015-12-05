@@ -778,10 +778,10 @@ namespace GT
 
 
         /// The default text colour.
-        Colour defaultTextColour;
+        ColorF defaultTextColour;
 
         /// The selection background colour.
-        Colour selectionBackgroundColour;
+        ColorF selectionBackgroundColour;
 
 
         /// Keeps track of the cursors last horizontal character index before doing vertical movements. Needed to place the cursor relative to
