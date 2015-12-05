@@ -7,6 +7,7 @@
 #include "Audio/SoundWorld.hpp"
 #include "Assets/AssetLibrary.hpp"
 #include "ScriptLibrary.hpp"
+#include "ParticleSystemLibrary.hpp"
 #include "GameEventQueue.hpp"
 #include "GameEventFilter.hpp"
 #include "GameWindowEventHandler.hpp"
@@ -141,6 +142,9 @@ namespace GT
 
         /// Retrieves a reference to the internal script library.
         ScriptLibrary & GetScriptLibrary() { return m_scriptLibrary; }
+
+        /// Retrieves a reference to the internal particle system library.
+        ParticleSystemLibrary & GetParticleSystemLibrary() { return m_particleSystemLibrary; }
 
 
 
@@ -564,6 +568,9 @@ namespace GT
 
         /// The script library.
         ScriptLibrary m_scriptLibrary;
+
+        /// The particle system library.
+        ParticleSystemLibrary m_particleSystemLibrary;
 
 
 

@@ -1051,7 +1051,7 @@ namespace GT
             }
             else if (GT::IsSupportedParticleSystemExtension(absolutePath))
             {
-                ParticleSystemLibrary::Reload(absolutePath);
+                this->GetContext().GetParticleSystemLibrary().Reload(absolutePath);
             }
             else
             {

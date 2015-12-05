@@ -9,41 +9,14 @@
 
 namespace GT
 {
-    /////////////////////////////////////
-    // Globals
-
-    struct ParticleSystemDefinitionReference
+    ParticleSystemLibrary::ParticleSystemLibrary(Context &context)
+        : m_context(context), m_loadedDefinitions()
     {
-        ParticleSystemDefinition* definition;
-        size_t                    referenceCount;
+    }
 
-
-        ParticleSystemDefinitionReference(ParticleSystemDefinition* definitionIn, size_t referenceCountIn)
-            : definition(definitionIn), referenceCount(referenceCountIn)
-        {
-        }
-
-        ParticleSystemDefinitionReference(const ParticleSystemDefinitionReference &other)
-            : definition(other.definition), referenceCount(other.referenceCount)
-        {
-        }
-
-
-        ParticleSystemDefinitionReference & operator=(const ParticleSystemDefinitionReference &other)
-        {
-            this->definition     = other.definition;
-            this->referenceCount = other.referenceCount;
-
-            return *this;
-        }
-    };
-
-
-    /// The list of loaded particle system definitions, indexed by their absolute path.
-    static Dictionary<ParticleSystemDefinitionReference> LoadedDefinitions;
-
-    /// The list of instantiated particle system objects. We need this so we can delete them on shutdown.
-    static Vector<ParticleSystem*> InstantiatedParticleSystems;
+    ParticleSystemLibrary::~ParticleSystemLibrary()
+    {
+    }
 
 
 
@@ -58,19 +31,19 @@ namespace GT
     void ParticleSystemLibrary::Shutdown()
     {
         // Instantiated particle systems need to be deleted.
-        for (size_t i = 0; i < InstantiatedParticleSystems.count; ++i)
+        for (size_t i = 0; i < m_instantiatedParticleSystems.count; ++i)
         {
-            delete InstantiatedParticleSystems[i];
+            delete m_instantiatedParticleSystems[i];
         }
-        InstantiatedParticleSystems.Clear();
+        m_instantiatedParticleSystems.Clear();
 
 
         // Definitions now need to be deleted.
-        for (size_t i = 0; i < LoadedDefinitions.count; ++i)
+        for (size_t i = 0; i < m_loadedDefinitions.count; ++i)
         {
-            delete LoadedDefinitions.buffer[i]->value.definition;
+            delete m_loadedDefinitions.buffer[i]->value.definition;
         }
-        LoadedDefinitions.Clear();
+        m_loadedDefinitions.Clear();
     }
 
 
@@ -102,7 +75,7 @@ namespace GT
         {
             ParticleSystemDefinition* definition = nullptr;
 
-            auto iDefinition = LoadedDefinitions.Find(absolutePath);
+            auto iDefinition = m_loadedDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
             {
                 // Definition is already loaded. All we do it increment the reference counter.
@@ -116,7 +89,7 @@ namespace GT
                 definition = new ParticleSystemDefinition;
                 if (definition->LoadFromFile(absolutePath, relativePath))
                 {
-                    LoadedDefinitions.Add(absolutePath, ParticleSystemDefinitionReference(definition, 1));
+                    m_loadedDefinitions.Add(absolutePath, ParticleSystemDefinitionReference(definition, 1));
                 }
                 else
                 {
@@ -129,7 +102,7 @@ namespace GT
             if (definition != nullptr)
             {
                 auto particleSystem = new ParticleSystem(*definition);
-                InstantiatedParticleSystems.PushBack(particleSystem);
+                m_instantiatedParticleSystems.PushBack(particleSystem);
 
                 return particleSystem;
             }
@@ -141,11 +114,11 @@ namespace GT
     ParticleSystem* ParticleSystemLibrary::CreateCopy(const ParticleSystem &other)
     {
         auto newParticleSystem = new ParticleSystem(other.GetDefinition());
-        InstantiatedParticleSystems.PushBack(newParticleSystem);
+        m_instantiatedParticleSystems.PushBack(newParticleSystem);
 
 
         // The reference counter needs to be incremented.
-        auto iDefinition = LoadedDefinitions.Find(other.GetDefinition().GetAbsolutePath());
+        auto iDefinition = m_loadedDefinitions.Find(other.GetDefinition().GetAbsolutePath());
         if (iDefinition != nullptr)
         {
             iDefinition->value.referenceCount += 1;
@@ -159,13 +132,13 @@ namespace GT
     {
         if (particleSystemToDelete != nullptr)
         {
-            InstantiatedParticleSystems.RemoveFirstOccuranceOf(particleSystemToDelete);
+            m_instantiatedParticleSystems.RemoveFirstOccuranceOf(particleSystemToDelete);
 
 
             // The reference counter needs to be decremented. If this is the last reference to the particle system we'll delete it.
             String absolutePath(particleSystemToDelete->GetDefinition().GetAbsolutePath());
 
-            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            auto iDefinition = m_loadedDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)
             {
                 assert(iDefinition->value.referenceCount >= 1);
@@ -175,7 +148,7 @@ namespace GT
                     if (iDefinition->value.referenceCount == 0)
                     {
                         delete iDefinition->value.definition;
-                        LoadedDefinitions.RemoveByKey(absolutePath.c_str());
+                        m_loadedDefinitions.RemoveByKey(absolutePath.c_str());
                     }
                 }
             }
@@ -190,7 +163,7 @@ namespace GT
         char absolutePath[EASYVFS_MAX_PATH];
         if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iDefinition = LoadedDefinitions.Find(absolutePath);
+            auto iDefinition = m_loadedDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
             {
                 auto &reference = iDefinition->value;
@@ -199,9 +172,9 @@ namespace GT
                     bool result = reference.definition->LoadFromFile(reference.definition->GetAbsolutePath(), reference.definition->GetRelativePath());
                     if (result)
                     {
-                        for (size_t iParticleSystem = 0; iParticleSystem < InstantiatedParticleSystems.count; ++iParticleSystem)
+                        for (size_t iParticleSystem = 0; iParticleSystem < m_instantiatedParticleSystems.count; ++iParticleSystem)
                         {
-                            auto particleSystem = InstantiatedParticleSystems.buffer[iParticleSystem];
+                            auto particleSystem = m_instantiatedParticleSystems.buffer[iParticleSystem];
                             assert(particleSystem != nullptr);
                             {
                                 if (&particleSystem->GetDefinition() == reference.definition)

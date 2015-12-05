@@ -5,8 +5,6 @@
 #include <GTGE/Rendering/Renderer.hpp>
 #include <GTGE/ModelLibrary.hpp>
 #include <GTGE/Texture2DLibrary.hpp>
-#include <GTGE/ParticleSystemLibrary.hpp>
-#include <GTGE/ScriptLibrary.hpp>
 #include <GTGE/VertexArrayLibrary.hpp>
 #include <GTGE/ShaderLibrary.hpp>
 #include <GTGE/Scripting.hpp>
@@ -118,7 +116,7 @@ namespace GT
           m_pLogFile(nullptr),
           m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
           m_assetLibrary(),
-          m_scriptLibrary(*this),
+          m_scriptLibrary(*this), m_particleSystemLibrary(*this),
           m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
           eventQueue(), eventQueueLock(NULL),
@@ -292,7 +290,8 @@ namespace GT
         PrefabLibrary::Startup();
 
         g_Context->Logf("Initializing Particle System Library...");
-        ParticleSystemLibrary::Startup();
+        m_particleSystemLibrary.Startup();
+        //ParticleSystemLibrary::Startup();
 
         g_Context->Logf("Initializing Script Library...");
         m_scriptLibrary.Startup();
@@ -443,14 +442,14 @@ namespace GT
 
 
         // We kill our libraries before the major sub-systems.
+        m_particleSystemLibrary.Shutdown();
+        m_scriptLibrary.Shutdown();
         ModelLibrary::Shutdown();
         MaterialLibrary::Shutdown();
         ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
         VertexArrayLibrary::Shutdown();
         PrefabLibrary::Shutdown();
-        ParticleSystemLibrary::Shutdown();
-        m_scriptLibrary.Shutdown();
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.
         Renderer::Shutdown();

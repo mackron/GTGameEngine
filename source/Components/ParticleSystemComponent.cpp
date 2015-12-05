@@ -23,7 +23,9 @@ namespace GT
     {
         if (this->isOwner)
         {
-            ParticleSystemLibrary::Delete(this->particleSystem);
+            if (this->GetContext() != NULL) {
+                this->GetContext()->GetParticleSystemLibrary().Delete(this->particleSystem);
+            }
         }
 
         this->node.DetachEventHandler(this->sceneNodeEventHandler);
@@ -34,7 +36,9 @@ namespace GT
     {
         if (this->isOwner)
         {
-            ParticleSystemLibrary::Delete(this->particleSystem);
+            if (this->GetContext() != NULL) {
+                this->GetContext()->GetParticleSystemLibrary().Delete(this->particleSystem);
+            }
         }
 
         this->particleSystem = newParticleSystem;
@@ -59,7 +63,10 @@ namespace GT
 
     ParticleSystem* ParticleSystemComponent::SetParticleSystem(const char* fileName, const char* relativeTo)
     {
-        this->SetParticleSystem(ParticleSystemLibrary::Create(fileName, relativeTo), true);
+        if (this->GetContext() != NULL) {
+            this->SetParticleSystem(this->GetContext()->GetParticleSystemLibrary().Create(fileName, relativeTo), true);
+        }
+
         return this->particleSystem;
     }
 
