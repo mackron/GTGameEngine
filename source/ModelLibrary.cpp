@@ -98,7 +98,7 @@ namespace GT
             else
             {
                 // Definition is not yet loaded and needs to be loaded now.
-                definition = new ModelDefinition;
+                definition = new ModelDefinition(m_context);
 
                 bool needsSerialize;
                 if (definition->LoadFromFile(absolutePath.c_str(), relativePath, needsSerialize))
@@ -361,11 +361,11 @@ namespace GT
         auto iDefinition = m_loadedDefinitions.Find(name);
         if (iDefinition == nullptr)
         {
-            definition = new ModelDefinition;
+            definition = new ModelDefinition(m_context);
             
             ModelDefinition::Mesh mesh;
             mesh.geometry = va;
-            mesh.material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
+            mesh.material = m_context.GetMaterialLibrary().Create("engine/materials/simple-diffuse.material");
             definition->AddMesh(mesh);
 
             m_loadedDefinitions.Add(name, ModelDefinitionReference(definition, 1));

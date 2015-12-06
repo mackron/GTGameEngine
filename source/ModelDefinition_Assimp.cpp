@@ -377,7 +377,7 @@ namespace GT
                         newMesh.name = String::CreateFormatted("%s_%d", newMesh.name.c_str(), static_cast<int>(definition.GetMeshCount()));
 
                         // Set the default material before adding the mesh.
-                        newMesh.material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
+                        newMesh.material = definition.GetContext().GetMaterialLibrary().Create("engine/materials/simple-diffuse.material");
                         definition.AddMesh(newMesh);
                     }
                     else
@@ -394,7 +394,7 @@ namespace GT
                 else
                 {
                     // Set the default material before adding the mesh.
-                    newMesh.material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
+                    newMesh.material = definition.GetContext().GetMaterialLibrary().Create("engine/materials/simple-diffuse.material");
                     definition.AddMesh(newMesh);
                 }
             }
@@ -464,7 +464,7 @@ namespace GT
                 {
                     if (this->meshes[i].geometry == nullptr)
                     {
-                        MaterialLibrary::Delete(this->meshes[i].material);
+                        m_context.GetMaterialLibrary().Delete(this->meshes[i].material);
                         this->meshes.Remove(i);
                     }
                     else

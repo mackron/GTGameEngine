@@ -1047,7 +1047,7 @@ namespace GT
             }
             else if (GT::IsSupportedMaterialExtension(absolutePath))
             {
-                MaterialLibrary::Reload(absolutePath);
+                this->GetContext().GetMaterialLibrary().Reload(absolutePath);
             }
             else if (GT::IsSupportedParticleSystemExtension(absolutePath))
             {

@@ -42,7 +42,7 @@ namespace GT
           playbackEventFilter(), eventFilterBeforePlaying(nullptr),
           selectedNodes(), selectedNodesBeforePlaying(), selectedNodesBeforePhysicsSimulation(),
           pickingWorld(),
-          transformGizmo(), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
+          transformGizmo(ownerEditor.GetContext().GetMaterialLibrary()), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
           gizmoDragMode(GizmoDragMode_None), gizmoTransformMode(GizmoTransformMode_Translate), gizmoTransformSpace(GizmoTransformSpace_Global),
           pivotPoint(),
           transformedObjectWithGizmo(false),
@@ -788,18 +788,18 @@ namespace GT
             // The renderer mesh doesn't exists. Create it.
             mainMesh = new SceneRendererMesh;
             mainMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-            mainMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
+            mainMesh->material    = this->GetContext().GetMaterialLibrary().CreateNavigationMeshMaterial();
 
             innerEdgeMesh = new SceneRendererMesh;
             innerEdgeMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-            innerEdgeMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
+            innerEdgeMesh->material    = this->GetContext().GetMaterialLibrary().CreateNavigationMeshMaterial();
             innerEdgeMesh->material->SetParameter("ColorF", glm::vec3(0.0f, 0.0f, 0.25f));
             innerEdgeMesh->material->SetParameter("Alpha",  0.05f);
             innerEdgeMesh->drawMode    = DrawMode_Lines;
 
             outerEdgeMesh = new SceneRendererMesh;
             outerEdgeMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-            outerEdgeMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
+            outerEdgeMesh->material    = this->GetContext().GetMaterialLibrary().CreateNavigationMeshMaterial();
             outerEdgeMesh->material->SetParameter("ColorF", glm::vec3(0.0f, 0.0f, 0.25f));
             outerEdgeMesh->material->SetParameter("Alpha",  0.5f);
             outerEdgeMesh->drawMode    = DrawMode_Lines;
@@ -857,9 +857,9 @@ namespace GT
                 m_scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_outerEdgeMesh);
 
                 // Delete the renderer mesh.
-                MaterialLibrary::Delete(rendererMesh.m_mainMesh->material);
-                MaterialLibrary::Delete(rendererMesh.m_innerEdgeMesh->material);
-                MaterialLibrary::Delete(rendererMesh.m_outerEdgeMesh->material);
+                this->GetContext().GetMaterialLibrary().Delete(rendererMesh.m_mainMesh->material);
+                this->GetContext().GetMaterialLibrary().Delete(rendererMesh.m_innerEdgeMesh->material);
+                this->GetContext().GetMaterialLibrary().Delete(rendererMesh.m_outerEdgeMesh->material);
 
                 VertexArrayLibrary::Delete(rendererMesh.m_mainMesh->vertexArray);
                 VertexArrayLibrary::Delete(rendererMesh.m_innerEdgeMesh->vertexArray);

@@ -23,7 +23,7 @@ namespace GT
         ///
         /// @remarks
         ///     This constructor will allow something to create a model without needing to supply a definition. This is useful for doing procedural models or whatnot.
-        Model();
+        //Model();
 
         /// Constructor.
         ///

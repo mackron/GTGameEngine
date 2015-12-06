@@ -1,12 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTGE/Context.hpp>
-#include <GTGE/Texture2DLibrary.hpp>
 #include <GTGE/Rendering/Renderer.hpp>
-#include <GTGE/ModelLibrary.hpp>
-#include <GTGE/Texture2DLibrary.hpp>
-#include <GTGE/VertexArrayLibrary.hpp>
-#include <GTGE/ShaderLibrary.hpp>
 #include <GTGE/Scripting.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GamePackager.hpp>
@@ -116,7 +111,7 @@ namespace GT
           m_pLogFile(nullptr),
           m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
           m_assetLibrary(),
-          m_scriptLibrary(*this), m_particleSystemLibrary(*this), m_prefabLibrary(*this), m_modelLibrary(*this),
+          m_scriptLibrary(*this), m_particleSystemLibrary(*this), m_prefabLibrary(*this), m_modelLibrary(*this), m_materialLibrary(*this),
           m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
           eventQueue(), eventQueueLock(NULL),
@@ -277,11 +272,11 @@ namespace GT
         g_Context->Logf("Initializing Texture Library...");
         Texture2DLibrary::Startup();
 
-        g_Context->Logf("Initializing Material Library...");
-        MaterialLibrary::Startup();
-
         g_Context->Logf("Initializing Vertex Array Library...");
         VertexArrayLibrary::Startup();
+
+        g_Context->Logf("Initializing Material Library...");
+        m_materialLibrary.Startup();
 
         g_Context->Logf("Initializing Model Library...");
         m_modelLibrary.Startup();
@@ -446,7 +441,7 @@ namespace GT
         m_prefabLibrary.Shutdown();
 
         m_modelLibrary.Shutdown();
-        MaterialLibrary::Shutdown();
+        m_materialLibrary.Shutdown();
         ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
         VertexArrayLibrary::Shutdown();

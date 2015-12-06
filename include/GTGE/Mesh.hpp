@@ -16,6 +16,8 @@
 
 namespace GT
 {
+    class Context;
+
     /// Structure containing the skinning information of a mesh.
     struct MeshSkinningData
     {
@@ -79,7 +81,7 @@ namespace GT
     public:
 
         /// Default constructor.
-        Mesh(DrawMode drawModeIn = DrawMode_Triangles);
+        Mesh(Context &context, DrawMode drawModeIn = DrawMode_Triangles);
 
         /// Destructor.
         ///
@@ -192,6 +194,9 @@ namespace GT
 
 
     private:
+
+        /// A reference to the context that owns this mesh. We need this for material management.
+        Context &m_context;
 
         /// The vertex array containing the geometric data of the mesh.
         VertexArray* geometry;

@@ -4,6 +4,7 @@
 #include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_SinglePassPipeline.hpp>
 #include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_MultiPassPipeline.hpp>
 #include <GTGE/ShaderLibrary.hpp>
+#include <GTGE/Context.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -15,8 +16,9 @@ namespace GT
     static const bool SplitShadowLights = true;
 
 
-    DefaultSceneRenderer::DefaultSceneRenderer()
-        : viewportFramebuffers(), m_materialShaders(), depthPassShader(nullptr), externalMeshes(),
+    DefaultSceneRenderer::DefaultSceneRenderer(Context &context)
+        : m_context(context),
+          viewportFramebuffers(), m_materialShaders(), depthPassShader(nullptr), externalMeshes(),
           directionalShadowMapFramebuffer(1, 1), pointShadowMapFramebuffer(1, 1), spotShadowMapFramebuffer(1, 1),
           fullscreenTriangleVA(nullptr),
           shadowMapShader(nullptr), pointShadowMapShader(nullptr),
@@ -75,7 +77,7 @@ namespace GT
 
         // The event handler needs to be attached to the material library so we can catch when a material definition is deleted an
         // in turn delete the shaders we've associated with that material.
-        MaterialLibrary::AttachEventHandler(this->materialLibraryEventHandler);
+        m_context.GetMaterialLibrary().AttachEventHandler(this->materialLibraryEventHandler);
     }
 
     DefaultSceneRenderer::~DefaultSceneRenderer()
@@ -104,7 +106,7 @@ namespace GT
 
         Renderer::DeleteVertexArray(this->fullscreenTriangleVA);
 
-        MaterialLibrary::RemoveEventHandler(this->materialLibraryEventHandler);
+        m_context.GetMaterialLibrary().RemoveEventHandler(this->materialLibraryEventHandler);
     }
 
 

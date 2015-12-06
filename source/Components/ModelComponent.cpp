@@ -3,7 +3,7 @@
 #include <GTGE/Components/ModelComponent.hpp>
 #include <GTGE/ModelLibrary.hpp>
 #include <GTGE/Scene.hpp>
-#include <GTGE/GTEngine.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
@@ -234,7 +234,10 @@ namespace GT
                         }
                         else
                         {
-                            this->SetModel(new Model, true);
+                            if (this->GetContext() != NULL) {
+                                ModelDefinition nullDefinition(*this->GetContext());
+                                this->SetModel(new Model(nullDefinition), true);
+                            }
                         }
 
 
@@ -256,7 +259,10 @@ namespace GT
 
             default:
                 {
-                    g_Context->Logf("Error deserializing ModelComponent. Main chunk has an unsupported version (%d).", header.version);
+                    if (this->GetContext() != NULL) {
+                        this->GetContext()->Logf("Error deserializing ModelComponent. Main chunk has an unsupported version (%d).", header.version);
+                    }
+
                     break;
                 }
             }

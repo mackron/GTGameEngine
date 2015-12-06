@@ -1,17 +1,16 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/Editor/TransformGizmo.hpp>
-#include <GTGE/ModelLibrary.hpp>            // <-- Can delete this.
 #include <GTGE/MaterialLibrary.hpp>
 
 namespace GT
 {
-    TransformGizmo::TransformGizmo()
+    TransformGizmo::TransformGizmo(MaterialLibrary &materialLibrary)
         : m_position(), m_orientation(), m_scale(1.0f, 1.0f, 1.0f),
           isVisible(false), showingTranslationHandles(false), showingRotationHandles(false), showingScaleHandles(false),
-          xTranslateHandle(HandleAxis_X), yTranslateHandle(HandleAxis_Y), zTranslateHandle(HandleAxis_Z),
-          xRotateHandle(HandleAxis_X),    yRotateHandle(HandleAxis_Y),    zRotateHandle(HandleAxis_Z), cameraFacingRotateHandle(HandleAxis_FrontFacing),
-          xScaleHandle(HandleAxis_X),     yScaleHandle(HandleAxis_Y),     zScaleHandle(HandleAxis_Z)
+          xTranslateHandle(materialLibrary, HandleAxis_X), yTranslateHandle(materialLibrary, HandleAxis_Y), zTranslateHandle(materialLibrary, HandleAxis_Z),
+          xRotateHandle(materialLibrary, HandleAxis_X),    yRotateHandle(materialLibrary, HandleAxis_Y),    zRotateHandle(materialLibrary, HandleAxis_Z), cameraFacingRotateHandle(materialLibrary, HandleAxis_FrontFacing),
+          xScaleHandle(materialLibrary, HandleAxis_X),     yScaleHandle(materialLibrary, HandleAxis_Y),     zScaleHandle(materialLibrary, HandleAxis_Z)
     {
     }
 
@@ -216,8 +215,8 @@ namespace GT
     ////////////////////////////////////////////////////
     // HandleMesh
 
-    TransformGizmo::Handle::Handle(HandleType typeIn, uint32_t axisIn)
-        : type(typeIn), axis(axisIn), material(MaterialLibrary::Create("engine/materials/simple-emissive.material")), baseColour(), pickingObject()
+    TransformGizmo::Handle::Handle(MaterialLibrary &materialLibraryIn, HandleType typeIn, uint32_t axisIn)
+        : materialLibrary(materialLibraryIn), type(typeIn), axis(axisIn), material(materialLibraryIn.Create("engine/materials/simple-emissive.material")), baseColour(), pickingObject()
     {
         if ((axisIn & HandleAxis_X))
         {
@@ -246,7 +245,7 @@ namespace GT
 
     TransformGizmo::Handle::~Handle()
     {
-        MaterialLibrary::Delete(this->material);
+        this->materialLibrary.Delete(this->material);
     }
 
 
@@ -266,8 +265,8 @@ namespace GT
     ////////////////////////////////////////////////////
     // TranslateHandle
 
-    TransformGizmo::TranslateHandle::TranslateHandle(HandleAxis axis)
-        : Handle(HandleType_Translate, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f)), forwardVector()
+    TransformGizmo::TranslateHandle::TranslateHandle(MaterialLibrary &materialLibrary, HandleAxis axis)
+        : Handle(materialLibrary, HandleType_Translate, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f)), forwardVector()
     {
         switch (axis)
         {
@@ -465,8 +464,8 @@ namespace GT
     ////////////////////////////////////////////////////
     // RotateHandle
 
-    TransformGizmo::RotateHandle::RotateHandle(HandleAxis axis)
-        : Handle(HandleType_Rotate, axis), localOrientation(), mesh(), pickingShape(), pickingShapeSegment(0.0f, 0.0f), forwardVector()
+    TransformGizmo::RotateHandle::RotateHandle(MaterialLibrary &materialLibrary, HandleAxis axis)
+        : Handle(materialLibrary, HandleType_Rotate, axis), localOrientation(), mesh(), pickingShape(), pickingShapeSegment(0.0f, 0.0f), forwardVector()
     {
         switch (axis)
         {
@@ -680,8 +679,8 @@ namespace GT
     ////////////////////////////////////////////////////
     // ScaleHandle
 
-    TransformGizmo::ScaleHandle::ScaleHandle(HandleAxis axis)
-        : Handle(HandleType_Scale, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f)), forwardVector()
+    TransformGizmo::ScaleHandle::ScaleHandle(MaterialLibrary &materialLibrary, HandleAxis axis)
+        : Handle(materialLibrary, HandleType_Scale, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f)), forwardVector()
     {
         switch (axis)
         {

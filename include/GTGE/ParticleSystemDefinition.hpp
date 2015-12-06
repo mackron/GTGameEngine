@@ -13,7 +13,7 @@ namespace GT
     public:
 
         /// Constructor.
-        ParticleSystemDefinition();
+        ParticleSystemDefinition(Context &context);
 
         /// Destructor.
         ~ParticleSystemDefinition();
@@ -81,6 +81,10 @@ namespace GT
 
 
     private:
+
+        /// A reference to the context that owns this definition.
+        Context &m_context;
+
 
         /// The absolute paht of the particle system.
         String absolutePath;

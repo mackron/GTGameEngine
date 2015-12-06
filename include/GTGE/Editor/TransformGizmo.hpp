@@ -13,7 +13,7 @@ namespace GT
     public:
 
         /// Constructor.
-        TransformGizmo();
+        TransformGizmo(MaterialLibrary &materialLibrary);
 
         /// Destructor.
         ~TransformGizmo();
@@ -108,6 +108,9 @@ namespace GT
         /// Base structure reprsenting the mesh of a handle.
         struct Handle
         {
+            /// A reference to the material library for loading the material to use when drawing the handle.
+            MaterialLibrary &materialLibrary;
+
             /// The type of the handle. Needed for casting.
             HandleType type;
 
@@ -128,7 +131,7 @@ namespace GT
 
 
             /// Constructor.
-            Handle(HandleType type, uint32_t axis);
+            Handle(MaterialLibrary &materialLibrary, HandleType type, uint32_t axis);
 
             /// Destructor.
             virtual ~Handle();
@@ -177,7 +180,7 @@ namespace GT
 
 
             /// Constructor.
-            TranslateHandle(HandleAxis axis);
+            TranslateHandle(MaterialLibrary &materialLibrary, HandleAxis axis);
 
             /// Destructor.
             ~TranslateHandle();
@@ -219,7 +222,7 @@ namespace GT
 
 
             /// Constructor.
-            RotateHandle(HandleAxis axis);
+            RotateHandle(MaterialLibrary &materialLibrary, HandleAxis axis);
 
             /// Destructor.
             ~RotateHandle();
@@ -265,7 +268,7 @@ namespace GT
 
 
             /// Constructor.
-            ScaleHandle(HandleAxis axis);
+            ScaleHandle(MaterialLibrary &materialLibrary, HandleAxis axis);
 
             /// Destructor.
             ~ScaleHandle();

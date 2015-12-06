@@ -15,7 +15,7 @@ namespace GT
 {
     ModelEditor::ModelEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          modelDefinition(), m_model(modelDefinition),
+          modelDefinition(ownerEditor.GetContext()), m_model(modelDefinition),
           scene(ownerEditor.GetContext()), camera(),
           modelNode(), convexHullParentNode(), convexHullNodes(),
           mainElement(nullptr), viewportElement(nullptr), timelineElement(nullptr),
@@ -334,10 +334,10 @@ namespace GT
 
     bool ModelEditor::SetMaterial(size_t index, const char* relativePath)
     {
-        auto newMaterial = MaterialLibrary::Create(relativePath);
+        auto newMaterial = this->GetContext().GetMaterialLibrary().Create(relativePath);
         if (newMaterial)
         {
-            MaterialLibrary::Delete(this->modelDefinition.meshes[index].material);
+            this->GetContext().GetMaterialLibrary().Delete(this->modelDefinition.meshes[index].material);
             this->modelDefinition.meshes[index].material = newMaterial;
             this->modelDefinition.meshes[index].defaultUniforms.Clear();
 

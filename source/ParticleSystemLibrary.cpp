@@ -86,7 +86,7 @@ namespace GT
             else
             {
                 // Definition is not yet loaded.
-                definition = new ParticleSystemDefinition;
+                definition = new ParticleSystemDefinition(m_context);
                 if (definition->LoadFromFile(absolutePath, relativePath))
                 {
                     m_loadedDefinitions.Add(absolutePath, ParticleSystemDefinitionReference(definition, 1));

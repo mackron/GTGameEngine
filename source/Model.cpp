@@ -13,8 +13,9 @@
 
 namespace GT
 {
-    static ModelDefinition NullModelDefinition;
+    //static ModelDefinition NullModelDefinition;
 
+#if 0
     Model::Model()
         : definition(NullModelDefinition),
           meshes(), bones(),
@@ -23,6 +24,7 @@ namespace GT
           animationPlaybackSpeed(1.0)
     {
     }
+#endif
 
     Model::Model(const ModelDefinition &definitionIn)
         : definition(definitionIn),
@@ -43,7 +45,7 @@ namespace GT
 
     Mesh* Model::AttachMesh(VertexArray* geometry, const char* materialFileName, DrawMode drawMode)
     {
-        auto newMesh = new Mesh(drawMode);
+        auto newMesh = new Mesh(definition.GetContext(), drawMode);
         newMesh->SetGeometry(geometry);
         newMesh->SetMaterial(materialFileName);
 
@@ -286,7 +288,8 @@ namespace GT
         // it is, we need to save the geometry data.
         BasicSerializer meshesSerializer;
 
-        bool serializeMeshGeometry = &this->definition == &NullModelDefinition;
+        //bool serializeMeshGeometry = &this->definition == &NullModelDefinition;
+        bool serializeMeshGeometry = true;
         
         meshesSerializer.Write(static_cast<uint32_t>(meshes.count));
         for (size_t i = 0; i < meshes.count; ++i)
@@ -298,7 +301,8 @@ namespace GT
 
                 // We need to write a boolean that specifies whether or not the material is the same as that specified by the definition.
                 bool usingSameMaterial = false;
-                if (&this->definition != &NullModelDefinition && this->definition.meshes[i].material != nullptr && mesh->GetMaterial() != nullptr)
+                //if (&this->definition != &NullModelDefinition && this->definition.meshes[i].material != nullptr && mesh->GetMaterial() != nullptr)
+                if (this->definition.meshes[i].material != nullptr && mesh->GetMaterial() != nullptr)
                 {
                     auto &definitionA = this->definition.meshes[i].material->GetDefinition();
                     auto &definitionB = mesh->GetMaterial()->GetDefinition();

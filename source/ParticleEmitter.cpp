@@ -2,7 +2,8 @@
 
 #include <GTGE/ParticleEmitter.hpp>
 #include <GTGE/Rendering.hpp>
-#include <GTGE/GTEngine.hpp>
+//#include <GTGE/GTEngine.hpp>
+#include <GTGE/Context.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -69,8 +70,8 @@ namespace GT
 
 
 
-    ParticleEmitter::ParticleEmitter()
-        : name(""), m_position(), m_orientation(),
+    ParticleEmitter::ParticleEmitter(Context &context)
+        : m_context(context), name(""), m_position(), m_orientation(),
           flags(0), durationInSeconds(0.0), delayInSeconds(0.0),
           gravityFactor(0.0), emissionRatePerSecond(10.0),
           emissionShapeType(EmissionShapeType_Cone), emissionShapeCone(), emissionShapeSphere(), emissionShapeBox(),
@@ -91,7 +92,7 @@ namespace GT
     }
 
     ParticleEmitter::ParticleEmitter(const ParticleEmitter &other)
-        : name(other.name), m_position(other.m_position), m_orientation(other.m_orientation),
+        : m_context(other.GetContext()), name(other.name), m_position(other.m_position), m_orientation(other.m_orientation),
           flags(other.flags), durationInSeconds(other.durationInSeconds),  delayInSeconds(other.delayInSeconds),
           gravityFactor(other.gravityFactor), emissionRatePerSecond(other.emissionRatePerSecond),
           emissionShapeType(other.emissionShapeType), emissionShapeCone(other.emissionShapeCone), emissionShapeSphere(other.emissionShapeSphere), emissionShapeBox(other.emissionShapeBox),
@@ -99,7 +100,7 @@ namespace GT
           startRotationMin(other.startRotationMin), startRotationMax(other.startRotationMax),
           startScaleMin(other.startScaleMin), startScaleMax(other.startScaleMax),
           lifetimeMin(other.lifetimeMin), lifetimeMax(other.lifetimeMax),
-          material((other.material != nullptr) ? MaterialLibrary::CreateCopy(*other.material) : nullptr),
+          material(nullptr),
           textureTilesX(other.textureTilesX), textureTilesY(other.textureTilesY),
           functions(),
           random(other.random),
@@ -108,6 +109,8 @@ namespace GT
           m_aabbMin(other.m_aabbMin), m_aabbMax(other.m_aabbMax),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P4T4N4C4))
     {
+        this->material = (other.material != nullptr) ? other.GetContext().GetMaterialLibrary().CreateCopy(*other.material) : nullptr;
+
         // The functions need to be copied over.
         for (size_t iFunction = 0; iFunction < other.GetFunctionCount(); ++iFunction)
         {
@@ -150,7 +153,7 @@ namespace GT
                     {
                         assert(false);
                         
-                        g_Context->Logf("You've forgotten to handle the particle function in the ParticleEmitter copy constructor!");
+                        this->GetContext().Logf("You've forgotten to handle the particle function in the ParticleEmitter copy constructor!");
                         break;
                     }
                 }
@@ -164,7 +167,7 @@ namespace GT
 
     ParticleEmitter::~ParticleEmitter()
     {
-        MaterialLibrary::Delete(this->material);
+        this->GetContext().GetMaterialLibrary().Delete(this->material);
 
         for (size_t iFunction = 0; iFunction < this->functions.count; ++iFunction)
         {
@@ -657,10 +660,10 @@ namespace GT
 
     bool ParticleEmitter::SetMaterial(const char* relativePath)
     {
-        auto newMaterial = MaterialLibrary::Create(relativePath);
+        auto newMaterial = this->GetContext().GetMaterialLibrary().Create(relativePath);
         if (newMaterial != nullptr)
         {
-            MaterialLibrary::Delete(this->material);
+            this->GetContext().GetMaterialLibrary().Delete(this->material);
             this->material = newMaterial;
 
             return true;
@@ -927,7 +930,7 @@ namespace GT
         }
         else
         {
-            g_Context->LogErrorf("Error deserializing particle emitter. Unknown chunk ID (%d).", header.id);
+            this->GetContext().LogErrorf("Error deserializing particle emitter. Unknown chunk ID (%d).", header.id);
             return;
         }
     }

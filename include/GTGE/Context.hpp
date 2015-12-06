@@ -10,6 +10,10 @@
 #include "ParticleSystemLibrary.hpp"
 #include "PrefabLibrary.hpp"
 #include "ModelLibrary.hpp"
+#include "MaterialLibrary.hpp"
+#include "Texture2DLibrary.hpp"
+#include "VertexArrayLibrary.hpp"
+#include "ShaderLibrary.hpp"
 #include "GameEventQueue.hpp"
 #include "GameEventFilter.hpp"
 #include "GameWindowEventHandler.hpp"
@@ -153,6 +157,9 @@ namespace GT
 
         /// Retrieves a reference to the internal model library.
         ModelLibrary & GetModelLibrary() { return m_modelLibrary; }
+
+        /// Retrieves a reference to the internal material library.
+        MaterialLibrary & GetMaterialLibrary() { return m_materialLibrary; }
 
 
 
@@ -585,6 +592,9 @@ namespace GT
 
         /// The model library.
         ModelLibrary m_modelLibrary;
+
+        /// The material library.
+        MaterialLibrary m_materialLibrary;
 
 
 

@@ -38,14 +38,17 @@ namespace GT
     public:
         
         /// Constructor.
-        ParticleEmitter();
+        ParticleEmitter(Context &context);
 
         /// Copy constructor.
         ParticleEmitter(const ParticleEmitter &other);
 
-
         /// Destructor.
         ~ParticleEmitter();
+
+
+        /// Retrieves a reference to the context.
+        Context & GetContext() const { return m_context; }
 
 
         /// Updates the emitter.
@@ -372,6 +375,9 @@ namespace GT
         };
 
 
+
+        /// A reference to the context that owns this particle emitter. We need this so we can copy materials in the copy constructor.
+        Context &m_context;
 
         /// The name of the emitter. The name is only used for identification for humans. This does not need to be unique.
         String name;

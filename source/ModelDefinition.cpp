@@ -8,8 +8,8 @@
 
 namespace GT
 {
-    ModelDefinition::ModelDefinition()
-        : absolutePath(), relativePath(),
+    ModelDefinition::ModelDefinition(Context &context)
+        : m_context(context), absolutePath(), relativePath(),
           meshes(), m_bones(),
           m_animation(), animationChannelBones(), animationKeyCache(),
           animationAABBPadding(0.25f),
@@ -202,7 +202,7 @@ namespace GT
             auto &mesh = this->meshes[iMesh];
             
             Renderer::DeleteVertexArray(mesh.geometry);
-            MaterialLibrary::Delete(mesh.material);
+            m_context.GetMaterialLibrary().Delete(mesh.material);
             delete [] mesh.skinningVertexAttributes;
         }
 
@@ -835,7 +835,7 @@ namespace GT
                             String materialName;
                             deserializer.ReadString(materialName);
 
-                            newMesh.material = MaterialLibrary::Create(materialName.c_str());
+                            newMesh.material = m_context.GetMaterialLibrary().Create(materialName.c_str());
 
 
 

@@ -51,7 +51,10 @@ namespace GT
         this->HideDirectionArrow();     // <-- This will delete the model.
 
         VertexArrayLibrary::Delete(this->collisionShapeMesh.vertexArray);
-        MaterialLibrary::Delete(this->collisionShapeMesh.material);
+
+        if (this->GetContext() != NULL) {
+            this->GetContext()->GetMaterialLibrary().Delete(this->collisionShapeMesh.material);
+        }
     }
 
 
@@ -250,7 +253,9 @@ namespace GT
             // Material.
             if (this->spriteMesh.material == nullptr)
             {
-                this->spriteMesh.material = MaterialLibrary::Create("engine/materials/editor-sprite.material");
+                if (this->GetContext() != NULL) {
+                    this->spriteMesh.material = this->GetContext()->GetMaterialLibrary().Create("engine/materials/editor-sprite.material");
+                }
             }
 
             auto newSpriteTexture = Texture2DLibrary::Acquire(texturePath);
@@ -291,7 +296,11 @@ namespace GT
             delete this->spritePickingCollisionObject;      // <-- the destructor will remove it from the scene.
             delete this->spritePickingCollisionShape;
             Renderer::DeleteVertexArray(this->spriteMesh.vertexArray);
-            MaterialLibrary::Delete(this->spriteMesh.material);
+
+            if (this->GetContext() != NULL) {
+                this->GetContext()->GetMaterialLibrary().Delete(this->spriteMesh.material);
+            }
+
             Texture2DLibrary::Unacquire(this->spriteTexture);
 
 
@@ -407,9 +416,10 @@ namespace GT
 
 
                 // Material.
-                this->directionArrowMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
-                this->directionArrowMesh.material->SetParameter("EmissiveColour", 1.0f, 1.0f, 0.0f);
-
+                if (this->GetContext() != NULL) {
+                    this->directionArrowMesh.material = this->GetContext()->GetMaterialLibrary().Create("engine/materials/simple-emissive.material");
+                    this->directionArrowMesh.material->SetParameter("EmissiveColour", 1.0f, 1.0f, 0.0f);
+                }
 
                 // Transform.
                 this->UpdateDirectionArrowTransform();
@@ -425,7 +435,10 @@ namespace GT
         if (this->IsShowingDirectionArrow())
         {
             Renderer::DeleteVertexArray(this->directionArrowMesh.vertexArray);
-            MaterialLibrary::Delete(this->directionArrowMesh.material);
+
+            if (this->GetContext() != NULL) {
+                this->GetContext()->GetMaterialLibrary().Delete(this->directionArrowMesh.material);
+            }
 
             this->directionArrowMesh.vertexArray = nullptr;
             this->directionArrowMesh.material    = nullptr;
@@ -486,8 +499,10 @@ namespace GT
                 // Material.
                 if (this->collisionShapeMesh.material == nullptr)
                 {
-                    this->collisionShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
-                    this->collisionShapeMesh.material->SetParameter("EmissiveColour", 0.25f, 0.75f, 0.25f);
+                    if (this->GetContext() != NULL) {
+                        this->collisionShapeMesh.material = this->GetContext()->GetMaterialLibrary().Create("engine/materials/simple-emissive.material");
+                        this->collisionShapeMesh.material->SetParameter("EmissiveColour", 0.25f, 0.75f, 0.25f);
+                    }
                 }
             }
 
@@ -555,8 +570,10 @@ namespace GT
                 // Material.
                 if (this->proximityShapeMesh.material == nullptr)
                 {
-                    this->proximityShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
-                    this->proximityShapeMesh.material->SetParameter("EmissiveColour", 0.75f, 0.75f, 0.25f);
+                    if (this->GetContext() != NULL) {
+                        this->proximityShapeMesh.material = this->GetContext()->GetMaterialLibrary().Create("engine/materials/simple-emissive.material");
+                        this->proximityShapeMesh.material->SetParameter("EmissiveColour", 0.75f, 0.75f, 0.25f);
+                    }
                 }
             }
 

@@ -14,7 +14,7 @@ namespace GT
 {
     ParticleEditor::ParticleEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          particleSystemDefinition(), particleSystem(particleSystemDefinition),
+          particleSystemDefinition(ownerEditor.GetContext()), particleSystem(particleSystemDefinition),
           scene(ownerEditor.GetContext()), camera(), particleNode(),
           mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(*this, ownerEditor.GetContext(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f),

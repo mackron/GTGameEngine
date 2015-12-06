@@ -4,12 +4,13 @@
 #include <GTGE/CPUVertexShader_Skinning.hpp>
 #include <GTGE/Rendering.hpp>
 #include <GTGE/MaterialLibrary.hpp>
-#include <GTGE/GTEngine.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
-    Mesh::Mesh(DrawMode drawModeIn)
-        : geometry(nullptr), material(nullptr),
+    Mesh::Mesh(Context &context, DrawMode drawModeIn)
+        : m_context(context), 
+          geometry(nullptr), material(nullptr),
           skinningData(nullptr),
           hasAnimated(false), deleteGeometry(false), deleteMaterial(false),
           drawMode(drawModeIn)
@@ -27,7 +28,7 @@ namespace GT
 
         if (this->deleteMaterial)
         {
-            MaterialLibrary::Delete(this->material);
+            m_context.GetMaterialLibrary().Delete(this->material);
         }
     }
 
@@ -48,7 +49,7 @@ namespace GT
     {
         if (this->deleteMaterial)
         {
-            MaterialLibrary::Delete(this->material);
+            m_context.GetMaterialLibrary().Delete(this->material);
         }
 
         this->material       = newMaterial;
@@ -59,11 +60,11 @@ namespace GT
     {
         if (this->deleteMaterial)
         {
-            MaterialLibrary::Delete(this->material);
+            m_context.GetMaterialLibrary().Delete(this->material);
         }
 
         this->deleteMaterial = true;
-        this->material       = MaterialLibrary::Create(materialFileName);
+        this->material       = m_context.GetMaterialLibrary().Create(materialFileName);
         
         return this->material != nullptr;
     }
@@ -219,7 +220,7 @@ namespace GT
 
                     default:
                         {
-                            g_Context->Logf("Error deserializing Mesh. Material chunk is an unsupported version (%d).", header.version);
+                            m_context.Logf("Error deserializing Mesh. Material chunk is an unsupported version (%d).", header.version);
                             break;
                         }
                     }
@@ -250,7 +251,7 @@ namespace GT
 
                     default:
                         {
-                            g_Context->Logf("Error deserializing Mesh. Geometry chunk is an unsupported version (%d).", header.version);
+                            m_context.Logf("Error deserializing Mesh. Geometry chunk is an unsupported version (%d).", header.version);
                             break;
                         }
                     }

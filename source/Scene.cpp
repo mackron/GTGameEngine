@@ -234,7 +234,7 @@ namespace GT
 
     Scene::Scene(Context &context)
         : m_context(context),
-          renderer(new DefaultSceneRenderer),
+          renderer(new DefaultSceneRenderer(context)),
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           prefabLinker(new DefaultPrefabLinker(*this)),
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true), deletePrefabLinker(true),
@@ -254,7 +254,7 @@ namespace GT
 
     Scene::Scene(Context &context, SceneUpdateManager &updateManagerIn, ScenePhysicsManager &physicsManagerIn, SceneCullingManager &cullingManagerIn)
         : m_context(context),
-          renderer(new DefaultSceneRenderer),
+          renderer(new DefaultSceneRenderer(context)),
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           prefabLinker(new DefaultPrefabLinker(*this)),
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false), deletePrefabLinker(true),

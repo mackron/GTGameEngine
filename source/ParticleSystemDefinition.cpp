@@ -6,8 +6,9 @@
 
 namespace GT
 {
-    ParticleSystemDefinition::ParticleSystemDefinition()
-        : absolutePath(), relativePath(),
+    ParticleSystemDefinition::ParticleSystemDefinition(Context &context)
+        : m_context(context),
+          absolutePath(), relativePath(),
           emitters()
     {
     }
@@ -99,7 +100,7 @@ namespace GT
 
     ParticleEmitter* ParticleSystemDefinition::AppendNewEmitter()
     {
-        auto newEmitter = new ParticleEmitter;
+        auto newEmitter = new ParticleEmitter(m_context);
         this->emitters.PushBack(newEmitter);
 
         return newEmitter;

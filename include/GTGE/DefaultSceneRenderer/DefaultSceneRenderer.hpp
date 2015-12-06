@@ -395,7 +395,7 @@ namespace GT
     public:
 
         /// Constructor.
-        DefaultSceneRenderer();
+        DefaultSceneRenderer(Context &context);
 
         /// Destructor.
         virtual ~DefaultSceneRenderer();
@@ -620,6 +620,9 @@ namespace GT
 
 
     private:
+
+        /// A reference to the main context.
+        Context &m_context;
 
         /// The framebuffers for each attached viewport. Keyed by the viewport.
         Map<SceneViewport*, DefaultSceneRendererFramebuffer*> viewportFramebuffers;

@@ -10,90 +10,13 @@
 
 namespace GT
 {
-    ///////////////////////////////////////
-    // Globals
-
-    struct MaterialDefinitionReference
+    MaterialLibrary::MaterialLibrary(Context &context)
+        : m_context(context)
     {
-        MaterialDefinition* definition;
-        size_t              referenceCount;
-
-
-        MaterialDefinitionReference(MaterialDefinition* definitionIn, size_t referenceCountIn)
-            : definition(definitionIn), referenceCount(referenceCountIn)
-        {
-        }
-
-        MaterialDefinitionReference(const MaterialDefinitionReference &other)
-            : definition(other.definition), referenceCount(other.referenceCount)
-        {
-        }
-
-
-        MaterialDefinitionReference & operator=(const MaterialDefinitionReference &other)
-        {
-            this->definition     = other.definition;
-            this->referenceCount = other.referenceCount;
-
-            return *this;
-        }
-    };
-
-
-    /// The list of loaded material definitions, indexed by their absolute path.
-    static Dictionary<MaterialDefinitionReference> MaterialDefinitions;
-
-    /// The list of loaded materials.
-    static List<Material*> LoadedMaterials;
-
-
-
-    /// The list of event handlers.
-    static Vector<MaterialLibrary::EventHandler*> EventHandlers;
-
-    /// Helper function for calling the OnCreateMaterial() event.
-    void MaterialLibrary_OnCreateMaterial(Material &material)
-    {
-        for (size_t i = 0; i < EventHandlers.count; ++i)
-        {
-            EventHandlers[i]->OnCreateMaterial(material);
-        }
     }
 
-    /// Helper function for calling the OnDeleteMaterial() event.
-    void MaterialLibrary_OnDeleteMaterial(Material &material)
+    MaterialLibrary::~MaterialLibrary()
     {
-        for (size_t i = 0; i < EventHandlers.count; ++i)
-        {
-            EventHandlers[i]->OnDeleteMaterial(material);
-        }
-    }
-
-    /// Helper function for calling the OnCreateMaterialDefinition() event.
-    void MaterialLibrary_OnCreateMaterialDefinition(MaterialDefinition &definition)
-    {
-        for (size_t i = 0; i < EventHandlers.count; ++i)
-        {
-            EventHandlers[i]->OnCreateMaterialDefinition(definition);
-        }
-    }
-
-    /// Helper function for calling the OnDeleteMaterialDefinition() event.
-    void MaterialLibrary_OnDeleteMaterialDefinition(MaterialDefinition &definition)
-    {
-        for (size_t i = 0; i < EventHandlers.count; ++i)
-        {
-            EventHandlers[i]->OnDeleteMaterialDefinition(definition);
-        }
-    }
-
-    /// Helper function for calling the OnReloadMaterialDefinition() event.
-    void MaterialLibrary_OnReloadMaterialDefinition(MaterialDefinition &definition)
-    {
-        for (size_t i = 0; i < EventHandlers.count; ++i)
-        {
-            EventHandlers[i]->OnReloadMaterialDefinition(definition);
-        }
     }
 
 
@@ -105,24 +28,24 @@ namespace GT
 
     void MaterialLibrary::Shutdown()
     {
-        while (LoadedMaterials.root != nullptr)
+        while (m_loadedMaterials.root != nullptr)
         {
-            auto material = LoadedMaterials.root->value;
+            auto material = m_loadedMaterials.root->value;
             assert(material != nullptr);
             {
-                MaterialLibrary_OnDeleteMaterial(*material);
+                this->OnDeleteMaterial(*material);
                 delete material;
             }
 
-            LoadedMaterials.RemoveRoot();
+            m_loadedMaterials.RemoveRoot();
         }
 
-        for (size_t i = 0; i < MaterialDefinitions.count; ++i)
+        for (size_t i = 0; i < m_materialDefinitions.count; ++i)
         {
-            auto &reference = MaterialDefinitions.buffer[i]->value;
+            auto &reference = m_materialDefinitions.buffer[i]->value;
             assert(reference.definition != nullptr);
             {
-                MaterialLibrary_OnDeleteMaterialDefinition(*reference.definition);
+                this->OnDeleteMaterialDefinition(*reference.definition);
                 delete reference.definition;
             }
         }
@@ -131,15 +54,15 @@ namespace GT
     
     void MaterialLibrary::AttachEventHandler(EventHandler &eventHandler)
     {
-        if (!EventHandlers.Exists(&eventHandler))
+        if (!m_eventHandlers.Exists(&eventHandler))
         {
-            EventHandlers.PushBack(&eventHandler);
+            m_eventHandlers.PushBack(&eventHandler);
         }
     }
 
     void MaterialLibrary::RemoveEventHandler(EventHandler &eventHandler)
     {
-        EventHandlers.RemoveFirstOccuranceOf(&eventHandler);
+        m_eventHandlers.RemoveFirstOccuranceOf(&eventHandler);
     }
 
 
@@ -167,7 +90,7 @@ namespace GT
         {
             MaterialDefinition* definition = nullptr;
 
-            auto iMaterialDefinition = MaterialDefinitions.Find(absolutePath);
+            auto iMaterialDefinition = m_materialDefinitions.Find(absolutePath);
             if (iMaterialDefinition != nullptr)
             {
                 // Definition is already loaded. All we do it increment the reference counter.
@@ -181,8 +104,8 @@ namespace GT
                 definition = new MaterialDefinition;
                 if (definition->LoadFromFile(absolutePath, relativePath))
                 {
-                    MaterialDefinitions.Add(absolutePath, MaterialDefinitionReference(definition, 1));
-                    MaterialLibrary_OnCreateMaterialDefinition(*definition);
+                    m_materialDefinitions.Add(absolutePath, MaterialDefinitionReference(definition, 1));
+                    this->OnCreateMaterialDefinition(*definition);
                 }
                 else
                 {
@@ -195,9 +118,9 @@ namespace GT
             if (definition != nullptr)
             {
                 auto material = new Material(*definition);
-                LoadedMaterials.Append(material);
+                m_loadedMaterials.Append(material);
 
-                MaterialLibrary_OnCreateMaterial(*material);
+                this->OnCreateMaterial(*material);
 
                 return material;
             }
@@ -209,13 +132,13 @@ namespace GT
     Material* MaterialLibrary::CreateCopy(const Material &source)
     {
         auto newMaterial = new Material(source.GetDefinition());
-        LoadedMaterials.Append(newMaterial);
+        m_loadedMaterials.Append(newMaterial);
 
-        MaterialLibrary_OnCreateMaterial(*newMaterial);
+        this->OnCreateMaterial(*newMaterial);
 
 
         // The reference counter needs to be incremented.
-        auto iMaterialDefinition = MaterialDefinitions.Find(source.GetDefinition().absolutePath.c_str());
+        auto iMaterialDefinition = m_materialDefinitions.Find(source.GetDefinition().absolutePath.c_str());
         if (iMaterialDefinition != nullptr)
         {
             iMaterialDefinition->value.referenceCount += 1;
@@ -230,15 +153,15 @@ namespace GT
     {
         if (material != nullptr)
         {
-            MaterialLibrary_OnDeleteMaterial(*material);
+            this->OnDeleteMaterial(*material);
 
-            LoadedMaterials.Remove(LoadedMaterials.Find(material));
+            m_loadedMaterials.Remove(m_loadedMaterials.Find(material));
 
 
             // The reference counter needs to be decremented. If this is the last reference to the material we'll delete it.
             String absolutePath(material->GetDefinition().absolutePath);
 
-            auto iMaterialDefinition = MaterialDefinitions.Find(absolutePath.c_str());
+            auto iMaterialDefinition = m_materialDefinitions.Find(absolutePath.c_str());
             if (iMaterialDefinition != nullptr)
             {
                 assert(iMaterialDefinition->value.referenceCount >= 1);
@@ -248,7 +171,7 @@ namespace GT
                     if (iMaterialDefinition->value.referenceCount == 0)
                     {
                         delete iMaterialDefinition->value.definition;
-                        MaterialDefinitions.RemoveByKey(absolutePath.c_str());
+                        m_materialDefinitions.RemoveByKey(absolutePath.c_str());
                     }
                 }
             }
@@ -264,7 +187,7 @@ namespace GT
         char absolutePath[EASYVFS_MAX_PATH];
         if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iDefinition = MaterialDefinitions.Find(absolutePath);
+            auto iDefinition = m_materialDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
             {
                 auto &reference = iDefinition->value;
@@ -278,7 +201,7 @@ namespace GT
                     if (result)
                     {
                         // Now we just iterate over material that uses the definition in question and update the default parameters.
-                        for (auto iMaterial = LoadedMaterials.root; iMaterial != nullptr; iMaterial = iMaterial->next)
+                        for (auto iMaterial = m_loadedMaterials.root; iMaterial != nullptr; iMaterial = iMaterial->next)
                         {
                             auto material = iMaterial->value;
                             assert(material != nullptr);
@@ -292,7 +215,7 @@ namespace GT
                         
 
                         // We need to let everything know that the material has been reloaded.
-                        MaterialLibrary_OnReloadMaterialDefinition(*reference.definition);
+                        this->OnReloadMaterialDefinition(*reference.definition);
 
                         return true;
                     }
@@ -309,7 +232,7 @@ namespace GT
     {
         MaterialDefinition* definition = nullptr;
 
-        auto iMaterialDefinition = MaterialDefinitions.Find("@NavigationMesh");
+        auto iMaterialDefinition = m_materialDefinitions.Find("@NavigationMesh");
         if (iMaterialDefinition == nullptr)
         {
             definition = new MaterialDefinition;
@@ -345,7 +268,7 @@ namespace GT
                 "</material>"
             );
 
-            MaterialDefinitions.Add("@NavigationMesh", MaterialDefinitionReference(definition, 1));
+            m_materialDefinitions.Add("@NavigationMesh", MaterialDefinitionReference(definition, 1));
         }
         else
         {
@@ -357,11 +280,55 @@ namespace GT
         assert(definition != nullptr);
         {
             auto material = new Material(*definition);
-            LoadedMaterials.Append(material);
+            m_loadedMaterials.Append(material);
 
-            MaterialLibrary_OnCreateMaterial(*material);
+            this->OnCreateMaterial(*material);
 
             return material;
+        }
+    }
+
+
+
+
+
+    void MaterialLibrary::OnCreateMaterial(Material &material)
+    {
+        for (size_t i = 0; i < m_eventHandlers.count; ++i)
+        {
+            m_eventHandlers[i]->OnCreateMaterial(material);
+        }
+    }
+
+    void MaterialLibrary::OnDeleteMaterial(Material &material)
+    {
+        for (size_t i = 0; i < m_eventHandlers.count; ++i)
+        {
+            m_eventHandlers[i]->OnDeleteMaterial(material);
+        }
+    }
+
+    void MaterialLibrary::OnCreateMaterialDefinition(MaterialDefinition &definition)
+    {
+        for (size_t i = 0; i < m_eventHandlers.count; ++i)
+        {
+            m_eventHandlers[i]->OnCreateMaterialDefinition(definition);
+        }
+    }
+
+    void MaterialLibrary::OnDeleteMaterialDefinition(MaterialDefinition &definition)
+    {
+        for (size_t i = 0; i < m_eventHandlers.count; ++i)
+        {
+            m_eventHandlers[i]->OnDeleteMaterialDefinition(definition);
+        }
+    }
+
+    void MaterialLibrary::OnReloadMaterialDefinition(MaterialDefinition &definition)
+    {
+        for (size_t i = 0; i < m_eventHandlers.count; ++i)
+        {
+            m_eventHandlers[i]->OnReloadMaterialDefinition(definition);
         }
     }
 }

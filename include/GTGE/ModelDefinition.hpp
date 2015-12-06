@@ -14,6 +14,8 @@
 
 namespace GT
 {
+    class Context;
+
     /// Class representing the base definition of a model.
     ///
     /// When a model is loaded from a file, it loads the definition, and then creates a model instantiation from that definition. Definitions
@@ -71,10 +73,14 @@ namespace GT
     public:
 
         /// Constructor.
-        ModelDefinition();
+        ModelDefinition(Context &context);
 
         /// Destructor.
         ~ModelDefinition();
+
+
+        /// Retrieves a reference to the context.
+        Context & GetContext() const { return m_context; }
 
 
         /// Loads the model definition from a file.
@@ -274,6 +280,10 @@ namespace GT
 
 
     public:
+
+        /// A reference to the main context.
+        Context &m_context;
+
 
         /// The absolute file path. This is of the foreign (source) file.
         String absolutePath;
