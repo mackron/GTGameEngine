@@ -2,6 +2,24 @@
 - Changelog
 -------------------------------------------------------------------------------
 
+0.0.5 ()
+
+This is a big release focused around improving the infrastructure of the engine
+while allowing for major breaking changes. Games prior to this version will not
+work and will require significant effort to port.
+
+BREAKING CHANGES:
+
+FEATURES:
+
+FIXES/IMPROVEMENTS:
+    - Removed most global variables.
+	- The "Game" and "EngineContext" classes have been merged into a single
+	  class called "Context".
+
+
+-------------------------------------------------------------------------------
+
 0.0.4 (December 4th, 2015)
 
 BREAKING CHANGES:
