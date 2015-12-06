@@ -49,7 +49,7 @@ namespace GT
         {
             if (needsSerialize)
             {
-                ModelLibrary::WriteToFile(this->modelDefinition);
+                this->GetContext().GetModelLibrary().WriteToFile(this->modelDefinition);
             }
         }
 
@@ -377,7 +377,7 @@ namespace GT
                     auto hull = convexHulls[i];
                     if (hull != nullptr)
                     {
-                        auto hullModel = ModelLibrary::CreateFromConvexHull(*hull);
+                        auto hullModel = this->GetContext().GetModelLibrary().CreateFromConvexHull(*hull);
                         hullModel->meshes[0]->GetMaterial()->SetParameter("DiffuseColour", this->random.Next<float>(0.0f, 1.0f), this->random.Next<float>(0.0f, 1.0f), this->random.Next<float>(0.0f, 1.0f));
 
                         auto node = new SceneNode;
@@ -437,7 +437,7 @@ namespace GT
 
         this->isSaving = true;
         {
-            wasSaved = ModelLibrary::WriteToFile(this->modelDefinition);
+            wasSaved = this->GetContext().GetModelLibrary().WriteToFile(this->modelDefinition);
 
             if (wasSaved)
             {
@@ -502,7 +502,7 @@ namespace GT
                     auto model = modelComponent->GetModel();
                     assert(model != nullptr);
                     {
-                        ModelLibrary::Delete(model);
+                        this->GetContext().GetModelLibrary().Delete(model);
                     }
                 }
 
@@ -551,7 +551,7 @@ namespace GT
             {
                 if (needsSerialize && !this->IsMarkedAsModified())
                 {
-                    ModelLibrary::WriteToFile(this->modelDefinition);
+                    this->GetContext().GetModelLibrary().WriteToFile(this->modelDefinition);
                 }
             }
 

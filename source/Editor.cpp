@@ -1039,7 +1039,7 @@ namespace GT
 
             if (ModelLibrary::IsExtensionSupported(extension))
             {
-                ModelLibrary::Reload(absolutePath);
+                this->GetContext().GetModelLibrary().Reload(absolutePath);
             }
             else if (Texture2DLibrary::IsExtensionSupported(extension))
             {

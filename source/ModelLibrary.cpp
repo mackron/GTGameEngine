@@ -21,47 +21,15 @@
 // Startup/Shutdown
 namespace GT
 {
-    ////////////////////////////////////////////////
-    // Globals
-
-    struct ModelDefinitionReference
+    /// Constructor.
+    ModelLibrary::ModelLibrary(Context &context)
+        : m_context(context), m_loadedDefinitions(), m_instantiatedModels()
     {
-        ModelDefinition* definition;
-        size_t           referenceCount;
+    }
 
-        ModelDefinitionReference(ModelDefinition* definitionIn, size_t referenceCountIn)
-            : definition(definitionIn), referenceCount(referenceCountIn)
-        {
-        }
-
-        ModelDefinitionReference(const ModelDefinitionReference &other)
-            : definition(other.definition), referenceCount(other.referenceCount)
-        {
-        }
-
-
-        ModelDefinitionReference & operator=(const ModelDefinitionReference &other)
-        {
-            this->definition     = other.definition;
-            this->referenceCount = other.referenceCount;
-
-            return *this;
-        }
-    };
-
-    /// The list of loaded model definitions, index by the absolute path of the original source file.
-    static Dictionary<ModelDefinitionReference> LoadedDefinitions;
-
-    /// The list of instantiated models. we need this so we can delete them on shutdown.
-    static Vector<Model*> InstantiatedModels;
-
-
-    /// Creates a model from a primitive's vertex array.
-    ///
-    /// @param name [in] The name of the primitive.
-    /// @param va   [in] The vertex array of the primitive. This can be nullptr, but only if the primitive has already been created.
-    Model* ModelLibrary_CreateFromPrimitive(const char* name, VertexArray* va);
-
+    ModelLibrary::~ModelLibrary()
+    {
+    }
 
 
     ////////////////////////////////////////////////
@@ -75,19 +43,19 @@ namespace GT
     void ModelLibrary::Shutdown()
     {
         // Instantiated models need to be deleted.
-        for (size_t i = 0; i < InstantiatedModels.count; ++i)
+        for (size_t i = 0; i < m_instantiatedModels.count; ++i)
         {
-            delete InstantiatedModels[i];
+            delete m_instantiatedModels[i];
         }
-        InstantiatedModels.Clear();
+        m_instantiatedModels.Clear();
 
 
         // Definitions now need to be deleted.
-        for (size_t i = 0; i < LoadedDefinitions.count; ++i)
+        for (size_t i = 0; i < m_loadedDefinitions.count; ++i)
         {
-            delete LoadedDefinitions.buffer[i]->value.definition;
+            delete m_loadedDefinitions.buffer[i]->value.definition;
         }
-        LoadedDefinitions.Clear();
+        m_loadedDefinitions.Clear();
     }
 
 
@@ -115,11 +83,11 @@ namespace GT
 
         // We will first find an existing model definition. If we don't find it, we create one and the load into it.
         String absolutePath;
-        if (ModelLibrary::FindAbsolutePath(fileName, absolutePath))
+        if (this->FindAbsolutePath(fileName, absolutePath))
         {
             ModelDefinition* definition = nullptr;
 
-            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            auto iDefinition = m_loadedDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)
             {
                 // Definition is already loaded. All we do it increment the reference counter.
@@ -135,11 +103,11 @@ namespace GT
                 bool needsSerialize;
                 if (definition->LoadFromFile(absolutePath.c_str(), relativePath, needsSerialize))
                 {
-                    LoadedDefinitions.Add(definition->absolutePath.c_str(), ModelDefinitionReference(definition, 1));
+                    m_loadedDefinitions.Add(definition->absolutePath.c_str(), ModelDefinitionReference(definition, 1));
 
                     if (needsSerialize)
                     {
-                        ModelLibrary::WriteToFile(*definition);
+                        this->WriteToFile(*definition);
                     }
                 }
                 else
@@ -153,7 +121,7 @@ namespace GT
             // Now all we do is create the model from the definition.
             if (definition != nullptr)
             {
-                return ModelLibrary::CreateFromDefinition(*definition);
+                return this->CreateFromDefinition(*definition);
             }
         }
 
@@ -163,7 +131,7 @@ namespace GT
     Model* ModelLibrary::CreateFromDefinition(const ModelDefinition &definition)
     {
         auto model = new Model(definition);
-        InstantiatedModels.PushBack(model);
+        m_instantiatedModels.PushBack(model);
 
         return model;
     }
@@ -179,13 +147,13 @@ namespace GT
         // We create the model from a primitive. To do this we need a non-const vertex array.
         VertexArray* va = nullptr;
 
-        bool exists = LoadedDefinitions.Find(name) != nullptr;
+        bool exists = m_loadedDefinitions.Find(name) != nullptr;
         if (!exists)
         {
             va = VertexArrayLibrary::CreateFromConvexHull(convexHull);
         }
 
-        return ModelLibrary_CreateFromPrimitive(name, va);
+        return this->CreateFromPrimitive(name, va);
     }
 
 
@@ -193,13 +161,13 @@ namespace GT
     {
         if (model != nullptr)
         {
-            InstantiatedModels.RemoveFirstOccuranceOf(model);
+            m_instantiatedModels.RemoveFirstOccuranceOf(model);
 
 
             // The reference counter needs to be decremented. If this is the last reference to the model we'll delete it.
             String absolutePath(model->GetDefinition().GetAbsolutePath());
 
-            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            auto iDefinition = m_loadedDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)
             {
                 assert(iDefinition->value.referenceCount >= 1);
@@ -209,7 +177,7 @@ namespace GT
                     if (iDefinition->value.referenceCount == 0)
                     {
                         delete iDefinition->value.definition;
-                        LoadedDefinitions.RemoveByKey(absolutePath.c_str());
+                        m_loadedDefinitions.RemoveByKey(absolutePath.c_str());
                     }
                 }
             }
@@ -232,7 +200,7 @@ namespace GT
 
 
         // We need to find the definition that we're updating.
-        auto definition = ModelLibrary::FindDefinition(fileName);
+        auto definition = this->FindDefinition(fileName);
         if (definition != nullptr)
         {
             bool needsSerialize;
@@ -240,14 +208,14 @@ namespace GT
             {
                 if (needsSerialize)
                 {
-                    ModelLibrary::WriteToFile(*definition);
+                    this->WriteToFile(*definition);
                 }
             }
 
             // Every model with this definition needs to know that it has changed.
-            for (size_t iModel = 0; iModel < InstantiatedModels.count; ++iModel)
+            for (size_t iModel = 0; iModel < m_instantiatedModels.count; ++iModel)
             {
-                auto model = InstantiatedModels[iModel];
+                auto model = m_instantiatedModels[iModel];
                 assert(model != nullptr);
                 {
                     if (&model->GetDefinition() == definition)
@@ -292,13 +260,13 @@ namespace GT
 
     bool ModelLibrary::WriteToFile(const ModelDefinition &definition)
     {
-        return ModelLibrary::WriteToFile(definition, definition.absolutePath.c_str());
+        return this->WriteToFile(definition, definition.absolutePath.c_str());
     }
 
     bool ModelLibrary::WriteToFile(const char* fileName)
     {
         // We first need to find the definition.
-        auto iDefinition = LoadedDefinitions.Find(fileName);
+        auto iDefinition = m_loadedDefinitions.Find(fileName);
         if (iDefinition == nullptr)
         {
             if (easypath_extension_equal(fileName, "gtmodel"))
@@ -306,13 +274,13 @@ namespace GT
                 char fileNameWithoutExtension[EASYVFS_MAX_PATH];
                 easypath_copy_and_remove_extension(fileNameWithoutExtension, sizeof(fileNameWithoutExtension), fileName);
 
-                iDefinition = LoadedDefinitions.Find(fileNameWithoutExtension);
+                iDefinition = m_loadedDefinitions.Find(fileNameWithoutExtension);
             }
         }
 
         if (iDefinition != nullptr)
         {
-            return ModelLibrary::WriteToFile(*iDefinition->value.definition, fileName);
+            return this->WriteToFile(*iDefinition->value.definition, fileName);
         }
 
         return false;
@@ -376,7 +344,7 @@ namespace GT
 
     ModelDefinition* ModelLibrary::FindDefinition(const char* absolutePath)
     {
-        auto iDefinition = LoadedDefinitions.Find(absolutePath);
+        auto iDefinition = m_loadedDefinitions.Find(absolutePath);
         if (iDefinition != nullptr)
         {
             return iDefinition->value.definition;
@@ -384,21 +352,13 @@ namespace GT
 
         return nullptr;
     }
-}
 
-
-
-
-
-// These are private functions implementations for ModelLibrary.
-namespace GT
-{
-    Model* ModelLibrary_CreateFromPrimitive(const char* name, VertexArray* va)
+    Model* ModelLibrary::CreateFromPrimitive(const char* name, VertexArray* va)
     {
         ModelDefinition* definition = nullptr;
 
         // We first need to retrieve our model info.
-        auto iDefinition = LoadedDefinitions.Find(name);
+        auto iDefinition = m_loadedDefinitions.Find(name);
         if (iDefinition == nullptr)
         {
             definition = new ModelDefinition;
@@ -408,7 +368,7 @@ namespace GT
             mesh.material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
             definition->AddMesh(mesh);
 
-            LoadedDefinitions.Add(name, ModelDefinitionReference(definition, 1));
+            m_loadedDefinitions.Add(name, ModelDefinitionReference(definition, 1));
         }
         else
         {
@@ -419,7 +379,7 @@ namespace GT
         // Now that we have the model information we can create a model from it.
         if (definition != nullptr)
         {
-            return ModelLibrary::CreateFromDefinition(*definition);
+            return this->CreateFromDefinition(*definition);
         }
 
         return nullptr;

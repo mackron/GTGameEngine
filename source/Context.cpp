@@ -116,7 +116,7 @@ namespace GT
           m_pLogFile(nullptr),
           m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
           m_assetLibrary(),
-          m_scriptLibrary(*this), m_particleSystemLibrary(*this), m_prefabLibrary(*this),
+          m_scriptLibrary(*this), m_particleSystemLibrary(*this), m_prefabLibrary(*this), m_modelLibrary(*this),
           m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
           eventQueue(), eventQueueLock(NULL),
@@ -284,19 +284,16 @@ namespace GT
         VertexArrayLibrary::Startup();
 
         g_Context->Logf("Initializing Model Library...");
-        ModelLibrary::Startup();
+        m_modelLibrary.Startup();
 
         g_Context->Logf("Initializing Prefab Library...");
         m_prefabLibrary.Startup();
-        //PrefabLibrary::Startup();
 
         g_Context->Logf("Initializing Particle System Library...");
         m_particleSystemLibrary.Startup();
-        //ParticleSystemLibrary::Startup();
 
         g_Context->Logf("Initializing Script Library...");
         m_scriptLibrary.Startup();
-        //ScriptLibrary::Startup(this);
 
 
 
@@ -448,7 +445,7 @@ namespace GT
         m_particleSystemLibrary.Shutdown();
         m_prefabLibrary.Shutdown();
 
-        ModelLibrary::Shutdown();
+        m_modelLibrary.Shutdown();
         MaterialLibrary::Shutdown();
         ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();

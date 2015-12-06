@@ -23,7 +23,9 @@ namespace GT
     {
         if (this->flags & Owner)
         {
-            ModelLibrary::Delete(this->model);
+            if (this->GetContext() != NULL) {
+                this->GetContext()->GetModelLibrary().Delete(this->model);
+            }
         }
     }
 
@@ -39,7 +41,9 @@ namespace GT
 
         if (this->flags & Owner)
         {
-            ModelLibrary::Delete(this->model);
+            if (this->GetContext() != NULL) {
+                this->GetContext()->GetModelLibrary().Delete(this->model);
+            }
         }
 
         this->model = newModel;
@@ -64,7 +68,10 @@ namespace GT
 
     Model* ModelComponent::SetModel(const char* fileName, const char* relativeTo)
     {
-        this->SetModel(ModelLibrary::Create(fileName, relativeTo), true);
+        if (this->GetContext() != NULL) {
+            this->SetModel(this->GetContext()->GetModelLibrary().Create(fileName, relativeTo), true);
+        }
+
         return this->model;
     }
 

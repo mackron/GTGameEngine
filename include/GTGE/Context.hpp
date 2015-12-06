@@ -9,6 +9,7 @@
 #include "ScriptLibrary.hpp"
 #include "ParticleSystemLibrary.hpp"
 #include "PrefabLibrary.hpp"
+#include "ModelLibrary.hpp"
 #include "GameEventQueue.hpp"
 #include "GameEventFilter.hpp"
 #include "GameWindowEventHandler.hpp"
@@ -149,6 +150,9 @@ namespace GT
 
         /// Retrieves a reference to the internal prefab library.
         PrefabLibrary & GetPrefabLibrary() { return m_prefabLibrary; }
+
+        /// Retrieves a reference to the internal model library.
+        ModelLibrary & GetModelLibrary() { return m_modelLibrary; }
 
 
 
@@ -578,6 +582,9 @@ namespace GT
 
         /// The prefab library.
         PrefabLibrary m_prefabLibrary;
+
+        /// The model library.
+        ModelLibrary m_modelLibrary;
 
 
 
