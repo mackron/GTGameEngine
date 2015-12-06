@@ -5,7 +5,7 @@
 #include <GTGE/Scripting.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GamePackager.hpp>
-#include <GTGE/GTEngine.hpp>           // For g_Context. Remove this when the global context is removed.
+#include <GTGE/GTEngine.hpp>           // For this. Remove this when the global context is removed.
 #include <GTGE/Core/System.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
 #include <GTGE/Core/String.hpp>
@@ -250,15 +250,15 @@ namespace GT
 
 
         // With the log file created, we can startup all of our other sub-systems.
-        g_Context->Logf("Starting Rendering Sub-System...");
+        this->Logf("Starting Rendering Sub-System...");
         if (Renderer::Startup())
         {
-            g_Context->Logf("Renderer Caps:");
-            g_Context->Logf("    Max Color Attachments: %d", Renderer::GetMaxColourAttachments());
-            g_Context->Logf("    Max Draw Buffers:      %d", Renderer::GetMaxDrawBuffers());
-            g_Context->Logf("    Max Texture Units:     %d", Renderer::GetMaxTextureUnits());
+            this->Logf("Renderer Caps:");
+            this->Logf("    Max Color Attachments: %d", Renderer::GetMaxColourAttachments());
+            this->Logf("    Max Draw Buffers:      %d", Renderer::GetMaxDrawBuffers());
+            this->Logf("    Max Texture Units:     %d", Renderer::GetMaxTextureUnits());
 
-            g_Context->Logf("Loading Shaders...");
+            this->Logf("Loading Shaders...");
             ShaderLibrary::LoadFromDirectory("engine/shaders/glsl");
             ShaderLibrary::LoadFromDirectory("shaders/glsl");
         }
@@ -269,25 +269,25 @@ namespace GT
 
 
         // With sub-systems started up, we can startup our resource libraries.
-        g_Context->Logf("Initializing Texture Library...");
+        this->Logf("Initializing Texture Library...");
         Texture2DLibrary::Startup();
 
-        g_Context->Logf("Initializing Vertex Array Library...");
+        this->Logf("Initializing Vertex Array Library...");
         VertexArrayLibrary::Startup();
 
-        g_Context->Logf("Initializing Material Library...");
+        this->Logf("Initializing Material Library...");
         m_materialLibrary.Startup();
 
-        g_Context->Logf("Initializing Model Library...");
+        this->Logf("Initializing Model Library...");
         m_modelLibrary.Startup();
 
-        g_Context->Logf("Initializing Prefab Library...");
+        this->Logf("Initializing Prefab Library...");
         m_prefabLibrary.Startup();
 
-        g_Context->Logf("Initializing Particle System Library...");
+        this->Logf("Initializing Particle System Library...");
         m_particleSystemLibrary.Startup();
 
-        g_Context->Logf("Initializing Script Library...");
+        this->Logf("Initializing Script Library...");
         m_scriptLibrary.Startup();
 
 
@@ -300,7 +300,7 @@ namespace GT
             this->gui.Startup();
             this->guiRenderer.Startup();
 
-            //// FROM GAME ////
+
             this->eventQueueLock = easyutil_create_mutex();
 
             // The main game window GUI element needs to be created. It is just a 100% x 100% invisible element off the root element.
@@ -318,7 +318,7 @@ namespace GT
             m_gameStateManager.OnLoadConfigs(*this);
 
             // This is where the user config scripts are loaded.
-            easyutil_parse_cmdline(&g_Context->GetCommandLine(), GameCommandLineProc, this);
+            easyutil_parse_cmdline(&this->GetCommandLine(), GameCommandLineProc, this);
 
 
             // Here we will set the default anistropy for textures via the texture library.
@@ -340,10 +340,10 @@ namespace GT
 
 
                 // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
-                g_Context->Logf("Loading GUI...");
+                this->Logf("Loading GUI...");
                 if (!this->InitialiseGUI())
                 {
-                    g_Context->Logf("Error loading GUI.");
+                    this->Logf("Error loading GUI.");
                 }
 
 
@@ -361,13 +361,13 @@ namespace GT
             else
             {
                 // We couldn't create a window, which means the renderer is not usable...
-                g_Context->LogErrorf("Error initialising renderer.");
+                this->LogErrorf("Error initialising renderer.");
                 return false;
             }
         }
         else
         {
-            g_Context->LogErrorf("Error initialising scripting environment.");
+            this->LogErrorf("Error initialising scripting environment.");
             return false;
         }
 
@@ -1024,12 +1024,12 @@ namespace GT
     bool Context::PackageForDistribution(const char* outputDirectory, const char* executableName)
     {
         char absoluteOutputDirectory[EASYVFS_MAX_PATH];
-        easypath_copy_and_append(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), g_Context->GetExecutableDirectoryAbsolutePath(), outputDirectory);
+        easypath_copy_and_append(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), this->GetExecutableDirectoryAbsolutePath(), outputDirectory);
 
         // We will start by creating the output directory.
-        if (!easyvfs_is_existing_directory(g_Context->GetVFS(), absoluteOutputDirectory))
+        if (!easyvfs_is_existing_directory(this->GetVFS(), absoluteOutputDirectory))
         {
-            if (!easyvfs_mkdir(g_Context->GetVFS(), absoluteOutputDirectory))
+            if (!easyvfs_mkdir(this->GetVFS(), absoluteOutputDirectory))
             {
                 // Failed to create the output directory.
                 return false;
@@ -1040,27 +1040,27 @@ namespace GT
 
 
         // We will start by copying over the data directories, not including the executable directory.
-        assert(easyvfs_get_base_directory_count(g_Context->GetVFS()) > 0);
-        for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_Context->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
+        assert(easyvfs_get_base_directory_count(this->GetVFS()) > 0);
+        for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(this->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
         {
-            packager.CopyDataDirectory(easyvfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir));
+            packager.CopyDataDirectory(easyvfs_get_base_directory_by_index(this->GetVFS(), iBaseDir));
         }
 
 
-        if (easypath_extension_equal(g_Context->GetExecutableAbsolutePath(), "exe"))
+        if (easypath_extension_equal(this->GetExecutableAbsolutePath(), "exe"))
         {
             if (easypath_extension_equal(executableName, "exe"))
             {
-                packager.CopyExecutable(g_Context->GetExecutableAbsolutePath(), executableName);
+                packager.CopyExecutable(this->GetExecutableAbsolutePath(), executableName);
             }
             else
             {
-                packager.CopyExecutable(g_Context->GetExecutableAbsolutePath(), (String(executableName) + ".exe").c_str());
+                packager.CopyExecutable(this->GetExecutableAbsolutePath(), (String(executableName) + ".exe").c_str());
             }
         }
         else
         {
-            packager.CopyExecutable(g_Context->GetExecutableAbsolutePath(), executableName);
+            packager.CopyExecutable(this->GetExecutableAbsolutePath(), executableName);
         }
 
         packager.WriteConfig();
@@ -1117,7 +1117,7 @@ namespace GT
 
     bool Context::SaveGameState(const char* destinationFilePath)
     {
-        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), destinationFilePath, EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
+        easyvfs_file* pFile = easyvfs_open(this->GetVFS(), destinationFilePath, EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
         if (pFile != nullptr)
         {
             FileSerializer serializer(pFile);
@@ -1132,7 +1132,7 @@ namespace GT
 
     bool Context::LoadGameState(const char* sourceFilePath)
     {
-        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), sourceFilePath, EASYVFS_READ, 0);
+        easyvfs_file* pFile = easyvfs_open(this->GetVFS(), sourceFilePath, EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
             FileDeserializer deserializer(pFile);
