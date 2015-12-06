@@ -116,7 +116,7 @@ namespace GT
           m_pLogFile(nullptr),
           m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
           m_assetLibrary(),
-          m_scriptLibrary(*this), m_particleSystemLibrary(*this),
+          m_scriptLibrary(*this), m_particleSystemLibrary(*this), m_prefabLibrary(*this),
           m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
           eventQueue(), eventQueueLock(NULL),
@@ -287,7 +287,8 @@ namespace GT
         ModelLibrary::Startup();
 
         g_Context->Logf("Initializing Prefab Library...");
-        PrefabLibrary::Startup();
+        m_prefabLibrary.Startup();
+        //PrefabLibrary::Startup();
 
         g_Context->Logf("Initializing Particle System Library...");
         m_particleSystemLibrary.Startup();
@@ -436,20 +437,23 @@ namespace GT
         m_pAudioContext = nullptr;
 
 
+
         easyutil_delete_mutex(this->eventQueueLock);
 
 
 
 
         // We kill our libraries before the major sub-systems.
-        m_particleSystemLibrary.Shutdown();
         m_scriptLibrary.Shutdown();
+        m_particleSystemLibrary.Shutdown();
+        m_prefabLibrary.Shutdown();
+
         ModelLibrary::Shutdown();
         MaterialLibrary::Shutdown();
         ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
         VertexArrayLibrary::Shutdown();
-        PrefabLibrary::Shutdown();
+        
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.
         Renderer::Shutdown();

@@ -3,10 +3,12 @@
 #ifndef GT_PrefabLinker
 #define GT_PrefabLinker
 
-#include "PrefabLibrary.hpp"
+#include "Prefab.hpp"
 
 namespace GT
 {
+    class Context;
+
     /// Base class for linking scene nodes to prefab, and vice versa.
     ///
     /// The purpose of this class is to implement the functionality required for keeping scene nodes synchronized with
@@ -23,10 +25,14 @@ namespace GT
     public:
 
         /// Constructor.
-        PrefabLinker();
+        PrefabLinker(Context &context);
 
         /// Destructor.
         virtual ~PrefabLinker();
+
+
+        /// Retrieves a reference to to the main context.
+        Context & GetContext() { return m_context; }
 
 
         /// Links a scene node to the given prefab.
@@ -160,6 +166,14 @@ namespace GT
         ///     @par
         ///     This may call CreateSceneNode().
         bool DeserializeSceneNode(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab);
+
+
+
+
+    private:
+
+        /// A reference to the context that owns this prefab linker.
+        Context &m_context;
     };
 }
 

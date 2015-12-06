@@ -2265,13 +2265,13 @@ namespace GT
 
             if (absolutePath != nullptr && makeRelativeTo != nullptr && sceneNode != nullptr)
             {
-                auto prefab = PrefabLibrary::Acquire(absolutePath, makeRelativeTo);
+                auto prefab = GameFFI::GetContext(script).GetPrefabLibrary().Acquire(absolutePath, makeRelativeTo);
                 if (prefab != nullptr)
                 {
                     prefab->SetFromSceneNode(*sceneNode);
                     prefab->WriteToFile();
 
-                    PrefabLibrary::Unacquire(prefab);
+                    GameFFI::GetContext(script).GetPrefabLibrary().Unacquire(prefab);
                 }
             }
 

@@ -1,10 +1,12 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTGE/PrefabLinker.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
-    PrefabLinker::PrefabLinker()
+    PrefabLinker::PrefabLinker(Context &context)
+        : m_context(context)
     {
     }
 
@@ -15,7 +17,7 @@ namespace GT
 
     bool PrefabLinker::LinkSceneNodeToPrefab(SceneNode &baseSceneNode, const char* prefabRelativePath, bool isSourceSceneNode)
     {
-        auto prefab = PrefabLibrary::Acquire(prefabRelativePath);
+        auto prefab = m_context.GetPrefabLibrary().Acquire(prefabRelativePath);
         if (prefab != nullptr)
         {
             // If the scene node is already linked to another prefab, but it is not the root, we need to unlink it first.

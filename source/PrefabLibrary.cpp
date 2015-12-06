@@ -9,14 +9,14 @@
 
 namespace GT
 {
-    //////////////////////////////////////
-    // Globals.
+    PrefabLibrary::PrefabLibrary(Context &context)
+        : m_context(context)
+    {
+    }
 
-    typedef std::pair<Prefab*, size_t> PrefabReference;
-
-    /// The list of loaded classes, indexed by the absolute path.
-    static Dictionary<PrefabReference> LoadedPrefabs;
-
+    PrefabLibrary::~PrefabLibrary()
+    {
+    }
 
 
 
@@ -30,11 +30,11 @@ namespace GT
 
     void PrefabLibrary::Shutdown()
     {
-        for (size_t i = 0; i < LoadedPrefabs.count; ++i)
+        for (size_t i = 0; i < m_loadedPrefabs.count; ++i)
         {
-            delete LoadedPrefabs.buffer[i]->value.first;
+            delete m_loadedPrefabs.buffer[i]->value.first;
         }
-        LoadedPrefabs.Clear();
+        m_loadedPrefabs.Clear();
     }
 
 
@@ -64,7 +64,7 @@ namespace GT
         char absolutePath[EASYVFS_MAX_PATH];
         if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iLoadedPrefab = LoadedPrefabs.Find(absolutePath);
+            auto iLoadedPrefab = m_loadedPrefabs.Find(absolutePath);
             if (iLoadedPrefab == nullptr)
             {
                 // Does not exist. Needs to be loaded.
@@ -76,7 +76,7 @@ namespace GT
                     auto newPrefab = new Prefab(absolutePath, relativePath);
                     newPrefab->Deserialize(deserializer);
 
-                    LoadedPrefabs.Add(absolutePath, PrefabReference(newPrefab, 1));
+                    m_loadedPrefabs.Add(absolutePath, PrefabReference(newPrefab, 1));
 
                     easyvfs_close(pFile);
                     return newPrefab;
@@ -108,9 +108,9 @@ namespace GT
         if (prefabToUnacquire != nullptr)
         {
             // We need to search by value.
-            for (size_t i = 0; i < LoadedPrefabs.count; ++i)
+            for (size_t i = 0; i < m_loadedPrefabs.count; ++i)
             {
-                auto &value = LoadedPrefabs.buffer[i]->value;
+                auto &value = m_loadedPrefabs.buffer[i]->value;
                 if (value.first == prefabToUnacquire)
                 {
                     assert(value.second > 0);
@@ -120,7 +120,7 @@ namespace GT
                         if (value.second == 0)
                         {
                             delete value.first;
-                            LoadedPrefabs.RemoveByIndex(i);
+                            m_loadedPrefabs.RemoveByIndex(i);
                         }
 
                         break;

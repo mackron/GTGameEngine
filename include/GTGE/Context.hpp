@@ -8,6 +8,7 @@
 #include "Assets/AssetLibrary.hpp"
 #include "ScriptLibrary.hpp"
 #include "ParticleSystemLibrary.hpp"
+#include "PrefabLibrary.hpp"
 #include "GameEventQueue.hpp"
 #include "GameEventFilter.hpp"
 #include "GameWindowEventHandler.hpp"
@@ -145,6 +146,9 @@ namespace GT
 
         /// Retrieves a reference to the internal particle system library.
         ParticleSystemLibrary & GetParticleSystemLibrary() { return m_particleSystemLibrary; }
+
+        /// Retrieves a reference to the internal prefab library.
+        PrefabLibrary & GetPrefabLibrary() { return m_prefabLibrary; }
 
 
 
@@ -571,6 +575,9 @@ namespace GT
 
         /// The particle system library.
         ParticleSystemLibrary m_particleSystemLibrary;
+
+        /// The prefab library.
+        PrefabLibrary m_prefabLibrary;
 
 
 

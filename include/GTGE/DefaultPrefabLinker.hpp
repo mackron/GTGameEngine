@@ -8,6 +8,7 @@
 namespace GT
 {
     class Scene;
+    class Context;
 
     /// The default prefab linker.
     ///
@@ -23,6 +24,9 @@ namespace GT
         /// Destructor.
         virtual ~DefaultPrefabLinker();
 
+
+        /// Retrieves a reference to the scene.
+        Scene & GetScene() { return scene; }
 
 
     protected:

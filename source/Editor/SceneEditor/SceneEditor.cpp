@@ -1607,7 +1607,7 @@ namespace GT
     {
         bool successful = false;
 
-        auto prefab = PrefabLibrary::Acquire(filePath, makeRelativeTo);
+        auto prefab = this->GetContext().GetPrefabLibrary().Acquire(filePath, makeRelativeTo);
         if (prefab != nullptr)
         {
             prefab->SetFromSceneNode(sceneNode);
@@ -1627,7 +1627,7 @@ namespace GT
                 successful = true;
             }
 
-            PrefabLibrary::Unacquire(prefab);
+            this->GetContext().GetPrefabLibrary().Unacquire(prefab);
         }
 
 

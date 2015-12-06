@@ -6,7 +6,7 @@
 namespace GT
 {
     DefaultPrefabLinker::DefaultPrefabLinker(Scene &sceneIn)
-        : scene(sceneIn), deserializingSceneNodeData(), lastCreatedSceneNode(nullptr)
+        : PrefabLinker(sceneIn.GetContext()), scene(sceneIn), deserializingSceneNodeData(), lastCreatedSceneNode(nullptr)
     {
     }
 

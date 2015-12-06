@@ -8,19 +8,29 @@
 
 namespace GT
 {
+    class Context;
+
     /// Class representing the library of prefabs.
     class PrefabLibrary
     {
     public:
 
+        /// Constructor.
+        PrefabLibrary(Context &context);
+
+        /// Destructor.
+        ~PrefabLibrary();
+
+
+
         //////////////////////////////////////
         // Startup/Shutdown.
 
         /// Starts up the library.
-        static bool Startup();
+        bool Startup();
 
         /// Shuts down the library.
-        static void Shutdown();
+        void Shutdown();
 
 
         
@@ -39,12 +49,25 @@ namespace GT
         ///     @par
         ///     All resources must have a relative path somewhere. If it doesn't, there will be errors with serialization. Thus,
         ///     this will return null if 'fileName' is absolute and 'makeRelativeTo' is null.
-        static Prefab* Acquire(const char* fileName, const char* makeRelativeTo = nullptr);
+        Prefab* Acquire(const char* fileName, const char* makeRelativeTo = nullptr);
 
         /// Unacquires a prefab that was first acquired by Acquire().
         ///
         /// @param prefabToUnacquire [in] A pointer to the scene node class to unacquire.
-        static void Unacquire(const Prefab* prefabToUnacquire);
+        void Unacquire(const Prefab* prefabToUnacquire);
+
+
+
+    private:
+
+        /// A reference to the context that owns this library.
+        Context &m_context;
+
+
+        typedef std::pair<Prefab*, size_t> PrefabReference;
+
+        /// The list of loaded classes, indexed by the absolute path.
+        Dictionary<PrefabReference> m_loadedPrefabs;
     };
 }
 

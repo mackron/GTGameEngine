@@ -3,8 +3,10 @@
 #include <GTGE/Scripting/Scripting_Scene.hpp>
 #include <GTGE/Scripting/Scripting_SceneNode.hpp>
 #include <GTGE/Scripting/Scripting_Math.hpp>
+#include <GTGE/Scripting/Scripting_Game.hpp>
 #include <GTGE/PrefabLibrary.hpp>
 #include <GTGE/Scene.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
@@ -642,7 +644,7 @@ namespace GT
             {
                 if (script.IsString(2))
                 {
-                    auto prefab = PrefabLibrary::Acquire(script.ToString(2));
+                    auto prefab = GameFFI::GetContext(script).GetPrefabLibrary().Acquire(script.ToString(2));
                     if (prefab != nullptr)
                     {
                         auto sceneNode = scene->CreateNewSceneNode(*prefab);
