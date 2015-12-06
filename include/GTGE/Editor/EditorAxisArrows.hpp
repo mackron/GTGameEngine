@@ -14,7 +14,7 @@ namespace GT
     public:
 
         /// Constructor.
-        EditorAxisArrows();
+        EditorAxisArrows(Context &context);
 
         /// Destructor.
         ~EditorAxisArrows();

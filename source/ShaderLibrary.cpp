@@ -8,18 +8,6 @@
 #include <GTGE/Core/String.hpp>
 #include <easy_path/easy_path.h>
 
-#if defined(__GNUC__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Weffc++"
-    #pragma GCC diagnostic ignored "-Wswitch-default"
-    #pragma GCC diagnostic ignored "-Winline"
-    #pragma GCC diagnostic ignored "-Wsign-conversion"
-#endif
-#include <GTGE/Core/rapidxml.hpp>
-#if defined(__GNUC__)
-    #pragma GCC diagnostic pop
-#endif
-
 using namespace rapidxml;
 
 /*
@@ -36,239 +24,40 @@ loaded, it will create an empty shader whose ID will be the URL.
 
 namespace GT
 {
-    /**
-    *   \brief  Class representing a shader in the shader library.
-    */
-    class ShaderLibraryShader
+    ShaderLibrary::ShaderLibrary(Context &context)
+        : m_context(context),
+          m_GUIShader(nullptr), m_GUIShaderA8(nullptr), m_Textured2DQuadShader(nullptr),
+          m_shaders()
     {
-    public:
+    }
 
-        /// Constructor.
-        ShaderLibraryShader(const char* id)
-            : id(id), includes(), anonIncludes(), content(nullptr)
-        {
-        }
-
-        /// Destructor.
-        ~ShaderLibraryShader()
-        {
-            this->DeleteAnonymousIncludes();
-        }
-
-        /**
-        *   \brief  Retrieves the ID of the shader.
-        */
-        const char* GetID() const { return this->id.c_str(); }
-
-        /**
-        *   \brief  Retrieves the content of the shader.
-        *
-        *   \remarks
-        *       The first time this is called, the content will be constructed from it's includes. If any include has not yet
-        *       had it's content set, an empty string will be returned.
-        */
-        const char* GetContent()
-        {
-            if (this->content == "")
-            {
-                this->ConstructContent();
-            }
-
-            return this->content.c_str();
-        }
-
-        /**
-        *   \brief  Sets the content fo the shader directly.
-        */
-        void SetContent(const char* contentIn)
-        {
-            this->content = contentIn;
-        }
-
-
-        /**
-        *   \brief  Appends a named include to the shader.
-        */
-        void AppendInclude(ShaderLibraryShader *include)
-        {
-            this->includes.Append(include);
-        }
-
-        /**
-        *   \brief  Appends an anonymous include to the shader.
-        */
-        void AppendAnonymousInclude(const char *contentIn)
-        {
-            auto newInclude = new ShaderLibraryShader(nullptr);
-            newInclude->SetContent(contentIn);
-
-            this->includes.Append(newInclude);
-            this->anonIncludes.Append(newInclude);
-        }
-
-        /**
-        *   \brief  Resets the shader, leaving it as an empty shell. Does not reset it's ID.
-        */
-        void Reset()
-        {
-            this->includes.Clear();
-            this->DeleteAnonymousIncludes();
-
-            this->content = "";
-        }
-
-
-    private:
-
-        /**
-        *   \brief  Constructs the content of the shader based on it's includes.
-        *
-        *   \remarks
-        *       If any include has not had it's content loaded, the content string is left unmodified.
-        */
-        void ConstructContent()
-        {
-            // We will use a string list for constructing the content string.
-            Strings::List<char> contentList;
-            for (auto i = this->includes.root; i != nullptr; i = i->next)
-            {
-                const char *iContent = i->value->GetContent();
-                if (iContent != nullptr)
-                {
-                    contentList.Append(iContent);
-                }
-                else
-                {
-                    // Early termination if one of our includes haven't yet been loaded.
-                    return;
-                }
-            }
-
-            // If we've made it here it means the shader content was built successfully and we can set it.
-            this->content = contentList.c_str();
-        }
-
-        /**
-        *   \brief  Helper function for deleting the anonymous includes.
-        */
-        void DeleteAnonymousIncludes()
-        {
-            for (auto i = this->anonIncludes.root; i != nullptr; i = i->next)
-            {
-                delete i->value;
-            }
-            this->anonIncludes.Clear();
-        }
-
-
-    private:
-
-        /// The ID of the shader. All shaders need an ID for loading/retrieval purposes.
-        String id;
-
-        /// The list of includes making up this shader. This includes both named and anonymous includes.
-        List<ShaderLibraryShader*> includes;
-
-        /// The list containing pointers to the anonymous includes. These includes are tied to this shader, and
-        /// only this shader.
-        List<ShaderLibraryShader*> anonIncludes;
-
-        /// The content of the shader. This will start out as empty, but will be given content when the
-        /// shader content is constructed with ConstructContent(), or SetContent() is called.
-        String content;
-
-
-    private:    // No copying.
-        ShaderLibraryShader(const ShaderLibraryShader &);
-        ShaderLibraryShader & operator=(const ShaderLibraryShader &);
-    };
-    
-    /**
-    *   \brief  Static class for managing the shaders that have been loaded into the library.
-    */
-    class ShaderLibraryShaders
+    ShaderLibrary::~ShaderLibrary()
     {
-    public:
+    }
 
-        /**
-        *   \brief  Loads an returns a shader.
-        *
-        *   \remarks
-        *       If a shader with the same ID already exists, that existing shader is reset before returning. Use FindByID() to retrieve
-        *       a pointer to an existing shader.
-        */
-        static ShaderLibraryShader* LoadShader(const char *id)
+
+    void ShaderLibrary::Shutdown()
+    {
+        Renderer::DeleteShader(m_GUIShader);
+        Renderer::DeleteShader(m_GUIShaderA8);
+        Renderer::DeleteShader(m_Textured2DQuadShader);
+
+        m_GUIShader            = nullptr;
+        m_GUIShaderA8          = nullptr;
+        m_Textured2DQuadShader = nullptr;
+
+        m_shaders.Clear();
+
+        // All shader objects need to be deleted.
+        for (size_t i = 0; i < AcquiredShaders.count; ++i)
         {
-            ShaderLibraryShader* shader = nullptr;
-
-            auto item = Shaders.Find(id);
-            if (item == nullptr)
-            {
-                shader = new ShaderLibraryShader(id);
-                Shaders.Add(shader->GetID(), shader);           // <-- DON'T use 'id' in place of 'shader->GetID()'.
-            }
-            else
-            {
-                shader = item->value;
-                shader->Reset();
-            }
-
-            return shader;
+            Renderer::DeleteShader(AcquiredShaders.buffer[i]->shader);
+            delete AcquiredShaders.buffer[i];
         }
-
-        /**
-        *   \brief  Finds a shader by it's ID.
-        */
-        static ShaderLibraryShader* FindByID(const char *id)
-        {
-            auto item = Shaders.Find(id);
-            if (item != nullptr)
-            {
-                return item->value;
-            }
-
-            return nullptr;
-        }
+        AcquiredShaders.Clear();
+    }
 
 
-        /**
-        *   \brief               Adds a shader.
-        *   \param  id      [in] The ID of the new shader.
-        *   \param  content [in] The content of the shader.
-        */
-        static ShaderLibraryShader* Add(const char* id, const char* content)
-        {
-            auto newShader = LoadShader(id);
-            newShader->SetContent(content);
-
-            return newShader;
-        }
-
-
-        /**
-        *   \brief  Clears the list of shaders.
-        */
-        static void Clear()
-        {
-            for (size_t i = 0; i < Shaders.count; ++i)
-            {
-                delete Shaders.buffer[i]->value;
-            }
-
-            Shaders.Clear();
-        }
-
-
-    private:
-
-        /// The map containing pointers to each of the loaded shaders, indexed by their ID.
-        static Dictionary<ShaderLibraryShader*> Shaders;
-    };
-    Dictionary<ShaderLibraryShader*> ShaderLibraryShaders::Shaders;
-}
-
-namespace GT
-{
     bool ShaderLibrary::LoadFromDirectory(const char* directory, bool recursive)
     {
         easyvfs_context* pVFS = g_Context->GetVFS();
@@ -316,79 +105,11 @@ namespace GT
             }
         }
 
-
-#if 0
-        // We need to do this for every data directory, including the current directory.
-        Vector<String> baseDirectories;
-        baseDirectories.PushBack(IO::GetCurrentDirectory());
-
-        if (!Path::IsAbsolute(directory))
-        {
-            g_Context->GetApplicationConfig().GetDataDirectories(baseDirectories);
-        }
-
-
-        for (size_t iBaseDirectory = 0; iBaseDirectory < baseDirectories.count; ++iBaseDirectory)
-        {
-            // Here we save and then set the current directory.
-            IO::PushCurrentDirectory();
-            IO::SetCurrentDirectory(baseDirectories[iBaseDirectory].c_str());
-
-            // First we need the files in the directory.
-            Path searchQuery(directory);
-            searchQuery.Append(".*");                   // <-- This means to iterate over every file in the directory.
-
-            IO::FileIterator i(searchQuery.c_str());
-            while (i)
-            {
-                if (i.isDirectory)
-                {
-                    if (recursive)
-                    {
-                        ShaderLibrary::LoadFromDirectory(i.name, true);
-                    }
-                }
-                else
-                {
-                    ShaderLibrary::LoadFromFile(i.name);
-                }
-
-                ++i;
-            }
-
-            // Can't forget to restore the previous directory.
-            IO::PopCurrentDirectory();
-        }
-#endif
-        
         return true;
     }
 
     bool ShaderLibrary::LoadFromFile(const char* fileName)
     {
-#if 0
-        auto file = IO::Open(fileName, IO::OpenMode::Read);
-        if (file)
-        {
-            // We need to read the content of the file and then load it as XML. We cast the size to a size_t to
-            // play nicely with 32-bit compilations. We can pretty safely assume the XML file will not exceed that.
-            size_t fileSize = static_cast<size_t>(IO::Size(file));
-            
-            auto fileData = static_cast<char*>(malloc(fileSize + 1));
-            IO::Read(file, fileData, fileSize);
-            fileData[fileSize] = '\0';
-            
-            IO::Close(file);
-            
-            bool result = ShaderLibrary::LoadFromXML(fileData);
-            
-            free(fileData);
-            return result;
-        }
-        
-        return false;
-#endif
-
         easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), fileName, EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
@@ -422,7 +143,7 @@ namespace GT
         return result;
     }
 
-    bool ShaderLibrary_LoadShaderFromXML(xml_node<> *node)
+    bool ShaderLibrary::LoadShaderFromXML(xml_node<> *node)
     {
         if (node != nullptr)
         {
@@ -431,7 +152,7 @@ namespace GT
             if ((attr = node->first_attribute("id")) != nullptr)
             {
                 // We have an ID, so we can load the shader.
-                ShaderLibraryShader *shader = ShaderLibraryShaders::LoadShader(attr->value());  // attr->value() will be the shader's ID.
+                ShaderLibraryShader *shader = m_shaders.LoadShader(attr->value());  // attr->value() will be the shader's ID.
                 if (shader != nullptr)
                 {
                     // Now that the shader is in the library, it needs to be filled with content. To do this we simply
@@ -458,10 +179,10 @@ namespace GT
                                             // The URL will begin with a '#'. We need to move to the character after that before loading the include.
                                             const char *url = includeAttr->value() + 1;     // <-- The '+ 1' will move past the '#' character.
                                     
-                                            ShaderLibraryShader *include = ShaderLibraryShaders::FindByID(url);
+                                            ShaderLibraryShader *include = m_shaders.FindByID(url);
                                             if (include == nullptr)
                                             {
-                                                include = ShaderLibraryShaders::LoadShader(url);
+                                                include = m_shaders.LoadShader(url);
                                             }
 
                                             shader->AppendInclude(include);
@@ -538,7 +259,7 @@ namespace GT
             {
                 if (strcmp(shaderNode->name(), "shader") == 0)
                 {
-                    ShaderLibrary_LoadShaderFromXML(shaderNode);
+                    ShaderLibrary::LoadShaderFromXML(shaderNode);
                 }
 
                 shaderNode = shaderNode->next_sibling();
@@ -552,13 +273,13 @@ namespace GT
 
     void ShaderLibrary::AddShaderString(const char* id, const char* shaderStr)
     {
-        ShaderLibraryShaders::Add(id, shaderStr);
+        m_shaders.Add(id, shaderStr);
     }
 
     const char* ShaderLibrary::GetShaderString(const char* id)
     {
         // First we need to try and find the shader. If we can't find it, we return null.
-        ShaderLibraryShader *shader = ShaderLibraryShaders::FindByID(id);
+        ShaderLibraryShader *shader = m_shaders.FindByID(id);
         if (shader)
         {
             // All we need to do is resolve the shader and then return it's content.
@@ -567,68 +288,13 @@ namespace GT
         
         return nullptr;
     }
-}
 
 
-// Creation/Deletion.
-namespace GT
-{
-    // FIXME: The shader detection code here can be improved a bit. For starters, we should use a sorted data structure
-    //        and sort by vertexShaderID and then again by fragmentShaderID. This will allow faster searching.
-
-    struct ShaderInfo
-    {
-        ShaderInfo()
-            : shader(nullptr),
-              vertexShaderID(), fragmentShaderID(),
-              refCount(0)
-        {
-        }
-        
-        Shader*        shader;
-        String vertexShaderID;
-        String fragmentShaderID;
-        int            refCount;
-        
-        
-    private:    // No copying.
-        ShaderInfo(const ShaderInfo &);
-        ShaderInfo & operator=(const ShaderInfo &);
-    };
-    Vector<ShaderInfo*> AcquiredShaders;
-
-    ShaderInfo* ShaderLibrary_FindShaderInfo(const char* vertexShaderID, const char* fragmentShaderID)
-    {
-        for (size_t i = 0; i < AcquiredShaders.count; ++i)
-        {
-            if (AcquiredShaders[i]->vertexShaderID   == vertexShaderID &&
-                AcquiredShaders[i]->fragmentShaderID == fragmentShaderID)
-            {
-                return AcquiredShaders[i];
-            }
-        }
-
-        return nullptr;
-    }
-
-    ShaderInfo* ShaderLibrary_FindShaderInfo(Shader* shader)
-    {
-        for (size_t i = 0; i < AcquiredShaders.count; ++i)
-        {
-            if (AcquiredShaders[i]->shader == shader)
-            {
-                return AcquiredShaders[i];
-            }
-        }
-
-        return nullptr;
-    }
-
-
+    // Creation/Deletion.
 
     Shader* ShaderLibrary::Acquire(const char* vertexShaderID, const char* fragmentShaderID)
     {
-        auto shaderInfo = ShaderLibrary_FindShaderInfo(vertexShaderID, fragmentShaderID);
+        auto shaderInfo = this->FindShaderInfo(vertexShaderID, fragmentShaderID);
         if (shaderInfo == nullptr)
         {
             // We'll get here if the shader has not already been created.
@@ -650,7 +316,7 @@ namespace GT
 
     Shader* ShaderLibrary::Acquire(Shader* shader)
     {
-        auto shaderInfo = ShaderLibrary_FindShaderInfo(shader);
+        auto shaderInfo = this->FindShaderInfo(shader);
         if (shaderInfo != nullptr)
         {
             ++shaderInfo->refCount;
@@ -661,7 +327,7 @@ namespace GT
 
     void ShaderLibrary::Unacquire(Shader* shader)
     {
-        auto shaderInfo = ShaderLibrary_FindShaderInfo(shader);
+        auto shaderInfo = this->FindShaderInfo(shader);
         if (shaderInfo != nullptr)
         {
             // Here we do a simple check to see if we should delete the objects, or just decrement the reference count.
@@ -682,7 +348,7 @@ namespace GT
 
     Shader* ShaderLibrary::FindShader(const char* vertexShaderID, const char* fragmentShaderID)
     {
-        auto shaderInfo = ShaderLibrary_FindShaderInfo(vertexShaderID, fragmentShaderID);
+        auto shaderInfo = this->FindShaderInfo(vertexShaderID, fragmentShaderID);
         if (shaderInfo != nullptr)
         {
             return shaderInfo->shader;
@@ -690,70 +356,73 @@ namespace GT
 
         return nullptr;
     }
-}
 
 
-// Shader object retrieval.
-namespace GT
-{
-    static Shader* GUIShader            = nullptr;
-    static Shader* GUIShaderA8          = nullptr;
-    static Shader* Textured2DQuadShader = nullptr;
+
+    // Shader object retrieval.
 
     Shader* ShaderLibrary::GetGUIShader()
     {
-        if (GUIShader == nullptr)
+        if (m_GUIShader == nullptr)
         {
-            GUIShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS"), nullptr);
+            m_GUIShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS"), nullptr);
         }
 
-        return GUIShader;
+        return m_GUIShader;
     }
     
     Shader* ShaderLibrary::GetGUIShaderA8()
     {
-        if (GUIShaderA8 == nullptr)
+        if (m_GUIShaderA8 == nullptr)
         {
-            GUIShaderA8 = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS_A8"), nullptr);
+            m_GUIShaderA8 = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS_A8"), nullptr);
         }
 
-        return GUIShaderA8;
+        return m_GUIShaderA8;
     }
 
 
     Shader* ShaderLibrary::GetTextured2DQuadShader()
     {
-        if (Textured2DQuadShader == nullptr)
+        if (m_Textured2DQuadShader == nullptr)
         {
-            Textured2DQuadShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_Textured2DQuad_VS"), ShaderLibrary::GetShaderString("Engine_Textured2DQuad_FS"));
+            m_Textured2DQuadShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_Textured2DQuad_VS"), ShaderLibrary::GetShaderString("Engine_Textured2DQuad_FS"));
         }
 
-        return Textured2DQuadShader;
+        return m_Textured2DQuadShader;
     }
-}
 
 
-// Shutdown.
-namespace GT
-{
-    void ShaderLibrary::Shutdown()
+
+
+
+    ///////////////////////////////////////
+    // Private
+
+    ShaderLibrary::ShaderInfo* ShaderLibrary::FindShaderInfo(const char* vertexShaderID, const char* fragmentShaderID)
     {
-        Renderer::DeleteShader(GUIShader);
-        Renderer::DeleteShader(GUIShaderA8);
-        Renderer::DeleteShader(Textured2DQuadShader);
-
-        GUIShader            = nullptr;
-        GUIShaderA8          = nullptr;
-        Textured2DQuadShader = nullptr;
-
-        ShaderLibraryShaders::Clear();
-
-        // All shader objects need to be deleted.
         for (size_t i = 0; i < AcquiredShaders.count; ++i)
         {
-            Renderer::DeleteShader(AcquiredShaders.buffer[i]->shader);
-            delete AcquiredShaders.buffer[i];
+            if (AcquiredShaders[i]->vertexShaderID   == vertexShaderID &&
+                AcquiredShaders[i]->fragmentShaderID == fragmentShaderID)
+            {
+                return AcquiredShaders[i];
+            }
         }
-        AcquiredShaders.Clear();
+
+        return nullptr;
+    }
+
+    ShaderLibrary::ShaderInfo* ShaderLibrary::FindShaderInfo(Shader* shader)
+    {
+        for (size_t i = 0; i < AcquiredShaders.count; ++i)
+        {
+            if (AcquiredShaders[i]->shader == shader)
+            {
+                return AcquiredShaders[i];
+            }
+        }
+
+        return nullptr;
     }
 }

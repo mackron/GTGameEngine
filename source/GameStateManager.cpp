@@ -485,7 +485,7 @@ namespace GT
             if (m_currentScene != nullptr)
             {
                 Renderer::SetCurrentFramebuffer(nullptr);
-                Renderer::Utils::DrawFullscreenQuad(m_currentScene->GetDefaultViewport().GetColourBuffer());
+                Renderer::Utils::DrawFullscreenQuad(context, m_currentScene->GetDefaultViewport().GetColourBuffer());
             }
         }
         

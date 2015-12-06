@@ -3,17 +3,18 @@
 #include <GTGE/Rendering/Renderer.hpp>
 #include <GTGE/VertexArrayLibrary.hpp>
 #include <GTGE/ShaderLibrary.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
-    void Renderer::Utils::DrawFullscreenQuad(const Texture2D* texture)
+    void Renderer::Utils::DrawFullscreenQuad(Context &context, const Texture2D* texture)
     {
         if (texture != nullptr)
         {
             auto fullscreenQuadVA = VertexArrayLibrary::GetFullscreenTriangleVA();
             assert(fullscreenQuadVA != nullptr);
             {
-                auto fullscreenQuadShader = ShaderLibrary::GetTextured2DQuadShader();
+                auto fullscreenQuadShader = context.GetShaderLibrary().GetTextured2DQuadShader();
                 assert(fullscreenQuadShader != nullptr);
                 {
                     // Shader setup.
@@ -26,27 +27,6 @@ namespace GT
                     Renderer::DisableDepthTest();
                     Renderer::DisableDepthWrites();
                     Renderer::Draw(*fullscreenQuadVA);
-
-#if 0
-                    float triangleVertices[] =
-                    {
-                        -3.0f, -1.0f,
-                        -1.0f,  0.0f,
-
-                         1.0f, -1.0f,
-                         1.0f,  0.0f,
-
-                         1.0f,  3.0f,
-                         1.0f,  2.0f,
-                    };
-
-                    unsigned int triangleIndices[] =
-                    {
-                        0, 1, 2
-                    };
-
-                    Renderer::Draw(triangleVertices, triangleIndices, 3, VertexFormat::P2T2);
-#endif
                 }
             }
         }

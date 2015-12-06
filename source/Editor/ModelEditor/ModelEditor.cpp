@@ -21,7 +21,7 @@ namespace GT
           mainElement(nullptr), viewportElement(nullptr), timelineElement(nullptr),
           viewportEventHandler(ownerEditor.GetContext(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
-          grid(0.25f, 8, 32),
+          grid(ownerEditor.GetContext(), 0.25f, 8, 32),
           random(),
           currentlyPlayingSegmentIndex(-1), currentlyPlayingSequenceIndex(-1),
           isSaving(false), isReloading(false)

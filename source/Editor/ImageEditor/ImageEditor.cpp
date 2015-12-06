@@ -4,6 +4,7 @@
 #include <GTGE/Rendering/Renderer.hpp>
 #include <GTGE/ShaderLibrary.hpp>
 #include <GTGE/IO.hpp>
+#include <GTGE/Context.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -105,7 +106,7 @@ namespace GT
             auto image = this->ownerEditor.GetImage();
             if (image != nullptr)
             {
-                auto shader = ShaderLibrary::GetTextured2DQuadShader();
+                auto shader = this->ownerEditor.GetContext().GetShaderLibrary().GetTextured2DQuadShader();
                 assert(shader != nullptr);
                 {
                     Renderer::SetCurrentShader(shader);

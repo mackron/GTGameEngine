@@ -101,7 +101,7 @@ namespace GT
             else
             {
                 // Definition is not yet loaded.
-                definition = new MaterialDefinition;
+                definition = new MaterialDefinition(m_context);
                 if (definition->LoadFromFile(absolutePath, relativePath))
                 {
                     m_materialDefinitions.Add(absolutePath, MaterialDefinitionReference(definition, 1));
@@ -235,7 +235,7 @@ namespace GT
         auto iMaterialDefinition = m_materialDefinitions.Find("@NavigationMesh");
         if (iMaterialDefinition == nullptr)
         {
-            definition = new MaterialDefinition;
+            definition = new MaterialDefinition(m_context);
             definition->LoadFromXML
             (
                 "<material>"

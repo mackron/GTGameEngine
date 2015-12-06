@@ -14,7 +14,7 @@ namespace GT
     public:
 
         /// Constructor.
-        DefaultGUIRenderer();
+        DefaultGUIRenderer(Context &context);
 
         /// Destructor.
         virtual ~DefaultGUIRenderer();
@@ -71,6 +71,10 @@ namespace GT
 
 
     private:
+
+        /// The context that owns this renderer.
+        Context &m_context;
+
 
         /// The main shader.
         Shader* shader;

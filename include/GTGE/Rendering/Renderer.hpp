@@ -21,6 +21,8 @@
 
 namespace GT
 {
+    class Context;
+
     /// Static class for performing rendering operations.
     ///
     /// This is built as a static class to make things a bit easier to use. To switch implementations (OpenGL 3.3, D3D10, etc), just build
@@ -608,8 +610,8 @@ namespace GT
             ///
             /// @remarks
             ///     This will change the current shader and explicitly disable depth testing and depth writes.
-            static void DrawFullscreenQuad(const Texture2D* texture);
-            static void DrawFullscreenQuad(const Texture2D &texture) { DrawFullscreenQuad(&texture); }
+            static void DrawFullscreenQuad(Context &context, const Texture2D* texture);
+            static void DrawFullscreenQuad(Context &context, const Texture2D &texture) { DrawFullscreenQuad(context, &texture); }
         };
     };
 }

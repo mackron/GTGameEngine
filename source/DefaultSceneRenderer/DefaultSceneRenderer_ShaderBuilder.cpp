@@ -3,6 +3,7 @@
 #include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_ShaderBuilder.hpp>
 #include <GTGE/Rendering/Renderer.hpp>
 #include <GTGE/ShaderLibrary.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
@@ -1571,7 +1572,7 @@ namespace GT
     {
         if (material.IsChannelDefined("diffuse"))
         {
-            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("diffuse").c_str());
+            return material.context.GetShaderLibrary().GetShaderString(material.GetChannelShaderID("diffuse").c_str());
         }
 
         return "vec4 Diffuse() { return vec4(0.0, 0.0, 0.0, 1.0); }";
@@ -1581,7 +1582,7 @@ namespace GT
     {
         if (material.IsChannelDefined("emissive"))
         {
-            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("emissive").c_str());
+            return material.context.GetShaderLibrary().GetShaderString(material.GetChannelShaderID("emissive").c_str());
         }
 
         return "vec3 Emissive() { return vec3(0.0, 0.0, 0.0); }";
@@ -1591,7 +1592,7 @@ namespace GT
     {
         if (material.IsChannelDefined("shininess"))
         {
-            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("shininess").c_str());
+            return material.context.GetShaderLibrary().GetShaderString(material.GetChannelShaderID("shininess").c_str());
         }
 
         return "float Shininess() { return 0.0; }";
@@ -1601,7 +1602,7 @@ namespace GT
     {
         if (material.IsChannelDefined("specular"))
         {
-            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("specular").c_str());
+            return material.context.GetShaderLibrary().GetShaderString(material.GetChannelShaderID("specular").c_str());
         }
 
         return "float Specular() { return 64.0; }";
@@ -1611,7 +1612,7 @@ namespace GT
     {
         if (material.IsChannelDefined("normal"))
         {
-            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("normal").c_str());
+            return material.context.GetShaderLibrary().GetShaderString(material.GetChannelShaderID("normal").c_str());
         }
 
         return "vec3 Normal() { return vec3(0.0, 0.0, 1.0); }";
@@ -1621,7 +1622,7 @@ namespace GT
     {
         if (material.IsChannelDefined("refraction"))
         {
-            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("refraction").c_str());
+            return material.context.GetShaderLibrary().GetShaderString(material.GetChannelShaderID("refraction").c_str());
         }
 
         return "vec3 Refraction() { return vec3(0.0, 0.0, 1.0); }";

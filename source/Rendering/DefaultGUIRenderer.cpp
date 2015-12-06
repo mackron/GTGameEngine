@@ -4,12 +4,13 @@
 #include <GTGE/Rendering/Renderer.hpp>
 #include <GTGE/ShaderLibrary.hpp>
 #include <GTGE/GUI/GUIServer.hpp>
+#include <GTGE/Context.hpp>
 
 
 namespace GT
 {
-    DefaultGUIRenderer::DefaultGUIRenderer()
-        : shader(nullptr), shaderA8(nullptr),
+    DefaultGUIRenderer::DefaultGUIRenderer(Context &context)
+        : m_context(context), shader(nullptr), shaderA8(nullptr),
           defaultTexture(nullptr),
           viewportWidth(0), viewportHeight(0), projection(0),
           currentOffsetX(0.0f), currentOffsetY(0.0f), currentShader(nullptr), currentTexture(nullptr), isBlendingEnabled(false),
@@ -26,8 +27,8 @@ namespace GT
 
     bool DefaultGUIRenderer::Startup()
     {
-        this->shader = ShaderLibrary::GetGUIShader();
-        this->shaderA8 = ShaderLibrary::GetGUIShaderA8();
+        this->shader = m_context.GetShaderLibrary().GetGUIShader();
+        this->shaderA8 = m_context.GetShaderLibrary().GetGUIShaderA8();
 
         assert(shader   != nullptr);
         assert(shaderA8 != nullptr);

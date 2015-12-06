@@ -4,10 +4,10 @@
 
 namespace GT
 {
-    EditorAxisArrows::EditorAxisArrows()
+    EditorAxisArrows::EditorAxisArrows(Context &context)
         : xArrowLine(), yArrowLine(), zArrowLine(),
           xArrowHead(), yArrowHead(), zArrowHead(),
-          materialDefinition(),
+          materialDefinition(context),
           localPosition(), localScale(1.0f, 1.0f, 1.0f)
     {
         this->materialDefinition.LoadFromXML

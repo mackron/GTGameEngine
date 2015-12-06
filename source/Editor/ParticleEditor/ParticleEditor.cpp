@@ -18,7 +18,7 @@ namespace GT
           scene(ownerEditor.GetContext()), camera(), particleNode(),
           mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(*this, ownerEditor.GetContext(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
-          grid(0.25f, 8, 32), axisArrows(),
+          grid(ownerEditor.GetContext(), 0.25f, 8, 32), axisArrows(ownerEditor.GetContext()),
           isSaving(false), isReloading(false),
           isShowingGrid(false), isShowingAxisArrows(false)
     {

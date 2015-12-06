@@ -45,7 +45,7 @@ namespace GT
     {
         auto colourBuffer = this->viewport.GetColourBuffer();
 
-        auto shader = ShaderLibrary::GetTextured2DQuadShader();
+        auto shader = this->context.GetShaderLibrary().GetTextured2DQuadShader();
         assert(shader != nullptr);
         {
             Renderer::SetCurrentShader(shader);

@@ -161,6 +161,9 @@ namespace GT
         /// Retrieves a reference to the internal material library.
         MaterialLibrary & GetMaterialLibrary() { return m_materialLibrary; }
 
+        /// Retrieves a reference to the internal shader library.
+        ShaderLibrary & GetShaderLibrary() { return m_shaderLibrary; }
+
 
 
         //// FROM GAME ////
@@ -595,6 +598,9 @@ namespace GT
 
         /// The material library.
         MaterialLibrary m_materialLibrary;
+
+        /// The shader library.
+        ShaderLibrary m_shaderLibrary;
 
 
 

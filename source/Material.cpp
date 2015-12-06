@@ -4,7 +4,7 @@
 #include <GTGE/ShaderLibrary.hpp>
 #include <GTGE/Texture2DLibrary.hpp>
 #include <GTGE/ShaderParameter.hpp>
-#include <GTGE/GTEngine.hpp>
+#include <GTGE/Context.hpp>
 #include <GTGE/Core/Parse.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
 #include <easy_path/easy_path.h>
@@ -39,9 +39,9 @@ namespace GT
     }
 
 
-    MaterialDefinition::MaterialDefinition()
-        : absolutePath(), relativePath(), xmlString(),
-          //diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(), specularShaderID(),
+    MaterialDefinition::MaterialDefinition(Context &context)
+        : context(context),
+          absolutePath(), relativePath(), xmlString(),
           channelShaderIDs(),
           defaultParams(),
           hasNormalChannel(false), isRefractive(false), isBlended(false),
@@ -88,7 +88,7 @@ namespace GT
         }
         catch (rapidxml::parse_error &e)
         {
-            g_Context->LogErrorf("Material: %s", e.what());
+            this->context.LogErrorf("Material: %s", e.what());
             return false;
         }
 
@@ -124,7 +124,7 @@ namespace GT
 
                         if (childNode->value_size() > 0)
                         {
-                            ShaderLibrary::AddShaderString(shaderID.c_str(), childNode->value());
+                            this->context.GetShaderLibrary().AddShaderString(shaderID.c_str(), childNode->value());
                         }
 
 
@@ -134,7 +134,7 @@ namespace GT
                     else
                     {
                         // It is an error for a <channel> tag to not have a name.
-                        g_Context->LogErrorf("Material: Warning: Missing 'name' attribute from a <channel> tag. Ignoring.");
+                        this->context.LogErrorf("Material: Warning: Missing 'name' attribute from a <channel> tag. Ignoring.");
                     }
                 }
 
@@ -264,7 +264,7 @@ namespace GT
             return true;
         }
 
-        g_Context->LogErrorf("Material: Missing <material> node.");
+        this->context.LogErrorf("Material: Missing <material> node.");
         return false;
     }
 
@@ -295,7 +295,7 @@ namespace GT
             }
             else
             {
-                g_Context->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
+                this->context.LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
                 return false;
             }
         }
@@ -303,14 +303,14 @@ namespace GT
         {
             strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (!easyvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
+            if (!easyvfs_find_absolute_path(this->context.GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-        char* pFileData = easyvfs_open_and_read_text_file(g_Context->GetVFS(), newAbsolutePath, NULL);
+        char* pFileData = easyvfs_open_and_read_text_file(this->context.GetVFS(), newAbsolutePath, NULL);
         if (pFileData != nullptr)
         {
             bool result = this->LoadFromXML(pFileData);

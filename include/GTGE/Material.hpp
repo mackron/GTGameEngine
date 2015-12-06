@@ -11,6 +11,8 @@
 
 namespace GT
 {
+    class Context;
+
     /// Class representing a materials structure. XML material definitions are converted into a descriptor. The material library
     /// uses descriptors for efficient material storage and creation. It allows the material definition to be stored in a way
     /// where the XML doesn't need to be parsed every time a material is instantiated.
@@ -22,7 +24,7 @@ namespace GT
     public:
 
         /// Default constructor. Use LoadFromXML() to load the definition from an XML script.
-        MaterialDefinition();
+        MaterialDefinition(Context &context);
 
         /// Destructor.
         ~MaterialDefinition();
@@ -92,6 +94,10 @@ namespace GT
         
 
     public:
+
+        /// A reference to the main context.
+        Context &context;
+
 
         /// The absolute paht of the material.
         String absolutePath;

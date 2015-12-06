@@ -17,7 +17,7 @@ namespace GT
     public:
 
         /// Constructor.
-        EditorGrid(float spacing, unsigned int subdivisions, unsigned int lineCount);
+        EditorGrid(Context &context, float spacing, unsigned int subdivisions, unsigned int lineCount);
 
         /// Destructor.
         ~EditorGrid();

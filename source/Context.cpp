@@ -111,7 +111,7 @@ namespace GT
           m_pLogFile(nullptr),
           m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
           m_assetLibrary(),
-          m_scriptLibrary(*this), m_particleSystemLibrary(*this), m_prefabLibrary(*this), m_modelLibrary(*this), m_materialLibrary(*this),
+          m_scriptLibrary(*this), m_particleSystemLibrary(*this), m_prefabLibrary(*this), m_modelLibrary(*this), m_materialLibrary(*this), m_shaderLibrary(*this),
           m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
           eventQueue(), eventQueueLock(NULL),
@@ -119,7 +119,7 @@ namespace GT
           window(nullptr), windowEventHandler(*this),
           script(*this),
           deltaTimeInSeconds(0.0), totalRunninTimeInSeconds(0.0), updateTimer(),
-          guiImageManager(), gui(&script, &guiImageManager), guiEventHandler(*this), guiRenderer(), gameWindowGUIElement(nullptr),
+          guiImageManager(), gui(&script, &guiImageManager), guiEventHandler(*this), guiRenderer(*this), gameWindowGUIElement(nullptr),
           paused(false), focused(true),
           isCursorVisible(true),
           isAutoScriptReloadEnabled(false),
@@ -259,8 +259,8 @@ namespace GT
             this->Logf("    Max Texture Units:     %d", Renderer::GetMaxTextureUnits());
 
             this->Logf("Loading Shaders...");
-            ShaderLibrary::LoadFromDirectory("engine/shaders/glsl");
-            ShaderLibrary::LoadFromDirectory("shaders/glsl");
+            m_shaderLibrary.LoadFromDirectory("engine/shaders/glsl");
+            m_shaderLibrary.LoadFromDirectory("shaders/glsl");
         }
         else
         {
@@ -442,7 +442,7 @@ namespace GT
 
         m_modelLibrary.Shutdown();
         m_materialLibrary.Shutdown();
-        ShaderLibrary::Shutdown();
+        m_shaderLibrary.Shutdown();
         Texture2DLibrary::Shutdown();
         VertexArrayLibrary::Shutdown();
         

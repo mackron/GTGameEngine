@@ -4,8 +4,8 @@
 
 namespace GT
 {
-    EditorGrid::EditorGrid(float spacing, unsigned int subdivisions, unsigned int lineCount)
-        : innerSpacingMesh(), subdivisionMesh(), materialDefinition()
+    EditorGrid::EditorGrid(Context &context, float spacing, unsigned int subdivisions, unsigned int lineCount)
+        : innerSpacingMesh(), subdivisionMesh(), materialDefinition(context)
     {
         this->materialDefinition.LoadFromXML
         (
