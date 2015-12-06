@@ -3,8 +3,10 @@
 #include <GTGE/Scripting/Scripting_Components.hpp>
 #include <GTGE/Scripting/Scripting_Animation.hpp>
 #include <GTGE/Scripting/Scripting_Math.hpp>
+#include <GTGE/Scripting/Scripting_Game.hpp>
 #include <GTGE/Script.hpp>
 #include <GTGE/SceneNode.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
@@ -1544,7 +1546,7 @@ namespace GT
                                 else if (script.IsString(4))
                                 {
                                     // It's a string. Assume a path to a texture.
-                                    material->SetParameter(name, Texture2DLibrary::Acquire(script.ToString(4)));
+                                    material->SetParameter(name, GameFFI::GetContext(script).GetTextureLibrary().Acquire(script.ToString(4)));
                                 }
                                 else
                                 {

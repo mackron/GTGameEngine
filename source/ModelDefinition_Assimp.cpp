@@ -249,7 +249,7 @@ namespace GT
             // For now, only support triangle formats.
             if (mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE)
             {
-                ModelDefinition::Mesh newMesh;
+                ModelDefinition::Mesh newMesh(definition.GetContext());
                 newMesh.name = mesh->mName.C_Str();
 
                 // If the mesh has no name we will give it a default one.

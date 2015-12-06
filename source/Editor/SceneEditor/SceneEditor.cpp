@@ -861,9 +861,9 @@ namespace GT
                 this->GetContext().GetMaterialLibrary().Delete(rendererMesh.m_innerEdgeMesh->material);
                 this->GetContext().GetMaterialLibrary().Delete(rendererMesh.m_outerEdgeMesh->material);
 
-                VertexArrayLibrary::Delete(rendererMesh.m_mainMesh->vertexArray);
-                VertexArrayLibrary::Delete(rendererMesh.m_innerEdgeMesh->vertexArray);
-                VertexArrayLibrary::Delete(rendererMesh.m_outerEdgeMesh->vertexArray);
+                this->GetContext().GetVertexArrayLibrary().Delete(rendererMesh.m_mainMesh->vertexArray);
+                this->GetContext().GetVertexArrayLibrary().Delete(rendererMesh.m_innerEdgeMesh->vertexArray);
+                this->GetContext().GetVertexArrayLibrary().Delete(rendererMesh.m_outerEdgeMesh->vertexArray);
 
                 delete rendererMesh.m_mainMesh;
                 delete rendererMesh.m_innerEdgeMesh;

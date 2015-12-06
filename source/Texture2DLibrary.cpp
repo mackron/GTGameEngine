@@ -2,31 +2,25 @@
 
 #include <GTGE/Texture2DLibrary.hpp>
 #include <GTGE/Rendering/Renderer.hpp>
-#include <GTGE/GTEngine.hpp>
-#include <GTGE/Core/Dictionary.hpp>
+#include <GTGE/Context.hpp>
 #include <easy_path/easy_path.h>
 
 namespace GT
 {
-    /// The list of loaded textures, indexed by file name.
-    static Dictionary<Texture2D*> LoadedTextures;
+    Texture2DLibrary::Texture2DLibrary(Context &context)
+        : m_context(context),
+          m_loadedTextures(),
+          m_defaultAnisotropy(1),
+          m_defaultMinFilter(TextureFilter_LinearLinear),
+          m_defaultMagFilter(TextureFilter_Linear),
+          Black1x1Texture(nullptr)
+    {
+    }
 
-    /// The default level of anistropy to apply to all textures.
-    static unsigned int DefaultAnisotropy = 1;
+    Texture2DLibrary::~Texture2DLibrary()
+    {
+    }
 
-    /// The default minification filter to apply to textures.
-    static TextureFilter DefaultMinFilter = TextureFilter_LinearLinear;
-
-    /// The default magnification filter to apply to textures.
-    static TextureFilter DefaultMagFilter = TextureFilter_Linear;
-
-
-    // Global Textures.
-    static Texture2D* Black1x1Texture = nullptr;
-
-
-    /////////////////////////////////////////////////////
-    // Startup/Shutdown
 
     bool Texture2DLibrary::Startup()
     {
@@ -36,11 +30,11 @@ namespace GT
     void Texture2DLibrary::Shutdown()
     {
         // Textures need to be deleted.
-        for (size_t i = 0; i < LoadedTextures.count; ++i)
+        for (size_t i = 0; i < m_loadedTextures.count; ++i)
         {
-            Renderer::DeleteTexture2D(LoadedTextures.buffer[i]->value);
+            Renderer::DeleteTexture2D(m_loadedTextures.buffer[i]->value);
         }
-        LoadedTextures.Clear();
+        m_loadedTextures.Clear();
 
 
         Renderer::DeleteTexture2D(Black1x1Texture);
@@ -61,16 +55,16 @@ namespace GT
             }
             else
             {
-                g_Context->LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                m_context.LogErrorf("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
                 return nullptr;
             }
         }
 
 
         char absFileName[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absFileName, sizeof(absFileName)))
+        if (easyvfs_find_absolute_path(m_context.GetVFS(), fileName, absFileName, sizeof(absFileName)))
         {
-            auto iTexture = LoadedTextures.Find(absFileName);
+            auto iTexture = m_loadedTextures.Find(absFileName);
             if (iTexture == nullptr)
             {
                 Image image(absFileName);
@@ -85,8 +79,8 @@ namespace GT
 
                     Renderer::PushTexture2DData(*newTexture);
                     Renderer::GenerateTexture2DMipmaps(*newTexture);
-                    Renderer::SetTexture2DFilter(*newTexture, DefaultMinFilter, DefaultMagFilter);
-                    Renderer::SetTexture2DAnisotropy(*newTexture, DefaultAnisotropy);
+                    Renderer::SetTexture2DFilter(*newTexture, m_defaultMinFilter, m_defaultMagFilter);
+                    Renderer::SetTexture2DAnisotropy(*newTexture, m_defaultAnisotropy);
                     
 
 
@@ -94,12 +88,12 @@ namespace GT
                     newTexture->DeleteLocalData();
 
 
-                    LoadedTextures.Add(absFileName, newTexture);
+                    m_loadedTextures.Add(absFileName, newTexture);
                     return newTexture;
                 }
                 else
                 {
-                    g_Context->LogErrorf("Can not find file: %s", fileName);
+                    m_context.LogErrorf("Can not find file: %s", fileName);
                     return nullptr;
                 }
             }
@@ -135,13 +129,13 @@ namespace GT
             if (texture->DecrementReferenceCounter() == 0)
             {
                 // We only delete the texture if it was initially acquired by the library.
-                for (size_t i = 0; i < LoadedTextures.count; ++i)
+                for (size_t i = 0; i < m_loadedTextures.count; ++i)
                 {
-                    if (LoadedTextures.buffer[i]->value == texture)
+                    if (m_loadedTextures.buffer[i]->value == texture)
                     {
                         Renderer::DeleteTexture2D(texture);
 
-                        LoadedTextures.RemoveByIndex(i);
+                        m_loadedTextures.RemoveByIndex(i);
                         break;
                     }
                 }
@@ -152,9 +146,9 @@ namespace GT
     bool Texture2DLibrary::Reload(const char* fileName)
     {
         char absFileName[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absFileName, sizeof(absFileName)))
+        if (easyvfs_find_absolute_path(m_context.GetVFS(), fileName, absFileName, sizeof(absFileName)))
         {
-            auto iTexture = LoadedTextures.Find(absFileName);
+            auto iTexture = m_loadedTextures.Find(absFileName);
             if (iTexture != nullptr)
             {
                 auto texture = iTexture->value;
@@ -205,17 +199,17 @@ namespace GT
 
     void Texture2DLibrary::SetDefaultAnisotropy(unsigned int defaultAnisotropy)
     {
-        DefaultAnisotropy = defaultAnisotropy;
+        m_defaultAnisotropy = defaultAnisotropy;
     }
 
     void Texture2DLibrary::SetDefaultMinFilter(TextureFilter filter)
     {
-        DefaultMinFilter = filter;
+        m_defaultMinFilter = filter;
     }
 
     void Texture2DLibrary::SetDefaultMagFilter(TextureFilter filter)
     {
-        DefaultMagFilter = filter;
+        m_defaultMagFilter = filter;
     }
 
 

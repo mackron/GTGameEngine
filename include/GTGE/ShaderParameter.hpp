@@ -170,21 +170,22 @@ namespace GT
 
     struct ShaderParameter_Texture2D : public ShaderParameter
     {
+        Texture2DLibrary* pLibrary;
         Texture2D* value;
 
-        ShaderParameter_Texture2D(Texture2D* valueIn)
-            : ShaderParameter(ShaderParameterType_Texture2D), value(Texture2DLibrary::Acquire(valueIn))
+        ShaderParameter_Texture2D(Texture2DLibrary &libraryIn, Texture2D* valueIn)
+            : ShaderParameter(ShaderParameterType_Texture2D), pLibrary(&libraryIn), value(libraryIn.Acquire(valueIn))
         {
         }
 
         ShaderParameter_Texture2D(const ShaderParameter_Texture2D &other)
-            : ShaderParameter(other), value(Texture2DLibrary::Acquire(other.value))
+            : ShaderParameter(other), pLibrary(other.pLibrary), value(other.pLibrary->Acquire(other.value))
         {
         }
 
         ~ShaderParameter_Texture2D()
         {
-            Texture2DLibrary::Unacquire(this->value);
+            this->pLibrary->Unacquire(this->value);
         }
 
 
@@ -192,8 +193,8 @@ namespace GT
         {
             ShaderParameter::operator=(other);
 
-            Texture2DLibrary::Unacquire(this->value);
-            this->value = Texture2DLibrary::Acquire(other.value);
+            this->pLibrary->Unacquire(this->value);
+            this->value = this->pLibrary->Acquire(other.value);
 
             return *this;
         }

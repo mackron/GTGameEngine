@@ -164,6 +164,12 @@ namespace GT
         /// Retrieves a reference to the internal shader library.
         ShaderLibrary & GetShaderLibrary() { return m_shaderLibrary; }
 
+        /// Retrieves a reference to the internal vertex array library.
+        VertexArrayLibrary & GetVertexArrayLibrary() { return m_vertexArrayLibrary; }
+
+        /// Retrieves a reference to the internal texture library.
+        Texture2DLibrary & GetTextureLibrary() { return m_textureLibrary; }
+
 
 
         //// FROM GAME ////
@@ -601,6 +607,12 @@ namespace GT
 
         /// The shader library.
         ShaderLibrary m_shaderLibrary;
+
+        /// The vertex array library.
+        VertexArrayLibrary m_vertexArrayLibrary;
+
+        /// The texture library.
+        Texture2DLibrary m_textureLibrary;
 
 
 

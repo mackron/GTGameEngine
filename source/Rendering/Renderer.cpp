@@ -11,7 +11,7 @@ namespace GT
     {
         if (texture != nullptr)
         {
-            auto fullscreenQuadVA = VertexArrayLibrary::GetFullscreenTriangleVA();
+            auto fullscreenQuadVA = context.GetVertexArrayLibrary().GetFullscreenTriangleVA();
             assert(fullscreenQuadVA != nullptr);
             {
                 auto fullscreenQuadShader = context.GetShaderLibrary().GetTextured2DQuadShader();

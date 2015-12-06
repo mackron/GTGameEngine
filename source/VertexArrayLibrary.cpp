@@ -4,73 +4,16 @@
 #include <GTGE/MeshBuilder.hpp>
 #include <GTGE/Core/Math.hpp>
 
-
 namespace GT
 {
-    static VertexArray* FullscreenQuad     = nullptr;
-    static VertexArray* FullscreenTriangle = nullptr;
-
-    VertexArray* VertexArrayLibrary::GetFullscreenQuadVA()
+    VertexArrayLibrary::VertexArrayLibrary(Context &context)
+        : m_context(context), m_fullscreenQuad(nullptr), m_fullscreenTriangle(nullptr)
     {
-        if (FullscreenQuad == nullptr)
-        {
-            FullscreenQuad = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P2);
-            
-            float vertices[] =
-            {
-                -1.0f, -1.0f,
-                 1.0f, -1.0f,
-                 1.0f,  1.0f,
-                -1.0f,  1.0f
-            };
-
-            unsigned int indices[] =
-            {
-                0, 1, 2,
-                2, 3, 0,
-            };
-            
-            FullscreenQuad->SetData(vertices, 4, indices, 6);
-        }
-
-        return FullscreenQuad;
     }
 
-    VertexArray* VertexArrayLibrary::GetFullscreenTriangleVA()
+    VertexArrayLibrary::~VertexArrayLibrary()
     {
-        if (FullscreenTriangle == nullptr)
-        {
-            FullscreenTriangle = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P2T2);
-
-            float triangleVertices[] =
-            {
-                -3.0f, -1.0f,
-                -1.0f,  0.0f,
-
-                 1.0f, -1.0f,
-                 1.0f,  0.0f,
-
-                 1.0f,  3.0f,
-                 1.0f,  2.0f,
-            };
-
-            unsigned int triangleIndices[] =
-            {
-                0, 1, 2
-            };
-
-            FullscreenTriangle->SetData(triangleVertices, 3, triangleIndices, 3);
-        }
-
-        return FullscreenTriangle;
     }
-}
-
-
-namespace GT
-{
-    ////////////////////////////////////////////////////////////////
-    // Startup/Shutdown.
 
     bool VertexArrayLibrary::Startup()
     {
@@ -79,11 +22,11 @@ namespace GT
 
     void VertexArrayLibrary::Shutdown()
     {
-        Renderer::DeleteVertexArray(FullscreenQuad);
-        Renderer::DeleteVertexArray(FullscreenTriangle);
+        Renderer::DeleteVertexArray(m_fullscreenQuad);
+        Renderer::DeleteVertexArray(m_fullscreenTriangle);
 
-        FullscreenQuad     = nullptr;
-        FullscreenTriangle = nullptr;
+        m_fullscreenQuad     = nullptr;
+        m_fullscreenTriangle = nullptr;
     }
 
 
@@ -196,7 +139,7 @@ namespace GT
         
 
         // The builder will contain all of the geometric data so now we can create a vertex array from it.
-        return VertexArrayLibrary::CreateFromBuilder(builder);
+        return this->CreateFromBuilder(builder);
     }
 
 
@@ -288,7 +231,7 @@ namespace GT
             builder.EmitVertex(v2, texCoord, normal);
         }
 
-        return VertexArrayLibrary::CreateFromBuilder(builder);
+        return this->CreateFromBuilder(builder);
     }
 
 
@@ -412,5 +355,63 @@ namespace GT
     void VertexArrayLibrary::Delete(VertexArray* va)
     {
         Renderer::DeleteVertexArray(va);
+    }
+
+
+
+
+    VertexArray* VertexArrayLibrary::GetFullscreenQuadVA()
+    {
+        if (m_fullscreenQuad == nullptr)
+        {
+            m_fullscreenQuad = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P2);
+            
+            float vertices[] =
+            {
+                -1.0f, -1.0f,
+                 1.0f, -1.0f,
+                 1.0f,  1.0f,
+                -1.0f,  1.0f
+            };
+
+            unsigned int indices[] =
+            {
+                0, 1, 2,
+                2, 3, 0,
+            };
+            
+            m_fullscreenQuad->SetData(vertices, 4, indices, 6);
+        }
+
+        return m_fullscreenQuad;
+    }
+
+    VertexArray* VertexArrayLibrary::GetFullscreenTriangleVA()
+    {
+        if (m_fullscreenTriangle == nullptr)
+        {
+            m_fullscreenTriangle = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P2T2);
+
+            float triangleVertices[] =
+            {
+                -3.0f, -1.0f,
+                -1.0f,  0.0f,
+
+                 1.0f, -1.0f,
+                 1.0f,  0.0f,
+
+                 1.0f,  3.0f,
+                 1.0f,  2.0f,
+            };
+
+            unsigned int triangleIndices[] =
+            {
+                0, 1, 2
+            };
+
+            m_fullscreenTriangle->SetData(triangleVertices, 3, triangleIndices, 3);
+        }
+
+        return m_fullscreenTriangle;
     }
 }

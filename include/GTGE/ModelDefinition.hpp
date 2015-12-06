@@ -28,20 +28,21 @@ namespace GT
         struct Mesh
         {
             /// Constructor.
-            Mesh()
-                : name(), geometry(nullptr), material(nullptr), skinningVertexAttributes(nullptr), defaultUniforms()
+            Mesh(Context &context)
+                : pContext(&context), name(), geometry(nullptr), material(nullptr), skinningVertexAttributes(nullptr), defaultUniforms(context)
             {
             }
 
             /// Copy constructor.
             Mesh(const Mesh &other)
-                : name(other.name), geometry(other.geometry), material(other.material), skinningVertexAttributes(other.skinningVertexAttributes), defaultUniforms(other.defaultUniforms)
+                : pContext(other.pContext), name(other.name), geometry(other.geometry), material(other.material), skinningVertexAttributes(other.skinningVertexAttributes), defaultUniforms(other.defaultUniforms)
             {
             }
             
             /// Assignment operator.
             Mesh & operator=(const Mesh &other)
             {
+                this->pContext                 = other.pContext;
                 this->name                     = other.name;
                 this->geometry                 = other.geometry;
                 this->material                 = other.material;
@@ -50,6 +51,10 @@ namespace GT
                 
                 return *this;
             }
+
+
+            /// A pointer to the main context.
+            Context* pContext;
 
             /// The name of the mesh.
             String name;

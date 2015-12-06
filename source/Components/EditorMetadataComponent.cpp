@@ -50,9 +50,8 @@ namespace GT
         this->HideSprite();             // <-- This will make sure everything to do with the sprite is deallocated.
         this->HideDirectionArrow();     // <-- This will delete the model.
 
-        VertexArrayLibrary::Delete(this->collisionShapeMesh.vertexArray);
-
         if (this->GetContext() != NULL) {
+            this->GetContext()->GetVertexArrayLibrary().Delete(this->collisionShapeMesh.vertexArray);
             this->GetContext()->GetMaterialLibrary().Delete(this->collisionShapeMesh.material);
         }
     }
@@ -258,13 +257,16 @@ namespace GT
                 }
             }
 
-            auto newSpriteTexture = Texture2DLibrary::Acquire(texturePath);
-            if (newSpriteTexture != this->spriteTexture)
+            if (this->GetContext() != NULL)
             {
-                Texture2DLibrary::Unacquire(this->spriteTexture);
-                this->spriteTexture = newSpriteTexture;
+                auto newSpriteTexture = this->GetContext()->GetTextureLibrary().Acquire(texturePath);
+                if (newSpriteTexture != this->spriteTexture)
+                {
+                    this->GetContext()->GetTextureLibrary().Unacquire(this->spriteTexture);
+                    this->spriteTexture = newSpriteTexture;
 
-                this->spriteMesh.material->SetParameter("SpriteTexture", this->spriteTexture);
+                    this->spriteMesh.material->SetParameter("SpriteTexture", this->spriteTexture);
+                }
             }
 
             this->spriteMesh.material->SetParameter("SpriteColour", colour);
@@ -299,10 +301,8 @@ namespace GT
 
             if (this->GetContext() != NULL) {
                 this->GetContext()->GetMaterialLibrary().Delete(this->spriteMesh.material);
+                this->GetContext()->GetTextureLibrary().Unacquire(this->spriteTexture);
             }
-
-            Texture2DLibrary::Unacquire(this->spriteTexture);
-
 
             this->spritePickingCollisionObject = nullptr;
             this->spritePickingCollisionShape  = nullptr;

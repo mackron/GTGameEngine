@@ -16,7 +16,7 @@ namespace GT
     ImageEditor::ImageEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           m_viewportElement(nullptr), m_viewportEventHandler(*this),
-          m_image(Texture2DLibrary::Acquire(absolutePath, GT::GetBasePath(absolutePath, relativePath).c_str())), m_zoom(1.0f)
+          m_image(ownerEditor.GetContext().GetTextureLibrary().Acquire(absolutePath, GT::GetBasePath(absolutePath, relativePath).c_str())), m_zoom(1.0f)
     {
         if (m_image != nullptr)
         {
@@ -51,7 +51,7 @@ namespace GT
         Renderer::DeleteVertexArray(m_viewportEventHandler.vertexArray);
 
         // The image needs to be unacquired.
-        Texture2DLibrary::Unacquire(m_image);
+        this->GetContext().GetTextureLibrary().Unacquire(m_image);
 
 
         // We created the viewport element in the constructor so it needs to be deleted here.

@@ -12,6 +12,7 @@ namespace GT
 {
     class Texture2D;
     class TextureCube;
+    class Context;
 
     /// Class representing a cache of shader parameters.
     class ShaderParameterCache
@@ -19,7 +20,7 @@ namespace GT
     public:
 
         /// Constructor.
-        ShaderParameterCache();
+        ShaderParameterCache(Context &context);
 
         /// Copy constructor.
         ShaderParameterCache(const ShaderParameterCache &other);
@@ -36,16 +37,6 @@ namespace GT
         void Set(const char* name, const glm::vec2 &v);
         void Set(const char* name, const glm::vec3 &v);
         void Set(const char* name, const glm::vec4 &v);
-
-#if 0
-        void Set(const char* name, int x);
-        void Set(const char* name, int x, int y)               { this->Set(name, glm::vec2(x, y)); }
-        void Set(const char* name, int x, int y, int z)        { this->Set(name, glm::vec3(x, y, z)); }
-        void Set(const char* name, int x, int y, int z, int w) { this->Set(name, glm::vec4(x, y, z, w)); }
-        void Set(const char* name, const glm::ivec2 &v);
-        void Set(const char* name, const glm::ivec3 &v);
-        void Set(const char* name, const glm::ivec4 &v);
-#endif
 
         void Set(const char* name, const glm::mat2 &v);
         void Set(const char* name, const glm::mat3 &v);
@@ -127,6 +118,9 @@ namespace GT
 
 
     private:
+
+        /// A reference to the main context.
+        Context* m_pContext;
 
         Dictionary<ShaderParameter_Float>       floatParameters;
         Dictionary<ShaderParameter_Float2>      float2Parameters;

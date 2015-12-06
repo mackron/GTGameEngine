@@ -150,7 +150,7 @@ namespace GT
         bool exists = m_loadedDefinitions.Find(name) != nullptr;
         if (!exists)
         {
-            va = VertexArrayLibrary::CreateFromConvexHull(convexHull);
+            va = m_context.GetVertexArrayLibrary().CreateFromConvexHull(convexHull);
         }
 
         return this->CreateFromPrimitive(name, va);
@@ -363,7 +363,7 @@ namespace GT
         {
             definition = new ModelDefinition(m_context);
             
-            ModelDefinition::Mesh mesh;
+            ModelDefinition::Mesh mesh(m_context);
             mesh.geometry = va;
             mesh.material = m_context.GetMaterialLibrary().Create("engine/materials/simple-diffuse.material");
             definition->AddMesh(mesh);

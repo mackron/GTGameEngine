@@ -7,8 +7,9 @@
 
 namespace GT
 {
-    ShaderParameterCache::ShaderParameterCache()
-        : floatParameters(),
+    ShaderParameterCache::ShaderParameterCache(Context &context)
+        : m_pContext(&context),
+          floatParameters(),
           float2Parameters(),
           float3Parameters(),
           float4Parameters(),
@@ -21,7 +22,8 @@ namespace GT
     }
 
     ShaderParameterCache::ShaderParameterCache(const ShaderParameterCache &other)
-        : floatParameters(other.floatParameters),
+        : m_pContext(other.m_pContext),
+          floatParameters(other.floatParameters),
           float2Parameters(other.float2Parameters),
           float3Parameters(other.float3Parameters),
           float4Parameters(other.float4Parameters),
@@ -56,26 +58,6 @@ namespace GT
     }
 
 
-#if 0
-    void ShaderParameterCache::Set(const char* name, int value)
-    {
-        this->SetGeneric<ShaderParameter_Integer>(name, value);
-    }
-    void ShaderParameterCache::Set(const char* name, const glm::ivec2 &value)
-    {
-        this->SetGeneric<ShaderParameter_Integer2>(name, value);
-    }
-    void ShaderParameterCache::Set(const char* name, const glm::ivec3 &value)
-    {
-        this->SetGeneric<ShaderParameter_Integer3>(name, value);
-    }
-    void ShaderParameterCache::Set(const char* name, const glm::ivec4 &value)
-    {
-        this->SetGeneric<ShaderParameter_Integer4>(name, value);
-    }
-#endif
-
-
     void ShaderParameterCache::Set(const char* name, const glm::mat2 &value)
     {
         this->float2x2Parameters.Add(name, value);
@@ -91,7 +73,7 @@ namespace GT
 
     void ShaderParameterCache::Set(const char* name, Texture2D* value)
     {
-        this->texture2DParameters.Add(name, value);
+        this->texture2DParameters.Add(name, ShaderParameter_Texture2D(m_pContext->GetTextureLibrary(), value));
     }
     void ShaderParameterCache::Set(const char* name, TextureCube* value)
     {
@@ -651,11 +633,11 @@ namespace GT
                         deserializer.ReadString(name);
                         deserializer.ReadString(value);
 
-                        auto texture = Texture2DLibrary::Acquire(value.c_str());
+                        auto texture = m_pContext->GetTextureLibrary().Acquire(value.c_str());
                         {
                             this->Set(name.c_str(), texture);
                         }
-                        Texture2DLibrary::Unacquire(texture);
+                        m_pContext->GetTextureLibrary().Unacquire(texture);
 
                         this->Set(name.c_str(), texture);
                     }

@@ -2,7 +2,9 @@
 
 #include <GTGE/Scripting/Scripting_Editor.hpp>
 #include <GTGE/Scripting/Scripting_Math.hpp>
+#include <GTGE/Scripting/Scripting_Game.hpp>
 #include <GTGE/Editor.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
@@ -601,14 +603,14 @@ namespace GT
                 auto uniformName         = script.ToString(3);
                 auto textureRelativePath = script.ToString(4);
 
-                auto texture = Texture2DLibrary::Acquire(textureRelativePath);
+                auto texture = GameFFI::GetContext(script).GetTextureLibrary().Acquire(textureRelativePath);
                 if (texture != nullptr)
                 {
                     mesh.defaultUniforms.Set(uniformName, texture);
                     mesh.material->SetParameter(uniformName, texture);
                     modelEditor->RefreshViewport();
 
-                    Texture2DLibrary::Unacquire(texture);
+                    GameFFI::GetContext(script).GetTextureLibrary().Unacquire(texture);
                     script.Push(true);
                 }
                 else

@@ -1043,7 +1043,7 @@ namespace GT
             }
             else if (Texture2DLibrary::IsExtensionSupported(extension))
             {
-                Texture2DLibrary::Reload(absolutePath);
+                this->GetContext().GetTextureLibrary().Reload(absolutePath);
             }
             else if (GT::IsSupportedMaterialExtension(absolutePath))
             {

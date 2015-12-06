@@ -8,21 +8,26 @@
 #include "MeshBuilder.hpp"
 #include "ConvexHull.hpp"
 
-
 namespace GT
 {
+    class Context;
+
     class VertexArrayLibrary
     {
     public:
 
-        ////////////////////////////////////////////////////////////////
-        // Startup/Shutdown
+        /// Constructor.
+        VertexArrayLibrary(Context &context);
+
+        /// Destructor.
+        ~VertexArrayLibrary();
+
 
         /// Starts up the library.
-        static bool Startup();
+        bool Startup();
 
         /// Shuts down the library.
-        static void Shutdown();
+        void Shutdown();
 
 
 
@@ -38,9 +43,9 @@ namespace GT
         ///
         /// @remarks
         ///     The returned vertex array will be in P3T2N3T3B3.
-        static VertexArray* CreateBox(float halfWidth, float halfHeight, float halfDepth);
-        static VertexArray* CreateBox(const glm::vec3 &halfExtents) { return CreateBox(halfExtents.x, halfExtents.y, halfExtents.z); }
-        static VertexArray* CreateBox(const btVector3 &halfExtents) { return CreateBox(halfExtents.x(), halfExtents.y(), halfExtents.z()); }
+        VertexArray* CreateBox(float halfWidth, float halfHeight, float halfDepth);
+        VertexArray* CreateBox(const glm::vec3 &halfExtents) { return CreateBox(halfExtents.x, halfExtents.y, halfExtents.z); }
+        VertexArray* CreateBox(const btVector3 &halfExtents) { return CreateBox(halfExtents.x(), halfExtents.y(), halfExtents.z()); }
 
 
 
@@ -48,7 +53,7 @@ namespace GT
         // Wireframe Primitives
 
         /// Creates a wireframe AABB.
-        static VertexArray* CreateWireframeFromAABB(const btAABB &aabb);
+        VertexArray* CreateWireframeFromAABB(const btAABB &aabb);
 
 
 
@@ -61,7 +66,7 @@ namespace GT
         ///
         /// @remarks
         ///     The returned vertex array will be in P3T2N3T3B3, with flat shaded faces.
-        static VertexArray* CreateFromConvexHull(const ConvexHull &convexHull);
+        VertexArray* CreateFromConvexHull(const ConvexHull &convexHull);
 
 
         ////////////////////////////////////////////////////////////////
@@ -70,7 +75,7 @@ namespace GT
         /// Creates a P3T2N3T3B3 vertex array from a MeshBuilderP3T2N3.
         ///
         /// @param builder [in] A reference to the builder to use for creating the vertex array.
-        static VertexArray* CreateFromBuilder(const MeshBuilderP3T2N3 &builder);
+        VertexArray* CreateFromBuilder(const MeshBuilderP3T2N3 &builder);
 
 
 
@@ -87,7 +92,7 @@ namespace GT
         ///     This function asserts that all input vertex arrays are the same format.
         ///     @par
         ///     Any vertex attributes in <format> that do not appear in the formats of the input arrays will be left undefined.
-        static VertexArray* CreateCombined(const VertexArray* const* vertexArrays, size_t count, const VertexFormat &format);
+        VertexArray* CreateCombined(const VertexArray* const* vertexArrays, size_t count, const VertexFormat &format);
 
 
 
@@ -100,19 +105,28 @@ namespace GT
         ///
         /// @remarks
         ///     Use MarkForCollection() to use the garbage collector, which will do everything thread-safely.
-        static void Delete(VertexArray* va);
+        void Delete(VertexArray* va);
 
 
 
     public:
 
         /// Retrieves a P2 vertex array that can used for fullscreen quads.
-        static VertexArray* GetFullscreenQuadVA();
+        VertexArray* GetFullscreenQuadVA();
 
         /// Retrieves a P2T2 vertex array that can be used for a fullscreen texture write.
-        static VertexArray* GetFullscreenTriangleVA();
+        VertexArray* GetFullscreenTriangleVA();
 
         
+
+
+    private:
+
+        /// A reference to the main context.
+        Context &m_context;
+
+        VertexArray* m_fullscreenQuad;
+        VertexArray* m_fullscreenTriangle;
     };
 }
 

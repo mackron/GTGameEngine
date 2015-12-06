@@ -4,10 +4,12 @@
 #define GT_Texture2DLibrary
 
 #include "Rendering/TextureFilters.hpp"
+#include <GTGE/Core/Dictionary.hpp>
 
 namespace GT
 {
     class Texture2D;
+    class Context;
 
     /// Library class for Texture2Ds.
     ///
@@ -18,14 +20,18 @@ namespace GT
     {
     public:
 
-        /////////////////////////////////////////////////////
-        // Startup/Shutdown
+        /// Constructor.
+        Texture2DLibrary(Context &context);
+
+        /// Destructor.
+        ~Texture2DLibrary();
+
 
         /// Starts up the library.
-        static bool Startup();
+        bool Startup();
 
         /// Shuts down the library.
-        static void Shutdown();
+        void Shutdown();
 
 
 
@@ -47,7 +53,7 @@ namespace GT
         ///     @par
         ///     All resources must have a relative path somewhere. If it doesn't, there will be errors with serialization. Thus,
         ///     this will return null if 'fileName' is absolute and 'makeRelativeTo' is null.
-        static Texture2D* Acquire(const char* fileName, const char* makeRelativeTo = nullptr);
+        Texture2D* Acquire(const char* fileName, const char* makeRelativeTo = nullptr);
 
         /// Acquires an already-acquired texture object. This simply increments the internal reference count.
         ///
@@ -58,13 +64,13 @@ namespace GT
         /// @remarks
         ///     It is safe to call this generically on textures that were not initially acquired by this library. In this case, the
         ///     acquire/unacquire operations will simply be ignored.
-        static Texture2D* Acquire(Texture2D* texture);
+        Texture2D* Acquire(Texture2D* texture);
 
 
         /// Unacquires a texture.
         ///
         /// @param texture [in] A pointer to the texture to unacquire.
-        static void Unacquire(Texture2D* texture);
+        void Unacquire(Texture2D* texture);
 
 
         /// Reloads the texture of the given file.
@@ -75,7 +81,7 @@ namespace GT
         ///
         /// @remarks
         ///     This will NOT load the texture if the texture has not already been loaded.
-        static bool Reload(const char* fileName);
+        bool Reload(const char* fileName);
 
 
 
@@ -83,7 +89,7 @@ namespace GT
         // System/Engine textures.
 
         /// Retrieves a 1x1 black texture.
-        static Texture2D* Get1x1BlackTexture();
+        Texture2D* Get1x1BlackTexture();
 
 
 
@@ -91,16 +97,40 @@ namespace GT
         // Misc.
 
         /// Sets the default level of anisotropy to apply to newly acquired textures.
-        static void SetDefaultAnisotropy(unsigned int defaultAnisotropy);
+        void SetDefaultAnisotropy(unsigned int defaultAnisotropy);
 
         /// Sets the default minification filter.
-        static void SetDefaultMinFilter(TextureFilter filter);
+        void SetDefaultMinFilter(TextureFilter filter);
 
         /// Sets the default magnification filter.
-        static void SetDefaultMagFilter(TextureFilter filter);
+        void SetDefaultMagFilter(TextureFilter filter);
 
         /// Determines whether or not the given extension is a supported image extension.
         static bool IsExtensionSupported(const char* extension);
+
+
+
+    private:
+
+        /// A reference to the context that owns this library.
+        Context &m_context;
+
+
+        /// The list of loaded textures, indexed by file name.
+        Dictionary<Texture2D*> m_loadedTextures;
+
+        /// The default level of anistropy to apply to all textures.
+        unsigned int m_defaultAnisotropy;
+
+        /// The default minification filter to apply to textures.
+        TextureFilter m_defaultMinFilter;
+
+        /// The default magnification filter to apply to textures.
+        TextureFilter m_defaultMagFilter;
+
+
+        // Global Textures.
+        Texture2D* Black1x1Texture;
     };
 }
 

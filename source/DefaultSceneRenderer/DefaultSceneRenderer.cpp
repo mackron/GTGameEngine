@@ -26,7 +26,7 @@ namespace GT
           bloomShader(nullptr), highlightShader(nullptr),
           bloomBlurShaderX(nullptr), bloomBlurShaderY(nullptr), shadowBlurShaderX(nullptr), shadowBlurShaderY(nullptr),
           shaderBuilder(),
-          luminanceChain(),
+          luminanceChain(context),
           materialUniformNames(),
           isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f),
           directionalShadowMapSize(1024), pointShadowMapSize(256), spotShadowMapSize(512),

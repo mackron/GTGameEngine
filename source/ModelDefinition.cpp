@@ -825,7 +825,7 @@ namespace GT
 
                         for (uint32_t iMesh = 0; iMesh < meshCount; ++iMesh)
                         {
-                            ModelDefinition::Mesh newMesh;
+                            ModelDefinition::Mesh newMesh(m_context);
 
                             // Name.
                             deserializer.ReadString(newMesh.name);

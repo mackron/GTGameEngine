@@ -5,7 +5,6 @@
 #include <GTGE/Scripting.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GamePackager.hpp>
-#include <GTGE/GTEngine.hpp>           // For this. Remove this when the global context is removed.
 #include <GTGE/Core/System.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
 #include <GTGE/Core/String.hpp>
@@ -111,7 +110,7 @@ namespace GT
           m_pLogFile(nullptr),
           m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
           m_assetLibrary(),
-          m_scriptLibrary(*this), m_particleSystemLibrary(*this), m_prefabLibrary(*this), m_modelLibrary(*this), m_materialLibrary(*this), m_shaderLibrary(*this),
+          m_scriptLibrary(*this), m_particleSystemLibrary(*this), m_prefabLibrary(*this), m_modelLibrary(*this), m_materialLibrary(*this), m_shaderLibrary(*this), m_vertexArrayLibrary(*this), m_textureLibrary(*this),
           m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
           eventQueue(), eventQueueLock(NULL),
@@ -270,10 +269,10 @@ namespace GT
 
         // With sub-systems started up, we can startup our resource libraries.
         this->Logf("Initializing Texture Library...");
-        Texture2DLibrary::Startup();
+        m_textureLibrary.Startup();
 
         this->Logf("Initializing Vertex Array Library...");
-        VertexArrayLibrary::Startup();
+        m_vertexArrayLibrary.Startup();
 
         this->Logf("Initializing Material Library...");
         m_materialLibrary.Startup();
@@ -322,7 +321,7 @@ namespace GT
 
 
             // Here we will set the default anistropy for textures via the texture library.
-            Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("GTEngine.Display.Textures.Anisotropy")));
+            m_textureLibrary.SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("GTEngine.Display.Textures.Anisotropy")));
 
 
             // First we need a window. Note that we don't show it straight away.
@@ -443,8 +442,8 @@ namespace GT
         m_modelLibrary.Shutdown();
         m_materialLibrary.Shutdown();
         m_shaderLibrary.Shutdown();
-        Texture2DLibrary::Shutdown();
-        VertexArrayLibrary::Shutdown();
+        m_vertexArrayLibrary.Shutdown();
+        m_textureLibrary.Shutdown();     
         
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.

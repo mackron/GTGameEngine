@@ -10,6 +10,7 @@ namespace GT
     class Framebuffer;
     class Texture2D;
     class Shader;
+    class Context;
 
     /// Class representing a chain of buffers that are used for calculating the luminance of a scene.
     ///
@@ -26,7 +27,7 @@ namespace GT
     public:
 
         /// Constructor.
-        DefaultSceneRenderer_LuminanceChain();
+        DefaultSceneRenderer_LuminanceChain(Context &context);
 
         /// Destructor.
         ~DefaultSceneRenderer_LuminanceChain();
@@ -66,6 +67,9 @@ namespace GT
 
 
     private:
+
+        /// A reference to the main context.
+        Context &m_context;
 
         /// The framebuffer to use when rendering.
         Framebuffer* m_framebuffer;

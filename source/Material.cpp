@@ -43,7 +43,7 @@ namespace GT
         : context(context),
           absolutePath(), relativePath(), xmlString(),
           channelShaderIDs(),
-          defaultParams(),
+          defaultParams(context),
           hasNormalChannel(false), isRefractive(false), isBlended(false),
           blendEquation(BlendEquation_Add), blendSourceFactor(BlendFunc_One), blendDestinationFactor(BlendFunc_Zero), blendColour(0.0f, 0.0f, 0.0f, 0.0f)
     {
@@ -244,11 +244,11 @@ namespace GT
                             {
                                 auto valueStr = propertyNode->value();
 
-                                auto texture = Texture2DLibrary::Acquire(valueStr);
+                                auto texture = this->context.GetTextureLibrary().Acquire(valueStr);
                                 {
                                     this->defaultParams.Set(nameAttr->value(), texture);
                                 }
-                                Texture2DLibrary::Unacquire(texture);
+                                this->context.GetTextureLibrary().Unacquire(texture);
                             }
                         }
 
@@ -402,7 +402,7 @@ namespace GT
 namespace GT
 {
     Material::Material(const MaterialDefinition &definition)
-        : definition(definition), parameters(), blendColour(definition.GetBlendColour())
+        : definition(definition), parameters(definition.context), blendColour(definition.GetBlendColour())
     {
         this->parameters = definition.defaultParams;
     }

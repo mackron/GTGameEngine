@@ -3,11 +3,13 @@
 #include <GTGE/DefaultSceneRenderer/DefaultSceneRenderer_LuminanceChain.hpp>
 #include <GTGE/Rendering/Renderer.hpp>
 #include <GTGE/VertexArrayLibrary.hpp>
+#include <GTGE/Context.hpp>
 
 namespace GT
 {
-    DefaultSceneRenderer_LuminanceChain::DefaultSceneRenderer_LuminanceChain()
-        : m_framebuffer(),
+    DefaultSceneRenderer_LuminanceChain::DefaultSceneRenderer_LuminanceChain(Context &context)
+        : m_context(context),
+          m_framebuffer(),
           m_buffers(),
           m_shaders(),
           m_baseWidth(0),
@@ -102,7 +104,7 @@ namespace GT
                     }
 
                     // Set the quad.
-                    Renderer::Draw(VertexArrayLibrary::GetFullscreenTriangleVA());
+                    Renderer::Draw(m_context.GetVertexArrayLibrary().GetFullscreenTriangleVA());
                 }
             }
         }
