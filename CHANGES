@@ -2,7 +2,7 @@
 - Changelog
 -------------------------------------------------------------------------------
 
-0.0.4 ()
+0.0.4 (December 4th, 2015)
 
 BREAKING CHANGES:
     - The file format for scenes have changed. Old scenes will fail to load,
@@ -11,6 +11,7 @@ BREAKING CHANGES:
       
 
 FEATURES:
+    - Added support for loading files from Zip and Quake 2 PAK files.
     - Added OnSerialize and OnDeserialize events to scene nodes. These will be
       called when custom script-side data needs to be serialized/deserialized.
     - Added support for keeping track of the game state. This allows makes save
@@ -23,6 +24,20 @@ FEATURES:
 
 
 FIXES/IMPROVEMENTS
+    - A big simplification to the multi-threaded parts of the engine.
+    - Remove a few global variables.
+    - Simplified the logging system to use simple text files instead of HTML
+	  files.
+    - Changed the format of the main config file to something a lot simpler.
+    - Renamed the main include directory from "GTEngine" to "GTGE" which is a
+	  bit smaller and more consistent with the name of the project.
+    - Improved the file system watcher by replacing it with easy_fsw.
+    - Moved everything into a single namespace called "GT".
+    - Removed GTLib and integrated it directly into the main source tree.
+    - Lots of miscellaneous clean up.
+    - Removed dependency on OpenAL by replacing it with easy_audio.
+    - Removed dependency on libpng and zlib by replacing them with stb_image and
+	  miniz.
     - Fixed a bug where script errors would occur when dynamically attaching
       and detaching script script files from a scene node.
     - Fixed a shader warning on Intel.
