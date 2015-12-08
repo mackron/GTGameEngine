@@ -331,7 +331,7 @@ namespace GT
             m_textureLibrary.SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("GTEngine.Display.Textures.Anisotropy")));
 
 
-            // First we need a window. Note that we don't show it straight away.
+            // First we need a window. Note that we don't show it straight away - it'll be shown at the start of Run().
             this->window = Renderer::CreateWindow();
             if (this->window != nullptr)
             {
@@ -342,7 +342,7 @@ namespace GT
 
                 // Now we can set the window's event handler and show it.
                 this->window->SetEventHandler(this->windowEventHandler);
-                this->window->Show();
+                
 
 
                 // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
@@ -632,6 +632,9 @@ namespace GT
         }
 #endif
 
+        // If we make it here it means we are not running the editor and are running the game like normal. We need to just show the
+        // window and the enter into the main loop.
+        this->window->Show();
 
         while (!this->closing)
         {
