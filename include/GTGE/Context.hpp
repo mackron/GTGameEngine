@@ -40,6 +40,8 @@ namespace GT
     static const size_t MouseBufferSize   = 2;
     static const float  MouseSmoothFactor = 0.5f;
 
+    class Editor2;
+
     /// Class representing the engine context.
     class Context
     {
@@ -483,26 +485,23 @@ namespace GT
 
     private:
 
+        /// Determines whether or not "--editor" was passed on the command line.
+        bool IsEditorOnCommandLine();
 
-        /**
-        *   \brief  Initialises the GUI server.
-        *
-        *   \remarks
-        *       This should be called after InitialiseFonts() because the GUI depends on the font server.
-        */
+
+        /// Initialises the GUI server.
+        ///
+        /// @remarks
+        ///     This should be called after InitialiseFonts() because the GUI depends on the font server.
         bool InitialiseGUI();
 
         /// Updates a renders a single frame.
         void DoFrame();
 
-        /**
-        *   \brief  Updates the game. This is run on the update thread.
-        */
+        /// Updates the game. This is run on the update thread.
         void Update();
 
-        /**
-        *   \brief  Draws the next frame based on the previous update.
-        */
+        /// Draws the frame that was just updated.
         void Draw();
 
 
@@ -733,6 +732,11 @@ namespace GT
         KeyCombination editorToggleKeyCombination;
 
 
+
+#ifdef GT_BUILD_EDITOR
+        /// The editor.
+        Editor2* m_pEditor;
+#endif
 
 
     private:    // No copying.

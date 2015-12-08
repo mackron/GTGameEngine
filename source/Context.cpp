@@ -5,6 +5,7 @@
 #include <GTGE/Scripting.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GamePackager.hpp>
+#include <GTGE/Editor2/Editor2.hpp>
 #include <GTGE/Core/System.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
 #include <GTGE/Core/String.hpp>
@@ -131,6 +132,9 @@ namespace GT
           mousePosX(0), mousePosY(0), mouseMoveLockCounter(0),
           profilerToggleKey(Keys::F11),
           editorToggleKeyCombination(Keys::Shift, Keys::Tab)
+#ifdef GT_BUILD_EDITOR
+        , m_pEditor(nullptr)
+#endif
     {
     }
 
@@ -156,6 +160,9 @@ namespace GT
 
     bool Context::Startup(easyutil_cmdline &cmdline)
     {
+        // Make the application DPI aware right at the start.
+        win32_make_dpi_aware();
+
         m_cmdline = cmdline;
 
 
@@ -611,6 +618,21 @@ namespace GT
 
     int Context::Run()
     {
+#ifdef GT_BUILD_EDITOR
+        // We need to check if "--editor" was passed to the command line, and if so, open the editor.
+        if (this->IsEditorOnCommandLine())
+        {
+            m_pEditor = new Editor2(*this);
+            int result = m_pEditor->StartupAndRun();
+
+            delete m_pEditor;
+            m_pEditor = nullptr;
+
+            return result;
+        }
+#endif
+
+
         while (!this->closing)
         {
             // First we need to handle any pending window messages. We do not want to wait here (first argument).
@@ -1150,14 +1172,38 @@ namespace GT
     }
 
 
+
+
+
+    /////////////////////////////////////////////
+    // Private
+
+    static bool IsEditorOnCommandLineProc(const char* key, const char* value, void* pUserData)
+    {
+        (void)value;
+
+        if (strcmp(key, "editor") == 0)
+        {
+            *((bool*)pUserData) = true;
+            return false;
+        }
+
+        return true;
+    }
+
+    bool Context::IsEditorOnCommandLine()
+    {
+        bool onCmdLine = false;
+        easyutil_parse_cmdline(&m_cmdline, IsEditorOnCommandLineProc, &onCmdLine);
+
+        return onCmdLine;
+    }
+
     bool Context::InitialiseGUI()
     {
         this->gui.SetEventHandler(this->guiEventHandler);
         return true;
     }
-
-
-    
 
     void Context::DoFrame()
     {
