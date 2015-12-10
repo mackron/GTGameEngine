@@ -34,6 +34,16 @@ namespace GT
 
 
 
+        /// Retrieves a pointer to the internal easy_appkit application.
+        ak_application* GetAKApplication();
+
+        /// Retrieves a pointer to the internal GUI context.
+        easygui_context* GetGUI();
+
+        /// Retrieves a pointer to the internal theme.
+        ak_theme* GetAKTheme();
+
+
 
         ///////////////////////////////////////////////////////////
         //
