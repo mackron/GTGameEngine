@@ -5,6 +5,7 @@
 
 #include "EditorTool.hpp"
 #include <easy_gui/wip/easygui_tree_view.h>
+#include <easy_appkit/ak_menu.h>
 
 namespace GT
 {
@@ -150,6 +151,14 @@ namespace GT
 
         /// The height of the folder icon when drawn as a string.
         float m_pageIconStringHeight;
+
+
+
+
+    public:
+
+        /// Test menu.
+        ak_window* m_pTestMenu;
     };
 }
 

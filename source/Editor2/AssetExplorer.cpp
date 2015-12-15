@@ -278,6 +278,27 @@ namespace GT
         pAssetExplorer->OnItemPicked(pItem);
     }
 
+    static void AssetExplorer_OnTreeViewMouseButtonUp(easygui_element* pTVElement, int mouseButton, int relativeMousePosX, int relativeMousePosY)
+    {
+        AssetExplorerUserData* pUserData = reinterpret_cast<AssetExplorerUserData*>(tv_get_extra_data(pTVElement));
+        if (pUserData == NULL) {
+            return;
+        }
+
+        AssetExplorer* pAssetExplorer = pUserData->pAssetExplorer;
+        if (pAssetExplorer == NULL) {
+            return;
+        }
+
+        if (mouseButton == EASYGUI_MOUSE_BUTTON_RIGHT)
+        {
+            ak_menu_set_position(pAssetExplorer->m_pTestMenu, relativeMousePosX, relativeMousePosY);
+            ak_menu_show(pAssetExplorer->m_pTestMenu);
+        }
+
+        tv_on_mouse_button_up(pTVElement, mouseButton, relativeMousePosX, relativeMousePosY);
+    }
+
 
     AssetExplorer::AssetExplorer(Editor2 &editor)
         : EditorTool(editor), m_pTV(NULL)
@@ -287,6 +308,8 @@ namespace GT
 
     AssetExplorer::~AssetExplorer()
     {
+        ak_delete_menu(m_pTestMenu);
+
         // Deleting the tree-view control will delete any items that are still attached.
         eg_delete_tree_view(m_pTV);
     }
@@ -334,6 +357,7 @@ namespace GT
         tv_set_on_item_paint(m_pTV, AssetExplorer_OnItemPaint);
         tv_set_on_item_measure(m_pTV, AssetExplorer_OnItemMeasure);
         tv_set_on_item_picked(m_pTV, AssetExplorer_OnTreeViewItemPicked);
+        easygui_register_on_mouse_button_up(m_pTV, AssetExplorer_OnTreeViewMouseButtonUp);
 
 
         // The base directories needs to be added first.
@@ -360,18 +384,9 @@ namespace GT
 
 
         // Add some testing items.
-        //ak_tree_view_item* pItem0 = ak_create_tree_view_item(m_pTV, NULL, "Testing", 0, NULL);
-        //ak_tree_view_item* pItem0_0 = ak_create_tree_view_item(m_pTV, pItem0, "Sub Item 0", 0, NULL);
-        //ak_tree_view_item* pItem0_1 = ak_create_tree_view_item(m_pTV, pItem0, "Sub Item 1", 0, NULL);
-
-        //ak_tree_view_item* pItem0a = ak_create_tree_view_item(m_pTV, NULL, "Testing A", 0, NULL);
-        //ak_tree_view_item* pItem0a_0 = ak_create_tree_view_item(m_pTV, pItem0a, "Sub Item 0 A", 0, NULL);
-        //ak_tree_view_item* pItem0a_1 = ak_create_tree_view_item(m_pTV, pItem0a, "Sub Item 1 A", 0, NULL);
-
-        //ak_tree_view_item* pItem0b = ak_create_tree_view_item(m_pTV, NULL, "Testing B", 0, NULL);
-        //ak_tree_view_item* pItem0b_0 = ak_create_tree_view_item(m_pTV, pItem0b, "Sub Item 0 B", 0, NULL);
-        //ak_tree_view_item* pItem0b_1 = ak_create_tree_view_item(m_pTV, pItem0b, "Sub Item 1 B", 0, NULL);
-
+        m_pTestMenu = ak_create_menu(m_editor.GetAKApplication(), ak_get_window_by_name(m_editor.GetAKApplication(), "MainWindow"), 0, NULL);
+        ak_menu_set_size(m_pTestMenu, 256, 512);
+        ak_menu_show(m_pTestMenu);
 
         return true;
     }
