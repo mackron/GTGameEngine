@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGE/Editor2/Editor2.hpp>
+#include "../../include/GTGE/Editor2/Editor2.hpp"
+#include "../../include/GTGE/Context.hpp"
 #include "../Editor2/AssetExplorer.hpp"
 #include <string.h>
 #include <assert.h>
@@ -70,7 +71,8 @@ namespace GT
 
     Editor2::Editor2(Context &context)
         : m_context(context),
-          m_pApplication(NULL)
+          m_pApplication(NULL),
+          m_pSymbolFont(NULL), m_symbolFontMetrics()
     {
     }
 
@@ -88,6 +90,9 @@ namespace GT
         m_pApplication = ak_create_application("GTGE/Editor", sizeof(userData), &userData);
         if (m_pApplication != NULL)
         {
+            m_pSymbolFont = easygui_create_font(ak_get_application_gui(m_pApplication), "Segoe UI Symbol", 14, easygui_weight_normal, easygui_slant_none, 0);
+            easygui_get_font_metrics(m_pSymbolFont, &m_symbolFontMetrics);
+
             // Set the callback that the application object will call when the default layout script is required.
             ak_set_on_default_config(m_pApplication, Editor_OnDefaultLayout);
             ak_set_on_create_tool(m_pApplication, Editor_OnCreateTool);
@@ -117,6 +122,11 @@ namespace GT
     easygui_context* Editor2::GetGUI()
     {
         return ak_get_application_gui(m_pApplication);
+    }
+
+    easyvfs_context* Editor2::GetVFS()
+    {
+        return m_context.GetVFS();
     }
 
     ak_theme* Editor2::GetAKTheme()

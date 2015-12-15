@@ -2,6 +2,7 @@
 
 #include "EditorTool.hpp"
 #include <GTGE/Editor2/Editor2.hpp>
+#include <GTGE/Context.hpp>
 #include <easy_appkit/ak_gui.h>
 #include <easy_gui/easy_gui.h>
 
@@ -38,6 +39,12 @@ namespace GT
         }
 
         return true;
+    }
+
+
+    easyvfs_context* EditorTool::GetVFS()
+    {
+        return m_editor.GetVFS();
     }
 
 
