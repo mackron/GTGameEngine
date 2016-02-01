@@ -2136,20 +2136,19 @@ namespace GT
                 query.Append(".*");
 
                 easyvfs_iterator iFile;
-                if (easyvfs_begin_iteration(g_Context->GetVFS(), directoryName, &iFile))
+                if (easyvfs_begin(g_Context->GetVFS(), directoryName, &iFile))
                 {
-                    easyvfs_file_info fi;
-                    while (easyvfs_next_iteration(g_Context->GetVFS(), &iFile, &fi))
+                    do
                     {
-                        if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                        if ((iFile.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                         {
-                            directories.Add(easypath_file_name(fi.absolutePath), true);
+                            directories.Add(easypath_file_name(iFile.info.absolutePath), true);
                         }
                         else
                         {
-                            files.Add(easypath_file_name(fi.absolutePath), true);
+                            files.Add(easypath_file_name(iFile.info.absolutePath), true);
                         }
-                    }
+                    } while (easyvfs_next(g_Context->GetVFS(), &iFile));
                 }
 
 
@@ -2371,7 +2370,7 @@ namespace GT
 
             int CreateDirectory(Script &script)
             {
-                easyvfs_mkdir_recursive(g_Context->GetVFS(), script.ToString(1));
+                easyvfs_create_directory_recursive(g_Context->GetVFS(), script.ToString(1));
                 return 0;
             }
 

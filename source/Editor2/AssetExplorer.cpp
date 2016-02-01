@@ -3,7 +3,6 @@
 #include "AssetExplorer.hpp"
 #include <GTGE/Editor2/Editor2.hpp>
 #include <GTGE/Context.hpp>
-#include <easy_appkit/ak_gui.h>
 #include <easy_appkit/ak_theme.h>
 #include <easy_gui/easy_gui.h>
 #include <easy_path/easy_path.h>
@@ -278,7 +277,7 @@ namespace GT
         pAssetExplorer->OnItemPicked(pItem);
     }
 
-    static void AssetExplorer_OnTreeViewMouseButtonUp(easygui_element* pTVElement, int mouseButton, int relativeMousePosX, int relativeMousePosY)
+    static void AssetExplorer_OnTreeViewMouseButtonUp(easygui_element* pTVElement, int mouseButton, int relativeMousePosX, int relativeMousePosY, int stateFlags)
     {
         AssetExplorerUserData* pUserData = reinterpret_cast<AssetExplorerUserData*>(tv_get_extra_data(pTVElement));
         if (pUserData == NULL) {
@@ -296,7 +295,7 @@ namespace GT
             ak_menu_show(pAssetExplorer->m_pTestMenu);
         }
 
-        tv_on_mouse_button_up(pTVElement, mouseButton, relativeMousePosX, relativeMousePosY);
+        tv_on_mouse_button_up(pTVElement, mouseButton, relativeMousePosX, relativeMousePosY, stateFlags);
     }
 
 
@@ -323,22 +322,22 @@ namespace GT
 
         // Load the default font for items.
         m_pItemFont = m_editor.GetAKTheme()->pUIFont;
-        easygui_get_font_metrics(m_pItemFont, &m_itemFontMetrics);
+        easygui_get_font_metrics(m_pItemFont, 1, 1, &m_itemFontMetrics);
 
-        m_pArrowFont = easygui_create_font(m_editor.GetGUI(), "Segoe UI Symbol", 10, easygui_weight_normal, easygui_slant_none, 0);
-        easygui_get_font_metrics(m_pArrowFont, &m_arrowFontMetrics);
-        easygui_get_glyph_metrics(m_pArrowFont, g_TreeView_ArrowFacingRightUTF32, &m_arrowGlyphMetrics);
+        m_pArrowFont = easygui_create_font(m_editor.GetGUI(), "Segoe UI Symbol", 10, easygui_font_weight_normal, easygui_font_slant_none, 0);
+        easygui_get_font_metrics(m_pArrowFont, 1, 1, &m_arrowFontMetrics);
+        easygui_get_glyph_metrics(m_pArrowFont, 1, 1, g_TreeView_ArrowFacingRightUTF32, &m_arrowGlyphMetrics);
 
 
-        easygui_get_glyph_metrics(m_editor.GetSymbolFont(), g_FolderOpenedUTF32, &m_folderIconGlyphMetrics);
-        easygui_measure_string(m_editor.GetSymbolFont(), g_FolderOpenedIconString, strlen(g_FolderOpenedIconString), &m_folderIconStringWidth, &m_folderIconStringHeight);
+        easygui_get_glyph_metrics(m_editor.GetSymbolFont(), g_FolderOpenedUTF32, 1, 1, &m_folderIconGlyphMetrics);
+        easygui_measure_string(m_editor.GetSymbolFont(), g_FolderOpenedIconString, strlen(g_FolderOpenedIconString), 1, 1, &m_folderIconStringWidth, &m_folderIconStringHeight);
         
-        easygui_get_glyph_metrics(m_editor.GetSymbolFont(), g_PageIconUTF32, &m_pageIconGlyphMetrics);
-        easygui_measure_string(m_editor.GetSymbolFont(), g_PageIconString, strlen(g_PageIconString), &m_pageIconStringWidth, &m_pageIconStringHeight);
+        easygui_get_glyph_metrics(m_editor.GetSymbolFont(), g_PageIconUTF32, 1, 1, &m_pageIconGlyphMetrics);
+        easygui_measure_string(m_editor.GetSymbolFont(), g_PageIconString, strlen(g_PageIconString), 1, 1, &m_pageIconStringWidth, &m_pageIconStringHeight);
 
 
         // For now, have the tree view control also size itself so that it's the same size as the parent.
-        easygui_register_on_size(m_pTool, easygui_on_size_fit_children_to_parent);
+        easygui_set_on_size(m_pTool, easygui_on_size_fit_children_to_parent);
 
 
 
@@ -357,7 +356,7 @@ namespace GT
         tv_set_on_item_paint(m_pTV, AssetExplorer_OnItemPaint);
         tv_set_on_item_measure(m_pTV, AssetExplorer_OnItemMeasure);
         tv_set_on_item_picked(m_pTV, AssetExplorer_OnTreeViewItemPicked);
-        easygui_register_on_mouse_button_up(m_pTV, AssetExplorer_OnTreeViewMouseButtonUp);
+        easygui_set_on_mouse_button_up(m_pTV, AssetExplorer_OnTreeViewMouseButtonUp);
 
 
         // The base directories needs to be added first.
@@ -638,27 +637,26 @@ namespace GT
 
         // Children.
         easyvfs_iterator iFile;
-        if (easyvfs_begin_iteration(this->GetVFS(), absolutePath, &iFile))
+        if (easyvfs_begin(this->GetVFS(), absolutePath, &iFile))
         {
-            easyvfs_file_info fi;
-            while (easyvfs_next_iteration(this->GetVFS(), &iFile, &fi))
+            do
             {
-                if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                if ((iFile.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                 {
-                    this->InsertDirectoryRecursive(fi.absolutePath);
+                    this->InsertDirectoryRecursive(iFile.info.absolutePath);
                 }
                 else
                 {
-                    this->InsertChildItem(pDirItem, easypath_file_name(fi.absolutePath));
+                    this->InsertChildItem(pDirItem, easypath_file_name(iFile.info.absolutePath));
                 }
-            }
+            } while (easyvfs_next(this->GetVFS(), &iFile));
         }
     }
 
     float AssetExplorer::CalculateItemWidth(const char * text) const
     {
         float textWidth;
-        easygui_measure_string(m_pItemFont, text, strlen(text), &textWidth, NULL);
+        easygui_measure_string(m_pItemFont, text, strlen(text), 1, 1, &textWidth, NULL);
 
         return this->GetItemArrowWidth() + this->GetItemIconWidth() + textWidth + (this->GetItemPadding()*2);   // Times 2 for the padding because we want to include both left and right sides.
     }

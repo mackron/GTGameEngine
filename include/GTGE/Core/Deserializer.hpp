@@ -429,7 +429,7 @@ namespace GT
                 return 0;
             }
                 
-            easyvfs_seek(m_pFile, static_cast<easyvfs_int64>(readPointer), easyvfs_start);
+            easyvfs_seek(m_pFile, static_cast<easyvfs_int64>(readPointer), easyvfs_origin_start);
             return bytesRead;
         }
 
@@ -438,7 +438,7 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            if (easyvfs_seek(m_pFile, bytesToSkip, easyvfs_current)) {
+            if (easyvfs_seek(m_pFile, bytesToSkip, easyvfs_origin_current)) {
                 return bytesToSkip;
             }
 

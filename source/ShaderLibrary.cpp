@@ -68,23 +68,23 @@ namespace GT
             // Absolute.
 
             easyvfs_iterator iFile;
-            if (easyvfs_begin_iteration(pVFS, directory, &iFile))
+            if (easyvfs_begin(pVFS, directory, &iFile))
             {
-                easyvfs_file_info fi;
-                while (easyvfs_next_iteration(pVFS, &iFile, &fi))
+                do
                 {
-                    if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    if ((iFile.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                     {
                         if (recursive)
                         {
-                            ShaderLibrary::LoadFromDirectory(fi.absolutePath);
+                            ShaderLibrary::LoadFromDirectory(iFile.info.absolutePath);
                         }
                     }
                     else
                     {
-                        ShaderLibrary::LoadFromFile(fi.absolutePath);
+                        ShaderLibrary::LoadFromFile(iFile.info.absolutePath);
                     }
-                }
+
+                } while (easyvfs_next(pVFS, &iFile));
             }
         }
         else
@@ -115,7 +115,7 @@ namespace GT
         {
             // We need to read the content of the file and then load it as XML. We cast the size to a size_t to
             // play nicely with 32-bit compilations. We can pretty safely assume the XML file will not exceed that.
-            size_t fileSize = static_cast<size_t>(easyvfs_file_size(pFile));
+            size_t fileSize = static_cast<size_t>(easyvfs_size(pFile));
             
             auto fileData = static_cast<char*>(malloc(fileSize + 1));
             easyvfs_read(pFile, fileData, fileSize, nullptr);

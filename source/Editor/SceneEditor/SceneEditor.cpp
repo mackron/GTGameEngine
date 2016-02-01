@@ -173,7 +173,7 @@ namespace GT
 
 
             // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
-            if (easyvfs_file_size(file) > 0)
+            if (easyvfs_size(file) > 0)
             {
                 FileDeserializer deserializer(file);
                 this->DeserializeScene(deserializer);

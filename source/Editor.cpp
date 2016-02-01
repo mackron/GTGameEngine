@@ -1183,22 +1183,21 @@ namespace GT
         assert(easyvfs_is_existing_directory(g_Context->GetVFS(), baseDir));
 
         easyvfs_iterator iFile;
-        if (easyvfs_begin_iteration(g_Context->GetVFS(), baseDir, &iFile))
+        if (easyvfs_begin(g_Context->GetVFS(), baseDir, &iFile))
         {
-            easyvfs_file_info fi;
-            while (easyvfs_next_iteration(g_Context->GetVFS(), &iFile, &fi))
+            do
             {
-                if (!easyvfs_is_base_directory(g_Context->GetVFS(), fi.absolutePath))
+                if (!easyvfs_is_base_directory(g_Context->GetVFS(), iFile.info.absolutePath))
                 {
-                    this->OnFileInsert(fi.absolutePath);
+                    this->OnFileInsert(iFile.info.absolutePath);
 
                     // Call this function recursively if the file is a directory and is not another base directory.
-                    if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    if ((iFile.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                     {
-                        this->InsertDirectoryChildren_Recursive(fi.absolutePath);
+                        this->InsertDirectoryChildren_Recursive(iFile.info.absolutePath);
                     }
                 }
-            }
+            } while (easyvfs_next(g_Context->GetVFS(), &iFile));
         }
     }
 

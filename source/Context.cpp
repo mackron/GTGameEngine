@@ -86,6 +86,8 @@ namespace GT
         AppConfigData* pData = reinterpret_cast<AppConfigData*>(pUserData);
         assert(pData != NULL);
 
+        printf("key/value: [%s] = [%s]\n", key, value);
+
         if (strcmp(key, "BaseDirectory") == 0)
         {
             pData->pContext->AddBaseDirectoryRelativeToExe(value);
@@ -1053,7 +1055,7 @@ namespace GT
         // We will start by creating the output directory.
         if (!easyvfs_is_existing_directory(this->GetVFS(), absoluteOutputDirectory))
         {
-            if (!easyvfs_mkdir(this->GetVFS(), absoluteOutputDirectory))
+            if (!easyvfs_create_directory(this->GetVFS(), absoluteOutputDirectory))
             {
                 // Failed to create the output directory.
                 return false;

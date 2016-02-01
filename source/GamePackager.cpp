@@ -37,15 +37,14 @@ namespace GT
 
 
         easyvfs_iterator iFile;
-        if (easyvfs_begin_iteration(g_Context->GetVFS(), sourceAbsolutePath, &iFile))
+        if (easyvfs_begin(g_Context->GetVFS(), sourceAbsolutePath, &iFile))
         {
-            easyvfs_file_info fi;
-            while (easyvfs_next_iteration(g_Context->GetVFS(), &iFile, &fi))
+            do
             {
-                const char* fileAbsolutePath = fi.absolutePath;
+                const char* fileAbsolutePath = iFile.info.absolutePath;
                 const char* fileName         = easypath_file_name(fileAbsolutePath);
 
-                if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                if ((iFile.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                 {
                     // Recursive. Don't want to copy over "var" directories.
                     if (!(isRootDataDirectory && Strings::Equal<false>(fileName, "var")))
@@ -79,7 +78,7 @@ namespace GT
 
                     this->CopyFile(fileAbsolutePath, (String(destinationRelativePath) + "/" + fileName).c_str());
                 }
-            }
+            } while (easyvfs_next(g_Context->GetVFS(), &iFile));
         }
     }
 

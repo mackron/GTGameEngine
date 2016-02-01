@@ -52,7 +52,7 @@ namespace GT
         assert(callbackData != nullptr);
         {
             assert(callbackData->pFile != nullptr);
-            easyvfs_seek(callbackData->pFile, n, easyvfs_current);
+            easyvfs_seek(callbackData->pFile, n, easyvfs_origin_current);
         }
     }
 

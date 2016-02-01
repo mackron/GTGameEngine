@@ -3,7 +3,7 @@
 #include "EditorTool.hpp"
 #include <GTGE/Editor2/Editor2.hpp>
 #include <GTGE/Context.hpp>
-#include <easy_appkit/ak_gui.h>
+#include <easy_appkit/ak_tool.h>
 #include <easy_gui/easy_gui.h>
 
 namespace GT
@@ -33,7 +33,7 @@ namespace GT
         AK_EditorToolUserData userData;
         userData.pEditorTool = this;
 
-        m_pTool = ak_create_tool(m_editor.GetAKApplication(), NULL, sizeof(this), &userData);
+        m_pTool = ak_create_tool(m_editor.GetAKApplication(), NULL, "EditorTool", sizeof(this), &userData);
         if (m_pTool == NULL) {
             return false;
         }
