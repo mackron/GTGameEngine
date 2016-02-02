@@ -28,7 +28,7 @@
 #include <GTGE/Core/Vector.hpp>
 #include <GTGE/Core/Timing.hpp>
 #include <GTGE/Core/FontServer.hpp>
-#include <easy_util/easy_util.h>
+#include <dr_libs/dr_util.h>
 #include <dr_libs/dr_vfs.h>
 
 #ifdef _WIN32
@@ -55,7 +55,7 @@ namespace GT
 
 
         /// Starts up the context from a command line object.
-        bool Startup(easyutil_cmdline &cmdline);
+        bool Startup(drutil_cmdline &cmdline);
 
         /// Starts up the context from an argv style command line.
         bool Startup(int argc, char** argv);
@@ -78,7 +78,7 @@ namespace GT
         /// Retrieve a reference to the internal command line object.
         ///
         /// @return A pointer to the internal command line object.
-        easyutil_cmdline & GetCommandLine() { return m_cmdline; }
+        drutil_cmdline & GetCommandLine() { return m_cmdline; }
 
 
 
@@ -559,7 +559,7 @@ namespace GT
     private:
 
         /// The command line object.
-        easyutil_cmdline m_cmdline;
+        drutil_cmdline m_cmdline;
 
         /// The absolute path of the executable.
         char m_executableAbsolutePath[DRVFS_MAX_PATH];
@@ -630,7 +630,7 @@ namespace GT
         GameEventQueue eventQueue;
 
         /// The mutex for protecting access to the event queue.
-        easyutil_mutex eventQueueLock;
+        drutil_mutex eventQueueLock;
         
         /// A pointer to the event filter to filter events with. This can be null, in which case events will be dispatched without filtering. Defaults to null.
         GameEventFilter* eventFilter;

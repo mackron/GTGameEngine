@@ -3,7 +3,7 @@
 #include "ModelAsset_MD2.hpp"
 
 #if defined(GT_BUILD_MD2)
-#include <easy_util/easy_util.h>
+#include <dr_libs/dr_util.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

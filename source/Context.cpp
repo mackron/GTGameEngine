@@ -160,7 +160,7 @@ namespace GT
     }
 
 
-    bool Context::Startup(easyutil_cmdline &cmdline)
+    bool Context::Startup(drutil_cmdline &cmdline)
     {
         // Make the application DPI aware right at the start.
         win32_make_dpi_aware();
@@ -175,7 +175,7 @@ namespace GT
         // Parse the command line.
         CommandLineData cmdlineData;
         strcpy_s(cmdlineData.relativeLogPath, sizeof(cmdlineData.relativeLogPath), "var/logs/engine.txt");
-        easyutil_parse_cmdline(&m_cmdline, parse_cmdline_proc, &cmdlineData);
+        drutil_parse_cmdline(&m_cmdline, parse_cmdline_proc, &cmdlineData);
 
 
         // Make sure the executable's absolute path is clean for future things.
@@ -209,7 +209,7 @@ namespace GT
         cfg.pContext = this;
         cfg.pFile    = drvfs_open(m_pVFS, "config.cfg", DRVFS_READ, 0);
         if (cfg.pFile != NULL) {
-            easyutil_parse_key_value_pairs(app_config_read, app_config_pair, app_config_error, &cfg);
+            drutil_parse_key_value_pairs(app_config_read, app_config_pair, app_config_error, &cfg);
             drvfs_close(cfg.pFile);
         }
         
@@ -309,7 +309,7 @@ namespace GT
             this->guiRenderer.Startup();
 
 
-            this->eventQueueLock = easyutil_create_mutex();
+            this->eventQueueLock = drutil_create_mutex();
 
             // The main game window GUI element needs to be created. It is just a 100% x 100% invisible element off the root element.
             this->gui.Load("<div id='MainGameWindow' style='width:100%; height:100%' />");
@@ -326,7 +326,7 @@ namespace GT
             m_gameStateManager.OnLoadConfigs(*this);
 
             // This is where the user config scripts are loaded.
-            easyutil_parse_cmdline(&this->GetCommandLine(), GameCommandLineProc, this);
+            drutil_parse_cmdline(&this->GetCommandLine(), GameCommandLineProc, this);
 
 
             // Here we will set the default anistropy for textures via the texture library.
@@ -386,8 +386,8 @@ namespace GT
 
     bool Context::Startup(int argc, char** argv)
     {
-        easyutil_cmdline cmdline;
-        if (easyutil_init_cmdline(&cmdline, argc, argv))
+        drutil_cmdline cmdline;
+        if (drutil_init_cmdline(&cmdline, argc, argv))
         {
             return this->Startup(cmdline);
         }
@@ -397,8 +397,8 @@ namespace GT
 
     bool Context::Startup(const char* cmdlineWin32)
     {
-        easyutil_cmdline cmdline;
-        if (easyutil_init_cmdline_win32(&cmdline, cmdlineWin32))
+        drutil_cmdline cmdline;
+        if (drutil_init_cmdline_win32(&cmdline, cmdlineWin32))
         {
             return this->Startup(cmdline);
         }
@@ -408,7 +408,7 @@ namespace GT
 
     bool Context::Startup()
     {
-        easyutil_cmdline cmdline;
+        drutil_cmdline cmdline;
         memset(&cmdline, 0, sizeof(cmdline));
 
         return this->Startup(cmdline);
@@ -438,7 +438,7 @@ namespace GT
 
 
 
-        easyutil_delete_mutex(this->eventQueueLock);
+        drutil_delete_mutex(this->eventQueueLock);
 
 
 
@@ -497,7 +497,7 @@ namespace GT
         if (m_pLogFile != NULL)
         {
             char dateTime[64];
-            easyutil_datetime_short(easyutil_now(), dateTime, sizeof(dateTime));
+            drutil_datetime_short(drutil_now(), dateTime, sizeof(dateTime));
 
             drvfs_write_string(m_pLogFile, "[");
             drvfs_write_string(m_pLogFile, dateTime);
@@ -681,11 +681,11 @@ namespace GT
 
     void Context::SendEvent(const GameEvent &e)
     {
-        easyutil_lock_mutex(this->eventQueueLock);
+        drutil_lock_mutex(this->eventQueueLock);
         {
             this->eventQueue.Push(e);
         }
-        easyutil_unlock_mutex(this->eventQueueLock);
+        drutil_unlock_mutex(this->eventQueueLock);
     }
 
 
@@ -1199,7 +1199,7 @@ namespace GT
     bool Context::IsEditorOnCommandLine()
     {
         bool onCmdLine = false;
-        easyutil_parse_cmdline(&m_cmdline, IsEditorOnCommandLineProc, &onCmdLine);
+        drutil_parse_cmdline(&m_cmdline, IsEditorOnCommandLineProc, &onCmdLine);
 
         return onCmdLine;
     }

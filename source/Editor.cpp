@@ -1244,7 +1244,7 @@ namespace GT
 
             // The file system watcher waits for events in the background in another thread.
             //assert(m_FSWThread == nullptr);
-            //m_FSWThread = easyutil_create_thread(EditorFSWProc, this);
+            //m_FSWThread = drutil_create_thread(EditorFSWProc, this);
         }
     }
 
@@ -1259,7 +1259,7 @@ namespace GT
             drfsw_delete_context(pFSW);
 
             // The thread handle also needs to be deleted.
-            //easyutil_wait_and_delete_thread(m_FSWThread);
+            //drutil_wait_and_delete_thread(m_FSWThread);
             //m_FSWThread = NULL;
         }
     }

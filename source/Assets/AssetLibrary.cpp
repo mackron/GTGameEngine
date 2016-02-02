@@ -33,7 +33,7 @@ namespace GT
         if (m_pVFS == nullptr)
         {
             m_pVFS  = pVFS;
-            m_mutex = easyutil_create_mutex();
+            m_mutex = drutil_create_mutex();
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
             // Create and register the default allocator.
@@ -70,7 +70,7 @@ namespace GT
         m_pDefaultAssetAllocator = nullptr;
 #endif
 
-        easyutil_delete_mutex(m_mutex);
+        drutil_delete_mutex(m_mutex);
         m_mutex = nullptr;
 
         m_pVFS = nullptr;
@@ -110,7 +110,7 @@ namespace GT
 
 
         Asset* pAsset = nullptr;
-        easyutil_lock_mutex(m_mutex);
+        drutil_lock_mutex(m_mutex);
         {
             auto iExistingAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
             if (iExistingAsset == nullptr)
@@ -174,7 +174,7 @@ namespace GT
                 pAsset = iExistingAsset->value;
             }
         }
-        easyutil_unlock_mutex(m_mutex);
+        drutil_unlock_mutex(m_mutex);
 
         return pAsset;
     }
@@ -183,11 +183,11 @@ namespace GT
     {
         if (pAsset != nullptr)
         {
-            easyutil_lock_mutex(m_mutex);
+            drutil_lock_mutex(m_mutex);
             {
                 pAsset->IncrementReferenceCount();
             }
-            easyutil_unlock_mutex(m_mutex);
+            drutil_unlock_mutex(m_mutex);
         }
 
         return pAsset;
@@ -197,7 +197,7 @@ namespace GT
     {
         if (pAsset != nullptr)
         {
-            easyutil_lock_mutex(m_mutex);
+            drutil_lock_mutex(m_mutex);
             {
                 if (pAsset->DecrementReferenceCount() == 0)
                 {
@@ -222,7 +222,7 @@ namespace GT
                     }
                 }
             }
-            easyutil_unlock_mutex(m_mutex);
+            drutil_unlock_mutex(m_mutex);
         }
     }
 
@@ -241,7 +241,7 @@ namespace GT
             }
         }
 
-        easyutil_lock_mutex(m_mutex);
+        drutil_lock_mutex(m_mutex);
         {
             auto iAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
             if (iAsset != nullptr)
@@ -265,7 +265,7 @@ namespace GT
                 }
             }
         }
-        easyutil_unlock_mutex(m_mutex);
+        drutil_unlock_mutex(m_mutex);
     }
 
 

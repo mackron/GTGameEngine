@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGE/Assets/Asset.hpp>
-#include <easy_util/easy_util.h>
+#include <dr_libs/dr_util.h>
 
 namespace GT
 {

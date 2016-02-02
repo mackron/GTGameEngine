@@ -5,7 +5,7 @@
 #if defined(GT_BUILD_OBJ)
 #include <GTGE/Math.hpp>
 #include <GTGE/Core/Vector.hpp>
-#include <easy_util/easy_util.h>
+#include <dr_libs/dr_util.h>
 
 // TODO: Correctly handle "usemtl" to properly handle multiple materials.
 

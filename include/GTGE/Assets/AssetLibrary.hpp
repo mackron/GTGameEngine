@@ -8,7 +8,7 @@
 #include "../Config.hpp"
 #include "AssetTypes.hpp"
 #include <dr_libs/dr_vfs.h>
-#include <easy_util/easy_util.h>
+#include <dr_libs/dr_util.h>
 
 namespace GT
 {
@@ -113,7 +113,7 @@ namespace GT
         Dictionary<Asset*> m_loadedAssets;
 
         /// The mutex for loading and unloading assets.
-        easyutil_mutex m_mutex;
+        drutil_mutex m_mutex;
 
         
 #if defined(GT_BUILD_DEFAULT_ASSETS)

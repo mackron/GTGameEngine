@@ -91,12 +91,12 @@ namespace GT
         }
 
 
-        easyutil_delete_mutex(this->eventLock);
+        drutil_delete_mutex(this->eventLock);
     }
 
     bool GUIServer::Startup()
     {
-        this->eventLock = easyutil_create_mutex();
+        this->eventLock = drutil_create_mutex();
 
 
         // Load the defaults after setting the event handlers.
@@ -991,11 +991,11 @@ namespace GT
 
     void GUIServer::QueueEvent(GUIEvent &e)
     {
-        easyutil_lock_mutex(this->eventLock);
+        drutil_lock_mutex(this->eventLock);
         {
             this->eventQueue.Push(e);
         }
-        easyutil_unlock_mutex(this->eventLock);
+        drutil_unlock_mutex(this->eventLock);
     }
 
     void GUIServer::FocusElement(GUIElement *element)

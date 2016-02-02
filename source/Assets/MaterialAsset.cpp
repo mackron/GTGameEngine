@@ -2,7 +2,7 @@
 
 #include <GTGE/Assets/MaterialAsset.hpp>
 #include <easy_draw/easy_mtl.h>
-#include <easy_util/easy_util.h>
+#include <dr_libs/dr_util.h>
 
 namespace GT
 {
