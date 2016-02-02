@@ -91,7 +91,7 @@ namespace GT
         }
 
 
-        drutil_delete_mutex(this->eventLock);
+        dr_delete_mutex(this->eventLock);
     }
 
     bool GUIServer::Startup()
@@ -991,11 +991,11 @@ namespace GT
 
     void GUIServer::QueueEvent(GUIEvent &e)
     {
-        drutil_lock_mutex(this->eventLock);
+        dr_lock_mutex(this->eventLock);
         {
             this->eventQueue.Push(e);
         }
-        drutil_unlock_mutex(this->eventLock);
+        dr_unlock_mutex(this->eventLock);
     }
 
     void GUIServer::FocusElement(GUIElement *element)

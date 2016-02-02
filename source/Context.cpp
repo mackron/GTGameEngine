@@ -160,10 +160,10 @@ namespace GT
     }
 
 
-    bool Context::Startup(drutil_cmdline &cmdline)
+    bool Context::Startup(dr_cmdline &cmdline)
     {
         // Make the application DPI aware right at the start.
-        win32_make_dpi_aware();
+        dr_win32_make_dpi_aware();
 
         m_cmdline = cmdline;
 
@@ -175,7 +175,7 @@ namespace GT
         // Parse the command line.
         CommandLineData cmdlineData;
         strcpy_s(cmdlineData.relativeLogPath, sizeof(cmdlineData.relativeLogPath), "var/logs/engine.txt");
-        drutil_parse_cmdline(&m_cmdline, parse_cmdline_proc, &cmdlineData);
+        dr_parse_cmdline(&m_cmdline, parse_cmdline_proc, &cmdlineData);
 
 
         // Make sure the executable's absolute path is clean for future things.
@@ -209,7 +209,7 @@ namespace GT
         cfg.pContext = this;
         cfg.pFile    = drvfs_open(m_pVFS, "config.cfg", DRVFS_READ, 0);
         if (cfg.pFile != NULL) {
-            drutil_parse_key_value_pairs(app_config_read, app_config_pair, app_config_error, &cfg);
+            dr_parse_key_value_pairs(app_config_read, app_config_pair, app_config_error, &cfg);
             drvfs_close(cfg.pFile);
         }
         
@@ -326,7 +326,7 @@ namespace GT
             m_gameStateManager.OnLoadConfigs(*this);
 
             // This is where the user config scripts are loaded.
-            drutil_parse_cmdline(&this->GetCommandLine(), GameCommandLineProc, this);
+            dr_parse_cmdline(&this->GetCommandLine(), GameCommandLineProc, this);
 
 
             // Here we will set the default anistropy for textures via the texture library.
@@ -386,8 +386,8 @@ namespace GT
 
     bool Context::Startup(int argc, char** argv)
     {
-        drutil_cmdline cmdline;
-        if (drutil_init_cmdline(&cmdline, argc, argv))
+        dr_cmdline cmdline;
+        if (dr_init_cmdline(&cmdline, argc, argv))
         {
             return this->Startup(cmdline);
         }
@@ -397,8 +397,8 @@ namespace GT
 
     bool Context::Startup(const char* cmdlineWin32)
     {
-        drutil_cmdline cmdline;
-        if (drutil_init_cmdline_win32(&cmdline, cmdlineWin32))
+        dr_cmdline cmdline;
+        if (dr_init_cmdline_win32(&cmdline, cmdlineWin32))
         {
             return this->Startup(cmdline);
         }
@@ -408,7 +408,7 @@ namespace GT
 
     bool Context::Startup()
     {
-        drutil_cmdline cmdline;
+        dr_cmdline cmdline;
         memset(&cmdline, 0, sizeof(cmdline));
 
         return this->Startup(cmdline);
@@ -438,7 +438,7 @@ namespace GT
 
 
 
-        drutil_delete_mutex(this->eventQueueLock);
+        dr_delete_mutex(this->eventQueueLock);
 
 
 
@@ -497,7 +497,7 @@ namespace GT
         if (m_pLogFile != NULL)
         {
             char dateTime[64];
-            drutil_datetime_short(drutil_now(), dateTime, sizeof(dateTime));
+            dr_datetime_short(dr_now(), dateTime, sizeof(dateTime));
 
             drvfs_write_string(m_pLogFile, "[");
             drvfs_write_string(m_pLogFile, dateTime);
@@ -681,11 +681,11 @@ namespace GT
 
     void Context::SendEvent(const GameEvent &e)
     {
-        drutil_lock_mutex(this->eventQueueLock);
+        dr_lock_mutex(this->eventQueueLock);
         {
             this->eventQueue.Push(e);
         }
-        drutil_unlock_mutex(this->eventQueueLock);
+        dr_unlock_mutex(this->eventQueueLock);
     }
 
 
@@ -1199,7 +1199,7 @@ namespace GT
     bool Context::IsEditorOnCommandLine()
     {
         bool onCmdLine = false;
-        drutil_parse_cmdline(&m_cmdline, IsEditorOnCommandLineProc, &onCmdLine);
+        dr_parse_cmdline(&m_cmdline, IsEditorOnCommandLineProc, &onCmdLine);
 
         return onCmdLine;
     }

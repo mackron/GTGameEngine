@@ -326,7 +326,7 @@ namespace GT
 
         m_pArrowFont = easygui_create_font(m_editor.GetGUI(), "Segoe UI Symbol", 10, easygui_font_weight_normal, easygui_font_slant_none, 0);
         easygui_get_font_metrics(m_pArrowFont, 1, 1, &m_arrowFontMetrics);
-        easygui_get_glyph_metrics(m_pArrowFont, 1, 1, g_TreeView_ArrowFacingRightUTF32, &m_arrowGlyphMetrics);
+        easygui_get_glyph_metrics(m_pArrowFont, g_TreeView_ArrowFacingRightUTF32, 1, 1, &m_arrowGlyphMetrics);
 
 
         easygui_get_glyph_metrics(m_editor.GetSymbolFont(), g_FolderOpenedUTF32, 1, 1, &m_folderIconGlyphMetrics);

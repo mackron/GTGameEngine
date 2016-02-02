@@ -405,8 +405,8 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            unsigned int bytesRead = 0;
-            if (!drvfs_read(m_pFile, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
+            size_t bytesRead = 0;
+            if (!drvfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead))
             {
                 // Error reading.
                 bytesRead = 0;
@@ -422,8 +422,8 @@ namespace GT
 
             drvfs_uint64 readPointer = drvfs_tell(m_pFile);
 
-            unsigned int bytesRead = 0;
-            if (!drvfs_read(m_pFile, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
+            size_t bytesRead = 0;
+            if (!drvfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead))
             {
                 // Error reading.
                 return 0;

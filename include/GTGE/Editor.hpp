@@ -306,7 +306,7 @@ namespace GT
         drfsw_context* m_pFSW;
 
         /// The file system watcher thread.
-        //drutil_thread m_FSWThread;
+        //dr_thread m_FSWThread;
 
 
         /// The list of open files. This is indexed by the full, absolute file path. We need to index like this since we need to support

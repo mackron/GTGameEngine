@@ -70,7 +70,7 @@ namespace GT
         m_pDefaultAssetAllocator = nullptr;
 #endif
 
-        drutil_delete_mutex(m_mutex);
+        dr_delete_mutex(m_mutex);
         m_mutex = nullptr;
 
         m_pVFS = nullptr;
@@ -110,7 +110,7 @@ namespace GT
 
 
         Asset* pAsset = nullptr;
-        drutil_lock_mutex(m_mutex);
+        dr_lock_mutex(m_mutex);
         {
             auto iExistingAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
             if (iExistingAsset == nullptr)
@@ -174,7 +174,7 @@ namespace GT
                 pAsset = iExistingAsset->value;
             }
         }
-        drutil_unlock_mutex(m_mutex);
+        dr_unlock_mutex(m_mutex);
 
         return pAsset;
     }
@@ -183,11 +183,11 @@ namespace GT
     {
         if (pAsset != nullptr)
         {
-            drutil_lock_mutex(m_mutex);
+            dr_lock_mutex(m_mutex);
             {
                 pAsset->IncrementReferenceCount();
             }
-            drutil_unlock_mutex(m_mutex);
+            dr_unlock_mutex(m_mutex);
         }
 
         return pAsset;
@@ -197,7 +197,7 @@ namespace GT
     {
         if (pAsset != nullptr)
         {
-            drutil_lock_mutex(m_mutex);
+            dr_lock_mutex(m_mutex);
             {
                 if (pAsset->DecrementReferenceCount() == 0)
                 {
@@ -222,7 +222,7 @@ namespace GT
                     }
                 }
             }
-            drutil_unlock_mutex(m_mutex);
+            dr_unlock_mutex(m_mutex);
         }
     }
 
@@ -241,7 +241,7 @@ namespace GT
             }
         }
 
-        drutil_lock_mutex(m_mutex);
+        dr_lock_mutex(m_mutex);
         {
             auto iAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
             if (iAsset != nullptr)
@@ -265,7 +265,7 @@ namespace GT
                 }
             }
         }
-        drutil_unlock_mutex(m_mutex);
+        dr_unlock_mutex(m_mutex);
     }
 
 

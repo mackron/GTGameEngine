@@ -113,7 +113,7 @@ namespace GT
         Dictionary<Asset*> m_loadedAssets;
 
         /// The mutex for loading and unloading assets.
-        drutil_mutex m_mutex;
+        dr_mutex m_mutex;
 
         
 #if defined(GT_BUILD_DEFAULT_ASSETS)

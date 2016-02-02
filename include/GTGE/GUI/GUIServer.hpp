@@ -944,7 +944,7 @@ namespace GT
         GUIEventQueue eventQueue;
 
         /// The lock we'll use to keep access to 'eventQueue' thread-safe.
-        drutil_mutex eventLock;
+        dr_mutex eventLock;
 
 
         unsigned int viewportWidth;     //< The width of the working area.

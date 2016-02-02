@@ -55,7 +55,7 @@ namespace GT
 
 
         /// Starts up the context from a command line object.
-        bool Startup(drutil_cmdline &cmdline);
+        bool Startup(dr_cmdline &cmdline);
 
         /// Starts up the context from an argv style command line.
         bool Startup(int argc, char** argv);
@@ -78,7 +78,7 @@ namespace GT
         /// Retrieve a reference to the internal command line object.
         ///
         /// @return A pointer to the internal command line object.
-        drutil_cmdline & GetCommandLine() { return m_cmdline; }
+        dr_cmdline & GetCommandLine() { return m_cmdline; }
 
 
 
@@ -559,7 +559,7 @@ namespace GT
     private:
 
         /// The command line object.
-        drutil_cmdline m_cmdline;
+        dr_cmdline m_cmdline;
 
         /// The absolute path of the executable.
         char m_executableAbsolutePath[DRVFS_MAX_PATH];
@@ -630,7 +630,7 @@ namespace GT
         GameEventQueue eventQueue;
 
         /// The mutex for protecting access to the event queue.
-        drutil_mutex eventQueueLock;
+        dr_mutex eventQueueLock;
         
         /// A pointer to the event filter to filter events with. This can be null, in which case events will be dispatched without filtering. Defaults to null.
         GameEventFilter* eventFilter;

@@ -17,7 +17,7 @@ public:
 
     void* operator new(size_t size)
     {
-        return aligned_malloc(Alignment, size);
+        return dr_aligned_malloc(Alignment, size);
     }
     void* operator new(size_t, void* ptr)
     {
@@ -25,12 +25,12 @@ public:
     }
     void* operator new(size_t size, const std::nothrow_t &)
     {
-        return aligned_malloc(Alignment, size);
+        return dr_aligned_malloc(Alignment, size);
     }
 
     void* operator new[](size_t size)
     {
-        return aligned_malloc(Alignment, size);
+        return dr_aligned_malloc(Alignment, size);
     }
     void* operator new[](size_t, void* ptr)
     {
@@ -38,34 +38,34 @@ public:
     }
     void* operator new[](size_t size, const std::nothrow_t &)
     {
-        return aligned_malloc(Alignment, size);
+        return dr_aligned_malloc(Alignment, size);
     }
 
 
     void operator delete(void* ptr)
     {
-        aligned_free(ptr);
+        dr_aligned_free(ptr);
     }
     void operator delete(void* ptr, const std::nothrow_t &)
     {
-        aligned_free(ptr);
+        dr_aligned_free(ptr);
     }
     void operator delete(void* ptr, void*)
     {
-        aligned_free(ptr);
+        dr_aligned_free(ptr);
     }
 
     void operator delete[](void* ptr)
     {
-        aligned_free(ptr);
+        dr_aligned_free(ptr);
     }
     void operator delete[](void* ptr, const std::nothrow_t &)
     {
-        aligned_free(ptr);
+        dr_aligned_free(ptr);
     }
     void operator delete[](void* ptr, void*)
     {
-        aligned_free(ptr);
+        dr_aligned_free(ptr);
     }
 };
 
