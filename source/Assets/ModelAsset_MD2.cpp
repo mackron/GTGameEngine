@@ -267,10 +267,10 @@ namespace GT
     }
 
 
-    bool ModelAsset_MD2::Load(const char* absolutePath, easyvfs_context* pVFS)
+    bool ModelAsset_MD2::Load(const char* absolutePath, drvfs_context* pVFS)
     {
         size_t fileSize;
-        uint8_t* pFileData = reinterpret_cast<uint8_t*>(easyvfs_open_and_read_binary_file(pVFS, absolutePath, &fileSize));
+        uint8_t* pFileData = reinterpret_cast<uint8_t*>(drvfs_open_and_read_binary_file(pVFS, absolutePath, &fileSize));
         if (pFileData != nullptr)
         {
             bool result = true;
@@ -389,7 +389,7 @@ namespace GT
             }
                 
 
-            easyvfs_free(pFileData);
+            drvfs_free(pFileData);
             return result;
         }
         else

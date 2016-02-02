@@ -29,7 +29,7 @@
 #include <GTGE/Core/Timing.hpp>
 #include <GTGE/Core/FontServer.hpp>
 #include <easy_util/easy_util.h>
-#include <easy_fs/easy_vfs.h>
+#include <dr_libs/dr_vfs.h>
 
 #ifdef _WIN32
 #undef GetCommandLine
@@ -86,7 +86,7 @@ namespace GT
         // File System Management
 
         /// Retrieves a pointer to the virtual file system object.
-        easyvfs_context* GetVFS() { return m_pVFS; }
+        drvfs_context* GetVFS() { return m_pVFS; }
 
         /// Retrieves the executable's absolute file path.
         const char* GetExecutableAbsolutePath() const;
@@ -562,17 +562,17 @@ namespace GT
         easyutil_cmdline m_cmdline;
 
         /// The absolute path of the executable.
-        char m_executableAbsolutePath[EASYVFS_MAX_PATH];
+        char m_executableAbsolutePath[DRVFS_MAX_PATH];
 
         /// The absolute path of the directory of the application's executable.
-        char m_executableDirectoryAbsolutePath[EASYVFS_MAX_PATH];
+        char m_executableDirectoryAbsolutePath[DRVFS_MAX_PATH];
 
 
         /// A pointer to the object representing the virtual file system. This is where base directories are added.
-        easyvfs_context* m_pVFS;
+        drvfs_context* m_pVFS;
 
         /// The log file.
-        easyvfs_file* m_pLogFile;
+        drvfs_file* m_pLogFile;
 
 
         /// A pointer to the easy_audio context for audio playback.

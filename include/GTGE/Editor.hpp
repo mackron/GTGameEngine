@@ -10,7 +10,7 @@
 #include "Editor/ParticleEditor/ParticleEditor.hpp"
 #include "Editor/TextEditor/TextEditor.hpp"
 #include "Editor/PackagingToolEditor/PackagingToolEditor.hpp"
-#include <easy_fs/easy_fsw.h>
+#include <dr_libs/dr_fsw.h>
 
 namespace GT
 {
@@ -263,7 +263,7 @@ namespace GT
 
 
         /// Retrieves a pointer to the internal file system watcher.
-        easyfsw_context* GetFSW() { return m_pFSW; }
+        drfsw_context* GetFSW() { return m_pFSW; }
 
 
 
@@ -303,7 +303,7 @@ namespace GT
         Context &context;
 
         /// A pointer to the file system watcher.
-        easyfsw_context* m_pFSW;
+        drfsw_context* m_pFSW;
 
         /// The file system watcher thread.
         //easyutil_thread m_FSWThread;

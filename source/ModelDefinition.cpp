@@ -33,8 +33,8 @@ namespace GT
 
     bool ModelDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn, bool &needsSerialize)
     {
-        char newAbsolutePath[EASYVFS_MAX_PATH];
-        char newRelativePath[EASYVFS_MAX_PATH];
+        char newAbsolutePath[DRVFS_MAX_PATH];
+        char newRelativePath[DRVFS_MAX_PATH];
 
         if (easypath_is_absolute(fileNameIn))
         {
@@ -54,14 +54,14 @@ namespace GT
         {
             strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
+            if (drvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-        char nativeAbsolutePath[EASYVFS_MAX_PATH];
+        char nativeAbsolutePath[DRVFS_MAX_PATH];
         if (easypath_extension_equal(newAbsolutePath, "gtmodel"))
         {
             strcpy_s(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath);
@@ -79,11 +79,11 @@ namespace GT
 
         // We need file info of both the foreign and native files. If the foreign file is different to the file that would used to generate
         // the existing native file, it will be reloaded.
-        easyvfs_file_info foreignFileInfo;
-        bool foreignFileExists = easyvfs_get_file_info(g_Context->GetVFS(), newAbsolutePath, &foreignFileInfo);
+        drvfs_file_info foreignFileInfo;
+        bool foreignFileExists = drvfs_get_file_info(g_Context->GetVFS(), newAbsolutePath, &foreignFileInfo);
 
-        easyvfs_file_info nativeFileInfo;
-        bool nativeFileExists = easyvfs_get_file_info(g_Context->GetVFS(), nativeAbsolutePath, &nativeFileInfo);
+        drvfs_file_info nativeFileInfo;
+        bool nativeFileExists = drvfs_get_file_info(g_Context->GetVFS(), nativeAbsolutePath, &nativeFileInfo);
 
         if (!foreignFileExists && !nativeFileExists)
         {
@@ -1141,13 +1141,13 @@ namespace GT
         // When loading from a native file, all we need to do is deserialize.
         bool successful = false;
 
-        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), absolutePathIn.c_str(), EASYVFS_READ, 0);
+        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), absolutePathIn.c_str(), DRVFS_READ, 0);
         if (pFile != nullptr)
         {
             FileDeserializer deserializer(pFile);
             successful = this->Deserialize(deserializer);
 
-            easyvfs_close(pFile);
+            drvfs_close(pFile);
         }
 
         return successful;

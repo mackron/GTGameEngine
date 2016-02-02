@@ -7,7 +7,7 @@
 #include <GTGE/Core/Dictionary.hpp>
 #include "../Config.hpp"
 #include "AssetTypes.hpp"
-#include <easy_fs/easy_vfs.h>
+#include <dr_libs/dr_vfs.h>
 #include <easy_util/easy_util.h>
 
 namespace GT
@@ -37,14 +37,14 @@ namespace GT
 
 
         /// Starts up the asset library.
-        bool Startup(easyvfs_context* pVFS);
+        bool Startup(drvfs_context* pVFS);
 
         /// Shuts down the asset library.
         void Shutdown();
 
 
         /// Retrieves a reference to the asset library that is being used to load the asset files.
-        easyvfs_context* GetVFS() const;
+        drvfs_context* GetVFS() const;
 
 
         /// Loads an asset using the give file path.
@@ -104,7 +104,7 @@ namespace GT
     private:
 
         /// A pointer to the file system to use when loading and unloading assets.
-        easyvfs_context* m_pVFS;
+        drvfs_context* m_pVFS;
 
         /// The list of allocators.
         Vector<AssetAllocator*> m_allocators;

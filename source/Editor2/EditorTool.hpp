@@ -4,7 +4,7 @@
 #define GT_EditorTool
 
 typedef struct easygui_element easygui_element;
-typedef struct easyvfs_context easyvfs_context;
+typedef struct drvfs_context drvfs_context;
 
 namespace GT
 {
@@ -40,7 +40,7 @@ namespace GT
         Editor2 & GetEditor() { return m_editor; }
 
         /// Retrieves a pointer to the virtual file system.
-        easyvfs_context* GetVFS();
+        drvfs_context* GetVFS();
 
         /// Retrieves a pointer to the easy_appkit tool.
         easygui_element* GetAKTool() { return m_pTool; }

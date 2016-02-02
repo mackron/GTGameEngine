@@ -12,20 +12,20 @@
 #include <GTGE/Core/Keyboard.hpp>
 #include <GTGE/Core/WindowManagement.hpp>
 #include <easy_path/easy_path.h>
-#include <easy_fs/easy_vfs.h>
+#include <dr_libs/dr_vfs.h>
 
 namespace GT
 {
     typedef struct
     {
         /// The absolute path of the executable's directory.
-        char absoluteExeDirPath[EASYVFS_MAX_PATH];
+        char absoluteExeDirPath[DRVFS_MAX_PATH];
 
         /// The relative executable path.
-        char absoluteExePath[EASYVFS_MAX_PATH];
+        char absoluteExePath[DRVFS_MAX_PATH];
 
         /// The relative path of the log file.
-        char relativeLogPath[EASYVFS_MAX_PATH];
+        char relativeLogPath[DRVFS_MAX_PATH];
 
     } CommandLineData;
 
@@ -37,7 +37,7 @@ namespace GT
 
         if (strcmp(key, "[path]") == 0)
         {
-            char exeDirectoryPath[EASYVFS_MAX_PATH];
+            char exeDirectoryPath[DRVFS_MAX_PATH];
             easypath_copy_base_path(value, exeDirectoryPath, sizeof(exeDirectoryPath));
 
             _chdir(exeDirectoryPath);
@@ -64,7 +64,7 @@ namespace GT
         Context* pContext;
 
         /// A pointer to the file to read the config data from.
-        easyvfs_file* pFile;
+        drvfs_file* pFile;
 
     } AppConfigData;
 
@@ -74,7 +74,7 @@ namespace GT
         assert(pData != NULL);
 
         unsigned int bytesRead;
-        if (easyvfs_read(pData->pFile, pDataOut, bytesToRead, &bytesRead)) {
+        if (drvfs_read(pData->pFile, pDataOut, bytesToRead, &bytesRead)) {
             return bytesRead;
         }
 
@@ -169,7 +169,7 @@ namespace GT
 
 
         // We need to initialize the virtual file system early so we can do things like create logs and cache files.
-        m_pVFS = easyvfs_create_context();
+        m_pVFS = drvfs_create_context();
 
 
         // Parse the command line.
@@ -183,15 +183,15 @@ namespace GT
         easypath_clean(cmdlineData.absoluteExePath, m_executableAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
 
         // The directory containing the executable needs to be the lowest-priority base path.
-        easyvfs_add_base_directory(m_pVFS, m_executableDirectoryAbsolutePath);
+        drvfs_add_base_directory(m_pVFS, m_executableDirectoryAbsolutePath);
             
 
 
         // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
-        char logpath[EASYVFS_MAX_PATH];
+        char logpath[DRVFS_MAX_PATH];
         easypath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
 
-        m_pLogFile = easyvfs_open(m_pVFS, logpath, EASYVFS_WRITE, 0);
+        m_pLogFile = drvfs_open(m_pVFS, logpath, DRVFS_WRITE, 0);
         if (m_pLogFile == NULL) {
             printf("WARNING: Failed to open log file.\n");
         }
@@ -207,10 +207,10 @@ namespace GT
         // the game will use defaults.
         AppConfigData cfg;
         cfg.pContext = this;
-        cfg.pFile    = easyvfs_open(m_pVFS, "config.cfg", EASYVFS_READ, 0);
+        cfg.pFile    = drvfs_open(m_pVFS, "config.cfg", DRVFS_READ, 0);
         if (cfg.pFile != NULL) {
             easyutil_parse_key_value_pairs(app_config_read, app_config_pair, app_config_error, &cfg);
-            easyvfs_close(cfg.pFile);
+            drvfs_close(cfg.pFile);
         }
         
 
@@ -480,10 +480,10 @@ namespace GT
 
     void Context::AddBaseDirectoryRelativeToExe(const char* relativePath)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         easypath_to_absolute(relativePath, this->GetExecutableDirectoryAbsolutePath(), absolutePath, sizeof(absolutePath));
 
-        easyvfs_insert_base_directory(m_pVFS, absolutePath, easyvfs_get_base_directory_count(m_pVFS) - 1);
+        drvfs_insert_base_directory(m_pVFS, absolutePath, drvfs_get_base_directory_count(m_pVFS) - 1);
     }
 
 
@@ -499,11 +499,11 @@ namespace GT
             char dateTime[64];
             easyutil_datetime_short(easyutil_now(), dateTime, sizeof(dateTime));
 
-            easyvfs_write_string(m_pLogFile, "[");
-            easyvfs_write_string(m_pLogFile, dateTime);
-            easyvfs_write_string(m_pLogFile, "]");
-            easyvfs_write_line  (m_pLogFile, message);
-            easyvfs_flush(m_pLogFile);
+            drvfs_write_string(m_pLogFile, "[");
+            drvfs_write_string(m_pLogFile, dateTime);
+            drvfs_write_string(m_pLogFile, "]");
+            drvfs_write_line  (m_pLogFile, message);
+            drvfs_flush(m_pLogFile);
         }
 
         // Post to the terminal.
@@ -1049,13 +1049,13 @@ namespace GT
 
     bool Context::PackageForDistribution(const char* outputDirectory, const char* executableName)
     {
-        char absoluteOutputDirectory[EASYVFS_MAX_PATH];
+        char absoluteOutputDirectory[DRVFS_MAX_PATH];
         easypath_copy_and_append(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), this->GetExecutableDirectoryAbsolutePath(), outputDirectory);
 
         // We will start by creating the output directory.
-        if (!easyvfs_is_existing_directory(this->GetVFS(), absoluteOutputDirectory))
+        if (!drvfs_is_existing_directory(this->GetVFS(), absoluteOutputDirectory))
         {
-            if (!easyvfs_create_directory(this->GetVFS(), absoluteOutputDirectory))
+            if (!drvfs_create_directory(this->GetVFS(), absoluteOutputDirectory))
             {
                 // Failed to create the output directory.
                 return false;
@@ -1066,10 +1066,10 @@ namespace GT
 
 
         // We will start by copying over the data directories, not including the executable directory.
-        assert(easyvfs_get_base_directory_count(this->GetVFS()) > 0);
-        for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(this->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
+        assert(drvfs_get_base_directory_count(this->GetVFS()) > 0);
+        for (unsigned int iBaseDir = 0; iBaseDir < drvfs_get_base_directory_count(this->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
         {
-            packager.CopyDataDirectory(easyvfs_get_base_directory_by_index(this->GetVFS(), iBaseDir));
+            packager.CopyDataDirectory(drvfs_get_base_directory_by_index(this->GetVFS(), iBaseDir));
         }
 
 
@@ -1143,13 +1143,13 @@ namespace GT
 
     bool Context::SaveGameState(const char* destinationFilePath)
     {
-        easyvfs_file* pFile = easyvfs_open(this->GetVFS(), destinationFilePath, EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
+        drvfs_file* pFile = drvfs_open(this->GetVFS(), destinationFilePath, DRVFS_WRITE | DRVFS_CREATE_DIRS, 0);
         if (pFile != nullptr)
         {
             FileSerializer serializer(pFile);
             bool result = this->SerializeGameState(serializer);
 
-            easyvfs_close(pFile);
+            drvfs_close(pFile);
             return result;
         }
 
@@ -1158,13 +1158,13 @@ namespace GT
 
     bool Context::LoadGameState(const char* sourceFilePath)
     {
-        easyvfs_file* pFile = easyvfs_open(this->GetVFS(), sourceFilePath, EASYVFS_READ, 0);
+        drvfs_file* pFile = drvfs_open(this->GetVFS(), sourceFilePath, DRVFS_READ, 0);
         if (pFile != nullptr)
         {
             FileDeserializer deserializer(pFile);
             bool result = this->DeserializeGameState(deserializer);
 
-            easyvfs_close(pFile);
+            drvfs_close(pFile);
             return result;
         }
 

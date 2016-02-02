@@ -21,8 +21,8 @@ namespace GT
 
     bool ParticleSystemDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn)
     {
-        char newAbsolutePath[EASYVFS_MAX_PATH];
-        char newRelativePath[EASYVFS_MAX_PATH];
+        char newAbsolutePath[DRVFS_MAX_PATH];
+        char newRelativePath[DRVFS_MAX_PATH];
 
 
         if (easypath_is_absolute(fileNameIn))
@@ -43,14 +43,14 @@ namespace GT
         {
             strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
+            if (drvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), newAbsolutePath, EASYVFS_READ, 0);
+        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), newAbsolutePath, DRVFS_READ, 0);
         if (pFile != nullptr)
         {
             FileDeserializer deserializer(pFile);
@@ -60,7 +60,7 @@ namespace GT
             this->absolutePath = newAbsolutePath;
             this->relativePath = newRelativePath;
 
-            easyvfs_close(pFile);
+            drvfs_close(pFile);
             return true;
         }
 

@@ -164,9 +164,9 @@ namespace GT
             this->StartupFileSystemWatcher();
 
             // We need to iterate over every file and folder in each base directory and make the editor aware of it.
-            for (unsigned int iBaseDir = 0; iBaseDir < easyvfs_get_base_directory_count(g_Context->GetVFS()); ++iBaseDir)
+            for (unsigned int iBaseDir = 0; iBaseDir < drvfs_get_base_directory_count(g_Context->GetVFS()); ++iBaseDir)
             {
-                const char* baseDir = easyvfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir);
+                const char* baseDir = drvfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir);
                 assert(baseDir != nullptr);
 
                 this->InsertDirectoryChildren_Recursive(baseDir);
@@ -198,8 +198,8 @@ namespace GT
 
 
         // We need to make sure we have an absolute and relative path.
-        char absolutePath[EASYVFS_MAX_PATH];
-        char relativePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
+        char relativePath[DRVFS_MAX_PATH];
 
         if (!isSpecialEditor)
         {
@@ -219,7 +219,7 @@ namespace GT
             else
             {
                 // The file needs to exist. If it doesn't, we need to return false.
-                if (easyvfs_find_absolute_path(g_Context->GetVFS(), path, absolutePath, sizeof(absolutePath)))
+                if (drvfs_find_absolute_path(g_Context->GetVFS(), path, absolutePath, sizeof(absolutePath)))
                 {
                     strcpy_s(relativePath, sizeof(relativePath), path);
                 }
@@ -228,10 +228,10 @@ namespace GT
                     // The file might have an associated .gtmodel file. We'll let it pass if so.
                     if (GT::IsSupportedModelExtension(path))
                     {
-                        char pathWithExt[EASYVFS_MAX_PATH];
+                        char pathWithExt[DRVFS_MAX_PATH];
                         easypath_copy_and_append_extension(pathWithExt, sizeof(pathWithExt), path, "gtmodel");
 
-                        if (easyvfs_find_absolute_path(g_Context->GetVFS(), pathWithExt, absolutePath, sizeof(absolutePath))) {
+                        if (drvfs_find_absolute_path(g_Context->GetVFS(), pathWithExt, absolutePath, sizeof(absolutePath))) {
                             strcpy_s(relativePath, sizeof(relativePath), path);
                         }
                     }
@@ -260,15 +260,15 @@ namespace GT
             if (!isSpecialEditor)
             {
                 // We'll check if the file exists from here.
-                if (!easyvfs_is_existing_file(g_Context->GetVFS(), absolutePath))
+                if (!drvfs_is_existing_file(g_Context->GetVFS(), absolutePath))
                 {
                     // The file doesn't exist, but it might be a model so we'll need to check if it's got an associated .gtmodel file.
                     if (GT::IsSupportedModelExtension(absolutePath))
                     {
-                        char absolutePathWithExt[EASYVFS_MAX_PATH];
+                        char absolutePathWithExt[DRVFS_MAX_PATH];
                         easypath_copy_and_append_extension(absolutePathWithExt, sizeof(absolutePathWithExt), absolutePath, "gtmodel");
 
-                        if (!easyvfs_is_existing_file(g_Context->GetVFS(), absolutePathWithExt))
+                        if (!drvfs_is_existing_file(g_Context->GetVFS(), absolutePathWithExt))
                         {
                             g_Context->LogErrorf("Editor: Can not open model file '%s'. Associated .gtmodel file does not exist.\n", path);
                             return nullptr;
@@ -371,7 +371,7 @@ namespace GT
 
     void Editor::CloseFile(const char* path, const char* relativeTo)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -413,7 +413,7 @@ namespace GT
 
     void Editor::ForceCloseFile(const char* path, const char* relativeTo)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -492,7 +492,7 @@ namespace GT
 
     bool Editor::ShowFile(const char* path, const char* relativeTo)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -590,7 +590,7 @@ namespace GT
 
     bool Editor::SaveFile(const char* path, const char* relativeTo)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -655,7 +655,7 @@ namespace GT
 
     void Editor::MarkFileAsModified(const char* path, const char* relativeTo)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -689,7 +689,7 @@ namespace GT
 
     void Editor::UnmarkFileAsModified(const char* path, const char* relativeTo)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -724,7 +724,7 @@ namespace GT
 
     bool Editor::IsFileMarkedAsModified(const char* path, const char* relativeTo)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -814,7 +814,7 @@ namespace GT
 
     GUIElement* Editor::GetFileEditorElement(const char* path, const char* relativeTo)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -850,15 +850,15 @@ namespace GT
     void Editor::Update(double deltaTimeInSeconds)
     {
         // Check for changes to the file system.
-        easyfsw_event e;
-        while (easyfsw_peek_event(m_pFSW, &e))
+        drfsw_event e;
+        while (drfsw_peek_event(m_pFSW, &e))
         {
             switch (e.type)
             {
-                case easyfsw_event_type_created: this->OnFileInsert(e.absolutePath); break;
-                case easyfsw_event_type_deleted: this->OnFileRemove(e.absolutePath); break;
-                case easyfsw_event_type_renamed: this->OnFileRename(e.absolutePath, e.absolutePathNew); break;
-                case easyfsw_event_type_updated: this->OnFileUpdate(e.absolutePath); break;
+                case drfsw_event_type_created: this->OnFileInsert(e.absolutePath); break;
+                case drfsw_event_type_deleted: this->OnFileRemove(e.absolutePath); break;
+                case drfsw_event_type_renamed: this->OnFileRename(e.absolutePath, e.absolutePathNew); break;
+                case drfsw_event_type_updated: this->OnFileUpdate(e.absolutePath); break;
                 default: break;
             }
         }
@@ -1031,7 +1031,7 @@ namespace GT
     void Editor::OnFileUpdate(const char* absolutePath)
     {
         // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
-        if (!easyvfs_is_existing_directory(g_Context->GetVFS(), absolutePath))
+        if (!drvfs_is_existing_directory(g_Context->GetVFS(), absolutePath))
         {
             // It's not a directory.
 
@@ -1180,24 +1180,24 @@ namespace GT
 
     void Editor::InsertDirectoryChildren_Recursive(const char* baseDir)
     {
-        assert(easyvfs_is_existing_directory(g_Context->GetVFS(), baseDir));
+        assert(drvfs_is_existing_directory(g_Context->GetVFS(), baseDir));
 
-        easyvfs_iterator iFile;
-        if (easyvfs_begin(g_Context->GetVFS(), baseDir, &iFile))
+        drvfs_iterator iFile;
+        if (drvfs_begin(g_Context->GetVFS(), baseDir, &iFile))
         {
             do
             {
-                if (!easyvfs_is_base_directory(g_Context->GetVFS(), iFile.info.absolutePath))
+                if (!drvfs_is_base_directory(g_Context->GetVFS(), iFile.info.absolutePath))
                 {
                     this->OnFileInsert(iFile.info.absolutePath);
 
                     // Call this function recursively if the file is a directory and is not another base directory.
-                    if ((iFile.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    if ((iFile.info.attributes & DRVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                     {
                         this->InsertDirectoryChildren_Recursive(iFile.info.absolutePath);
                     }
                 }
-            } while (easyvfs_next(g_Context->GetVFS(), &iFile));
+            } while (drvfs_next(g_Context->GetVFS(), &iFile));
         }
     }
 
@@ -1208,18 +1208,18 @@ namespace GT
         Editor* pEditor = reinterpret_cast<Editor*>(pData);
         assert(pEditor != nullptr);
 
-        easyfsw_context* pFSW = pEditor->GetFSW();
+        drfsw_context* pFSW = pEditor->GetFSW();
         assert(pFSW != nullptr);
 
-        easyfsw_event e;
-        while (pFSW != NULL && easyfsw_next_event(pFSW, &e))
+        drfsw_event e;
+        while (pFSW != NULL && drfsw_next_event(pFSW, &e))
         {
             switch (e.type)
             {
-                case easyfsw_event_type_created: pEditor->OnFileInsert(e.absolutePath); break;
-                case easyfsw_event_type_deleted: pEditor->OnFileRemove(e.absolutePath); break;
-                case easyfsw_event_type_renamed: pEditor->OnFileRename(e.absolutePath, e.absolutePathNew); break;
-                case easyfsw_event_type_updated: pEditor->OnFileUpdate(e.absolutePath); break;
+                case drfsw_event_type_created: pEditor->OnFileInsert(e.absolutePath); break;
+                case drfsw_event_type_deleted: pEditor->OnFileRemove(e.absolutePath); break;
+                case drfsw_event_type_renamed: pEditor->OnFileRename(e.absolutePath, e.absolutePathNew); break;
+                case drfsw_event_type_updated: pEditor->OnFileUpdate(e.absolutePath); break;
                 default: break;
             }
         }
@@ -1233,12 +1233,12 @@ namespace GT
         // Don't do anything if the file system watcher has already been initialized.
         if (m_pFSW == NULL)
         {
-            m_pFSW = easyfsw_create_context();
+            m_pFSW = drfsw_create_context();
 
             // We add the base directories based ont he virtual file system.
-            for (unsigned int i = 0; i < easyvfs_get_base_directory_count(g_Context->GetVFS()); ++i)
+            for (unsigned int i = 0; i < drvfs_get_base_directory_count(g_Context->GetVFS()); ++i)
             {
-                easyfsw_add_directory(m_pFSW, easyvfs_get_base_directory_by_index(g_Context->GetVFS(), i));
+                drfsw_add_directory(m_pFSW, drvfs_get_base_directory_by_index(g_Context->GetVFS(), i));
             }
 
 
@@ -1252,11 +1252,11 @@ namespace GT
     {
         if (m_pFSW != NULL)
         {
-            easyfsw_context* pFSW = m_pFSW;
+            drfsw_context* pFSW = m_pFSW;
             m_pFSW = NULL;
             
             // Deleting the context will cause the FSW thread to terminate.
-            easyfsw_delete_context(pFSW);
+            drfsw_delete_context(pFSW);
 
             // The thread handle also needs to be deleted.
             //easyutil_wait_and_delete_thread(m_FSWThread);

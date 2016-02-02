@@ -33,8 +33,8 @@ namespace GT
 
     void PrefabComponent::SetPrefabRelativePath(const char* relativePath)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(g_Context->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
+        char absolutePath[DRVFS_MAX_PATH];
+        if (!drvfs_find_absolute_path(g_Context->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
             g_Context->LogWarning("Could not find absolute path of prefab.");
         }
 

@@ -40,8 +40,8 @@ namespace GT
         /// Retrieves a pointer to the internal GUI context.
         easygui_context* GetGUI();
 
-        /// Retrieves a pointer to the context's easyvfs_context object. 
-        easyvfs_context* GetVFS();
+        /// Retrieves a pointer to the context's drvfs_context object. 
+        drvfs_context* GetVFS();
 
         /// Retrieves a pointer to the internal easy_appkit application.
         ak_application* GetAKApplication();

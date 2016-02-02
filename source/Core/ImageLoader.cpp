@@ -24,8 +24,8 @@ namespace GT
         : fileName(fileNameIn), absolutePath()
     {
         // We need to find the absolute path.
-        char absolutePathTemp[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, absolutePathTemp, sizeof(absolutePathTemp))) {
+        char absolutePathTemp[DRVFS_MAX_PATH];
+        if (drvfs_find_absolute_path(g_Context->GetVFS(), fileNameIn, absolutePathTemp, sizeof(absolutePathTemp))) {
             this->absolutePath = absolutePathTemp;
         }
     }

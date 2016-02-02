@@ -125,7 +125,7 @@ namespace GT
         return ak_get_application_gui(m_pApplication);
     }
 
-    easyvfs_context* Editor2::GetVFS()
+    drvfs_context* Editor2::GetVFS()
     {
         return m_context.GetVFS();
     }

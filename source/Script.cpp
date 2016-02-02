@@ -269,16 +269,16 @@ namespace GT
         lua_close(LUA_STATE);
     }
 
-    bool Script::LoadFile(easyvfs_context* pVFS, const char* fileName)
+    bool Script::LoadFile(drvfs_context* pVFS, const char* fileName)
     {
         // We don't use Lua's built in file loading API. Instead we use our own virtual file system.
 
-        char* pFileData = easyvfs_open_and_read_text_file(pVFS, fileName, nullptr);
+        char* pFileData = drvfs_open_and_read_text_file(pVFS, fileName, nullptr);
         if (pFileData != nullptr)
         {
             bool retValue = this->Load(pFileData, fileName);
 
-            easyvfs_free(pFileData);
+            drvfs_free(pFileData);
             return retValue;
         }
         else
@@ -353,7 +353,7 @@ namespace GT
         return this->LoadBinary(script, size, name) && this->Execute(returnValueCount);
     }
 
-    bool Script::LoadFileAndExecute(easyvfs_context* pVFS, const char* filename, int returnValueCount)
+    bool Script::LoadFileAndExecute(drvfs_context* pVFS, const char* filename, int returnValueCount)
     {
         return this->LoadFile(pVFS, filename) && this->Execute(returnValueCount);
     }

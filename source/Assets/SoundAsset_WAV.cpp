@@ -14,14 +14,14 @@ namespace GT
 
     SoundAsset_WAV::~SoundAsset_WAV()
     {
-        easyvfs_free(m_dataInfo.pData);
+        drvfs_free(m_dataInfo.pData);
     }
 
 
-    bool SoundAsset_WAV::Load(const char* absolutePath, easyvfs_context* pVFS)
+    bool SoundAsset_WAV::Load(const char* absolutePath, drvfs_context* pVFS)
     {
         // For now we are just going to load a streamer and retrieve the information about the buffer. Later on we'll clean this up and do it properly.
-        m_dataInfo.pData = easyvfs_open_and_read_binary_file(pVFS, absolutePath, &m_dataInfo.sizeInBytes);
+        m_dataInfo.pData = drvfs_open_and_read_binary_file(pVFS, absolutePath, &m_dataInfo.sizeInBytes);
         if (m_dataInfo.pData != nullptr)
         {
             SoundStreamer_WAV streamer(m_dataInfo.pData, m_dataInfo.sizeInBytes);

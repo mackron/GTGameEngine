@@ -127,8 +127,8 @@ namespace GT
 
     ScriptDefinition* ScriptComponent::GetScriptDefinitionByRelativePath(const char* relativePath, size_t &indexOut)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(g_Context->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
+        char absolutePath[DRVFS_MAX_PATH];
+        if (!drvfs_find_absolute_path(g_Context->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
             return nullptr;
         }
 

@@ -317,7 +317,7 @@ namespace GT
 
     bool Scene::LoadFromFile(const char* relativeFilePath)
     {
-        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), relativeFilePath, EASYVFS_READ, 0);
+        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), relativeFilePath, DRVFS_READ, 0);
         if (pFile != nullptr)
         {
             bool result = false;
@@ -325,7 +325,7 @@ namespace GT
             FileDeserializer deserializer(pFile);
             result = this->Deserialize(deserializer);
 
-            easyvfs_close(pFile);
+            drvfs_close(pFile);
             return result;
         }
 

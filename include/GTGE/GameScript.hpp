@@ -6,7 +6,7 @@
 #include <GTGE/Script.hpp>
 #include <GTGE/Core/String.hpp>
 #include <GTGE/Core/Vector.hpp>
-#include <easy_fs/easy_vfs.h>
+#include <dr_libs/dr_vfs.h>
 
 namespace GT
 {
@@ -41,7 +41,7 @@ namespace GT
         ///     This is a special implementation that keeps track of the file so we can do auto-reloading.
         ///     @par
         ///     This will also look for the absolute path using the search directories system.
-        bool LoadFile(easyvfs_context* pVFS, const char* fileName);
+        bool LoadFile(drvfs_context* pVFS, const char* fileName);
 
 
         /// Retrieves a reference to the game object that owns this environment.

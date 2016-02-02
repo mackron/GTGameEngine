@@ -32,7 +32,7 @@ namespace GT
 
 
         /// @copydoc ModelAsset::Load()
-        bool Load(const char* absolutePath, easyvfs_context* pContext);
+        bool Load(const char* absolutePath, drvfs_context* pContext);
 
 
         /// @copydoc ModelAsset::GetMeshCount()

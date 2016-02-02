@@ -44,7 +44,7 @@ namespace GT
 
     Prefab* PrefabLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
     {
-        char relativePath[EASYVFS_MAX_PATH];
+        char relativePath[DRVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (easypath_is_absolute(fileName))
@@ -61,14 +61,14 @@ namespace GT
         }
 
 
-        char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRVFS_MAX_PATH];
+        if (drvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             auto iLoadedPrefab = m_loadedPrefabs.Find(absolutePath);
             if (iLoadedPrefab == nullptr)
             {
                 // Does not exist. Needs to be loaded.
-                easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), absolutePath, EASYVFS_READ, 0);
+                drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), absolutePath, DRVFS_READ, 0);
                 if (pFile != nullptr)
                 {
                     FileDeserializer deserializer(pFile);
@@ -78,7 +78,7 @@ namespace GT
 
                     m_loadedPrefabs.Add(absolutePath, PrefabReference(newPrefab, 1));
 
-                    easyvfs_close(pFile);
+                    drvfs_close(pFile);
                     return newPrefab;
                 }
                 else

@@ -45,7 +45,7 @@ namespace GT
         int textLength;
 
         /// The absolute path of the file or directory.
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
 
         /// Whether or not the mouse is over the arrow.
         bool isMouseOverArrow;
@@ -360,11 +360,11 @@ namespace GT
 
 
         // The base directories needs to be added first.
-        for (unsigned int iBasePath = 0; iBasePath < easyvfs_get_base_directory_count(this->GetVFS()); ++iBasePath)
+        for (unsigned int iBasePath = 0; iBasePath < drvfs_get_base_directory_count(this->GetVFS()); ++iBasePath)
         {
             AssetExplorerItemData itemData;
             
-            easypath_to_relative(easyvfs_get_base_directory_by_index(this->GetVFS(), iBasePath), m_editor.GetContext().GetExecutableDirectoryAbsolutePath(), itemData.text, sizeof(itemData.text));
+            easypath_to_relative(drvfs_get_base_directory_by_index(this->GetVFS(), iBasePath), m_editor.GetContext().GetExecutableDirectoryAbsolutePath(), itemData.text, sizeof(itemData.text));
             if (itemData.text[0] == '\0') {
                 strcpy_s(itemData.text, sizeof(itemData.text), "[root]");
             }
@@ -373,7 +373,7 @@ namespace GT
             itemData.width = this->CalculateItemWidth(itemData.text);
             itemData.isMouseOverArrow = false;
             itemData.isDirectory = true;
-            strcpy_s(itemData.absolutePath, sizeof(itemData.absolutePath), easyvfs_get_base_directory_by_index(this->GetVFS(), iBasePath));
+            strcpy_s(itemData.absolutePath, sizeof(itemData.absolutePath), drvfs_get_base_directory_by_index(this->GetVFS(), iBasePath));
 
             tv_create_item(m_pTV, NULL, sizeof(itemData), &itemData);
 
@@ -449,7 +449,7 @@ namespace GT
                 if (easypath_is_descendant(absolutePath, pItemData->absolutePath))
                 {
                     // The new item is a descendant of this base directory - we now need to build each item segment by segment.
-                    char relativePath[EASYVFS_MAX_PATH];
+                    char relativePath[DRVFS_MAX_PATH];
                     if (easypath_to_relative(absolutePath, pItemData->absolutePath, relativePath, sizeof(relativePath)))
                     {
                         eg_tree_view_item* pNewItem = pItem;
@@ -457,7 +457,7 @@ namespace GT
                         easypath_iterator iseg = easypath_first(relativePath);
                         while (easypath_next(&iseg))
                         {
-                            char segment[EASYVFS_MAX_PATH];
+                            char segment[DRVFS_MAX_PATH];
                             strncpy_s(segment, sizeof(segment), iseg.path + iseg.segment.offset, iseg.segment.length);
 
                             pNewItem = this->InsertChildItem(pNewItem, segment);
@@ -593,7 +593,7 @@ namespace GT
         AssetExplorerItemData* pParentData = reinterpret_cast<AssetExplorerItemData*>(tvi_get_extra_data(pParentItem));
         assert(pParentData != NULL);
 
-        char absolutePath[EASYVFS_MAX_PATH];
+        char absolutePath[DRVFS_MAX_PATH];
         easypath_copy_and_append(absolutePath, sizeof(absolutePath), pParentData->absolutePath, relativePath);
         
 
@@ -618,7 +618,7 @@ namespace GT
         itemData.textLength = strlen(itemData.text);
         itemData.width = this->CalculateItemWidth(itemData.text);
         itemData.isMouseOverArrow = false;
-        itemData.isDirectory = easyvfs_is_existing_directory(this->GetVFS(), absolutePath);
+        itemData.isDirectory = drvfs_is_existing_directory(this->GetVFS(), absolutePath);
         strcpy_s(itemData.absolutePath, sizeof(itemData.absolutePath), absolutePath);
 
         eg_tree_view_item* pNewItem = tv_create_item(tvi_get_tree_view_element(pParentItem), pParentItem, sizeof(itemData), &itemData);
@@ -636,12 +636,12 @@ namespace GT
 
 
         // Children.
-        easyvfs_iterator iFile;
-        if (easyvfs_begin(this->GetVFS(), absolutePath, &iFile))
+        drvfs_iterator iFile;
+        if (drvfs_begin(this->GetVFS(), absolutePath, &iFile))
         {
             do
             {
-                if ((iFile.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                if ((iFile.info.attributes & DRVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                 {
                     this->InsertDirectoryRecursive(iFile.info.absolutePath);
                 }
@@ -649,7 +649,7 @@ namespace GT
                 {
                     this->InsertChildItem(pDirItem, easypath_file_name(iFile.info.absolutePath));
                 }
-            } while (easyvfs_next(this->GetVFS(), &iFile));
+            } while (drvfs_next(this->GetVFS(), &iFile));
         }
     }
 

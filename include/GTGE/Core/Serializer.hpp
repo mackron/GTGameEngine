@@ -7,7 +7,7 @@
 #include <cstring>      // For memcpy()
 #include "Math.hpp"     // For Max().
 #include "String.hpp"   // For String specialization.
-#include <easy_fs/easy_vfs.h>
+#include <dr_libs/dr_vfs.h>
 
 namespace GT
 {
@@ -250,7 +250,7 @@ namespace GT
     public:
 
         /// Constructor.
-        FileSerializer(easyvfs_file* pFileIn)
+        FileSerializer(drvfs_file* pFileIn)
             : m_pFile(pFileIn)
         {
         }
@@ -266,7 +266,7 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            easyvfs_write(m_pFile, bufferIn, static_cast<unsigned int>(bufferInSizeInBytes), nullptr);
+            drvfs_write(m_pFile, bufferIn, static_cast<unsigned int>(bufferInSizeInBytes), nullptr);
         }
 
 
@@ -287,7 +287,7 @@ namespace GT
     private:
 
         /// The virtual file system file object to write to.
-        easyvfs_file* m_pFile;
+        drvfs_file* m_pFile;
 
 
     private:    // No copying

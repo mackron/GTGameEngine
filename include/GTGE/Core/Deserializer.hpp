@@ -377,7 +377,7 @@ namespace GT
     public:
 
         /// Constructor.
-        FileDeserializer(easyvfs_file* pFileIn)
+        FileDeserializer(drvfs_file* pFileIn)
             : m_pFile(pFileIn)
         {
         }
@@ -406,7 +406,7 @@ namespace GT
             assert(m_pFile != nullptr);
 
             unsigned int bytesRead = 0;
-            if (!easyvfs_read(m_pFile, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
+            if (!drvfs_read(m_pFile, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
             {
                 // Error reading.
                 bytesRead = 0;
@@ -420,16 +420,16 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            easyvfs_uint64 readPointer = easyvfs_tell(m_pFile);
+            drvfs_uint64 readPointer = drvfs_tell(m_pFile);
 
             unsigned int bytesRead = 0;
-            if (!easyvfs_read(m_pFile, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
+            if (!drvfs_read(m_pFile, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
             {
                 // Error reading.
                 return 0;
             }
                 
-            easyvfs_seek(m_pFile, static_cast<easyvfs_int64>(readPointer), easyvfs_origin_start);
+            drvfs_seek(m_pFile, static_cast<drvfs_int64>(readPointer), drvfs_origin_start);
             return bytesRead;
         }
 
@@ -438,7 +438,7 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            if (easyvfs_seek(m_pFile, bytesToSkip, easyvfs_origin_current)) {
+            if (drvfs_seek(m_pFile, bytesToSkip, drvfs_origin_current)) {
                 return bytesToSkip;
             }
 
@@ -450,14 +450,14 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            return static_cast<size_t>(easyvfs_tell(m_pFile));
+            return static_cast<size_t>(drvfs_tell(m_pFile));
         }
 
 
     private:
 
         /// The virtual file system file object to read from.
-        easyvfs_file* m_pFile;
+        drvfs_file* m_pFile;
 
 
     private:    // No copying.

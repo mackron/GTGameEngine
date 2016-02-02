@@ -292,13 +292,13 @@ namespace GT
         }
 #endif
 
-        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
+        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), this->absolutePath.c_str(), DRVFS_READ, 0);
         if (pFile != nullptr)
         {
             FileSerializer serializer(pFile);
             this->Serialize(serializer);
 
-            easyvfs_close(pFile);
+            drvfs_close(pFile);
             return true;
         }
         else

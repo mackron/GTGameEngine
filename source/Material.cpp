@@ -281,8 +281,8 @@ namespace GT
 
     bool MaterialDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn)
     {
-        char newAbsolutePath[EASYVFS_MAX_PATH];
-        char newRelativePath[EASYVFS_MAX_PATH];
+        char newAbsolutePath[DRVFS_MAX_PATH];
+        char newRelativePath[DRVFS_MAX_PATH];
 
 
         if (easypath_is_absolute(fileNameIn))
@@ -303,14 +303,14 @@ namespace GT
         {
             strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (!easyvfs_find_absolute_path(this->context.GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
+            if (!drvfs_find_absolute_path(this->context.GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-        char* pFileData = easyvfs_open_and_read_text_file(this->context.GetVFS(), newAbsolutePath, NULL);
+        char* pFileData = drvfs_open_and_read_text_file(this->context.GetVFS(), newAbsolutePath, NULL);
         if (pFileData != nullptr)
         {
             bool result = this->LoadFromXML(pFileData);
@@ -320,7 +320,7 @@ namespace GT
             this->absolutePath = newAbsolutePath;
             this->relativePath = newRelativePath;
 
-            easyvfs_free(pFileData);
+            drvfs_free(pFileData);
             return result;
         }
 

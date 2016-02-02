@@ -198,11 +198,11 @@ namespace GT
             auto xmlString = this->scriptTextBoxElement->GetText();
             if (xmlString != nullptr)
             {
-                wasSaved = easyvfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), xmlString);
+                wasSaved = drvfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), xmlString);
             }
             else
             {
-                wasSaved = easyvfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), "");
+                wasSaved = drvfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), "");
             }
 
             if (wasSaved)

@@ -64,7 +64,7 @@ namespace GT
 
     Model* ModelLibrary::Create(const char* fileName, const char* makeRelativeTo)
     {
-        char relativePath[EASYVFS_MAX_PATH];
+        char relativePath[DRVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (easypath_is_absolute(fileName))
@@ -190,7 +190,7 @@ namespace GT
 
     bool ModelLibrary::Reload(const char* fileNameIn)
     {
-        char fileName[EASYVFS_MAX_PATH];
+        char fileName[DRVFS_MAX_PATH];
         strcpy_s(fileName, sizeof(fileName), fileNameIn);
 
         if (easypath_extension_equal(fileName, "gtmodel"))
@@ -245,13 +245,13 @@ namespace GT
             fileName += ".gtmodel";
         }
 
-        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), fileName.c_str(), EASYVFS_WRITE, 0);
+        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), fileName.c_str(), DRVFS_WRITE, 0);
         if (pFile != nullptr)
         {
             FileSerializer serializer(pFile);
             definition.Serialize(serializer);
 
-            easyvfs_close(pFile);
+            drvfs_close(pFile);
             return true;
         }
 
@@ -271,7 +271,7 @@ namespace GT
         {
             if (easypath_extension_equal(fileName, "gtmodel"))
             {
-                char fileNameWithoutExtension[EASYVFS_MAX_PATH];
+                char fileNameWithoutExtension[DRVFS_MAX_PATH];
                 easypath_copy_and_remove_extension(fileNameWithoutExtension, sizeof(fileNameWithoutExtension), fileName);
 
                 iDefinition = m_loadedDefinitions.Find(fileNameWithoutExtension);
@@ -321,10 +321,10 @@ namespace GT
 
     bool ModelLibrary::FindAbsolutePath(const char* relativePath, String &absolutePath)
     {
-        char absolutePathTemp[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(g_Context->GetVFS(), relativePath, absolutePathTemp, sizeof(absolutePathTemp)))
+        char absolutePathTemp[DRVFS_MAX_PATH];
+        if (!drvfs_find_absolute_path(g_Context->GetVFS(), relativePath, absolutePathTemp, sizeof(absolutePathTemp)))
         {
-            char adjustedRelativePath[EASYVFS_MAX_PATH];
+            char adjustedRelativePath[DRVFS_MAX_PATH];
             strcpy_s(adjustedRelativePath, sizeof(adjustedRelativePath), relativePath);
 
             if (easypath_extension_equal(relativePath, "gtmodel")) {
@@ -333,7 +333,7 @@ namespace GT
                 easypath_append_extension(adjustedRelativePath, sizeof(adjustedRelativePath), "gtmodel");
             }
 
-            if (!easyvfs_find_absolute_path(g_Context->GetVFS(), adjustedRelativePath, absolutePathTemp, sizeof(absolutePathTemp))) {
+            if (!drvfs_find_absolute_path(g_Context->GetVFS(), adjustedRelativePath, absolutePathTemp, sizeof(absolutePathTemp))) {
                 return false;
             }
         }

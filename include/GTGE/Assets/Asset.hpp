@@ -7,7 +7,7 @@
 #include <GTGE/Core/ReferenceCountedObject.hpp>
 #include "AssetTypes.hpp"
 #include "AssetMetadata.hpp"
-#include <easy_fs/easy_vfs.h>
+#include <dr_libs/dr_vfs.h>
 
 namespace GT
 {
@@ -59,7 +59,7 @@ namespace GT
         /// @remarks
         ///     This is virtual so that inherited classes do custom implementations which may be required for things like procedural assets. It is
         ///     not required that inherited classes implement this, in which case the default implementation will simply try loading it from a file.
-        virtual bool LoadMetadata(const char* absolutePath, easyvfs_context* pVFS);
+        virtual bool LoadMetadata(const char* absolutePath, drvfs_context* pVFS);
 
 
         /////////////////////////////////////
@@ -77,14 +77,14 @@ namespace GT
         ///
         /// @remarks
         ///     This will replace the existing content of the asset.
-        virtual bool Load(const char* absolutePath, easyvfs_context* pVFS) = 0;
+        virtual bool Load(const char* absolutePath, drvfs_context* pVFS) = 0;
 
 
 
     private:
 
         /// The absolute path or identifier of the asset.
-        char m_absolutePathOrIdentifier[EASYVFS_MAX_PATH];
+        char m_absolutePathOrIdentifier[DRVFS_MAX_PATH];
 
         /// The asset type.
         AssetType m_type;

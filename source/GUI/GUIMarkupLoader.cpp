@@ -54,8 +54,8 @@ namespace GT
     
     void GUIMarkupLoader::UnloadFile(const char* filePath)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRVFS_MAX_PATH];
+        if (drvfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
         {
             m_loadedFiles.Remove(absolutePath);
         }
@@ -84,14 +84,14 @@ namespace GT
             for (auto i = parser.includes.root; i != nullptr; i = i->next)
             {
                 // Step 1: Translate the 'url' attribute to an absolute path based on 'directory'.
-                char absURL[EASYVFS_MAX_PATH];
+                char absURL[DRVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
                     easypath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
-                    easyvfs_find_absolute_path(GT::g_Context->GetVFS(), i->start, absURL, sizeof(absURL));
+                    drvfs_find_absolute_path(GT::g_Context->GetVFS(), i->start, absURL, sizeof(absURL));
                 }
 
                 // Step 2: Load the include file.
@@ -114,14 +114,14 @@ namespace GT
             for (auto i = parser.externalStyles.root; i != nullptr; i = i->next)
             {
                 // Step 1: Get the absolute path of this URL based on 'directory'.
-                char absURL[EASYVFS_MAX_PATH];
+                char absURL[DRVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
                     easypath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
-                    easyvfs_find_absolute_path(GT::g_Context->GetVFS(), i->start, absURL, sizeof(absURL));
+                    drvfs_find_absolute_path(GT::g_Context->GetVFS(), i->start, absURL, sizeof(absURL));
                 }
 
                 // Step 2: Load the file.
@@ -278,14 +278,14 @@ namespace GT
             for (auto i = parser.externalScripts.root; i != nullptr; i = i->next)
             {
                 // Step 1: Get the absolute path of this URL based on 'directory'.
-                char absURL[EASYVFS_MAX_PATH];
+                char absURL[DRVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
                     easypath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
-                    easyvfs_find_absolute_path(GT::g_Context->GetVFS(), i->start, absURL, sizeof(absURL));
+                    drvfs_find_absolute_path(GT::g_Context->GetVFS(), i->start, absURL, sizeof(absURL));
                 }
 
                 // Step 2: Load the file.
@@ -308,8 +308,8 @@ namespace GT
     
     bool GUIMarkupLoader::LoadFile(const char* filePath, GT::Vector<GUIElement*> &loadedElementsOut)
     {
-        char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRVFS_MAX_PATH];
+        if (drvfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
         {
             if (this->IsFileLoaded(absolutePath))
             {
@@ -318,10 +318,10 @@ namespace GT
             else
             {
                 size_t fileSize;
-                char* pFileData = easyvfs_open_and_read_text_file(GT::g_Context->GetVFS(), absolutePath, &fileSize);
+                char* pFileData = drvfs_open_and_read_text_file(GT::g_Context->GetVFS(), absolutePath, &fileSize);
                 if (pFileData != nullptr)
                 {
-                    char absoluteDir[EASYVFS_MAX_PATH];
+                    char absoluteDir[DRVFS_MAX_PATH];
                     easypath_copy_base_path(absolutePath, absoluteDir, sizeof(absoluteDir));
 
                     bool result = this->Load(pFileData, fileSize, absoluteDir, loadedElementsOut);
@@ -331,7 +331,7 @@ namespace GT
                         m_loadedFiles.Add(absolutePath, true);
                     }
 
-                    easyvfs_free(pFileData);
+                    drvfs_free(pFileData);
                     return result;
                 }
             }

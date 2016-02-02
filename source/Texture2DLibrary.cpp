@@ -44,7 +44,7 @@ namespace GT
 
     Texture2D* Texture2DLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
     {
-        char relativePath[EASYVFS_MAX_PATH];
+        char relativePath[DRVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (easypath_is_absolute(fileName))
@@ -61,8 +61,8 @@ namespace GT
         }
 
 
-        char absFileName[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(m_context.GetVFS(), fileName, absFileName, sizeof(absFileName)))
+        char absFileName[DRVFS_MAX_PATH];
+        if (drvfs_find_absolute_path(m_context.GetVFS(), fileName, absFileName, sizeof(absFileName)))
         {
             auto iTexture = m_loadedTextures.Find(absFileName);
             if (iTexture == nullptr)
@@ -145,8 +145,8 @@ namespace GT
 
     bool Texture2DLibrary::Reload(const char* fileName)
     {
-        char absFileName[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(m_context.GetVFS(), fileName, absFileName, sizeof(absFileName)))
+        char absFileName[DRVFS_MAX_PATH];
+        if (drvfs_find_absolute_path(m_context.GetVFS(), fileName, absFileName, sizeof(absFileName)))
         {
             auto iTexture = m_loadedTextures.Find(absFileName);
             if (iTexture != nullptr)

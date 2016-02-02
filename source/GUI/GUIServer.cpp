@@ -174,8 +174,8 @@ namespace GT
     bool GUIServer::IsFileLoaded(const char* filename)
     {
         // We need to check with the absolute path.
-        char absolutePath[EASYVFS_MAX_PATH];
-        if (easyvfs_find_absolute_path(GT::g_Context->GetVFS(), filename, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRVFS_MAX_PATH];
+        if (drvfs_find_absolute_path(GT::g_Context->GetVFS(), filename, absolutePath, sizeof(absolutePath)))
         {
             return this->markupLoader.IsFileLoaded(absolutePath);
         }

@@ -79,7 +79,7 @@ namespace GT
         auto &script = this->GetScript();
 
         // We need to load the scene.
-        easyvfs_file* file = easyvfs_open(g_Context->GetVFS(), absolutePath, EASYVFS_READ, 0);
+        drvfs_file* file = drvfs_open(g_Context->GetVFS(), absolutePath, DRVFS_READ, 0);
         if (file != nullptr)
         {
             // We need to now create the GUI elements for this particular file. We start with the main element.
@@ -173,7 +173,7 @@ namespace GT
 
 
             // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
-            if (easyvfs_size(file) > 0)
+            if (drvfs_size(file) > 0)
             {
                 FileDeserializer deserializer(file);
                 this->DeserializeScene(deserializer);
@@ -190,7 +190,7 @@ namespace GT
 
 
             // The scene will be done loading by this pointer, so we can close the file.
-            easyvfs_close(file);
+            drvfs_close(file);
         }
     }
 
@@ -2500,7 +2500,7 @@ namespace GT
 
     bool SceneEditor::Save()
     {
-        easyvfs_file* file = easyvfs_open(g_Context->GetVFS(), this->GetAbsolutePath(), EASYVFS_WRITE, 0);
+        drvfs_file* file = drvfs_open(g_Context->GetVFS(), this->GetAbsolutePath(), DRVFS_WRITE, 0);
         if (file != nullptr)
         {
             // If the physics simulation is running or the game is playing, it needs to be stopped first.
@@ -2517,7 +2517,7 @@ namespace GT
             FileSerializer serializer(file);
             this->SerializeScene(serializer);
 
-            easyvfs_close(file);
+            drvfs_close(file);
 
             this->UnmarkAsModified();
 
@@ -2785,7 +2785,7 @@ namespace GT
                         auto model = modelComponent->GetModel();
                         if (model != nullptr)
                         {
-                            char absolutePathWithoutExt[EASYVFS_MAX_PATH];
+                            char absolutePathWithoutExt[DRVFS_MAX_PATH];
                             easypath_copy_and_remove_extension(absolutePathWithoutExt, sizeof(absolutePathWithoutExt), absolutePath);
 
                             if (model->GetDefinition().absolutePath == absolutePath || model->GetDefinition().absolutePath == absolutePathWithoutExt)
@@ -2823,9 +2823,9 @@ namespace GT
             // we will find the most likely base path and use that to derive a relative path. This is not a robust way of doing this and
             // will be updated when the asset management system is updated.
             const char* mostLikelyBasePath = nullptr;
-            for (unsigned int iBasePath = 0; iBasePath < easyvfs_get_base_directory_count(g_Context->GetVFS()); ++iBasePath)
+            for (unsigned int iBasePath = 0; iBasePath < drvfs_get_base_directory_count(g_Context->GetVFS()); ++iBasePath)
             {
-                const char* basePath = easyvfs_get_base_directory_by_index(g_Context->GetVFS(), iBasePath);
+                const char* basePath = drvfs_get_base_directory_by_index(g_Context->GetVFS(), iBasePath);
                 if (easypath_is_descendant(absolutePath, basePath))
                 {
                     mostLikelyBasePath = basePath;
@@ -2835,7 +2835,7 @@ namespace GT
 
             if (mostLikelyBasePath != nullptr)
             {
-                char relativePath[EASYVFS_MAX_PATH];
+                char relativePath[DRVFS_MAX_PATH];
                 if (easypath_to_relative(absolutePath, mostLikelyBasePath, relativePath, sizeof(relativePath)))
                 {
                     if (GT::IsSupportedPrefabExtension(absolutePath))
@@ -3604,8 +3604,8 @@ namespace GT
 
     void SceneEditor::UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath)
     {
-        char scriptAbsolutePath[EASYVFS_MAX_PATH];
-        if (!easyvfs_find_absolute_path(g_Context->GetVFS(), scriptRelativePath, scriptAbsolutePath, sizeof(scriptAbsolutePath))) {
+        char scriptAbsolutePath[DRVFS_MAX_PATH];
+        if (!drvfs_find_absolute_path(g_Context->GetVFS(), scriptRelativePath, scriptAbsolutePath, sizeof(scriptAbsolutePath))) {
             return;
         }
 

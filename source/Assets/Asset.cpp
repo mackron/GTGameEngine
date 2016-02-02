@@ -8,7 +8,7 @@ namespace GT
     Asset::Asset(const char* absolutePathOrIdentifier, AssetType type)
         : m_absolutePathOrIdentifier(), m_type(type), m_metadata()
     {
-        strcpy_s(m_absolutePathOrIdentifier, EASYVFS_MAX_PATH, absolutePathOrIdentifier);
+        strcpy_s(m_absolutePathOrIdentifier, DRVFS_MAX_PATH, absolutePathOrIdentifier);
     }
 
     Asset::~Asset()
@@ -43,15 +43,15 @@ namespace GT
         return this->GetMetadataChunkData(name, unused);
     }
 
-    bool Asset::LoadMetadata(const char* absolutePath, easyvfs_context* pVFS)
+    bool Asset::LoadMetadata(const char* absolutePath, drvfs_context* pVFS)
     {
-        easyvfs_file* pMetadataFile = easyvfs_open(pVFS, absolutePath, EASYVFS_READ, 0);
+        drvfs_file* pMetadataFile = drvfs_open(pVFS, absolutePath, DRVFS_READ, 0);
         if (pMetadataFile != nullptr)
         {
             FileDeserializer deserializer(pMetadataFile);
             m_metadata.Deserialize(deserializer);
 
-            easyvfs_close(pMetadataFile);
+            drvfs_close(pMetadataFile);
             return true;
         }
         else

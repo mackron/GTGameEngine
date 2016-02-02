@@ -7,7 +7,7 @@
 #include "ImageLoader_PNG.hpp"
 
 #include <GTGE/GTEngine.hpp>
-#include <easy_fs/easy_vfs.h>
+#include <dr_libs/dr_vfs.h>
 
 namespace GT
 {
@@ -27,7 +27,7 @@ namespace GT
 
     struct STBICallbackData
     {
-        easyvfs_file* pFile;
+        drvfs_file* pFile;
     };
 
     static int STBI_Read(void* user, char *data, int size)
@@ -38,7 +38,7 @@ namespace GT
             assert(callbackData->pFile != nullptr);
 
             unsigned int bytesRead;
-            if (!easyvfs_read(callbackData->pFile, data, (unsigned int)size, &bytesRead)) {
+            if (!drvfs_read(callbackData->pFile, data, (unsigned int)size, &bytesRead)) {
                 return 0;
             }
 
@@ -52,7 +52,7 @@ namespace GT
         assert(callbackData != nullptr);
         {
             assert(callbackData->pFile != nullptr);
-            easyvfs_seek(callbackData->pFile, n, easyvfs_origin_current);
+            drvfs_seek(callbackData->pFile, n, drvfs_origin_current);
         }
     }
 
@@ -62,7 +62,7 @@ namespace GT
         assert(callbackData != nullptr);
         {
             assert(callbackData->pFile != nullptr);
-            return easyvfs_eof(callbackData->pFile);
+            return drvfs_eof(callbackData->pFile);
         }
     }
 
@@ -81,7 +81,7 @@ namespace GT
     bool ImageLoader_PNG::Open()
     {
         //FILE* pFile = IO::Open(this->absolutePath.c_str(), IO::OpenMode::Read);
-        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
+        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), this->absolutePath.c_str(), DRVFS_READ, 0);
         if (pFile != nullptr)
         {
             STBICallbackData callbackData;
@@ -97,7 +97,7 @@ namespace GT
             m_pImageData = stbi_load_from_callbacks(&stbiCallbacks, &callbackData, &imageWidth, &imageHeight, &m_channelCount, 0);
             if (m_pImageData != nullptr)
             {
-                easyvfs_get_file_info(g_Context->GetVFS(), this->absolutePath.c_str(), &m_info);
+                drvfs_get_file_info(g_Context->GetVFS(), this->absolutePath.c_str(), &m_info);
 
                 m_info.format = GetImageFormatFromSTBChannels(m_channelCount);
                 m_info.width  = static_cast<unsigned int>(imageWidth);
@@ -140,8 +140,8 @@ namespace GT
     bool ImageLoader_PNG::HasFileChanged() const
     {
         // We just need to check the last modified data. If it's different, the file has changed.
-        easyvfs_file_info tempInfo;
-        easyvfs_get_file_info(g_Context->GetVFS(), this->absolutePath.c_str(), &tempInfo);
+        drvfs_file_info tempInfo;
+        drvfs_get_file_info(g_Context->GetVFS(), this->absolutePath.c_str(), &tempInfo);
 
         if (tempInfo.lastModifiedTime != m_info.lastModifiedTime)
         {

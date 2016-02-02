@@ -228,10 +228,10 @@ namespace GT
     }
 
 
-    bool ModelAsset_OBJ::Load(const char* absolutePath, easyvfs_context* pVFS)
+    bool ModelAsset_OBJ::Load(const char* absolutePath, drvfs_context* pVFS)
     {
         size_t fileSize;
-        char* pFileData = easyvfs_open_and_read_text_file(pVFS, absolutePath, &fileSize);
+        char* pFileData = drvfs_open_and_read_text_file(pVFS, absolutePath, &fileSize);
         if (pFileData != 0 && fileSize > 0)
         {
             Vector<glm::vec4>    positions;
@@ -345,7 +345,7 @@ namespace GT
             }
 
             // At this point the file has been parsed, so free the file data...
-            easyvfs_free(pFileData);
+            drvfs_free(pFileData);
 
             // ... and start converting the data to our own format. OBJ separates positions, texture coordinates and normals, but we want them
             // to be interlaced.

@@ -60,19 +60,19 @@ namespace GT
 
     bool ShaderLibrary::LoadFromDirectory(const char* directory, bool recursive)
     {
-        easyvfs_context* pVFS = g_Context->GetVFS();
+        drvfs_context* pVFS = g_Context->GetVFS();
         assert(pVFS != nullptr);
 
         if (easypath_is_absolute(directory))
         {
             // Absolute.
 
-            easyvfs_iterator iFile;
-            if (easyvfs_begin(pVFS, directory, &iFile))
+            drvfs_iterator iFile;
+            if (drvfs_begin(pVFS, directory, &iFile))
             {
                 do
                 {
-                    if ((iFile.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    if ((iFile.info.attributes & DRVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                     {
                         if (recursive)
                         {
@@ -84,20 +84,20 @@ namespace GT
                         ShaderLibrary::LoadFromFile(iFile.info.absolutePath);
                     }
 
-                } while (easyvfs_next(pVFS, &iFile));
+                } while (drvfs_next(pVFS, &iFile));
             }
         }
         else
         {
             // Relative. We just call this recursively with the absolute path.
 
-            unsigned int baseDirectoryCount = easyvfs_get_base_directory_count(pVFS);
+            unsigned int baseDirectoryCount = drvfs_get_base_directory_count(pVFS);
             for (unsigned int iBaseDirectory = 0; iBaseDirectory < baseDirectoryCount; ++iBaseDirectory)
             {
-                const char* baseDirectory = easyvfs_get_base_directory_by_index(pVFS, iBaseDirectory);
+                const char* baseDirectory = drvfs_get_base_directory_by_index(pVFS, iBaseDirectory);
                 if (baseDirectory != nullptr)
                 {
-                    char searchDir[EASYVFS_MAX_PATH];
+                    char searchDir[DRVFS_MAX_PATH];
                     easypath_copy_and_append(searchDir, sizeof(searchDir), baseDirectory, directory);
 
                     ShaderLibrary::LoadFromDirectory(searchDir, recursive);
@@ -110,18 +110,18 @@ namespace GT
 
     bool ShaderLibrary::LoadFromFile(const char* fileName)
     {
-        easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), fileName, EASYVFS_READ, 0);
+        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), fileName, DRVFS_READ, 0);
         if (pFile != nullptr)
         {
             // We need to read the content of the file and then load it as XML. We cast the size to a size_t to
             // play nicely with 32-bit compilations. We can pretty safely assume the XML file will not exceed that.
-            size_t fileSize = static_cast<size_t>(easyvfs_size(pFile));
+            size_t fileSize = static_cast<size_t>(drvfs_size(pFile));
             
             auto fileData = static_cast<char*>(malloc(fileSize + 1));
-            easyvfs_read(pFile, fileData, fileSize, nullptr);
+            drvfs_read(pFile, fileData, fileSize, nullptr);
             fileData[fileSize] = '\0';
             
-            easyvfs_close(pFile);
+            drvfs_close(pFile);
             
             bool result = ShaderLibrary::LoadFromXML(fileData);
             

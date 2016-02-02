@@ -4,7 +4,7 @@
 #include <GTGE/IO.hpp>
 #include <GTGE/GTEngine.hpp>
 #include <easy_path/easy_path.h>
-#include <easy_fs/easy_vfs.h>
+#include <dr_libs/dr_vfs.h>
 
 namespace GT
 {
@@ -36,15 +36,15 @@ namespace GT
         }
 
 
-        easyvfs_iterator iFile;
-        if (easyvfs_begin(g_Context->GetVFS(), sourceAbsolutePath, &iFile))
+        drvfs_iterator iFile;
+        if (drvfs_begin(g_Context->GetVFS(), sourceAbsolutePath, &iFile))
         {
             do
             {
                 const char* fileAbsolutePath = iFile.info.absolutePath;
                 const char* fileName         = easypath_file_name(fileAbsolutePath);
 
-                if ((iFile.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                if ((iFile.info.attributes & DRVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                 {
                     // Recursive. Don't want to copy over "var" directories.
                     if (!(isRootDataDirectory && Strings::Equal<false>(fileName, "var")))
@@ -61,11 +61,11 @@ namespace GT
                     if (GT::IsSupportedModelExtension(fileName) && !easypath_extension_equal(fileName, ".gtmodel"))
                     {
                         // It's a non-gtmodel file. We need to look for an associated .gtmodel file.
-                        easyvfs_file_info gtmodelInfo;
-                        if (easyvfs_get_file_info(g_Context->GetVFS(), (String(fileAbsolutePath) + ".gtmodel").c_str(), &gtmodelInfo))
+                        drvfs_file_info gtmodelInfo;
+                        if (drvfs_get_file_info(g_Context->GetVFS(), (String(fileAbsolutePath) + ".gtmodel").c_str(), &gtmodelInfo))
                         {
-                            easyvfs_file_info originalInfo;
-                            if (easyvfs_get_file_info(g_Context->GetVFS(), fileAbsolutePath, &originalInfo))
+                            drvfs_file_info originalInfo;
+                            if (drvfs_get_file_info(g_Context->GetVFS(), fileAbsolutePath, &originalInfo))
                             {
                                 if (gtmodelInfo.lastModifiedTime > originalInfo.lastModifiedTime)
                                 {
@@ -78,7 +78,7 @@ namespace GT
 
                     this->CopyFile(fileAbsolutePath, (String(destinationRelativePath) + "/" + fileName).c_str());
                 }
-            } while (easyvfs_next(g_Context->GetVFS(), &iFile));
+            } while (drvfs_next(g_Context->GetVFS(), &iFile));
         }
     }
 
@@ -107,7 +107,7 @@ namespace GT
             destinationRelativePath = easypath_file_name(sourceAbsolutePath);
         }
 
-        return easyvfs_copy_file(g_Context->GetVFS(), sourceAbsolutePath, (this->outputDirectoryAbsolutePath + "/" + destinationRelativePath).c_str(), false);
+        return drvfs_copy_file(g_Context->GetVFS(), sourceAbsolutePath, (this->outputDirectoryAbsolutePath + "/" + destinationRelativePath).c_str(), false);
     }
 
 
@@ -115,7 +115,7 @@ namespace GT
     {
         if (!this->executableRelativePath.IsEmpty())
         {
-            char executableDirectory[EASYVFS_MAX_PATH];
+            char executableDirectory[DRVFS_MAX_PATH];
             easypath_copy_and_append(executableDirectory, sizeof(executableDirectory), this->outputDirectoryAbsolutePath.c_str(), executableRelativePath.c_str());
             easypath_remove_file_name(executableDirectory);
 
@@ -130,13 +130,13 @@ namespace GT
                 //Path dataDirectoryAbsolutePath((this->outputDirectoryAbsolutePath + "/" + this->dataDirectoryRelativePaths[iDataDirectory]).c_str());
                 //dataDirectoryAbsolutePath.Clean();
 
-                char dataDirectoryAbsolutePath[EASYVFS_MAX_PATH];
+                char dataDirectoryAbsolutePath[DRVFS_MAX_PATH];
                 easypath_append_and_clean(dataDirectoryAbsolutePath, sizeof(dataDirectoryAbsolutePath), this->outputDirectoryAbsolutePath.c_str(), this->dataDirectoryRelativePaths[iDataDirectory].c_str());
 
                 //Path dataDirectoryRelativePath(IO::ToRelativePath(dataDirectoryAbsolutePath.c_str(), executableDirectory.c_str()).c_str());
                 //dataDirectoryRelativePath.Clean();
 
-                char dataDirectoryRelativePath[EASYVFS_MAX_PATH];
+                char dataDirectoryRelativePath[DRVFS_MAX_PATH];
                 easypath_to_relative(dataDirectoryAbsolutePath, executableDirectory, dataDirectoryRelativePath, sizeof(dataDirectoryRelativePath));
 
                 dataDirectoryConfigPaths.PushBack(dataDirectoryRelativePath);
@@ -145,10 +145,10 @@ namespace GT
             //Path configPath(executableDirectory.c_str());
             //configPath.Append("config.lua");
 
-            char configPath[EASYVFS_MAX_PATH];
+            char configPath[DRVFS_MAX_PATH];
             easypath_copy_and_append(configPath, sizeof(configPath), executableDirectory, "config.cfg");
 
-            easyvfs_file* pFile = easyvfs_open(g_Context->GetVFS(), configPath, EASYVFS_WRITE, 0);
+            drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), configPath, DRVFS_WRITE, 0);
             if (pFile != nullptr)
             {
                 for (size_t iDataDirectory = 0; iDataDirectory < dataDirectoryConfigPaths.count; ++iDataDirectory)
@@ -156,11 +156,11 @@ namespace GT
                     auto index = static_cast<int>(iDataDirectory + 1);       // +1 because Lua is 1 based.
                     auto path  = dataDirectoryConfigPaths[iDataDirectory].c_str();
 
-                    easyvfs_write_string(pFile, String::CreateFormatted("BaseDirectory \"%s\"\n", index, path).c_str());
+                    drvfs_write_string(pFile, String::CreateFormatted("BaseDirectory \"%s\"\n", index, path).c_str());
                 }
 
 
-                easyvfs_close(pFile);
+                drvfs_close(pFile);
                 return true;
             }
         }

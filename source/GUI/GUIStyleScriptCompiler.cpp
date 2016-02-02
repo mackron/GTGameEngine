@@ -2,7 +2,7 @@
 
 #include <GTGE/GUI/GUIStyleScriptCompiler.hpp>
 #include "GUIStyleTokenizer.hpp"
-#include <easy_fs/easy_vfs.h>
+#include <dr_libs/dr_vfs.h>
 #include <easy_path/easy_path.h>
 
 namespace GT
@@ -634,7 +634,7 @@ namespace GT
                                                                         //    translatedURL.MakeAbsolute(baseURLPath);
                                                                         //}
 
-                                                                        char translatedURL[EASYVFS_MAX_PATH];
+                                                                        char translatedURL[DRVFS_MAX_PATH];
                                                                         if (baseURLPath != nullptr) {
                                                                             easypath_to_absolute(url.c_str(), baseURLPath, translatedURL, sizeof(translatedURL));
                                                                         } else {

@@ -42,7 +42,7 @@ namespace GT
     }
 
 
-    easyvfs_context* EditorTool::GetVFS()
+    drvfs_context* EditorTool::GetVFS()
     {
         return m_editor.GetVFS();
     }

@@ -20,7 +20,7 @@ namespace GT
 
 
         /// @copydoc GT::Asset::Load()
-        bool Load(const char* absolutePath, easyvfs_context* pVFS);
+        bool Load(const char* absolutePath, drvfs_context* pVFS);
 
         /// @copydoc GT::ImageAsset::GetImageWidth()
         unsigned int GetImageWidth() const;
