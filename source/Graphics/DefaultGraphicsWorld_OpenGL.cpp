@@ -7,7 +7,7 @@
 #include <GTGE/Core/BasicBuffer.hpp>
 #include <GTGE/Core/String.hpp>
 #include <GTGE/AlignedType.hpp>
-#include <easy_draw/easy_mtl.h>
+#include <dr_libs/dr_mtl.h>
 
 
 namespace GT
@@ -964,16 +964,16 @@ namespace GT
         GT::Vector<MaterialResource_OpenGL::InputVariables::VariableDesc> inputVariableDescriptors;
         GT::Vector<uint32_t> inputVariablesValuesBuffer;
 
-        easymtl_material materialSource;
-        if (easymtl_initfromexisting_nocopy(&materialSource, materialDesc.pData, materialDesc.dataSizeInBytes))
+        drmtl_material materialSource;
+        if (drmtl_initfromexisting_nocopy(&materialSource, materialDesc.pData, materialDesc.dataSizeInBytes))
         {
-            unsigned int inputVariableCount = easymtl_getpublicinputcount(&materialSource);
+            unsigned int inputVariableCount = drmtl_getpublicinputcount(&materialSource);
             for (unsigned int iInputVariable = 0; iInputVariable < inputVariableCount; ++iInputVariable)
             {
-                easymtl_input* pInputVariableSrc = easymtl_getpublicinputbyindex(&materialSource, iInputVariable);
+                drmtl_input* pInputVariableSrc = drmtl_getpublicinputbyindex(&materialSource, iInputVariable);
                 if (pInputVariableSrc != nullptr)
                 {
-                    easymtl_identifier* pIdentifier = easymtl_getidentifier(&materialSource, pInputVariableSrc->identifierIndex);
+                    drmtl_identifier* pIdentifier = drmtl_getidentifier(&materialSource, pInputVariableSrc->identifierIndex);
                     if (pIdentifier != nullptr)
                     {
                         GraphicsMaterialVariableType type = GraphicsMaterialVariableType(pIdentifier->type);    // Safe cast - the type enumerators should always be mirrored.
@@ -982,24 +982,24 @@ namespace GT
 
                         switch (pIdentifier->type)
                         {
-                        case easymtl_type_float:
-                        case easymtl_type_int:
-                        case easymtl_type_bool:
+                        case drmtl_type_float:
+                        case drmtl_type_int:
+                        case drmtl_type_bool:
                             {
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.x);
                                 break;
                             }
 
-                        case easymtl_type_float2:
-                        case easymtl_type_int2:
+                        case drmtl_type_float2:
+                        case drmtl_type_int2:
                             {
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.x);
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.y);
                                 break;
                             }
 
-                        case easymtl_type_float3:
-                        case easymtl_type_int3:
+                        case drmtl_type_float3:
+                        case drmtl_type_int3:
                             {
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.x);
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.y);
@@ -1008,8 +1008,8 @@ namespace GT
                                 break;
                             }
 
-                        case easymtl_type_float4:
-                        case easymtl_type_int4:
+                        case drmtl_type_float4:
+                        case drmtl_type_int4:
                             {
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.x);
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.y);
@@ -1018,10 +1018,10 @@ namespace GT
                                 break;
                             }
 
-                        case easymtl_type_tex1d:
-                        case easymtl_type_tex2d:
-                        case easymtl_type_tex3d:
-                        case easymtl_type_texcube:
+                        case drmtl_type_tex1d:
+                        case drmtl_type_tex2d:
+                        case drmtl_type_tex3d:
+                        case drmtl_type_texcube:
                             {
                                 for (unsigned int i = 0; i < sizeof(HGraphicsResource) / sizeof(uint32_t); ++i)
                                 {
@@ -1096,12 +1096,12 @@ namespace GT
         char* materialShaderString_Alpha            = nullptr;
 
         unsigned int materialShaderStringLength_Diffuse;
-        if (easymtl_codegen_glsl_channel(&materialSource, "DiffuseChannel", nullptr, 0, &materialShaderStringLength_Diffuse))
+        if (drmtl_codegen_glsl_channel(&materialSource, "DiffuseChannel", nullptr, 0, &materialShaderStringLength_Diffuse))
         {
             materialShaderString_Diffuse = reinterpret_cast<char*>(malloc(materialShaderStringLength_Diffuse));
             if (materialShaderString_Diffuse != nullptr)
             {
-                if (easymtl_codegen_glsl_channel(&materialSource, "DiffuseChannel", materialShaderString_Diffuse, materialShaderStringLength_Diffuse, nullptr))
+                if (drmtl_codegen_glsl_channel(&materialSource, "DiffuseChannel", materialShaderString_Diffuse, materialShaderStringLength_Diffuse, nullptr))
                 {
                     shaderString_Diffuse = materialShaderString_Diffuse;
                 }
@@ -1109,12 +1109,12 @@ namespace GT
         }
 
         unsigned int materialShaderStringLength_Specular;
-        if (easymtl_codegen_glsl_channel(&materialSource, "SpecularChannel", nullptr, 0, &materialShaderStringLength_Specular))
+        if (drmtl_codegen_glsl_channel(&materialSource, "SpecularChannel", nullptr, 0, &materialShaderStringLength_Specular))
         {
             materialShaderString_Specular = reinterpret_cast<char*>(malloc(materialShaderStringLength_Specular));
             if (materialShaderString_Specular != nullptr)
             {
-                if (easymtl_codegen_glsl_channel(&materialSource, "SpecularChannel", materialShaderString_Specular, materialShaderStringLength_Specular, nullptr))
+                if (drmtl_codegen_glsl_channel(&materialSource, "SpecularChannel", materialShaderString_Specular, materialShaderStringLength_Specular, nullptr))
                 {
                     shaderString_Specular = materialShaderString_Specular;
                 }
@@ -1122,12 +1122,12 @@ namespace GT
         }
 
         unsigned int materialShaderStringLength_SpecularExponent;
-        if (easymtl_codegen_glsl_channel(&materialSource, "SpecularExponentChannel", nullptr, 0, &materialShaderStringLength_SpecularExponent))
+        if (drmtl_codegen_glsl_channel(&materialSource, "SpecularExponentChannel", nullptr, 0, &materialShaderStringLength_SpecularExponent))
         {
             materialShaderString_SpecularExponent = reinterpret_cast<char*>(malloc(materialShaderStringLength_SpecularExponent));
             if (materialShaderString_SpecularExponent != nullptr)
             {
-                if (easymtl_codegen_glsl_channel(&materialSource, "SpecularExponentChannel", materialShaderString_SpecularExponent, materialShaderStringLength_SpecularExponent, nullptr))
+                if (drmtl_codegen_glsl_channel(&materialSource, "SpecularExponentChannel", materialShaderString_SpecularExponent, materialShaderStringLength_SpecularExponent, nullptr))
                 {
                     shaderString_SpecularExponent = materialShaderString_SpecularExponent;
                 }
@@ -1135,12 +1135,12 @@ namespace GT
         }
 
         unsigned int materialShaderStringLength_Emissive;
-        if (easymtl_codegen_glsl_channel(&materialSource, "EmissiveChannel", nullptr, 0, &materialShaderStringLength_Emissive))
+        if (drmtl_codegen_glsl_channel(&materialSource, "EmissiveChannel", nullptr, 0, &materialShaderStringLength_Emissive))
         {
             materialShaderString_Emissive = reinterpret_cast<char*>(malloc(materialShaderStringLength_Emissive));
             if (materialShaderString_Emissive != nullptr)
             {
-                if (easymtl_codegen_glsl_channel(&materialSource, "EmissiveChannel", materialShaderString_Emissive, materialShaderStringLength_Emissive, nullptr))
+                if (drmtl_codegen_glsl_channel(&materialSource, "EmissiveChannel", materialShaderString_Emissive, materialShaderStringLength_Emissive, nullptr))
                 {
                     shaderString_Emissive = materialShaderString_Emissive;
                 }
@@ -1148,12 +1148,12 @@ namespace GT
         }
 
         unsigned int materialShaderStringLength_Alpha;
-        if (easymtl_codegen_glsl_channel(&materialSource, "AlphaChannel", nullptr, 0, &materialShaderStringLength_Alpha))
+        if (drmtl_codegen_glsl_channel(&materialSource, "AlphaChannel", nullptr, 0, &materialShaderStringLength_Alpha))
         {
             materialShaderString_Alpha = reinterpret_cast<char*>(malloc(materialShaderStringLength_Alpha));
             if (materialShaderString_Alpha != nullptr)
             {
-                if (easymtl_codegen_glsl_channel(&materialSource, "AlphaChannel", materialShaderString_Alpha, materialShaderStringLength_Alpha, nullptr))
+                if (drmtl_codegen_glsl_channel(&materialSource, "AlphaChannel", materialShaderString_Alpha, materialShaderStringLength_Alpha, nullptr))
                 {
                     shaderString_Alpha = materialShaderString_Alpha;
                 }
@@ -1164,12 +1164,12 @@ namespace GT
         // Uniforms.
         char* uniformsString = nullptr;
         unsigned int uniformsStringLength;
-        if (easymtl_codegen_glsl_uniforms(&materialSource, nullptr, 0, &uniformsStringLength))
+        if (drmtl_codegen_glsl_uniforms(&materialSource, nullptr, 0, &uniformsStringLength))
         {
             uniformsString = reinterpret_cast<char*>(malloc(uniformsStringLength));
             if (uniformsString != nullptr)
             {
-                easymtl_codegen_glsl_uniforms(&materialSource, uniformsString, uniformsStringLength, nullptr);
+                drmtl_codegen_glsl_uniforms(&materialSource, uniformsString, uniformsStringLength, nullptr);
             }
         }
 
@@ -1262,10 +1262,10 @@ namespace GT
 
 
             // Properties.
-            easymtl_property* pIsTransparent = easymtl_getpropertybyname(&materialSource, "IsTransparent");
+            drmtl_property* pIsTransparent = drmtl_getpropertybyname(&materialSource, "IsTransparent");
             if (pIsTransparent != nullptr)
             {
-                if (pIsTransparent->type == easymtl_type_bool && pIsTransparent->b1.x)
+                if (pIsTransparent->type == drmtl_type_bool && pIsTransparent->b1.x)
                 {
                     pMaterialResource->isTransparent = true;
                 }

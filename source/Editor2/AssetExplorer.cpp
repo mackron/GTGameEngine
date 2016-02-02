@@ -241,7 +241,7 @@ namespace GT
             // We draw the text in such a position that it places the icon directly in the middle of the bounds.
             float iconPosX = offsetX + padding + pAssetExplorer->GetItemArrowWidth();
             float iconPosY = offsetY + padding;
-            iconPosY -= 2;      // Temporary hack until we can fix a glyph metrics bug in easy2d.
+            iconPosY -= 2;      // Temporary hack until we can fix a glyph metrics bug in dr2d.
             easygui_draw_text(pTVElement, pSymbolFont, iconStr, strlen(iconStr), iconPosX, iconPosY, iconCol, backgroundColor, pPaintData);
 
             // Space between the icon and the text.

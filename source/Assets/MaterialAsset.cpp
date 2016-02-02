@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGE/Assets/MaterialAsset.hpp>
-#include <easy_draw/easy_mtl.h>
+#include <dr_libs/dr_mtl.h>
 #include <dr_libs/dr_util.h>
 
 namespace GT
@@ -24,10 +24,10 @@ namespace GT
 
     unsigned int MaterialAsset::GetInputCount() const
     {
-        easymtl_material material;
-        if (easymtl_initfromexisting_nocopy(&material, this->GetData(), this->GetDataSizeInBytes()))
+        drmtl_material material;
+        if (drmtl_initfromexisting_nocopy(&material, this->GetData(), this->GetDataSizeInBytes()))
         {
-            return easymtl_getinputcount(&material);
+            return drmtl_getinputcount(&material);
         }
 
         return 0;
@@ -35,13 +35,13 @@ namespace GT
 
     bool MaterialAsset::GetInputByIndex(unsigned int index, MaterialVariable &variableOut)
     {
-        easymtl_material material;
-        if (easymtl_initfromexisting_nocopy(&material, this->GetData(), this->GetDataSizeInBytes()))
+        drmtl_material material;
+        if (drmtl_initfromexisting_nocopy(&material, this->GetData(), this->GetDataSizeInBytes()))
         {
-            easymtl_input* pInput = easymtl_getinputbyindex(&material, index);
+            drmtl_input* pInput = drmtl_getinputbyindex(&material, index);
             if (pInput != nullptr)
             {
-                easymtl_identifier* pIdentifier = easymtl_getidentifier(&material, pInput->identifierIndex);
+                drmtl_identifier* pIdentifier = drmtl_getidentifier(&material, pInput->identifierIndex);
                 if (pIdentifier != nullptr)
                 {
                     strcpy_s(variableOut.name, 28, pIdentifier->name);
@@ -59,10 +59,10 @@ namespace GT
 
     unsigned int MaterialAsset::GetPropertyCount() const
     {
-        easymtl_material material;
-        if (easymtl_initfromexisting_nocopy(&material, this->GetData(), this->GetDataSizeInBytes()))
+        drmtl_material material;
+        if (drmtl_initfromexisting_nocopy(&material, this->GetData(), this->GetDataSizeInBytes()))
         {
-            return easymtl_getpropertycount(&material);
+            return drmtl_getpropertycount(&material);
         }
 
         return 0;
@@ -70,10 +70,10 @@ namespace GT
 
     bool MaterialAsset::GetPropertyByIndex(unsigned int index, MaterialVariable &variableOut)
     {
-        easymtl_material material;
-        if (easymtl_initfromexisting_nocopy(&material, this->GetData(), this->GetDataSizeInBytes()))
+        drmtl_material material;
+        if (drmtl_initfromexisting_nocopy(&material, this->GetData(), this->GetDataSizeInBytes()))
         {
-            easymtl_property* pProperty = easymtl_getpropertybyindex(&material, index);
+            drmtl_property* pProperty = drmtl_getpropertybyindex(&material, index);
             if (pProperty != nullptr)
             {
                 strcpy_s(variableOut.name, 28, pProperty->name);

@@ -3,7 +3,7 @@
 #include "MaterialAsset_MTL.hpp"
 
 #if defined(GT_BUILD_MTL)
-#include <easy_draw/easy_mtl.h>
+#include <dr_libs/dr_mtl.h>
 
 namespace GT
 {
@@ -27,14 +27,14 @@ namespace GT
         {
             bool result = true;
 
-            easymtl_material materialSource;
-            if (easymtl_compile_wavefront_mtl(&materialSource, pFileData, fileSize, "FS_TexCoord"))
+            drmtl_material materialSource;
+            if (drmtl_compile_wavefront_mtl(&materialSource, pFileData, fileSize, "FS_TexCoord"))
             {
                 m_dataSizeInBytes = materialSource.sizeInBytes;
                 m_pData = malloc(materialSource.sizeInBytes);
                 memcpy(m_pData, materialSource.pRawData, materialSource.sizeInBytes);
 
-                easymtl_uninit(&materialSource);
+                drmtl_uninit(&materialSource);
                 result = true;
             }
             else

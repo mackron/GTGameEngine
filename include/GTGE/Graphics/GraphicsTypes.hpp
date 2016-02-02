@@ -33,7 +33,7 @@ namespace GT
     // Enumerators
 
     /// The different types for material variables. Some of these are invalid in certain contexts, which are specific to the underlying rendering API. All
-    /// of these match up with easymtl_type.
+    /// of these match up with drmtl_type.
     enum class GraphicsMaterialVariableType
     {
         Unknown     = 0,

@@ -14,3 +14,8 @@
 #define DR_AUDIO_IMPLEMENTATION
 #include <dr_libs/dr_audio.h>
 
+#define DR_2D_IMPLEMENTATION
+#include <dr_libs/dr_2d.h>
+
+#define DR_MTL_IMPLEMENTATION
+#include <dr_libs/dr_mtl.h>

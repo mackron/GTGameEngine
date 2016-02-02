@@ -9,7 +9,7 @@
 #include <GTGE/MeshBuilder.hpp>
 #include <dr_libs/dr_path.h>
 #include <dr_libs/dr_vfs.h>
-#include <easy_draw/easy_mtl.h>
+#include <dr_libs/dr_mtl.h>
 
 namespace GT
 {
@@ -516,18 +516,18 @@ namespace GT
             assert(pMaterialResource != nullptr);
 
             // Textures need to be loaded for both inputs and properties.
-            easymtl_material material;
-            if (easymtl_initfromexisting_nocopy(&material, desc.pData, desc.dataSizeInBytes))
+            drmtl_material material;
+            if (drmtl_initfromexisting_nocopy(&material, desc.pData, desc.dataSizeInBytes))
             {
                 // Inputs.
-                unsigned int inputCount = easymtl_getinputcount(&material);
+                unsigned int inputCount = drmtl_getinputcount(&material);
                 for (unsigned int iInput = 0; iInput < inputCount; ++iInput)
                 {
-                    easymtl_input* pInput = easymtl_getinputbyindex(&material, iInput);
+                    drmtl_input* pInput = drmtl_getinputbyindex(&material, iInput);
                     if (pInput != nullptr)
                     {
-                        easymtl_identifier* pIdentifier = easymtl_getidentifier(&material, pInput->identifierIndex);
-                        if (pIdentifier != nullptr && pIdentifier->type == easymtl_type_tex2d)
+                        drmtl_identifier* pIdentifier = drmtl_getidentifier(&material, pInput->identifierIndex);
+                        if (pIdentifier != nullptr && pIdentifier->type == drmtl_type_tex2d)
                         {
                             GraphicsAssetResource_Texture* pTextureResource = nullptr;
 
@@ -552,11 +552,11 @@ namespace GT
 
 
                 // Properties
-                unsigned int propertyCount = easymtl_getpropertycount(&material);
+                unsigned int propertyCount = drmtl_getpropertycount(&material);
                 for (unsigned int iProperty = 0; iProperty < propertyCount; ++iProperty)
                 {
-                    easymtl_property* pProperty = easymtl_getpropertybyindex(&material, iProperty);
-                    if (pProperty != nullptr && pProperty->type == easymtl_type_tex2d)
+                    drmtl_property* pProperty = drmtl_getpropertybyindex(&material, iProperty);
+                    if (pProperty != nullptr && pProperty->type == drmtl_type_tex2d)
                     {
                         GraphicsAssetResource_Texture* pTextureResource = nullptr;
 
@@ -715,25 +715,25 @@ namespace GT
     void GraphicsAssetResourceManager::LoadDefaultMaterial()
     {
         // The default material just returns constant values for Diffuse, Specular, Specular Exponent, Emissive and Alpha.
-        easymtl_material material;
-        if (easymtl_init(&material))
+        drmtl_material material;
+        if (drmtl_init(&material))
         {
-            easymtl_appendchannel(&material, easymtl_channel_float4("DiffuseChannel"));
-            easymtl_appendinstruction(&material, easymtl_retf4_c4(1, 1, 1, 1));
+            drmtl_appendchannel(&material, drmtl_channel_float4("DiffuseChannel"));
+            drmtl_appendinstruction(&material, drmtl_retf4_c4(1, 1, 1, 1));
 
-            easymtl_appendchannel(&material, easymtl_channel_float3("SpecularChannel"));
-            easymtl_appendinstruction(&material, easymtl_retf3_c3(1, 1, 1));
+            drmtl_appendchannel(&material, drmtl_channel_float3("SpecularChannel"));
+            drmtl_appendinstruction(&material, drmtl_retf3_c3(1, 1, 1));
 
-            easymtl_appendchannel(&material, easymtl_channel_float3("SpecularExponentChannel"));
-            easymtl_appendinstruction(&material, easymtl_retf1_c1(10));
+            drmtl_appendchannel(&material, drmtl_channel_float3("SpecularExponentChannel"));
+            drmtl_appendinstruction(&material, drmtl_retf1_c1(10));
 
-            easymtl_appendchannel(&material, easymtl_channel_float3("EmissiveChannel"));
-            easymtl_appendinstruction(&material, easymtl_retf3_c3(0, 0, 0));
+            drmtl_appendchannel(&material, drmtl_channel_float3("EmissiveChannel"));
+            drmtl_appendinstruction(&material, drmtl_retf3_c3(0, 0, 0));
 
-            easymtl_appendchannel(&material, easymtl_channel_float3("AlphaChannel"));
-            easymtl_appendinstruction(&material, easymtl_retf1_c1(1));
+            drmtl_appendchannel(&material, drmtl_channel_float3("AlphaChannel"));
+            drmtl_appendinstruction(&material, drmtl_retf1_c1(1));
 
-            easymtl_appendproperty(&material, easymtl_property_bool("IsTransparent", false));
+            drmtl_appendproperty(&material, drmtl_property_bool("IsTransparent", false));
 
 
             GraphicsMaterialResourceDesc desc;
@@ -742,7 +742,7 @@ namespace GT
             m_pDefaultMaterial = this->CreateMaterialResourceFromDesc(desc, nullptr, "");
 
 
-            easymtl_uninit(&material);
+            drmtl_uninit(&material);
         }
     }
 

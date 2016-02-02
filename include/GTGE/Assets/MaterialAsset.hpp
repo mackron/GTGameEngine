@@ -92,7 +92,7 @@ namespace GT
         /// Retrieves a pointer to the raw material data.
         ///
         /// @remarks
-        ///     This data must be in the format defined by easy_mtl.
+        ///     This data must be in the format defined by dr_mtl.
         virtual const void* GetData() const = 0;
 
         /// Retrieves the size of the raw material data, in bytes.
