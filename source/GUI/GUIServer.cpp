@@ -8,7 +8,7 @@
 #include <GTGE/Core/ToString.hpp>
 #include <cassert>
 #include <GTGE/GTEngine.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 // GUIServer
 namespace GT
@@ -668,7 +668,7 @@ namespace GT
     {
         if (m_imageManager != nullptr)
         {
-            if (easypath_is_absolute(absURLOrID))
+            if (drpath_is_absolute(absURLOrID))
             {
                 // We will first check that the image isn't already loaded. If it is, we just return the existing image.
                 auto iImage = this->loadedImages.Find(absURLOrID);

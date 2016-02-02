@@ -4,23 +4,23 @@
 #include <GTGE/ModelLibrary.hpp>
 #include <GTGE/Core/ImageLoader.hpp>
 #include <GTGE/Core/Strings/Find.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 namespace GT
 {
     bool IsSupportedImageExtension(const char* fileName)
     {
-        return ImageLoader::IsExtensionSupported(easypath_extension(fileName));
+        return ImageLoader::IsExtensionSupported(drpath_extension(fileName));
     }
 
     bool IsSupportedModelExtension(const char* fileName)
     {
-        return ModelLibrary::IsExtensionSupported(easypath_extension(fileName));
+        return ModelLibrary::IsExtensionSupported(drpath_extension(fileName));
     }
 
     bool IsSupportedMaterialExtension(const char* fileName)
     {
-        const char* extension = easypath_extension(fileName);
+        const char* extension = drpath_extension(fileName);
 
         return Strings::Equal<false>(extension, "material") ||
                Strings::Equal<false>(extension, "gtmaterial");
@@ -28,7 +28,7 @@ namespace GT
 
     bool IsSupportedSoundExtension(const char* fileName)
     {
-        const char* extension = easypath_extension(fileName);
+        const char* extension = drpath_extension(fileName);
             
         return Strings::Equal<false>(extension, "wav") ||
                Strings::Equal<false>(extension, "ogg");
@@ -36,22 +36,22 @@ namespace GT
 
     bool IsSupportedParticleSystemExtension(const char* fileName)
     {
-        return Strings::Equal<false>(easypath_extension(fileName), "gtparticle");
+        return Strings::Equal<false>(drpath_extension(fileName), "gtparticle");
     }
 
     bool IsSupportedSceneExtension(const char* fileName)
     {
-        return Strings::Equal<false>(easypath_extension(fileName), "gtscene");
+        return Strings::Equal<false>(drpath_extension(fileName), "gtscene");
     }
 
     bool IsSupportedPrefabExtension(const char* fileName)
     {
-        return Strings::Equal<false>(easypath_extension(fileName), "gtprefab");
+        return Strings::Equal<false>(drpath_extension(fileName), "gtprefab");
     }
 
     bool IsSupportedScriptExtension(const char* fileName)
     {
-        auto extension = easypath_extension(fileName);
+        auto extension = drpath_extension(fileName);
 
         return Strings::Equal<false>(extension, "gtscript") ||
                Strings::Equal<false>(extension, "script")   ||
@@ -63,7 +63,7 @@ namespace GT
     AssetType GetAssetClassFromExtension(const char* fileName)
     {
         // If the path is a directory instead of a file, we need to return AssetType_None.
-        if (Strings::IsNullOrEmpty(easypath_file_name(fileName)))
+        if (Strings::IsNullOrEmpty(drpath_file_name(fileName)))
         {
             return AssetClass_Unknown;
         }

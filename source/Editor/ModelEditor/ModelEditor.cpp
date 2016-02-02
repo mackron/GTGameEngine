@@ -4,7 +4,7 @@
 #include <GTGE/Context.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/MaterialLibrary.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -468,10 +468,10 @@ namespace GT
             }
             else
             {
-                if (easypath_extension_equal(absolutePath, "gtmodel"))
+                if (drpath_extension_equal(absolutePath, "gtmodel"))
                 {
                     char absolutePathNoExt[DRVFS_MAX_PATH];
-                    easypath_copy_and_remove_extension(absolutePathNoExt, sizeof(absolutePathNoExt), absolutePath);
+                    drpath_copy_and_remove_extension(absolutePathNoExt, sizeof(absolutePathNoExt), absolutePath);
 
                     if (strcmp(absolutePathNoExt, this->GetAbsolutePath()) == 0) {
                         this->Reload();

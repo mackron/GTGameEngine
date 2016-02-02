@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGE/Config.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 #include <dr_libs/dr_util.h>
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
@@ -33,7 +33,7 @@ namespace GT
     AssetType DefaultAssetAllocator::GetAssetTypeByPath(const char* filePath) const
     {
         // We determine the type by the extension, except for Wavefront MTL files which need to the in the format of <file>.mtl/<material>
-        const char* ext = easypath_extension(filePath);
+        const char* ext = drpath_extension(filePath);
         if (ext != NULL)
         {
             if (ext[0] != '\0')
@@ -80,7 +80,7 @@ namespace GT
             else
             {
                 // There's no extension, so it could be a material in a Wavefront MTL file. To do this we look for the last dot.
-                const char* filename = easypath_file_name(filePath);
+                const char* filename = drpath_file_name(filePath);
                 if (filename != NULL && filename[0] != '\0')
                 {
                     const char* extension = filename;

@@ -4,7 +4,7 @@
 #include <GTGE/Core/Strings/Equal.hpp>
 #include <GTGE/Core/Strings/Create.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 // TODO: Delete this once DDS is implemented.
 #define GTLIB_NO_DDS
@@ -50,7 +50,7 @@ namespace GT
 {
     ImageLoader * ImageLoader::Create(const char *filename)
     {
-        const char*  extension = easypath_extension(filename);
+        const char*  extension = drpath_extension(filename);
         ImageLoader* loader    = nullptr;
         
 #ifndef GTLIB_NO_PNG

@@ -3,7 +3,7 @@
 #include <GTGE/GUI/GUIStyleScriptCompiler.hpp>
 #include "GUIStyleTokenizer.hpp"
 #include <dr_libs/dr_vfs.h>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 namespace GT
 {
@@ -636,7 +636,7 @@ namespace GT
 
                                                                         char translatedURL[DRVFS_MAX_PATH];
                                                                         if (baseURLPath != nullptr) {
-                                                                            easypath_to_absolute(url.c_str(), baseURLPath, translatedURL, sizeof(translatedURL));
+                                                                            drpath_to_absolute(url.c_str(), baseURLPath, translatedURL, sizeof(translatedURL));
                                                                         } else {
                                                                             strcpy_s(translatedURL, sizeof(translatedURL), url.c_str());
                                                                         }

@@ -2,7 +2,7 @@
 
 #include <GTGE/ParticleSystemDefinition.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 namespace GT
 {
@@ -25,7 +25,7 @@ namespace GT
         char newRelativePath[DRVFS_MAX_PATH];
 
 
-        if (easypath_is_absolute(fileNameIn))
+        if (drpath_is_absolute(fileNameIn))
         {
             strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 

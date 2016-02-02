@@ -3,7 +3,7 @@
 #include <GTGE/Assets/AssetLibrary.hpp>
 #include <GTGE/Assets/Asset.hpp>
 #include <GTGE/Assets/AssetAllocator.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
 #include "DefaultAssetAllocator.hpp"
@@ -94,12 +94,12 @@ namespace GT
             // The file could not be found, but there may be a metadata file. It is possible that the data for an asset is
             // entirely defined in the metadata file, we'll look for that file too.
             char metadataPath[DRVFS_MAX_PATH];
-            easypath_copy_and_append_extension(metadataPath, DRVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
+            drpath_copy_and_append_extension(metadataPath, DRVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
 
             if (drvfs_find_absolute_path(m_pVFS, metadataPath, absolutePathOrIdentifier, sizeof(absolutePathOrIdentifier)))
             {
                 // The metadata file was found. Later on we'll load the metadata for real, so we'll need to remove the ".gtdata" extension beforehand.
-                easypath_remove_extension(absolutePathOrIdentifier);
+                drpath_remove_extension(absolutePathOrIdentifier);
             }
             else
             {
@@ -135,7 +135,7 @@ namespace GT
                     {
                         // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
                         char metadataAbsolutePath[DRVFS_MAX_PATH];
-                        easypath_copy_and_append_extension(metadataAbsolutePath, DRVFS_MAX_PATH, absolutePathOrIdentifier, "gtdata");
+                        drpath_copy_and_append_extension(metadataAbsolutePath, DRVFS_MAX_PATH, absolutePathOrIdentifier, "gtdata");
                         pAsset->LoadMetadata(metadataAbsolutePath, m_pVFS);
 
 
@@ -232,7 +232,7 @@ namespace GT
         if (!drvfs_find_absolute_path(m_pVFS, filePathOrIdentifier, absolutePathOrIdentifier, sizeof(absolutePathOrIdentifier)))
         {
             char metadataPath[DRVFS_MAX_PATH];
-            easypath_copy_and_append_extension(metadataPath, DRVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
+            drpath_copy_and_append_extension(metadataPath, DRVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
 
             if (!drvfs_find_absolute_path(m_pVFS, metadataPath, absolutePathOrIdentifier, sizeof(absolutePathOrIdentifier)))
             {
@@ -251,7 +251,7 @@ namespace GT
                 {
                     // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
                     char metadataAbsolutePath[DRVFS_MAX_PATH];
-                    easypath_copy_and_append_extension(metadataAbsolutePath, DRVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
+                    drpath_copy_and_append_extension(metadataAbsolutePath, DRVFS_MAX_PATH, filePathOrIdentifier, "gtdata");
                     pAsset->LoadMetadata(metadataAbsolutePath, m_pVFS);
 
                     // Load the asset after the metadata.

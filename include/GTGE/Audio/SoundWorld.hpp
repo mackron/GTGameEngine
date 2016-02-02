@@ -5,7 +5,7 @@
 
 #include <GTGE/Core/Vector.hpp>
 #include "../Math.hpp"
-#include <easy_audio/easy_audio.h>
+#include <dr_libs/dr_audio.h>
 
 namespace GT
 {
@@ -57,8 +57,8 @@ namespace GT
         /// A reference to the engine context.
         GT::Context &m_engineContext;
 
-        /// A pointer to the easy_audio world.
-        easyaudio_world* m_pWorld;
+        /// A pointer to the dr_audio world.
+        draudio_world* m_pWorld;
 
 
 

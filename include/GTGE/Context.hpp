@@ -129,11 +129,11 @@ namespace GT
         ////////////////////////////////////////////////////
         // Audio
 
-        /// Retrieves a pointer to the easy_audio context.
-        easyaudio_context* GetAudioContext();
+        /// Retrieves a pointer to the dr_audio context.
+        draudio_context* GetAudioContext();
 
         /// Retrieves a pointer to the audio playback device.
-        easyaudio_device* GetAudioPlaybackDevice();
+        draudio_device* GetAudioPlaybackDevice();
 
         /// Retrieves a reference to the global sound world.
         ///
@@ -575,11 +575,11 @@ namespace GT
         drvfs_file* m_pLogFile;
 
 
-        /// A pointer to the easy_audio context for audio playback.
-        easyaudio_context* m_pAudioContext;
+        /// A pointer to the dr_audio context for audio playback.
+        draudio_context* m_pAudioContext;
 
         /// A pointer to the device for audio playback.
-        easyaudio_device* m_pAudioPlaybackDevice;
+        draudio_device* m_pAudioPlaybackDevice;
 
         /// The global sound world.
         GT::SoundWorld m_soundWorld;

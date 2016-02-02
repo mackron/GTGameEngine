@@ -29,13 +29,13 @@ namespace GT
         CompressedAudioFormat GetCompressedDataFormat() const;
 
         /// @copydoc SoundAsset::GetDataInfo()
-        easyaudio_buffer_desc GetDataInfo() const;
+        draudio_buffer_desc GetDataInfo() const;
 
 
     private:
 
         /// The data info.
-        easyaudio_buffer_desc m_dataInfo;
+        draudio_buffer_desc m_dataInfo;
     };
 }
 

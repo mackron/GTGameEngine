@@ -6,7 +6,7 @@
 #include <GTGE/Core/String.hpp>
 #include <GTGE/Core/stdlib.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 // Delete the headers below later on.
 #include <iostream>
@@ -203,7 +203,7 @@ namespace GT
             this->UnloadFile(absolutePath);
 
             char absolutePathBase[DRVFS_MAX_PATH];
-            easypath_copy_base_path(absolutePath, absolutePathBase, sizeof(absolutePathBase));
+            drpath_copy_base_path(absolutePath, absolutePathBase, sizeof(absolutePathBase));
 
             bool successful = this->Load(pFileData, absolutePathBase, absolutePath);
             
@@ -225,7 +225,7 @@ namespace GT
     {
         // The file path needs to be absolute.
         char absolutePath[DRVFS_MAX_PATH];
-        if (!easypath_is_absolute(filePath))
+        if (!drpath_is_absolute(filePath))
         {
             if (!drvfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath))) {
                 strcpy_s(absolutePath, sizeof(absolutePath), filePath);

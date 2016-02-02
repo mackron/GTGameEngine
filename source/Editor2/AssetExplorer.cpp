@@ -5,7 +5,7 @@
 #include <GTGE/Context.hpp>
 #include <easy_appkit/ak_theme.h>
 #include <easy_gui/easy_gui.h>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 #include <stdio.h>  // For testing. Delete me.
 
@@ -364,7 +364,7 @@ namespace GT
         {
             AssetExplorerItemData itemData;
             
-            easypath_to_relative(drvfs_get_base_directory_by_index(this->GetVFS(), iBasePath), m_editor.GetContext().GetExecutableDirectoryAbsolutePath(), itemData.text, sizeof(itemData.text));
+            drpath_to_relative(drvfs_get_base_directory_by_index(this->GetVFS(), iBasePath), m_editor.GetContext().GetExecutableDirectoryAbsolutePath(), itemData.text, sizeof(itemData.text));
             if (itemData.text[0] == '\0') {
                 strcpy_s(itemData.text, sizeof(itemData.text), "[root]");
             }
@@ -446,16 +446,16 @@ namespace GT
             AssetExplorerItemData* pItemData = reinterpret_cast<AssetExplorerItemData*>(tvi_get_extra_data(pItem));
             if (pItemData != NULL)
             {
-                if (easypath_is_descendant(absolutePath, pItemData->absolutePath))
+                if (drpath_is_descendant(absolutePath, pItemData->absolutePath))
                 {
                     // The new item is a descendant of this base directory - we now need to build each item segment by segment.
                     char relativePath[DRVFS_MAX_PATH];
-                    if (easypath_to_relative(absolutePath, pItemData->absolutePath, relativePath, sizeof(relativePath)))
+                    if (drpath_to_relative(absolutePath, pItemData->absolutePath, relativePath, sizeof(relativePath)))
                     {
                         eg_tree_view_item* pNewItem = pItem;
 
-                        easypath_iterator iseg = easypath_first(relativePath);
-                        while (easypath_next(&iseg))
+                        drpath_iterator iseg = drpath_first(relativePath);
+                        while (drpath_next(&iseg))
                         {
                             char segment[DRVFS_MAX_PATH];
                             strncpy_s(segment, sizeof(segment), iseg.path + iseg.segment.offset, iseg.segment.length);
@@ -594,7 +594,7 @@ namespace GT
         assert(pParentData != NULL);
 
         char absolutePath[DRVFS_MAX_PATH];
-        easypath_copy_and_append(absolutePath, sizeof(absolutePath), pParentData->absolutePath, relativePath);
+        drpath_copy_and_append(absolutePath, sizeof(absolutePath), pParentData->absolutePath, relativePath);
         
 
         // If the child already exists, just return that one.
@@ -603,7 +603,7 @@ namespace GT
             AssetExplorerItemData* pChildData = reinterpret_cast<AssetExplorerItemData*>(tvi_get_extra_data(pChild));
             assert(pChildData != NULL);
 
-            if (easypath_equal(absolutePath, pChildData->absolutePath))
+            if (drpath_equal(absolutePath, pChildData->absolutePath))
             {
                 return pChild;
             }
@@ -614,7 +614,7 @@ namespace GT
 
         // TODO: Sort this alphabetically and by type (directory, archive, file).
         AssetExplorerItemData itemData;
-        strcpy_s(itemData.text, sizeof(itemData.text), easypath_file_name(absolutePath));
+        strcpy_s(itemData.text, sizeof(itemData.text), drpath_file_name(absolutePath));
         itemData.textLength = strlen(itemData.text);
         itemData.width = this->CalculateItemWidth(itemData.text);
         itemData.isMouseOverArrow = false;
@@ -647,7 +647,7 @@ namespace GT
                 }
                 else
                 {
-                    this->InsertChildItem(pDirItem, easypath_file_name(iFile.info.absolutePath));
+                    this->InsertChildItem(pDirItem, drpath_file_name(iFile.info.absolutePath));
                 }
             } while (drvfs_next(this->GetVFS(), &iFile));
         }

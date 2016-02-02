@@ -6,7 +6,7 @@
 #include <GTGE/PrefabLibrary.hpp>
 #include <GTGE/ScriptLibrary.hpp>
 #include <GTGE/Physics/CollisionShapeTypes.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 #include <GTGE/Core/System.hpp>
 
 // Temp until we get some more support in Script.
@@ -2142,11 +2142,11 @@ namespace GT
                     {
                         if ((iFile.info.attributes & DRVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                         {
-                            directories.Add(easypath_file_name(iFile.info.absolutePath), true);
+                            directories.Add(drpath_file_name(iFile.info.absolutePath), true);
                         }
                         else
                         {
-                            files.Add(easypath_file_name(iFile.info.absolutePath), true);
+                            files.Add(drpath_file_name(iFile.info.absolutePath), true);
                         }
                     } while (drvfs_next(g_Context->GetVFS(), &iFile));
                 }
@@ -2180,7 +2180,7 @@ namespace GT
             auto base = script.ToString(2);
                 
             char relativePath[DRVFS_MAX_PATH];
-            easypath_to_relative(path, base, relativePath, sizeof(relativePath));
+            drpath_to_relative(path, base, relativePath, sizeof(relativePath));
                 
             script.Push(relativePath);
             return 1;
@@ -2241,7 +2241,7 @@ namespace GT
         {
             // There can be any number of text files. Perhaps we should assume that if it's not a resouce file like a model and texture, we should assume a text file?
 
-            const char* extension = easypath_extension(script.ToString(1));
+            const char* extension = drpath_extension(script.ToString(1));
 
             bool result = Strings::Equal<false>(extension, "")       ||
                           Strings::Equal<false>(extension, "txt")    ||
@@ -2336,7 +2336,7 @@ namespace GT
             int GetParentDirectoryPath(Script &script)
             {
                 char baseDir[DRVFS_MAX_PATH];
-                easypath_copy_base_path(script.ToString(1), baseDir, sizeof(baseDir));
+                drpath_copy_base_path(script.ToString(1), baseDir, sizeof(baseDir));
 
                 script.Push(baseDir);
                 return 1;
@@ -2344,20 +2344,20 @@ namespace GT
 
             int GetFileNameFromPath(Script &script)
             {
-                script.Push(easypath_file_name(script.ToString(1)));
+                script.Push(drpath_file_name(script.ToString(1)));
                 return 1;
             }
 
             int GetExtension(Script &script)
             {
-                script.Push(easypath_extension(script.ToString(1)));
+                script.Push(drpath_extension(script.ToString(1)));
                 return 1;
             }
 
             int RemoveExtension(Script &script)
             {
                 char path[DRVFS_MAX_PATH];
-                easypath_copy_and_remove_extension(path, sizeof(path), script.ToString(1));
+                drpath_copy_and_remove_extension(path, sizeof(path), script.ToString(1));
 
                 return 1;
             }

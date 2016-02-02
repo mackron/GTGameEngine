@@ -7,7 +7,7 @@
 #include <GTGE/ScriptLibrary.hpp>
 #include <GTGE/GUI/GUIServer.hpp>
 #include <GTGE/Core/Keyboard.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -203,12 +203,12 @@ namespace GT
 
         if (!isSpecialEditor)
         {
-            if (easypath_is_absolute(path))
+            if (drpath_is_absolute(path))
             {
                 if (relativeTo != nullptr)
                 {
                     strcpy_s(absolutePath, sizeof(absolutePath), path);
-                    easypath_to_relative(path, relativeTo, relativePath, sizeof(relativePath));
+                    drpath_to_relative(path, relativeTo, relativePath, sizeof(relativePath));
                 }
                 else
                 {
@@ -229,7 +229,7 @@ namespace GT
                     if (GT::IsSupportedModelExtension(path))
                     {
                         char pathWithExt[DRVFS_MAX_PATH];
-                        easypath_copy_and_append_extension(pathWithExt, sizeof(pathWithExt), path, "gtmodel");
+                        drpath_copy_and_append_extension(pathWithExt, sizeof(pathWithExt), path, "gtmodel");
 
                         if (drvfs_find_absolute_path(g_Context->GetVFS(), pathWithExt, absolutePath, sizeof(absolutePath))) {
                             strcpy_s(relativePath, sizeof(relativePath), path);
@@ -266,7 +266,7 @@ namespace GT
                     if (GT::IsSupportedModelExtension(absolutePath))
                     {
                         char absolutePathWithExt[DRVFS_MAX_PATH];
-                        easypath_copy_and_append_extension(absolutePathWithExt, sizeof(absolutePathWithExt), absolutePath, "gtmodel");
+                        drpath_copy_and_append_extension(absolutePathWithExt, sizeof(absolutePathWithExt), absolutePath, "gtmodel");
 
                         if (!drvfs_is_existing_file(g_Context->GetVFS(), absolutePathWithExt))
                         {
@@ -376,11 +376,11 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_is_relative(path))
+            if (drpath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    drpath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -418,11 +418,11 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_is_relative(path))
+            if (drpath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    drpath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -497,11 +497,11 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_is_relative(path))
+            if (drpath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    drpath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -595,12 +595,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_is_relative(path))
+            if (drpath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    drpath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -660,12 +660,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_is_relative(path))
+            if (drpath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    drpath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -694,12 +694,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_is_relative(path))
+            if (drpath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    drpath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -729,11 +729,11 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_is_relative(path))
+            if (drpath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    drpath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -819,11 +819,11 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_is_relative(path))
+            if (drpath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    drpath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -1035,7 +1035,7 @@ namespace GT
         {
             // It's not a directory.
 
-            auto extension = easypath_extension(absolutePath);
+            auto extension = drpath_extension(absolutePath);
 
             if (ModelLibrary::IsExtensionSupported(extension))
             {

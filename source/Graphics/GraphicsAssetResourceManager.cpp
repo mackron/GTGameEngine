@@ -7,7 +7,7 @@
 #include <GTGE/Assets/MaterialAsset.hpp>
 #include <GTGE/Assets/ModelAsset.hpp>
 #include <GTGE/MeshBuilder.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 #include <dr_libs/dr_vfs.h>
 #include <easy_draw/easy_mtl.h>
 
@@ -932,16 +932,16 @@ namespace GT
     {
         // The base path for materials need special treatment because we cannot have the base path set to a .mtl archive file.
 
-        easypath_copy_base_path(materialAbsolutePath, basePath, basePathSize);
+        drpath_copy_base_path(materialAbsolutePath, basePath, basePathSize);
 
-        if (easypath_extension_equal(basePath, "mtl"))
+        if (drpath_extension_equal(basePath, "mtl"))
         {
-            easypath_base_path(basePath);
+            drpath_base_path(basePath);
         }
     }
 
     void GraphicsAssetResourceManager::GetModelBaseDirectory(const char* modelAbsolutePath, char* basePath, unsigned int basePathSize) const
     {
-        easypath_copy_base_path(modelAbsolutePath, basePath, basePathSize);
+        drpath_copy_base_path(modelAbsolutePath, basePath, basePathSize);
     }
 }

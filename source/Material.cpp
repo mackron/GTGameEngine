@@ -7,7 +7,7 @@
 #include <GTGE/Context.hpp>
 #include <GTGE/Core/Parse.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -285,7 +285,7 @@ namespace GT
         char newRelativePath[DRVFS_MAX_PATH];
 
 
-        if (easypath_is_absolute(fileNameIn))
+        if (drpath_is_absolute(fileNameIn))
         {
             strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 

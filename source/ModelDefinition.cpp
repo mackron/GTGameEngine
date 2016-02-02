@@ -4,7 +4,7 @@
 #include <GTGE/MaterialLibrary.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 namespace GT
 {
@@ -36,7 +36,7 @@ namespace GT
         char newAbsolutePath[DRVFS_MAX_PATH];
         char newRelativePath[DRVFS_MAX_PATH];
 
-        if (easypath_is_absolute(fileNameIn))
+        if (drpath_is_absolute(fileNameIn))
         {
             strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 
@@ -62,16 +62,16 @@ namespace GT
 
 
         char nativeAbsolutePath[DRVFS_MAX_PATH];
-        if (easypath_extension_equal(newAbsolutePath, "gtmodel"))
+        if (drpath_extension_equal(newAbsolutePath, "gtmodel"))
         {
             strcpy_s(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath);
 
-            easypath_remove_extension(newAbsolutePath);
-            easypath_remove_extension(newRelativePath);
+            drpath_remove_extension(newAbsolutePath);
+            drpath_remove_extension(newRelativePath);
         }
         else
         {
-            easypath_copy_and_append_extension(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath, "gtmodel");
+            drpath_copy_and_append_extension(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath, "gtmodel");
         }
 
 

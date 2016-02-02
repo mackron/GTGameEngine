@@ -4,7 +4,7 @@
 #define GT_SoundAsset
 
 #include "Asset.hpp"
-#include <easy_audio/easy_audio.h>
+#include <dr_libs/dr_audio.h>
 
 namespace GT
 {
@@ -42,10 +42,10 @@ namespace GT
         /// @remarks
         ///     The pInitialData member of the returned object is a shared pointer to the compressed audio data. The sizeInBytes member is the size
         ///     of the data referred to by pInitialData. All other members of the returned object refer to the uncompressed data and can be passed
-        ///     directly to easy_audio.
+        ///     directly to dr_audio.
         ///     @par
         ///     Currently, the pInitialData member should point to the first byte of the entire file.
-        virtual easyaudio_buffer_desc GetDataInfo() const = 0;
+        virtual draudio_buffer_desc GetDataInfo() const = 0;
     };
 }
 

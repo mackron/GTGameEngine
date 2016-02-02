@@ -11,7 +11,7 @@
 #include <GTGE/Core/Serializer.hpp>
 #include <GTGE/Core/Deserializer.hpp>
 #include <GTGE/Core/String.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 #undef min
 #undef max
@@ -2786,7 +2786,7 @@ namespace GT
                         if (model != nullptr)
                         {
                             char absolutePathWithoutExt[DRVFS_MAX_PATH];
-                            easypath_copy_and_remove_extension(absolutePathWithoutExt, sizeof(absolutePathWithoutExt), absolutePath);
+                            drpath_copy_and_remove_extension(absolutePathWithoutExt, sizeof(absolutePathWithoutExt), absolutePath);
 
                             if (model->GetDefinition().absolutePath == absolutePath || model->GetDefinition().absolutePath == absolutePathWithoutExt)
                             {
@@ -2826,7 +2826,7 @@ namespace GT
             for (unsigned int iBasePath = 0; iBasePath < drvfs_get_base_directory_count(g_Context->GetVFS()); ++iBasePath)
             {
                 const char* basePath = drvfs_get_base_directory_by_index(g_Context->GetVFS(), iBasePath);
-                if (easypath_is_descendant(absolutePath, basePath))
+                if (drpath_is_descendant(absolutePath, basePath))
                 {
                     mostLikelyBasePath = basePath;
                     break;
@@ -2836,7 +2836,7 @@ namespace GT
             if (mostLikelyBasePath != nullptr)
             {
                 char relativePath[DRVFS_MAX_PATH];
-                if (easypath_to_relative(absolutePath, mostLikelyBasePath, relativePath, sizeof(relativePath)))
+                if (drpath_to_relative(absolutePath, mostLikelyBasePath, relativePath, sizeof(relativePath)))
                 {
                     if (GT::IsSupportedPrefabExtension(absolutePath))
                     {
@@ -2845,9 +2845,9 @@ namespace GT
                     else
                     {
                         // It might be a script file.
-                        if (easypath_extension_equal(relativePath, "lua")    ||
-                            easypath_extension_equal(relativePath, "script") ||
-                            easypath_extension_equal(relativePath, "gtscript"))
+                        if (drpath_extension_equal(relativePath, "lua")    ||
+                            drpath_extension_equal(relativePath, "script") ||
+                            drpath_extension_equal(relativePath, "gtscript"))
                         {
                             this->UpdateAllSceneNodesLinkedToScript(relativePath);
                         }

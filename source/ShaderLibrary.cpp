@@ -6,7 +6,7 @@
 #include <GTGE/Core/Dictionary.hpp>
 #include <GTGE/Core/Vector.hpp>
 #include <GTGE/Core/String.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 using namespace rapidxml;
 
@@ -63,7 +63,7 @@ namespace GT
         drvfs_context* pVFS = g_Context->GetVFS();
         assert(pVFS != nullptr);
 
-        if (easypath_is_absolute(directory))
+        if (drpath_is_absolute(directory))
         {
             // Absolute.
 
@@ -98,7 +98,7 @@ namespace GT
                 if (baseDirectory != nullptr)
                 {
                     char searchDir[DRVFS_MAX_PATH];
-                    easypath_copy_and_append(searchDir, sizeof(searchDir), baseDirectory, directory);
+                    drpath_copy_and_append(searchDir, sizeof(searchDir), baseDirectory, directory);
 
                     ShaderLibrary::LoadFromDirectory(searchDir, recursive);
                 }

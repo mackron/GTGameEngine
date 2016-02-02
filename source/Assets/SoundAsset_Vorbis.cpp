@@ -46,7 +46,7 @@ namespace GT
         return CompressedAudioFormat::Vorbis;
     }
 
-    easyaudio_buffer_desc SoundAsset_Vorbis::GetDataInfo() const
+    draudio_buffer_desc SoundAsset_Vorbis::GetDataInfo() const
     {
         return m_dataInfo;
     }

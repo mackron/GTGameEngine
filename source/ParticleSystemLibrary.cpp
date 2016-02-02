@@ -4,7 +4,7 @@
 #include <GTGE/GTEngine.hpp>
 #include <GTGE/Core/Dictionary.hpp>
 #include <GTGE/Core/Vector.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 
 namespace GT
@@ -56,11 +56,11 @@ namespace GT
         char relativePath[DRVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
-        if (easypath_is_absolute(fileName))
+        if (drpath_is_absolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
+                drpath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else
             {

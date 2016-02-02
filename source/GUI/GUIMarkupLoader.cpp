@@ -3,7 +3,7 @@
 #include <GTGE/GUI/GUIMarkupLoader.hpp>
 #include <GTGE/GUI/GUIServer.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 namespace GT
 {
@@ -87,7 +87,7 @@ namespace GT
                 char absURL[DRVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
-                    easypath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
+                    drpath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
@@ -117,7 +117,7 @@ namespace GT
                 char absURL[DRVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
-                    easypath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
+                    drpath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
@@ -281,7 +281,7 @@ namespace GT
                 char absURL[DRVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
-                    easypath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
+                    drpath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
@@ -322,7 +322,7 @@ namespace GT
                 if (pFileData != nullptr)
                 {
                     char absoluteDir[DRVFS_MAX_PATH];
-                    easypath_copy_base_path(absolutePath, absoluteDir, sizeof(absoluteDir));
+                    drpath_copy_base_path(absolutePath, absoluteDir, sizeof(absoluteDir));
 
                     bool result = this->Load(pFileData, fileSize, absoluteDir, loadedElementsOut);
                     if (result)

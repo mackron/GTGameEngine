@@ -3,7 +3,7 @@
 #ifndef GT_Audio_SoundStreamer
 #define GT_Audio_SoundStreamer
 
-#include <easy_audio/easy_audio.h>
+#include <dr_libs/dr_audio.h>
 
 namespace GT
 {
@@ -73,7 +73,7 @@ namespace GT
         /// Retrieves the format of the audio.
         ///
         /// @return The format of the audio.
-        virtual easyaudio_format GetFormat() const = 0;
+        virtual draudio_format GetFormat() const = 0;
 
 
 

@@ -11,7 +11,7 @@
 #include <GTGE/Core/String.hpp>
 #include <GTGE/Core/Keyboard.hpp>
 #include <GTGE/Core/WindowManagement.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 #include <dr_libs/dr_vfs.h>
 
 namespace GT
@@ -38,12 +38,12 @@ namespace GT
         if (strcmp(key, "[path]") == 0)
         {
             char exeDirectoryPath[DRVFS_MAX_PATH];
-            easypath_copy_base_path(value, exeDirectoryPath, sizeof(exeDirectoryPath));
+            drpath_copy_base_path(value, exeDirectoryPath, sizeof(exeDirectoryPath));
 
             _chdir(exeDirectoryPath);
             _getcwd(pData->absoluteExeDirPath, sizeof(pData->absoluteExeDirPath));
 
-            easypath_copy_and_append(pData->absoluteExePath, sizeof(pData->absoluteExePath), pData->absoluteExeDirPath, easypath_file_name(value));
+            drpath_copy_and_append(pData->absoluteExePath, sizeof(pData->absoluteExePath), pData->absoluteExeDirPath, drpath_file_name(value));
 
             return true;
         }
@@ -179,8 +179,8 @@ namespace GT
 
 
         // Make sure the executable's absolute path is clean for future things.
-        easypath_clean(cmdlineData.absoluteExeDirPath, m_executableDirectoryAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
-        easypath_clean(cmdlineData.absoluteExePath, m_executableAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
+        drpath_clean(cmdlineData.absoluteExeDirPath, m_executableDirectoryAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
+        drpath_clean(cmdlineData.absoluteExePath, m_executableAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
 
         // The directory containing the executable needs to be the lowest-priority base path.
         drvfs_add_base_directory(m_pVFS, m_executableDirectoryAbsolutePath);
@@ -189,7 +189,7 @@ namespace GT
 
         // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
         char logpath[DRVFS_MAX_PATH];
-        easypath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
+        drpath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
 
         m_pLogFile = drvfs_open(m_pVFS, logpath, DRVFS_WRITE, 0);
         if (m_pLogFile == NULL) {
@@ -228,24 +228,24 @@ namespace GT
         //////////////////////////////////////////
         // Audio System
             
-        m_pAudioContext = easyaudio_create_context();
+        m_pAudioContext = draudio_create_context();
         if (m_pAudioContext == NULL) {
             this->LogError("Failed to create audio system.");
         }
 
         // TEMP: Print the playback devices.
-        unsigned int playbackDeviceCount = easyaudio_get_output_device_count(m_pAudioContext);
+        unsigned int playbackDeviceCount = draudio_get_output_device_count(m_pAudioContext);
         for (unsigned int iDevice = 0; iDevice < playbackDeviceCount; ++iDevice)
         {
-            easyaudio_device_info info;
-            if (easyaudio_get_output_device_info(m_pAudioContext, iDevice, &info))
+            draudio_device_info info;
+            if (draudio_get_output_device_info(m_pAudioContext, iDevice, &info))
             {
                 this->Logf("Playback Device (%d) - %s", iDevice, info.description);
             }
         }
 
         if (playbackDeviceCount > 0) {
-            m_pAudioPlaybackDevice = easyaudio_create_output_device(m_pAudioContext, 0);
+            m_pAudioPlaybackDevice = draudio_create_output_device(m_pAudioContext, 0);
         }
 
         m_soundWorld.Startup();
@@ -430,10 +430,10 @@ namespace GT
 
         m_soundWorld.Shutdown();
 
-        easyaudio_delete_output_device(m_pAudioPlaybackDevice);
+        draudio_delete_output_device(m_pAudioPlaybackDevice);
         m_pAudioPlaybackDevice = nullptr;
 
-        easyaudio_delete_context(m_pAudioContext);
+        draudio_delete_context(m_pAudioContext);
         m_pAudioContext = nullptr;
 
 
@@ -481,7 +481,7 @@ namespace GT
     void Context::AddBaseDirectoryRelativeToExe(const char* relativePath)
     {
         char absolutePath[DRVFS_MAX_PATH];
-        easypath_to_absolute(relativePath, this->GetExecutableDirectoryAbsolutePath(), absolutePath, sizeof(absolutePath));
+        drpath_to_absolute(relativePath, this->GetExecutableDirectoryAbsolutePath(), absolutePath, sizeof(absolutePath));
 
         drvfs_insert_base_directory(m_pVFS, absolutePath, drvfs_get_base_directory_count(m_pVFS) - 1);
     }
@@ -582,12 +582,12 @@ namespace GT
     ////////////////////////////////////////////////////
     // Audio
 
-    easyaudio_context* Context::GetAudioContext()
+    draudio_context* Context::GetAudioContext()
     {
         return m_pAudioContext;
     }
         
-    easyaudio_device* Context::GetAudioPlaybackDevice()
+    draudio_device* Context::GetAudioPlaybackDevice()
     {
         return m_pAudioPlaybackDevice;
     }
@@ -1050,7 +1050,7 @@ namespace GT
     bool Context::PackageForDistribution(const char* outputDirectory, const char* executableName)
     {
         char absoluteOutputDirectory[DRVFS_MAX_PATH];
-        easypath_copy_and_append(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), this->GetExecutableDirectoryAbsolutePath(), outputDirectory);
+        drpath_copy_and_append(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), this->GetExecutableDirectoryAbsolutePath(), outputDirectory);
 
         // We will start by creating the output directory.
         if (!drvfs_is_existing_directory(this->GetVFS(), absoluteOutputDirectory))
@@ -1073,9 +1073,9 @@ namespace GT
         }
 
 
-        if (easypath_extension_equal(this->GetExecutableAbsolutePath(), "exe"))
+        if (drpath_extension_equal(this->GetExecutableAbsolutePath(), "exe"))
         {
-            if (easypath_extension_equal(executableName, "exe"))
+            if (drpath_extension_equal(executableName, "exe"))
             {
                 packager.CopyExecutable(this->GetExecutableAbsolutePath(), executableName);
             }

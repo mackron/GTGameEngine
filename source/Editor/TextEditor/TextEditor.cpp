@@ -4,7 +4,7 @@
 #include <GTGE/Editor.hpp>
 #include <GTGE/Scripting.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -29,7 +29,7 @@ namespace GT
             auto &script = this->GetScript();
 
             // We need to determine whether or not we are running a script.
-            const char* extension = easypath_extension(absolutePath);
+            const char* extension = drpath_extension(absolutePath);
             assert(extension != nullptr);
             {
                 this->isScriptFile = Strings::Equal<false>(extension, "lua")    ||

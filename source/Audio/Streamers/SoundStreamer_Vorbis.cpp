@@ -82,9 +82,9 @@ namespace GT
         return m_vorbisInfo.sample_rate;
     }
 
-    easyaudio_format SoundStreamer_Vorbis::GetFormat() const
+    draudio_format SoundStreamer_Vorbis::GetFormat() const
     {
-        return easyaudio_format_float;
+        return draudio_format_float;
     }
 }
 

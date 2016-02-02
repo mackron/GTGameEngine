@@ -21,10 +21,10 @@ namespace GT
         SoundStreamer* pStreamer;
     };
 
-    static void EA_OnSoundDelete(easyaudio_sound* pSound)
+    static void EA_OnSoundDelete(draudio_sound* pSound)
     {
         // The streamer needs to be closed.
-        EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(easyaudio_get_sound_extra_data(pSound));
+        EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(draudio_get_sound_extra_data(pSound));
         assert(pSoundData != NULL);
 
         SoundStreamer::Delete(pSoundData->pStreamer);
@@ -34,9 +34,9 @@ namespace GT
         pSoundData->pAsset = NULL;
     }
 
-    static easyaudio_bool EA_OnSoundRead(easyaudio_sound* pSound, void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut)
+    static draudio_bool EA_OnSoundRead(draudio_sound* pSound, void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut)
     {
-        EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(easyaudio_get_sound_extra_data(pSound));
+        EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(draudio_get_sound_extra_data(pSound));
         assert(pSoundData != NULL);
 
         if (pSoundData->pStreamer != NULL) {
@@ -46,9 +46,9 @@ namespace GT
         return false;
     }
 
-    static easyaudio_bool EA_OnSoundSeek(easyaudio_sound* pSound, unsigned int offsetInBytesFromStart)
+    static draudio_bool EA_OnSoundSeek(draudio_sound* pSound, unsigned int offsetInBytesFromStart)
     {
-        EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(easyaudio_get_sound_extra_data(pSound));
+        EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(draudio_get_sound_extra_data(pSound));
         assert(pSoundData != NULL);
 
         if (pSoundData->pStreamer != NULL) {
@@ -74,7 +74,7 @@ namespace GT
 
     bool SoundWorld::Startup()
     {
-        m_pWorld = easyaudio_create_world(m_engineContext.GetAudioPlaybackDevice());
+        m_pWorld = draudio_create_world(m_engineContext.GetAudioPlaybackDevice());
         if (m_pWorld != nullptr)
         {
             return true;
@@ -85,7 +85,7 @@ namespace GT
 
     void SoundWorld::Shutdown()
     {
-        easyaudio_delete_world(m_pWorld);
+        draudio_delete_world(m_pWorld);
         m_pWorld = nullptr;
     }
 
@@ -105,7 +105,7 @@ namespace GT
                 extraData.pAsset         = pAsset;
                 extraData.pStreamer      = pStreamer;
 
-                easyaudio_sound_desc desc;
+                draudio_sound_desc desc;
                 desc.flags         = 0;
                 desc.format        = pStreamer->GetFormat();
                 desc.channels      = pStreamer->GetNumChannels();
@@ -119,14 +119,14 @@ namespace GT
                 desc.extraDataSize = sizeof(EA_SoundData);
                 desc.pExtraData    = &extraData;
                 if (desc.channels == 1) {
-                    desc.flags = EASYAUDIO_ENABLE_3D;
+                    desc.flags = DRAUDIO_ENABLE_3D;
 
                     if (relative) {
-                        desc.flags = EASYAUDIO_RELATIVE_3D;
+                        desc.flags = DRAUDIO_RELATIVE_3D;
                     }
                 }
 
-                easyaudio_play_inline_sound_3f(m_pWorld, desc, position.x, position.y, position.z);
+                draudio_play_inline_sound_3f(m_pWorld, desc, position.x, position.y, position.z);
 
                 return true;
             }
@@ -141,6 +141,6 @@ namespace GT
 
     void SoundWorld::StopAllSounds()
     {
-        easyaudio_stop_all_sounds(m_pWorld);
+        draudio_stop_all_sounds(m_pWorld);
     }
 }

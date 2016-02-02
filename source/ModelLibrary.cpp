@@ -4,7 +4,7 @@
 #include <GTGE/MaterialLibrary.hpp>
 #include <GTGE/VertexArrayLibrary.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <easy_path/easy_path.h>
+#include <dr_libs/dr_path.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -67,11 +67,11 @@ namespace GT
         char relativePath[DRVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
-        if (easypath_is_absolute(fileName))
+        if (drpath_is_absolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
+                drpath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else
             {
@@ -193,9 +193,9 @@ namespace GT
         char fileName[DRVFS_MAX_PATH];
         strcpy_s(fileName, sizeof(fileName), fileNameIn);
 
-        if (easypath_extension_equal(fileName, "gtmodel"))
+        if (drpath_extension_equal(fileName, "gtmodel"))
         {
-            easypath_remove_extension(fileName);
+            drpath_remove_extension(fileName);
         }
 
 
@@ -240,7 +240,7 @@ namespace GT
     {
         // We have a model, so now we need to check that we can open the file.
         String fileName(fileNameIn);
-        if (!easypath_extension_equal(fileNameIn, "gtmodel"))
+        if (!drpath_extension_equal(fileNameIn, "gtmodel"))
         {
             fileName += ".gtmodel";
         }
@@ -269,10 +269,10 @@ namespace GT
         auto iDefinition = m_loadedDefinitions.Find(fileName);
         if (iDefinition == nullptr)
         {
-            if (easypath_extension_equal(fileName, "gtmodel"))
+            if (drpath_extension_equal(fileName, "gtmodel"))
             {
                 char fileNameWithoutExtension[DRVFS_MAX_PATH];
-                easypath_copy_and_remove_extension(fileNameWithoutExtension, sizeof(fileNameWithoutExtension), fileName);
+                drpath_copy_and_remove_extension(fileNameWithoutExtension, sizeof(fileNameWithoutExtension), fileName);
 
                 iDefinition = m_loadedDefinitions.Find(fileNameWithoutExtension);
             }
@@ -327,10 +327,10 @@ namespace GT
             char adjustedRelativePath[DRVFS_MAX_PATH];
             strcpy_s(adjustedRelativePath, sizeof(adjustedRelativePath), relativePath);
 
-            if (easypath_extension_equal(relativePath, "gtmodel")) {
-                easypath_remove_extension(adjustedRelativePath);
+            if (drpath_extension_equal(relativePath, "gtmodel")) {
+                drpath_remove_extension(adjustedRelativePath);
             } else {
-                easypath_append_extension(adjustedRelativePath, sizeof(adjustedRelativePath), "gtmodel");
+                drpath_append_extension(adjustedRelativePath, sizeof(adjustedRelativePath), "gtmodel");
             }
 
             if (!drvfs_find_absolute_path(g_Context->GetVFS(), adjustedRelativePath, absolutePathTemp, sizeof(absolutePathTemp))) {

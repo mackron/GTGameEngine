@@ -37,7 +37,7 @@ namespace GT
         int SetListenerPosition(GT::Script &script)
         {
             glm::vec3 pos = ToVector3(script, 1);
-            easyaudio_set_listener_position(g_Context->GetAudioPlaybackDevice(), pos.x, pos.y, pos.z);
+            draudio_set_listener_position(g_Context->GetAudioPlaybackDevice(), pos.x, pos.y, pos.z);
 
             return 0;
         }
@@ -46,7 +46,7 @@ namespace GT
         {
             glm::vec3 forward = ToVector3(script, 1);
             glm::vec3 up = ToVector3(script, 1);
-            easyaudio_set_listener_orientation(g_Context->GetAudioPlaybackDevice(), forward.x, forward.y, forward.z, up.x, up.y, up.z);
+            draudio_set_listener_orientation(g_Context->GetAudioPlaybackDevice(), forward.x, forward.y, forward.z, up.x, up.y, up.z);
 
             return 0;
         }

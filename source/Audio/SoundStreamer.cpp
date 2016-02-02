@@ -33,7 +33,7 @@ namespace GT
             GT::SoundAsset* pSoundAsset = reinterpret_cast<GT::SoundAsset*>(pAsset);
             assert(pSoundAsset != nullptr);
 
-            easyaudio_buffer_desc dataInfo = pSoundAsset->GetDataInfo();
+            draudio_buffer_desc dataInfo = pSoundAsset->GetDataInfo();
 
 
             // We need to create a streamer based on the compressed format of the audio data.
