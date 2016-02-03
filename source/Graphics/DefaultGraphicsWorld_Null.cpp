@@ -4,7 +4,7 @@
 
 namespace GT
 {
-    DefaultGraphicsWorld_Null::DefaultGraphicsWorld_Null(easygui_context* pGUI)
+    DefaultGraphicsWorld_Null::DefaultGraphicsWorld_Null(drgui_context* pGUI)
         : GraphicsWorld(pGUI)
     {
     }
@@ -496,13 +496,13 @@ namespace GT
     }
 
 
-    void DefaultGraphicsWorld_Null::SetRenderTargetGUISurface(HGraphicsRenderTarget hRT, easygui_element* pGUIElement)
+    void DefaultGraphicsWorld_Null::SetRenderTargetGUISurface(HGraphicsRenderTarget hRT, drgui_element* pGUIElement)
     {
         (void)hRT;
         (void)pGUIElement;
     }
 
-    easygui_element* DefaultGraphicsWorld_Null::GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const
+    drgui_element* DefaultGraphicsWorld_Null::GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const
     {
         (void)hRT;
 

@@ -4,7 +4,7 @@
 #include <GTGE/Editor2/Editor2.hpp>
 #include <GTGE/Context.hpp>
 #include <easy_appkit/ak_tool.h>
-#include <easy_gui/easy_gui.h>
+#include <dr_libs/dr_gui.h>
 
 namespace GT
 {
@@ -22,7 +22,7 @@ namespace GT
 
     EditorTool::~EditorTool()
     {
-        easygui_delete_element(m_pTool);
+        drgui_delete_element(m_pTool);
     }
 
 
@@ -48,7 +48,7 @@ namespace GT
     }
 
 
-    EditorTool* GetEditorTool(easygui_element* pTool)
+    EditorTool* GetEditorTool(drgui_element* pTool)
     {
         AK_EditorToolUserData* pUserData = reinterpret_cast<AK_EditorToolUserData*>(ak_get_tool_extra_data(pTool));
         if (pUserData == NULL) {

@@ -8,7 +8,7 @@
 #include "../Math.hpp"
 #include "../AlignedType.hpp"
 #include "../Core/Colour.hpp"
-#include <easy_gui/easy_gui.h>
+#include <dr_libs/dr_gui.h>
 
 #if defined(_WIN32)
 #include <GTGE/Core/windows.hpp>
@@ -160,14 +160,14 @@ namespace GT
     public:
 
         /// Constructor.
-        GraphicsWorld(easygui_context* pGUI);
+        GraphicsWorld(drgui_context* pGUI);
 
         /// Destructor.
         virtual ~GraphicsWorld();
 
 
         /// Retrieves a reference to the GUI context that is used for drawing GUI elements.
-        easygui_context* GetGUI() const;
+        drgui_context* GetGUI() const;
 
 
 
@@ -396,10 +396,10 @@ namespace GT
         ///     @par
         ///     Setting the surface to NULL or 0 will remove the surface from the render target. This is the default, and should
         ///     be done if the surface is deleted from the GUI.
-        virtual void SetRenderTargetGUIElement(HGraphicsRenderTarget hRT, easygui_element* pElement) = 0;
+        virtual void SetRenderTargetGUIElement(HGraphicsRenderTarget hRT, drgui_element* pElement) = 0;
 
         /// Retrieves the surface that is being rendered to the given render target.
-        virtual easygui_element* GetRenderTargetGUIElement(HGraphicsRenderTarget hRT) const = 0;
+        virtual drgui_element* GetRenderTargetGUIElement(HGraphicsRenderTarget hRT) const = 0;
 
         /// Sets the size of the given surface's GUI surface to that of the viewport of the given render target.
         ///
@@ -441,7 +441,7 @@ namespace GT
     private:
 
         /// A reference to the GUI context.
-        easygui_context* m_pGUI;
+        drgui_context* m_pGUI;
 
         /// Padding.
 #if UINTPTR_MAX == UINT32_MAX

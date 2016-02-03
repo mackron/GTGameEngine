@@ -3,7 +3,7 @@
 #ifndef GT_EditorTool
 #define GT_EditorTool
 
-typedef struct easygui_element easygui_element;
+typedef struct drgui_element drgui_element;
 typedef struct drvfs_context drvfs_context;
 
 namespace GT
@@ -43,7 +43,7 @@ namespace GT
         drvfs_context* GetVFS();
 
         /// Retrieves a pointer to the easy_appkit tool.
-        easygui_element* GetAKTool() { return m_pTool; }
+        drgui_element* GetAKTool() { return m_pTool; }
 
 
 
@@ -53,12 +53,12 @@ namespace GT
         Editor2 &m_editor;
 
         /// A pointer to the easy_appkit tool GUI element.
-        easygui_element* m_pTool;
+        drgui_element* m_pTool;
     };
 
 
     /// Helper function for retrieving a pointer to the EditorTool object that is associated with the given easy_appkit tool.
-    EditorTool* GetEditorTool(easygui_element* pTool);
+    EditorTool* GetEditorTool(drgui_element* pTool);
 }
 
 #endif

@@ -4,7 +4,7 @@
 #define GT_Editor2
 
 #include <easy_appkit/ak_application.h>
-#include <easy_gui/easy_gui.h>
+#include <dr_libs/dr_gui.h>
 
 namespace GT
 {
@@ -38,7 +38,7 @@ namespace GT
         Context & GetContext() { return m_context; }
 
         /// Retrieves a pointer to the internal GUI context.
-        easygui_context* GetGUI();
+        drgui_context* GetGUI();
 
         /// Retrieves a pointer to the context's drvfs_context object. 
         drvfs_context* GetVFS();
@@ -50,10 +50,10 @@ namespace GT
         ak_theme* GetAKTheme();
 
         /// Retrieves a pointer to the font to use for drawing symbols.
-        easygui_font* GetSymbolFont() { return m_pSymbolFont; }
+        drgui_font* GetSymbolFont() { return m_pSymbolFont; }
         
         /// Retrieves the metrics of the symbol font.
-        easygui_font_metrics GetSymbolFontMetrics() { return m_symbolFontMetrics; }
+        drgui_font_metrics GetSymbolFontMetrics() { return m_symbolFontMetrics; }
 
 
 
@@ -77,10 +77,10 @@ namespace GT
         ak_application* m_pApplication;
 
         /// The font to use for symbols.
-        easygui_font* m_pSymbolFont;
+        drgui_font* m_pSymbolFont;
 
         /// The metrics of the symbol font.
-        easygui_font_metrics m_symbolFontMetrics;
+        drgui_font_metrics m_symbolFontMetrics;
     };
 }
 

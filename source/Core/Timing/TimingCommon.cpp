@@ -50,7 +50,7 @@ namespace GT
             timeval t;
             gettimeofday(&t, nullptr);
 
-            return t.tv_sec + (t.tv_usec * 0.000001);
+            return t.drgui_tv_sec + (t.tv_usec * 0.000001);
         }
     }
 }

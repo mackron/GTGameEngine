@@ -29,7 +29,7 @@ namespace GT
 
     
     /// The callback function for creating a tool.
-    static easygui_element* Editor_OnCreateTool(ak_application* pApplication, ak_window* pWindow, const char* type, const char* attributes)
+    static drgui_element* Editor_OnCreateTool(ak_application* pApplication, ak_window* pWindow, const char* type, const char* attributes)
     {
         AK_EditorUserData* pUserData = reinterpret_cast<AK_EditorUserData*>(ak_get_application_extra_data(pApplication));
         assert(pUserData != NULL);
@@ -57,7 +57,7 @@ namespace GT
     }
 
     /// The callback function for deleting a tool.
-    static bool Editor_OnDeleteTool(ak_application* pApplication, easygui_element* pTool, bool force)
+    static bool Editor_OnDeleteTool(ak_application* pApplication, drgui_element* pTool, bool force)
     {
         EditorTool* pEditorTool = GetEditorTool(pTool);
         if (pEditorTool == NULL) {
@@ -91,8 +91,8 @@ namespace GT
         m_pApplication = ak_create_application("GTGE/Editor", sizeof(userData), &userData);
         if (m_pApplication != NULL)
         {
-            m_pSymbolFont = easygui_create_font(ak_get_application_gui(m_pApplication), "Segoe UI Symbol", 14, easygui_font_weight_normal, easygui_font_slant_none, 0);
-            easygui_get_font_metrics(m_pSymbolFont, 1, 1, &m_symbolFontMetrics);
+            m_pSymbolFont = drgui_create_font(ak_get_application_gui(m_pApplication), "Segoe UI Symbol", 14, drgui_font_weight_normal, drgui_font_slant_none, 0);
+            drgui_get_font_metrics(m_pSymbolFont, 1, 1, &m_symbolFontMetrics);
 
             // Set the callback that the application object will call when the default layout script is required.
             ak_set_on_default_config(m_pApplication, Editor_OnDefaultLayout);
@@ -120,7 +120,7 @@ namespace GT
         return m_pApplication;
     }
 
-    easygui_context* Editor2::GetGUI()
+    drgui_context* Editor2::GetGUI()
     {
         return ak_get_application_gui(m_pApplication);
     }

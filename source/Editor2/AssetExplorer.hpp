@@ -4,7 +4,7 @@
 #define GT_AssetExplorer
 
 #include "EditorTool.hpp"
-#include <easy_gui/wip/easygui_tree_view.h>
+#include <dr_libs/wip/dr_gui_tree_view.h>
 #include <easy_appkit/ak_menu.h>
 
 namespace GT
@@ -30,11 +30,11 @@ namespace GT
 
 
         /// Retrieves a pointer to the internal tree-view control.
-        easygui_element* GetTreeView();
+        drgui_element* GetTreeView();
 
 
         /// Called when an item is picked.
-        void OnItemPicked(eg_tree_view_item* pItem);
+        void OnItemPicked(drgui_tree_view_item* pItem);
 
 
         /// Finds a tree-view item by it's path.
@@ -45,7 +45,7 @@ namespace GT
         ///
         /// @remarks
         ///     If the item already exists a pointer to the existing item will be returned.
-        eg_tree_view_item* InsertItem(const char* absolutePath);
+        drgui_tree_view_item* InsertItem(const char* absolutePath);
 
         /// Removes an item by it's path.
         void RemoveItem(const char* absolutePath);
@@ -55,10 +55,10 @@ namespace GT
 
 
         /// Retrieves the font to use for item text.
-        easygui_font* GetItemFont() const;
+        drgui_font* GetItemFont() const;
 
         /// Retrieves the color to use for item text.
-        easygui_color GetItemTextColor() const;
+        drgui_color GetItemTextColor() const;
 
         /// Retrieves the height of a single item.
         float GetDefaultItemHeight() const;
@@ -74,24 +74,24 @@ namespace GT
 
 
         /// Retrieves the font to use for the arrow graphics.
-        easygui_font* GetArrowFont() const;
+        drgui_font* GetArrowFont() const;
 
         /// Retrieves the metrics of the arrow font.
-        easygui_font_metrics GetArrowFontMetrics() const;
+        drgui_font_metrics GetArrowFontMetrics() const;
 
         /// Retrieves the glyph metrics of the arrow.
-        easygui_glyph_metrics GetArrowGlyphMetrics() const;
+        drgui_glyph_metrics GetArrowGlyphMetrics() const;
 
 
         /// Retrieves the glyph metrics of the folder icon.
-        easygui_glyph_metrics GetFolderIconGlyphMetrics() const;
+        drgui_glyph_metrics GetFolderIconGlyphMetrics() const;
 
         /// Retrieves the size of the folder icon when rendered as a string.
         void GetFolderIconStringSize(float* pWidthOut, float* pHeightOut);
 
 
         /// Retrieves the glyph metrics of the page icon.
-        easygui_glyph_metrics GetPageIconGlyphMetrics() const;
+        drgui_glyph_metrics GetPageIconGlyphMetrics() const;
 
         /// Retrieves the size of the folder icon when rendered as a string.
         void GetPageIconStringSize(float* pWidthOut, float* pHeightOut);
@@ -103,7 +103,7 @@ namespace GT
         ///
         /// @remarks
         ///     This will only create a direct child.
-        eg_tree_view_item* InsertChildItem(eg_tree_view_item* pParentItem, const char* relativePath);
+        drgui_tree_view_item* InsertChildItem(drgui_tree_view_item* pParentItem, const char* relativePath);
 
         /// Recursively inserts a directory.
         void InsertDirectoryRecursive(const char* absolutePath);
@@ -115,26 +115,26 @@ namespace GT
     private:
 
         /// The tree view control.
-        easygui_element* m_pTV;
+        drgui_element* m_pTV;
 
         /// The default font for items.
-        easygui_font* m_pItemFont;
+        drgui_font* m_pItemFont;
 
         /// The metrics of the default font.
-        easygui_font_metrics m_itemFontMetrics;
+        drgui_font_metrics m_itemFontMetrics;
 
         /// The font to use for the arrow graphic.
-        easygui_font* m_pArrowFont;
+        drgui_font* m_pArrowFont;
 
         /// The metrics of the arrow font.
-        easygui_font_metrics m_arrowFontMetrics;
+        drgui_font_metrics m_arrowFontMetrics;
 
         /// The glyph metrics of the arrow icon.
-        easygui_glyph_metrics m_arrowGlyphMetrics;
+        drgui_glyph_metrics m_arrowGlyphMetrics;
 
 
         /// The glyph metrics of the folder icon.
-        easygui_glyph_metrics m_folderIconGlyphMetrics;
+        drgui_glyph_metrics m_folderIconGlyphMetrics;
 
         /// The width of the folder icon when drawn as a string.
         float m_folderIconStringWidth;
@@ -144,7 +144,7 @@ namespace GT
 
 
         /// The glyph metrics of the page icon.
-        easygui_glyph_metrics m_pageIconGlyphMetrics;
+        drgui_glyph_metrics m_pageIconGlyphMetrics;
 
         /// The width of the folder icon when drawn as a string.
         float m_pageIconStringWidth;

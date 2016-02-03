@@ -16,7 +16,7 @@ namespace GT
     public:
 
         /// Constructor.
-        DefaultGraphicsWorld_Null(easygui_context* pGUI);
+        DefaultGraphicsWorld_Null(drgui_context* pGUI);
 
         /// Destructor.
         ~DefaultGraphicsWorld_Null();
@@ -192,10 +192,10 @@ namespace GT
 
 
         /// @copydoc GraphicsWorld::SetRenderTargetGUISurface()
-        void SetRenderTargetGUISurface(HGraphicsRenderTarget hRT, easygui_element* pGUIElement);
+        void SetRenderTargetGUISurface(HGraphicsRenderTarget hRT, drgui_element* pGUIElement);
 
         /// @copydoc GraphicsWorld::GetRenderTargetGUISurface()
-        easygui_element* GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const;
+        drgui_element* GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const;
 
         /// @copydoc GraphicsWorld::SetRenderTargetSurfaceSizeToRenderTarget()
         void SetRenderTargetSurfaceSizeToRenderTarget(HGraphicsRenderTarget hRT);

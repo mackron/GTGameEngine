@@ -293,7 +293,7 @@ namespace GT
         glm::mat4 view;
 
         /// The root GUI element to draw to this render target.
-        easygui_element* pGUIElement;
+        drgui_element* pGUIElement;
     };
 
     struct WindowRenderTarget_OpenGL : public RenderTarget_OpenGL, SIMDAlignedType
@@ -600,7 +600,7 @@ namespace GT
 
 
 
-    DefaultGraphicsWorld_OpenGL::DefaultGraphicsWorld_OpenGL(easygui_context* pGUI, GraphicsAPI_OpenGL &gl)
+    DefaultGraphicsWorld_OpenGL::DefaultGraphicsWorld_OpenGL(drgui_context* pGUI, GraphicsAPI_OpenGL &gl)
         : GraphicsWorld(pGUI),
           m_gl(gl),
           m_hDefaultTexture(0),
@@ -2174,7 +2174,7 @@ namespace GT
     }
 
 
-    void DefaultGraphicsWorld_OpenGL::SetRenderTargetGUISurface(HGraphicsRenderTarget hRT, easygui_element* pGUIElement)
+    void DefaultGraphicsWorld_OpenGL::SetRenderTargetGUISurface(HGraphicsRenderTarget hRT, drgui_element* pGUIElement)
     {
         auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
         if (pRT != nullptr)
@@ -2183,7 +2183,7 @@ namespace GT
         }
     }
 
-    easygui_element* DefaultGraphicsWorld_OpenGL::GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const
+    drgui_element* DefaultGraphicsWorld_OpenGL::GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const
     {
         auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
         if (pRT != nullptr)
@@ -2201,7 +2201,7 @@ namespace GT
         {
             if (pRT->pGUIElement != 0)
             {
-                easygui_set_size(pRT->pGUIElement, static_cast<float>(pRT->viewportWidth), static_cast<float>(pRT->viewportHeight));
+                drgui_set_size(pRT->pGUIElement, static_cast<float>(pRT->viewportWidth), static_cast<float>(pRT->viewportHeight));
             }
         }
     }
@@ -2561,7 +2561,7 @@ namespace GT
             // GUI.
             if (pRT->pGUIElement != 0)
             {
-                easygui_draw(pRT->pGUIElement, easygui_get_local_rect(pRT->pGUIElement), this);
+                drgui_draw(pRT->pGUIElement, drgui_get_local_rect(pRT->pGUIElement), this);
             }
         }
     }

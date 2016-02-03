@@ -6,7 +6,7 @@
 
 namespace GT
 {
-    GraphicsWorld::GraphicsWorld(easygui_context* pGUI)
+    GraphicsWorld::GraphicsWorld(drgui_context* pGUI)
         : m_pGUI(pGUI)
     {
     }
@@ -16,7 +16,7 @@ namespace GT
     }
 
 
-    easygui_context* GraphicsWorld::GetGUI() const
+    drgui_context* GraphicsWorld::GetGUI() const
     {
         return m_pGUI;
     }
