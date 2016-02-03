@@ -3,7 +3,7 @@
 #ifndef GT_Editor2
 #define GT_Editor2
 
-#include <easy_appkit/ak_application.h>
+#include <dr_appkit/ak_application.h>
 #include <dr_libs/dr_gui.h>
 
 namespace GT

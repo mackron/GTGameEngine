@@ -5,7 +5,7 @@
 
 #include "EditorTool.hpp"
 #include <dr_libs/wip/dr_gui_tree_view.h>
-#include <easy_appkit/ak_menu.h>
+#include <dr_appkit/ak_menu.h>
 
 namespace GT
 {

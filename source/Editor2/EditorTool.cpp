@@ -3,7 +3,7 @@
 #include "EditorTool.hpp"
 #include <GTGE/Editor2/Editor2.hpp>
 #include <GTGE/Context.hpp>
-#include <easy_appkit/ak_tool.h>
+#include <dr_appkit/ak_tool.h>
 #include <dr_libs/dr_gui.h>
 
 namespace GT
