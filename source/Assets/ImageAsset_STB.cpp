@@ -20,7 +20,7 @@ namespace GT
             assert(pCallbackData->pFile != nullptr);
 
             unsigned int bytesRead;
-            if (drvfs_read(pCallbackData->pFile, data, static_cast<unsigned int>(size), &bytesRead))
+            if (drvfs_read(pCallbackData->pFile, data, static_cast<unsigned int>(size), &bytesRead) == drvfs_success)
             {
                 return bytesRead;
             }
