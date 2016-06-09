@@ -16,7 +16,9 @@ issues.
 
 GTGameEngine depends on the following libraries:
 
-* easy_* libraries (https://github.com/mackron)
+* dr_libs (https://github.com/mackron/dr_libs)
+* stb_image
+* stb_vorbis
 * GLM (http://glm.g-truc.net)
 * Bullet (http://bulletphysics.org/wordpress)
 * assimp (http://assimp.sourceforge.net)
