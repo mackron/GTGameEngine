@@ -1,14 +1,21 @@
 
 #include <GTGE/Config.hpp>
 
-#define DR_VFS_IMPLEMENTATION
+// Platform libraries, for simplifying MSVC builds.
+#ifdef _WIN32
+#if defined(_MSC_VER) || defined(__clang__)
+#pragma comment(lib, "msimg32.lib")
+#endif
+#endif
+
+#define DR_IMPLEMENTATION
+#include <dr_libs/dr.h>
+
+#define DR_FS_IMPLEMENTATION
 #include <dr_libs/dr_fs.h>
 
 #define DR_FSW_IMPLEMENTATION
 #include <dr_libs/dr_fsw.h>
-
-#define DR_UTIL_IMPLEMENTATION
-#include <dr_libs/dr.h>
 
 #define DR_PATH_IMPLEMENTATION
 #include <dr_libs/dr_path.h>
@@ -25,6 +32,8 @@
 
 #if defined(GT_BUILD_VORBIS)
 #define STB_VORBIS_HEADER_ONLY
+#define STB_VORBIS_NO_STDIO
+#define STB_VORBIS_NO_PUSHDATA_API
 #include <GTGE/external/stb_vorbis.c>
 #endif
 

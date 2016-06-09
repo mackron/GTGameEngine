@@ -116,7 +116,8 @@ namespace GT
                 desc.onSeek     = EA_OnSoundSeek;
                 desc.pUserData  = pSoundData;
 
-                dra_sound_world_play_inline_3f(m_pWorld, desc, NULL, position.x, position.y, position.z);
+                (void)relative;
+                dra_sound_world_play_inline_3f(m_pWorld, &desc, NULL, position.x, position.y, position.z);
 
                 return true;
             }
@@ -132,5 +133,16 @@ namespace GT
     void SoundWorld::StopAllSounds()
     {
         dra_sound_world_stop_all_sounds(m_pWorld);
+    }
+
+
+    void SoundWorld::SetListenerPosition(float xPos, float yPos, float zPos)
+    {
+        dra_sound_world_set_listener_position(m_pWorld, xPos, yPos, zPos);
+    }
+
+    void SoundWorld::SetListenerOrientation(float xForward, float yForward, float zForward, float xUp, float yUp, float zUp)
+    {
+        dra_sound_world_set_listener_orientation(m_pWorld, xForward, yForward, zForward, xUp, yUp, zUp);
     }
 }

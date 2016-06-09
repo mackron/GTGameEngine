@@ -51,6 +51,12 @@ namespace GT
         void StopAllSounds();
 
 
+        /// Sets the position of the listener.
+        void SetListenerPosition(float xPos, float yPos, float zPos);
+
+        /// Sets the direction of the listener.
+        void SetListenerOrientation(float xForward, float yForward, float zForward, float xUp, float yUp, float zUp);
+
 
     private:
 

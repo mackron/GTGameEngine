@@ -17,12 +17,6 @@ namespace GT
 {
     typedef struct
     {
-        /// The absolute path of the executable's directory.
-        char absoluteExeDirPath[DRFS_MAX_PATH];
-
-        /// The relative executable path.
-        char absoluteExePath[DRFS_MAX_PATH];
-
         /// The relative path of the log file.
         char relativeLogPath[DRFS_MAX_PATH];
 
@@ -33,19 +27,6 @@ namespace GT
     {
         CommandLineData* pData = reinterpret_cast<CommandLineData*>(pUserData);
         assert(pData != NULL);
-
-        if (strcmp(key, "[path]") == 0)
-        {
-            char exeDirectoryPath[DRFS_MAX_PATH];
-            drpath_copy_base_path(value, exeDirectoryPath, sizeof(exeDirectoryPath));
-
-            _chdir(exeDirectoryPath);
-            _getcwd(pData->absoluteExeDirPath, sizeof(pData->absoluteExeDirPath));
-
-            drpath_copy_and_append(pData->absoluteExePath, sizeof(pData->absoluteExePath), pData->absoluteExeDirPath, drpath_file_name(value));
-
-            return true;
-        }
 
         if (strcmp(key, "logfile") == 0)
         {
@@ -73,7 +54,7 @@ namespace GT
         assert(pData != NULL);
 
         unsigned int bytesRead;
-        if (drfs_read(pData->pFile, pDataOut, bytesToRead, &bytesRead)) {
+        if (drfs_read(pData->pFile, pDataOut, bytesToRead, &bytesRead) == drfs_success) {
             return bytesRead;
         }
 
@@ -173,10 +154,8 @@ namespace GT
         strcpy_s(cmdlineData.relativeLogPath, sizeof(cmdlineData.relativeLogPath), "var/logs/engine.txt");
         dr_parse_cmdline(&m_cmdline, parse_cmdline_proc, &cmdlineData);
 
-
-        // Make sure the executable's absolute path is clean for future things.
-        drpath_clean(cmdlineData.absoluteExeDirPath, m_executableDirectoryAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
-        drpath_clean(cmdlineData.absoluteExePath, m_executableAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
+        dr_get_executable_path(m_executableAbsolutePath, sizeof(m_executableAbsolutePath));
+        dr_get_executable_directory_path(m_executableDirectoryAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
 
         // The directory containing the executable needs to be the lowest-priority base path.
         drfs_add_base_directory(m_pVFS, m_executableDirectoryAbsolutePath);
@@ -187,7 +166,7 @@ namespace GT
         char logpath[DRFS_MAX_PATH];
         drpath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
 
-        if (drfs_open(m_pVFS, logpath, DRFS_WRITE, &m_pLogFile) != drfs_success) {
+        if (drfs_open(m_pVFS, logpath, DRFS_WRITE | DRFS_CREATE_DIRS, &m_pLogFile) != drfs_success) {
             printf("WARNING: Failed to open log file.\n");
         }
 
