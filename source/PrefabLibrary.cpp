@@ -69,7 +69,7 @@ namespace GT
             {
                 // Does not exist. Needs to be loaded.
                 drfs_file* pFile;
-                if (drfs_open(g_Context->GetVFS(), absolutePath, DRFS_READ, &pFile) != drfs_success)
+                if (drfs_open(g_Context->GetVFS(), absolutePath, DRFS_READ, &pFile) == drfs_success)
                 {
                     FileDeserializer deserializer(pFile);
                     
