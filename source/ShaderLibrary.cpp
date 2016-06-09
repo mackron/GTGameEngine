@@ -60,19 +60,19 @@ namespace GT
 
     bool ShaderLibrary::LoadFromDirectory(const char* directory, bool recursive)
     {
-        drvfs_context* pVFS = g_Context->GetVFS();
+        drfs_context* pVFS = g_Context->GetVFS();
         assert(pVFS != nullptr);
 
         if (drpath_is_absolute(directory))
         {
             // Absolute.
 
-            drvfs_iterator iFile;
-            if (drvfs_begin(pVFS, directory, &iFile))
+            drfs_iterator iFile;
+            if (drfs_begin(pVFS, directory, &iFile))
             {
                 do
                 {
-                    if ((iFile.info.attributes & DRVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    if ((iFile.info.attributes & DRFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                     {
                         if (recursive)
                         {
@@ -84,20 +84,20 @@ namespace GT
                         ShaderLibrary::LoadFromFile(iFile.info.absolutePath);
                     }
 
-                } while (drvfs_next(pVFS, &iFile));
+                } while (drfs_next(pVFS, &iFile));
             }
         }
         else
         {
             // Relative. We just call this recursively with the absolute path.
 
-            unsigned int baseDirectoryCount = drvfs_get_base_directory_count(pVFS);
+            unsigned int baseDirectoryCount = drfs_get_base_directory_count(pVFS);
             for (unsigned int iBaseDirectory = 0; iBaseDirectory < baseDirectoryCount; ++iBaseDirectory)
             {
-                const char* baseDirectory = drvfs_get_base_directory_by_index(pVFS, iBaseDirectory);
+                const char* baseDirectory = drfs_get_base_directory_by_index(pVFS, iBaseDirectory);
                 if (baseDirectory != nullptr)
                 {
-                    char searchDir[DRVFS_MAX_PATH];
+                    char searchDir[DRFS_MAX_PATH];
                     drpath_copy_and_append(searchDir, sizeof(searchDir), baseDirectory, directory);
 
                     ShaderLibrary::LoadFromDirectory(searchDir, recursive);
@@ -110,26 +110,16 @@ namespace GT
 
     bool ShaderLibrary::LoadFromFile(const char* fileName)
     {
-        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), fileName, DRVFS_READ, 0);
-        if (pFile != nullptr)
-        {
-            // We need to read the content of the file and then load it as XML. We cast the size to a size_t to
-            // play nicely with 32-bit compilations. We can pretty safely assume the XML file will not exceed that.
-            size_t fileSize = static_cast<size_t>(drvfs_size(pFile));
-            
-            auto fileData = static_cast<char*>(malloc(fileSize + 1));
-            drvfs_read(pFile, fileData, fileSize, nullptr);
-            fileData[fileSize] = '\0';
-            
-            drvfs_close(pFile);
-            
-            bool result = ShaderLibrary::LoadFromXML(fileData);
-            
-            free(fileData);
-            return result;
+        size_t fileSize;
+        char* fileData = drfs_open_and_read_text_file(g_Context->GetVFS(), fileName, &fileSize);
+        if (fileData == NULL) {
+            return false;
         }
 
-        return false;
+        bool result = ShaderLibrary::LoadFromXML(fileData);
+
+        drfs_free(fileData);
+        return result;
     }
 
     bool ShaderLibrary::LoadFromXML(const char *xml)

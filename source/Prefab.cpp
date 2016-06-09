@@ -292,20 +292,16 @@ namespace GT
         }
 #endif
 
-        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), this->absolutePath.c_str(), DRVFS_READ, 0);
-        if (pFile != nullptr)
-        {
-            FileSerializer serializer(pFile);
-            this->Serialize(serializer);
-
-            drvfs_close(pFile);
-            return true;
-        }
-        else
-        {
+        drfs_file* pFile;
+        if (drfs_open(g_Context->GetVFS(), this->absolutePath.c_str(), DRFS_READ, &pFile) != drfs_success) {
             g_Context->Logf("Can not open file: '%s'.", this->absolutePath.c_str());
+            return false;
         }
 
-        return false;
+        FileSerializer serializer(pFile);
+        this->Serialize(serializer);
+
+        drfs_close(pFile);
+        return true;
     }
 }

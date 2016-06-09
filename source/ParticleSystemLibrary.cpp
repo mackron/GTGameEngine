@@ -53,7 +53,7 @@ namespace GT
 
     ParticleSystem* ParticleSystemLibrary::Create(const char* fileName, const char* makeRelativeTo)
     {
-        char relativePath[DRVFS_MAX_PATH];
+        char relativePath[DRFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (drpath_is_absolute(fileName))
@@ -70,8 +70,8 @@ namespace GT
         }
 
 
-        char absolutePath[DRVFS_MAX_PATH];
-        if (drvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRFS_MAX_PATH];
+        if (drfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             ParticleSystemDefinition* definition = nullptr;
 
@@ -160,8 +160,8 @@ namespace GT
 
     bool ParticleSystemLibrary::Reload(const char* fileName)
     {
-        char absolutePath[DRVFS_MAX_PATH];
-        if (drvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRFS_MAX_PATH];
+        if (drfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             auto iDefinition = m_loadedDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)

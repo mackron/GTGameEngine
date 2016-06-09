@@ -36,12 +36,12 @@ namespace GT
 
     bool GUIScriptServer::ExecuteFromFile(const char *filename, int returnValueCount)
     {
-        char* pFileData = drvfs_open_and_read_text_file(GT::g_Context->GetVFS(), filename, nullptr);
+        char* pFileData = drfs_open_and_read_text_file(GT::g_Context->GetVFS(), filename, nullptr);
         if (pFileData != nullptr)
         {
             bool successful = this->Execute(pFileData, returnValueCount);
 
-            drvfs_free(pFileData);
+            drfs_free(pFileData);
             return successful;
         }
         else

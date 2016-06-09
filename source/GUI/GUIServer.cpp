@@ -96,7 +96,7 @@ namespace GT
 
     bool GUIServer::Startup()
     {
-        this->eventLock = drutil_create_mutex();
+        this->eventLock = dr_create_mutex();
 
 
         // Load the defaults after setting the event handlers.
@@ -174,8 +174,8 @@ namespace GT
     bool GUIServer::IsFileLoaded(const char* filename)
     {
         // We need to check with the absolute path.
-        char absolutePath[DRVFS_MAX_PATH];
-        if (drvfs_find_absolute_path(GT::g_Context->GetVFS(), filename, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRFS_MAX_PATH];
+        if (drfs_find_absolute_path(GT::g_Context->GetVFS(), filename, absolutePath, sizeof(absolutePath)))
         {
             return this->markupLoader.IsFileLoaded(absolutePath);
         }

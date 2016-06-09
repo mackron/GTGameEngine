@@ -2,7 +2,7 @@
 
 #include <GTGE/Assets/MaterialAsset.hpp>
 #include <dr_libs/dr_mtl.h>
-#include <dr_libs/dr_util.h>
+#include <dr_libs/dr.h>
 
 namespace GT
 {

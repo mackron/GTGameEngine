@@ -23,7 +23,7 @@
 #include <GTGE/Core/SortedVector.hpp>
 #include <GTGE/Core/Timing.hpp>
 #include <GTGE/Core/FontServer.hpp>
-#include <dr_libs/dr_util.h>
+#include <dr_libs/dr.h>
 
 /*
 --- Implementation Details ---

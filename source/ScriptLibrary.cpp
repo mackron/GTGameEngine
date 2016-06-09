@@ -45,7 +45,7 @@ namespace GT
 
     ScriptDefinition* ScriptLibrary::Acquire(const char* fileName, const char* makeRelativeTo, bool silenceMissingFileWarning)
     {
-        char relativePath[DRVFS_MAX_PATH];
+        char relativePath[DRFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (drpath_is_absolute(fileName))
@@ -62,14 +62,14 @@ namespace GT
         }
 
 
-        char absolutePath[DRVFS_MAX_PATH];
-        if (drvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRFS_MAX_PATH];
+        if (drfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             auto iLoadedClass = m_loadedDefinitions.Find(absolutePath);
             if (iLoadedClass == nullptr)
             {
                 // Does not exist. Needs to be loaded.
-                char* scriptString = drvfs_open_and_read_text_file(g_Context->GetVFS(), absolutePath, nullptr);
+                char* scriptString = drfs_open_and_read_text_file(g_Context->GetVFS(), absolutePath, nullptr);
                 if (scriptString != nullptr)
                 {
                     auto newDefinition = new ScriptDefinition(absolutePath, scriptString);
@@ -77,7 +77,7 @@ namespace GT
 
                     GT::LoadScriptDefinition(m_context.GetScript(), absolutePath, scriptString);
 
-                    drvfs_free(scriptString);
+                    drfs_free(scriptString);
                     return newDefinition;
                 }
                 else
@@ -139,8 +139,8 @@ namespace GT
     bool ScriptLibrary::IsLoaded(const char* fileName)
     {
         // We key the definitions by their absolute path, so we'll need to retrieve that.
-        char absolutePath[DRVFS_MAX_PATH];
-        if (drvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRFS_MAX_PATH];
+        if (drfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             return m_loadedDefinitions.Exists(absolutePath);
         }
@@ -151,8 +151,8 @@ namespace GT
     bool ScriptLibrary::Reload(const char* fileName)
     {
         // We key the definitions by their absolute path, so we'll need to retrieve that.
-        char absolutePath[DRVFS_MAX_PATH];
-        if (drvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRFS_MAX_PATH];
+        if (drfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             auto iDefinition = m_loadedDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
@@ -162,7 +162,7 @@ namespace GT
                 {
                     // This next part is easy. We just destruct and reconstruct, while leaving the pointer as-is. It's important that we keep the same pointer because
                     // other objects may be referencing it.
-                    char* scriptString = drvfs_open_and_read_text_file(g_Context->GetVFS(), absolutePath, nullptr);
+                    char* scriptString = drfs_open_and_read_text_file(g_Context->GetVFS(), absolutePath, nullptr);
                     if (scriptString != nullptr)
                     {
                         definition->~ScriptDefinition();
@@ -170,7 +170,7 @@ namespace GT
 
                         GT::LoadScriptDefinition(m_context.GetScript(), definition->GetAbsolutePath(), scriptString);
 
-                        drvfs_free(scriptString);
+                        drfs_free(scriptString);
                         return true;
                     }
                 }

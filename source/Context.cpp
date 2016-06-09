@@ -5,27 +5,26 @@
 #include <GTGE/Scripting.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GamePackager.hpp>
-#include <GTGE/Editor2/Editor2.hpp>
 #include <GTGE/Core/System.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
 #include <GTGE/Core/String.hpp>
 #include <GTGE/Core/Keyboard.hpp>
 #include <GTGE/Core/WindowManagement.hpp>
 #include <dr_libs/dr_path.h>
-#include <dr_libs/dr_vfs.h>
+#include <dr_libs/dr_fs.h>
 
 namespace GT
 {
     typedef struct
     {
         /// The absolute path of the executable's directory.
-        char absoluteExeDirPath[DRVFS_MAX_PATH];
+        char absoluteExeDirPath[DRFS_MAX_PATH];
 
         /// The relative executable path.
-        char absoluteExePath[DRVFS_MAX_PATH];
+        char absoluteExePath[DRFS_MAX_PATH];
 
         /// The relative path of the log file.
-        char relativeLogPath[DRVFS_MAX_PATH];
+        char relativeLogPath[DRFS_MAX_PATH];
 
     } CommandLineData;
 
@@ -37,7 +36,7 @@ namespace GT
 
         if (strcmp(key, "[path]") == 0)
         {
-            char exeDirectoryPath[DRVFS_MAX_PATH];
+            char exeDirectoryPath[DRFS_MAX_PATH];
             drpath_copy_base_path(value, exeDirectoryPath, sizeof(exeDirectoryPath));
 
             _chdir(exeDirectoryPath);
@@ -64,7 +63,7 @@ namespace GT
         Context* pContext;
 
         /// A pointer to the file to read the config data from.
-        drvfs_file* pFile;
+        drfs_file* pFile;
 
     } AppConfigData;
 
@@ -74,7 +73,7 @@ namespace GT
         assert(pData != NULL);
 
         unsigned int bytesRead;
-        if (drvfs_read(pData->pFile, pDataOut, bytesToRead, &bytesRead)) {
+        if (drfs_read(pData->pFile, pDataOut, bytesToRead, &bytesRead)) {
             return bytesRead;
         }
 
@@ -134,9 +133,6 @@ namespace GT
           mousePosX(0), mousePosY(0), mouseMoveLockCounter(0),
           profilerToggleKey(Keys::F11),
           editorToggleKeyCombination(Keys::Shift, Keys::Tab)
-#ifdef GT_BUILD_EDITOR
-        , m_pEditor(nullptr)
-#endif
     {
     }
 
@@ -169,7 +165,7 @@ namespace GT
 
 
         // We need to initialize the virtual file system early so we can do things like create logs and cache files.
-        m_pVFS = drvfs_create_context();
+        m_pVFS = drfs_create_context();
 
 
         // Parse the command line.
@@ -183,16 +179,15 @@ namespace GT
         drpath_clean(cmdlineData.absoluteExePath, m_executableAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
 
         // The directory containing the executable needs to be the lowest-priority base path.
-        drvfs_add_base_directory(m_pVFS, m_executableDirectoryAbsolutePath);
+        drfs_add_base_directory(m_pVFS, m_executableDirectoryAbsolutePath);
             
 
 
         // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
-        char logpath[DRVFS_MAX_PATH];
+        char logpath[DRFS_MAX_PATH];
         drpath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
 
-        m_pLogFile = drvfs_open(m_pVFS, logpath, DRVFS_WRITE, 0);
-        if (m_pLogFile == NULL) {
+        if (drfs_open(m_pVFS, logpath, DRFS_WRITE, &m_pLogFile) != drfs_success) {
             printf("WARNING: Failed to open log file.\n");
         }
 
@@ -207,10 +202,10 @@ namespace GT
         // the game will use defaults.
         AppConfigData cfg;
         cfg.pContext = this;
-        cfg.pFile    = drvfs_open(m_pVFS, "config.cfg", DRVFS_READ, 0);
-        if (cfg.pFile != NULL) {
+        
+        if (drfs_open(m_pVFS, "config.cfg", DRFS_READ, &cfg.pFile) == drfs_success) {
             dr_parse_key_value_pairs(app_config_read, app_config_pair, app_config_error, &cfg);
-            drvfs_close(cfg.pFile);
+            drfs_close(cfg.pFile);
         }
         
 
@@ -228,24 +223,14 @@ namespace GT
         //////////////////////////////////////////
         // Audio System
             
-        m_pAudioContext = draudio_create_context();
+        m_pAudioContext = dra_context_create();
         if (m_pAudioContext == NULL) {
             this->LogError("Failed to create audio system.");
         }
 
-        // TEMP: Print the playback devices.
-        unsigned int playbackDeviceCount = draudio_get_output_device_count(m_pAudioContext);
-        for (unsigned int iDevice = 0; iDevice < playbackDeviceCount; ++iDevice)
-        {
-            draudio_device_info info;
-            if (draudio_get_output_device_info(m_pAudioContext, iDevice, &info))
-            {
-                this->Logf("Playback Device (%d) - %s", iDevice, info.description);
-            }
-        }
-
-        if (playbackDeviceCount > 0) {
-            m_pAudioPlaybackDevice = draudio_create_output_device(m_pAudioContext, 0);
+        m_pAudioPlaybackDevice = dra_device_open(m_pAudioContext, dra_device_type_playback);
+        if (m_pAudioPlaybackDevice == NULL) {
+            this->LogError("Failed to open audio playback device.");
         }
 
         m_soundWorld.Startup();
@@ -309,7 +294,7 @@ namespace GT
             this->guiRenderer.Startup();
 
 
-            this->eventQueueLock = drutil_create_mutex();
+            this->eventQueueLock = dr_create_mutex();
 
             // The main game window GUI element needs to be created. It is just a 100% x 100% invisible element off the root element.
             this->gui.Load("<div id='MainGameWindow' style='width:100%; height:100%' />");
@@ -430,10 +415,10 @@ namespace GT
 
         m_soundWorld.Shutdown();
 
-        draudio_delete_output_device(m_pAudioPlaybackDevice);
+        dra_device_close(m_pAudioPlaybackDevice);
         m_pAudioPlaybackDevice = nullptr;
 
-        draudio_delete_context(m_pAudioContext);
+        dra_context_delete(m_pAudioContext);
         m_pAudioContext = nullptr;
 
 
@@ -480,10 +465,10 @@ namespace GT
 
     void Context::AddBaseDirectoryRelativeToExe(const char* relativePath)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         drpath_to_absolute(relativePath, this->GetExecutableDirectoryAbsolutePath(), absolutePath, sizeof(absolutePath));
 
-        drvfs_insert_base_directory(m_pVFS, absolutePath, drvfs_get_base_directory_count(m_pVFS) - 1);
+        drfs_insert_base_directory(m_pVFS, absolutePath, drfs_get_base_directory_count(m_pVFS) - 1);
     }
 
 
@@ -499,11 +484,11 @@ namespace GT
             char dateTime[64];
             dr_datetime_short(dr_now(), dateTime, sizeof(dateTime));
 
-            drvfs_write_string(m_pLogFile, "[");
-            drvfs_write_string(m_pLogFile, dateTime);
-            drvfs_write_string(m_pLogFile, "]");
-            drvfs_write_line  (m_pLogFile, message);
-            drvfs_flush(m_pLogFile);
+            drfs_write_string(m_pLogFile, "[");
+            drfs_write_string(m_pLogFile, dateTime);
+            drfs_write_string(m_pLogFile, "]");
+            drfs_write_line  (m_pLogFile, message);
+            drfs_flush(m_pLogFile);
         }
 
         // Post to the terminal.
@@ -582,12 +567,12 @@ namespace GT
     ////////////////////////////////////////////////////
     // Audio
 
-    draudio_context* Context::GetAudioContext()
+    dra_context* Context::GetAudioContext()
     {
         return m_pAudioContext;
     }
         
-    draudio_device* Context::GetAudioPlaybackDevice()
+    dra_device* Context::GetAudioPlaybackDevice()
     {
         return m_pAudioPlaybackDevice;
     }
@@ -620,20 +605,6 @@ namespace GT
 
     int Context::Run()
     {
-#ifdef GT_BUILD_EDITOR
-        // We need to check if "--editor" was passed to the command line, and if so, open the editor.
-        if (this->IsEditorOnCommandLine())
-        {
-            m_pEditor = new Editor2(*this);
-            int result = m_pEditor->StartupAndRun();
-
-            delete m_pEditor;
-            m_pEditor = nullptr;
-
-            return result;
-        }
-#endif
-
         // If we make it here it means we are not running the editor and are running the game like normal. We need to just show the
         // window and the enter into the main loop.
         this->window->Show();
@@ -1049,13 +1020,13 @@ namespace GT
 
     bool Context::PackageForDistribution(const char* outputDirectory, const char* executableName)
     {
-        char absoluteOutputDirectory[DRVFS_MAX_PATH];
+        char absoluteOutputDirectory[DRFS_MAX_PATH];
         drpath_copy_and_append(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), this->GetExecutableDirectoryAbsolutePath(), outputDirectory);
 
         // We will start by creating the output directory.
-        if (!drvfs_is_existing_directory(this->GetVFS(), absoluteOutputDirectory))
+        if (!drfs_is_existing_directory(this->GetVFS(), absoluteOutputDirectory))
         {
-            if (!drvfs_create_directory(this->GetVFS(), absoluteOutputDirectory))
+            if (!drfs_create_directory(this->GetVFS(), absoluteOutputDirectory))
             {
                 // Failed to create the output directory.
                 return false;
@@ -1066,10 +1037,10 @@ namespace GT
 
 
         // We will start by copying over the data directories, not including the executable directory.
-        assert(drvfs_get_base_directory_count(this->GetVFS()) > 0);
-        for (unsigned int iBaseDir = 0; iBaseDir < drvfs_get_base_directory_count(this->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
+        assert(drfs_get_base_directory_count(this->GetVFS()) > 0);
+        for (unsigned int iBaseDir = 0; iBaseDir < drfs_get_base_directory_count(this->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
         {
-            packager.CopyDataDirectory(drvfs_get_base_directory_by_index(this->GetVFS(), iBaseDir));
+            packager.CopyDataDirectory(drfs_get_base_directory_by_index(this->GetVFS(), iBaseDir));
         }
 
 
@@ -1143,13 +1114,13 @@ namespace GT
 
     bool Context::SaveGameState(const char* destinationFilePath)
     {
-        drvfs_file* pFile = drvfs_open(this->GetVFS(), destinationFilePath, DRVFS_WRITE | DRVFS_CREATE_DIRS, 0);
-        if (pFile != nullptr)
+        drfs_file* pFile;
+        if (drfs_open(this->GetVFS(), destinationFilePath, DRFS_WRITE | DRFS_CREATE_DIRS, &pFile) == drfs_success)
         {
             FileSerializer serializer(pFile);
             bool result = this->SerializeGameState(serializer);
 
-            drvfs_close(pFile);
+            drfs_close(pFile);
             return result;
         }
 
@@ -1158,13 +1129,13 @@ namespace GT
 
     bool Context::LoadGameState(const char* sourceFilePath)
     {
-        drvfs_file* pFile = drvfs_open(this->GetVFS(), sourceFilePath, DRVFS_READ, 0);
-        if (pFile != nullptr)
+        drfs_file* pFile;
+        if (drfs_open(this->GetVFS(), sourceFilePath, DRFS_READ, &pFile) == drfs_success)
         {
             FileDeserializer deserializer(pFile);
             bool result = this->DeserializeGameState(deserializer);
 
-            drvfs_close(pFile);
+            drfs_close(pFile);
             return result;
         }
 

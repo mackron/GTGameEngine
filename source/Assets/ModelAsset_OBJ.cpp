@@ -5,7 +5,7 @@
 #if defined(GT_BUILD_OBJ)
 #include <GTGE/Math.hpp>
 #include <GTGE/Core/Vector.hpp>
-#include <dr_libs/dr_util.h>
+#include <dr_libs/dr.h>
 
 // TODO: Correctly handle "usemtl" to properly handle multiple materials.
 
@@ -228,10 +228,10 @@ namespace GT
     }
 
 
-    bool ModelAsset_OBJ::Load(const char* absolutePath, drvfs_context* pVFS)
+    bool ModelAsset_OBJ::Load(const char* absolutePath, drfs_context* pVFS)
     {
         size_t fileSize;
-        char* pFileData = drvfs_open_and_read_text_file(pVFS, absolutePath, &fileSize);
+        char* pFileData = drfs_open_and_read_text_file(pVFS, absolutePath, &fileSize);
         if (pFileData != 0 && fileSize > 0)
         {
             Vector<glm::vec4>    positions;
@@ -345,7 +345,7 @@ namespace GT
             }
 
             // At this point the file has been parsed, so free the file data...
-            drvfs_free(pFileData);
+            drfs_free(pFileData);
 
             // ... and start converting the data to our own format. OBJ separates positions, texture coordinates and normals, but we want them
             // to be interlaced.

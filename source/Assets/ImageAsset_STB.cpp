@@ -9,7 +9,7 @@ namespace GT
     struct STBICallbackData
     {
         /// A pointer to the virtual file.
-        drvfs_file* pFile;
+        drfs_file* pFile;
     };
 
     static int STBI_Read(void* user, char *data, int size)
@@ -20,7 +20,7 @@ namespace GT
             assert(pCallbackData->pFile != nullptr);
 
             unsigned int bytesRead;
-            if (drvfs_read(pCallbackData->pFile, data, static_cast<unsigned int>(size), &bytesRead) == drvfs_success)
+            if (drfs_read(pCallbackData->pFile, data, static_cast<unsigned int>(size), &bytesRead) == drfs_success)
             {
                 return bytesRead;
             }
@@ -37,7 +37,7 @@ namespace GT
         assert(pCallbackData != nullptr);
         {
             assert(pCallbackData->pFile != nullptr);
-            drvfs_seek(pCallbackData->pFile, n, drvfs_origin_current);
+            drfs_seek(pCallbackData->pFile, n, drfs_origin_current);
         }
     }
 
@@ -47,7 +47,7 @@ namespace GT
         assert(pCallbackData != nullptr);
         {
             assert(pCallbackData->pFile != nullptr);
-            return drvfs_eof(pCallbackData->pFile);
+            return drfs_eof(pCallbackData->pFile);
         }
     }
 
@@ -68,10 +68,10 @@ namespace GT
     }
 
 
-    bool ImageAsset_STB::Load(const char* absolutePath, drvfs_context* pVFS)
+    bool ImageAsset_STB::Load(const char* absolutePath, drfs_context* pVFS)
     {
-        drvfs_file* pFile = drvfs_open(pVFS, absolutePath, DRVFS_READ, 0);
-        if (pFile != nullptr)
+        drfs_file* pFile;
+        if (drfs_open(pVFS, absolutePath, DRFS_READ, &pFile) == drfs_success)
         {
             bool result = false;
 
@@ -96,7 +96,7 @@ namespace GT
                 result = true;
             }
 
-            drvfs_close(pFile);
+            drfs_close(pFile);
             return result;
         }
         else

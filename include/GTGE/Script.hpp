@@ -7,7 +7,7 @@
 #include <GTGE/Core/Vector.hpp>
 #include <GTGE/Core/String.hpp>
 #include <GTGE/Core/Strings/LineIterator.hpp>
-#include <dr_libs/dr_vfs.h>
+#include <dr_libs/dr_fs.h>
 
 namespace GT
 {
@@ -195,7 +195,7 @@ namespace GT
         *   \remarks
         *       Execute the script with Script::Execute().
         */
-        virtual bool LoadFile(drvfs_context* pVFS, const char *fileName);
+        virtual bool LoadFile(drfs_context* pVFS, const char *fileName);
 
         /**
         *   \brief  Executes the script.
@@ -254,7 +254,7 @@ namespace GT
         *       return this->LoadFile(someFileName) && this->Execute();
         *       </code>
         */
-        virtual bool ExecuteFile(drvfs_context* pVFS, const char* filename, int returnValueCount = -1) { return this->LoadFileAndExecute(pVFS, filename, returnValueCount); }
+        virtual bool ExecuteFile(drfs_context* pVFS, const char* filename, int returnValueCount = -1) { return this->LoadFileAndExecute(pVFS, filename, returnValueCount); }
 
 
         /**
@@ -288,7 +288,7 @@ namespace GT
         *   \param  returnValueCount [in] The number of return values.
         *   \return                       True if the file is loaded and executed successfully.
         */
-        virtual bool LoadFileAndExecute(drvfs_context* pVFS, const char* filename, int returnValueCount = -1);
+        virtual bool LoadFileAndExecute(drfs_context* pVFS, const char* filename, int returnValueCount = -1);
 
 
         /**

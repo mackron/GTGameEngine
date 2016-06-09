@@ -281,8 +281,8 @@ namespace GT
 
     bool MaterialDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn)
     {
-        char newAbsolutePath[DRVFS_MAX_PATH];
-        char newRelativePath[DRVFS_MAX_PATH];
+        char newAbsolutePath[DRFS_MAX_PATH];
+        char newRelativePath[DRFS_MAX_PATH];
 
 
         if (drpath_is_absolute(fileNameIn))
@@ -303,14 +303,14 @@ namespace GT
         {
             strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (!drvfs_find_absolute_path(this->context.GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
+            if (!drfs_find_absolute_path(this->context.GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-        char* pFileData = drvfs_open_and_read_text_file(this->context.GetVFS(), newAbsolutePath, NULL);
+        char* pFileData = drfs_open_and_read_text_file(this->context.GetVFS(), newAbsolutePath, NULL);
         if (pFileData != nullptr)
         {
             bool result = this->LoadFromXML(pFileData);
@@ -320,7 +320,7 @@ namespace GT
             this->absolutePath = newAbsolutePath;
             this->relativePath = newRelativePath;
 
-            drvfs_free(pFileData);
+            drfs_free(pFileData);
             return result;
         }
 

@@ -40,10 +40,10 @@ namespace GT
                 this->GetTableValue(-2);
                 if (this->IsTable(-1))
                 {
-                    assert(drvfs_get_base_directory_count(g_Context->GetVFS()) > 0);
-                    for (unsigned int iBaseDir = 0; iBaseDir < drvfs_get_base_directory_count(g_Context->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
+                    assert(drfs_get_base_directory_count(g_Context->GetVFS()) > 0);
+                    for (unsigned int iBaseDir = 0; iBaseDir < drfs_get_base_directory_count(g_Context->GetVFS()) - 1; ++iBaseDir)     // -1 because we want to ignore the executable directory.
                     {
-                        this->SetTableValue(-1, iBaseDir + 1, drvfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir));
+                        this->SetTableValue(-1, iBaseDir + 1, drfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir));
                     }
                 }
                 this->Pop(1);
@@ -58,12 +58,12 @@ namespace GT
     }
 
 
-    bool GameScript::LoadFile(drvfs_context* pVFS, const char* fileName)
+    bool GameScript::LoadFile(drfs_context* pVFS, const char* fileName)
     {
         if (!this->HasFileBeenLoaded(fileName))
         {
-            char absolutePath[DRVFS_MAX_PATH];
-            if (drvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+            char absolutePath[DRFS_MAX_PATH];
+            if (drfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
             {
                 this->loadedFiles.PushBack(absolutePath);
             }
@@ -76,8 +76,8 @@ namespace GT
 
     bool GameScript::HasFileBeenLoaded(const char* fileName) const
     {
-        char absolutePath[DRVFS_MAX_PATH];
-        if (drvfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
+        char absolutePath[DRFS_MAX_PATH];
+        if (drfs_find_absolute_path(g_Context->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             return this->loadedFiles.Exists(absolutePath);
         }

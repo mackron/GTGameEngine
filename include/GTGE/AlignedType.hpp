@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <new>
 
-#include <dr_libs/dr_util.h>
+#include <dr_libs/dr.h>
 
 
 /// Base class for correctly aligning new operations.

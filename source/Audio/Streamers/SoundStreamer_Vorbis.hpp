@@ -48,7 +48,7 @@ namespace GT
         unsigned int GetSampleRate() const;
 
         /// SoundStreamer::GetFormat()
-        draudio_format GetFormat() const;
+        dra_format GetFormat() const;
 
 
     private:

@@ -58,7 +58,7 @@ namespace GT
         GT::Context &m_engineContext;
 
         /// A pointer to the dr_audio world.
-        draudio_world* m_pWorld;
+        dra_sound_world* m_pWorld;
 
 
 

@@ -8,7 +8,7 @@
 #include <GTGE/Assets/ModelAsset.hpp>
 #include <GTGE/MeshBuilder.hpp>
 #include <dr_libs/dr_path.h>
-#include <dr_libs/dr_vfs.h>
+#include <dr_libs/dr_fs.h>
 #include <dr_libs/dr_mtl.h>
 
 namespace GT
@@ -254,8 +254,8 @@ namespace GT
         assert(pAsset != nullptr);
         assert(pAsset->GetClass() == AssetClass_Material);
 
-        char basePath[DRVFS_MAX_PATH];
-        this->GetMaterialBaseDirectory(pAsset->GetAbsolutePathOrIdentifier(), basePath, DRVFS_MAX_PATH);
+        char basePath[DRFS_MAX_PATH];
+        this->GetMaterialBaseDirectory(pAsset->GetAbsolutePathOrIdentifier(), basePath, DRFS_MAX_PATH);
 
         auto pMaterialAsset = reinterpret_cast<MaterialAsset*>(pAsset);
 
@@ -276,8 +276,8 @@ namespace GT
         assert(pAsset != nullptr);
         assert(pAsset->GetClass() == AssetClass_Model);
 
-        char basePath[DRVFS_MAX_PATH];
-        this->GetModelBaseDirectory(pAsset->GetAbsolutePathOrIdentifier(), basePath, DRVFS_MAX_PATH);
+        char basePath[DRFS_MAX_PATH];
+        this->GetModelBaseDirectory(pAsset->GetAbsolutePathOrIdentifier(), basePath, DRFS_MAX_PATH);
 
 
         auto pModelAsset = reinterpret_cast<ModelAsset*>(pAsset);
@@ -294,11 +294,11 @@ namespace GT
             {
                 GraphicsAssetResource_Material* pMaterialResource = nullptr;
 
-                char materialName[DRVFS_MAX_PATH];
-                pModelAsset->GetMeshMaterialName(iMesh, iMaterial, materialName, DRVFS_MAX_PATH);
+                char materialName[DRFS_MAX_PATH];
+                pModelAsset->GetMeshMaterialName(iMesh, iMaterial, materialName, DRFS_MAX_PATH);
 
-                char materialAbsolutePath[DRVFS_MAX_PATH];
-                if (drvfs_find_absolute_path_explicit_base(m_assetLibrary.GetVFS(), materialName, basePath, materialAbsolutePath, sizeof(materialAbsolutePath)))
+                char materialAbsolutePath[DRFS_MAX_PATH];
+                if (drfs_find_absolute_path_explicit_base(m_assetLibrary.GetVFS(), materialName, basePath, materialAbsolutePath, sizeof(materialAbsolutePath)))
                 {
                     pMaterialResource = this->LoadMaterial(materialAbsolutePath);
                 }
@@ -531,8 +531,8 @@ namespace GT
                         {
                             GraphicsAssetResource_Texture* pTextureResource = nullptr;
 
-                            char textureAbsolutePath[DRVFS_MAX_PATH];
-                            if (drvfs_find_absolute_path_explicit_base(m_assetLibrary.GetVFS(), pInput->path.value, basePath, textureAbsolutePath, sizeof(textureAbsolutePath)))
+                            char textureAbsolutePath[DRFS_MAX_PATH];
+                            if (drfs_find_absolute_path_explicit_base(m_assetLibrary.GetVFS(), pInput->path.value, basePath, textureAbsolutePath, sizeof(textureAbsolutePath)))
                             {
                                 pTextureResource = this->LoadTexture(textureAbsolutePath);
                             }
@@ -560,8 +560,8 @@ namespace GT
                     {
                         GraphicsAssetResource_Texture* pTextureResource = nullptr;
 
-                        char textureAbsolutePath[DRVFS_MAX_PATH];
-                        if (drvfs_find_absolute_path_explicit_base(m_assetLibrary.GetVFS(), pProperty->path.value, basePath, textureAbsolutePath, sizeof(textureAbsolutePath)))
+                        char textureAbsolutePath[DRFS_MAX_PATH];
+                        if (drfs_find_absolute_path_explicit_base(m_assetLibrary.GetVFS(), pProperty->path.value, basePath, textureAbsolutePath, sizeof(textureAbsolutePath)))
                         {
                             pTextureResource = this->LoadTexture(textureAbsolutePath);
                         }
@@ -616,11 +616,11 @@ namespace GT
 
     bool GraphicsAssetResourceManager::FindResourceIndexByPath(const char* assetPath, OUT size_t &indexOut, OUT char* absolutePath, size_t absolutePathSize) const
     {
-        drvfs_context* pVFS = m_assetLibrary.GetVFS();
+        drfs_context* pVFS = m_assetLibrary.GetVFS();
         
         if (absolutePath != nullptr)
         {
-            if (drvfs_find_absolute_path(pVFS, assetPath, absolutePath, sizeof(absolutePath)))
+            if (drfs_find_absolute_path(pVFS, assetPath, absolutePath, sizeof(absolutePath)))
             {
                 auto iExistingItem = m_loadedResources.Find(absolutePath, absolutePathSize);
                 if (iExistingItem != nullptr)
@@ -632,8 +632,8 @@ namespace GT
         }
         else
         {
-            char tempAbsolutePath[DRVFS_MAX_PATH];
-            if (drvfs_find_absolute_path(pVFS, assetPath, tempAbsolutePath, sizeof(tempAbsolutePath)))
+            char tempAbsolutePath[DRFS_MAX_PATH];
+            if (drfs_find_absolute_path(pVFS, assetPath, tempAbsolutePath, sizeof(tempAbsolutePath)))
             {
                 auto iExistingItem = m_loadedResources.Find(tempAbsolutePath, sizeof(tempAbsolutePath));
                 if (iExistingItem != nullptr)
@@ -650,7 +650,7 @@ namespace GT
 
     GraphicsAssetResource* GraphicsAssetResourceManager::FindExistingResourceOrLoadAsset(const char* assetPath, AssetClass expectedAssetClass, OUT Asset* &pAssetOut)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         auto pExistingResource = this->FindLoadedResourceByPath(assetPath, OUT absolutePath, sizeof(absolutePath));
         if (pExistingResource != nullptr)
         {

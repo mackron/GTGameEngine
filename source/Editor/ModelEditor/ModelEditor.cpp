@@ -470,7 +470,7 @@ namespace GT
             {
                 if (drpath_extension_equal(absolutePath, "gtmodel"))
                 {
-                    char absolutePathNoExt[DRVFS_MAX_PATH];
+                    char absolutePathNoExt[DRFS_MAX_PATH];
                     drpath_copy_and_remove_extension(absolutePathNoExt, sizeof(absolutePathNoExt), absolutePath);
 
                     if (strcmp(absolutePathNoExt, this->GetAbsolutePath()) == 0) {

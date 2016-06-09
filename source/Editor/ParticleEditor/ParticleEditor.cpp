@@ -256,15 +256,15 @@ namespace GT
 
         this->isSaving = true;
         {
-            auto file = drvfs_open(g_Context->GetVFS(), this->GetAbsolutePath(), DRVFS_WRITE, 0);
-            if (file != nullptr)
+            drfs_file* file;
+            if (drfs_open(g_Context->GetVFS(), this->GetAbsolutePath(), DRFS_WRITE, &file) == drfs_success)
             {
                 FileSerializer serializer(file);
                 this->particleSystemDefinition.Serialize(serializer);
 
                 this->UnmarkAsModified();
 
-                drvfs_close(file);
+                drfs_close(file);
                 wasSaved = true;
             }
         }

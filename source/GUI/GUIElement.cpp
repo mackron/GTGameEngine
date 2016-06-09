@@ -1147,8 +1147,8 @@ namespace GT
         auto sc = this->GetPrimaryStyleClass();
         assert(sc != nullptr);
        
-        char absoluteURL[DRVFS_MAX_PATH];
-        if (!drvfs_find_absolute_path(GT::g_Context->GetVFS(), imageURL, absoluteURL, sizeof(absoluteURL)))
+        char absoluteURL[DRFS_MAX_PATH];
+        if (!drfs_find_absolute_path(GT::g_Context->GetVFS(), imageURL, absoluteURL, sizeof(absoluteURL)))
         {
             strcpy_s(absoluteURL, sizeof(absoluteURL), imageURL);
         }

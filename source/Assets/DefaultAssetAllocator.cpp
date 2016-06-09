@@ -2,7 +2,7 @@
 
 #include <GTGE/Config.hpp>
 #include <dr_libs/dr_path.h>
-#include <dr_libs/dr_util.h>
+#include <dr_libs/dr.h>
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
 #include "DefaultAssetAllocator.hpp"

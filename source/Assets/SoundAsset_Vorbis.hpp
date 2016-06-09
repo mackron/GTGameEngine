@@ -22,20 +22,23 @@ namespace GT
 
 
         /// @copydoc Asset::Load()
-        bool Load(const char* absolutePath, drvfs_context* pVFS);
+        bool Load(const char* absolutePath, drfs_context* pVFS);
 
 
         /// @copydoc SoundAsset::GetCompressedFormat()
         CompressedAudioFormat GetCompressedDataFormat() const;
 
         /// @copydoc SoundAsset::GetDataInfo()
-        draudio_buffer_desc GetDataInfo() const;
+        VoiceDesc GetDataInfo() const;
 
 
     private:
 
+        void* m_pData;
+        size_t m_dataSize;
+
         /// The data info.
-        draudio_buffer_desc m_dataInfo;
+        VoiceDesc m_dataInfo;
     };
 }
 

@@ -4,14 +4,14 @@
 #define GT_ImageInfo
 
 #include "ImageFormats.hpp"
-#include <dr_libs/dr_vfs.h>
+#include <dr_libs/dr_fs.h>
 
 namespace GT
 {
-    struct ImageFileInfo : public drvfs_file_info
+    struct ImageFileInfo : public drfs_file_info
     {
         ImageFileInfo()
-            : drvfs_file_info(), format(ImageFormat_Auto), width(0), height(0), mipmapCount(0)
+            : drfs_file_info(), format(ImageFormat_Auto), width(0), height(0), mipmapCount(0)
         {
         }
 
@@ -22,7 +22,7 @@ namespace GT
         /// Assignment.
         ImageFileInfo & operator=(const ImageFileInfo &other)
         {
-            drvfs_file_info::operator=(other);
+            drfs_file_info::operator=(other);
 
             this->format      = other.format;
             this->width       = other.width;

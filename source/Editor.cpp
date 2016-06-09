@@ -164,9 +164,9 @@ namespace GT
             this->StartupFileSystemWatcher();
 
             // We need to iterate over every file and folder in each base directory and make the editor aware of it.
-            for (unsigned int iBaseDir = 0; iBaseDir < drvfs_get_base_directory_count(g_Context->GetVFS()); ++iBaseDir)
+            for (unsigned int iBaseDir = 0; iBaseDir < drfs_get_base_directory_count(g_Context->GetVFS()); ++iBaseDir)
             {
-                const char* baseDir = drvfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir);
+                const char* baseDir = drfs_get_base_directory_by_index(g_Context->GetVFS(), iBaseDir);
                 assert(baseDir != nullptr);
 
                 this->InsertDirectoryChildren_Recursive(baseDir);
@@ -198,8 +198,8 @@ namespace GT
 
 
         // We need to make sure we have an absolute and relative path.
-        char absolutePath[DRVFS_MAX_PATH];
-        char relativePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
+        char relativePath[DRFS_MAX_PATH];
 
         if (!isSpecialEditor)
         {
@@ -219,7 +219,7 @@ namespace GT
             else
             {
                 // The file needs to exist. If it doesn't, we need to return false.
-                if (drvfs_find_absolute_path(g_Context->GetVFS(), path, absolutePath, sizeof(absolutePath)))
+                if (drfs_find_absolute_path(g_Context->GetVFS(), path, absolutePath, sizeof(absolutePath)))
                 {
                     strcpy_s(relativePath, sizeof(relativePath), path);
                 }
@@ -228,10 +228,10 @@ namespace GT
                     // The file might have an associated .gtmodel file. We'll let it pass if so.
                     if (GT::IsSupportedModelExtension(path))
                     {
-                        char pathWithExt[DRVFS_MAX_PATH];
+                        char pathWithExt[DRFS_MAX_PATH];
                         drpath_copy_and_append_extension(pathWithExt, sizeof(pathWithExt), path, "gtmodel");
 
-                        if (drvfs_find_absolute_path(g_Context->GetVFS(), pathWithExt, absolutePath, sizeof(absolutePath))) {
+                        if (drfs_find_absolute_path(g_Context->GetVFS(), pathWithExt, absolutePath, sizeof(absolutePath))) {
                             strcpy_s(relativePath, sizeof(relativePath), path);
                         }
                     }
@@ -260,15 +260,15 @@ namespace GT
             if (!isSpecialEditor)
             {
                 // We'll check if the file exists from here.
-                if (!drvfs_is_existing_file(g_Context->GetVFS(), absolutePath))
+                if (!drfs_is_existing_file(g_Context->GetVFS(), absolutePath))
                 {
                     // The file doesn't exist, but it might be a model so we'll need to check if it's got an associated .gtmodel file.
                     if (GT::IsSupportedModelExtension(absolutePath))
                     {
-                        char absolutePathWithExt[DRVFS_MAX_PATH];
+                        char absolutePathWithExt[DRFS_MAX_PATH];
                         drpath_copy_and_append_extension(absolutePathWithExt, sizeof(absolutePathWithExt), absolutePath, "gtmodel");
 
-                        if (!drvfs_is_existing_file(g_Context->GetVFS(), absolutePathWithExt))
+                        if (!drfs_is_existing_file(g_Context->GetVFS(), absolutePathWithExt))
                         {
                             g_Context->LogErrorf("Editor: Can not open model file '%s'. Associated .gtmodel file does not exist.\n", path);
                             return nullptr;
@@ -371,7 +371,7 @@ namespace GT
 
     void Editor::CloseFile(const char* path, const char* relativeTo)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -413,7 +413,7 @@ namespace GT
 
     void Editor::ForceCloseFile(const char* path, const char* relativeTo)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -492,7 +492,7 @@ namespace GT
 
     bool Editor::ShowFile(const char* path, const char* relativeTo)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -590,7 +590,7 @@ namespace GT
 
     bool Editor::SaveFile(const char* path, const char* relativeTo)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -655,7 +655,7 @@ namespace GT
 
     void Editor::MarkFileAsModified(const char* path, const char* relativeTo)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -689,7 +689,7 @@ namespace GT
 
     void Editor::UnmarkFileAsModified(const char* path, const char* relativeTo)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -724,7 +724,7 @@ namespace GT
 
     bool Editor::IsFileMarkedAsModified(const char* path, const char* relativeTo)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -814,7 +814,7 @@ namespace GT
 
     GUIElement* Editor::GetFileEditorElement(const char* path, const char* relativeTo)
     {
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
@@ -1031,7 +1031,7 @@ namespace GT
     void Editor::OnFileUpdate(const char* absolutePath)
     {
         // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
-        if (!drvfs_is_existing_directory(g_Context->GetVFS(), absolutePath))
+        if (!drfs_is_existing_directory(g_Context->GetVFS(), absolutePath))
         {
             // It's not a directory.
 
@@ -1180,24 +1180,24 @@ namespace GT
 
     void Editor::InsertDirectoryChildren_Recursive(const char* baseDir)
     {
-        assert(drvfs_is_existing_directory(g_Context->GetVFS(), baseDir));
+        assert(drfs_is_existing_directory(g_Context->GetVFS(), baseDir));
 
-        drvfs_iterator iFile;
-        if (drvfs_begin(g_Context->GetVFS(), baseDir, &iFile))
+        drfs_iterator iFile;
+        if (drfs_begin(g_Context->GetVFS(), baseDir, &iFile))
         {
             do
             {
-                if (!drvfs_is_base_directory(g_Context->GetVFS(), iFile.info.absolutePath))
+                if (!drfs_is_base_directory(g_Context->GetVFS(), iFile.info.absolutePath))
                 {
                     this->OnFileInsert(iFile.info.absolutePath);
 
                     // Call this function recursively if the file is a directory and is not another base directory.
-                    if ((iFile.info.attributes & DRVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    if ((iFile.info.attributes & DRFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                     {
                         this->InsertDirectoryChildren_Recursive(iFile.info.absolutePath);
                     }
                 }
-            } while (drvfs_next(g_Context->GetVFS(), &iFile));
+            } while (drfs_next(g_Context->GetVFS(), &iFile));
         }
     }
 
@@ -1236,9 +1236,9 @@ namespace GT
             m_pFSW = drfsw_create_context();
 
             // We add the base directories based ont he virtual file system.
-            for (unsigned int i = 0; i < drvfs_get_base_directory_count(g_Context->GetVFS()); ++i)
+            for (unsigned int i = 0; i < drfs_get_base_directory_count(g_Context->GetVFS()); ++i)
             {
-                drfsw_add_directory(m_pFSW, drvfs_get_base_directory_by_index(g_Context->GetVFS(), i));
+                drfsw_add_directory(m_pFSW, drfs_get_base_directory_by_index(g_Context->GetVFS(), i));
             }
 
 

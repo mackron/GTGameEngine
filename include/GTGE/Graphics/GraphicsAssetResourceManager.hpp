@@ -6,7 +6,7 @@
 #include "GraphicsAssetResources.hpp"
 #include "../Assets/AssetTypes.hpp"
 
-#include <dr_libs/dr_util.h>
+#include <dr_libs/dr.h>
 
 namespace GT
 {

@@ -377,7 +377,7 @@ namespace GT
     public:
 
         /// Constructor.
-        FileDeserializer(drvfs_file* pFileIn)
+        FileDeserializer(drfs_file* pFileIn)
             : m_pFile(pFileIn)
         {
         }
@@ -406,7 +406,7 @@ namespace GT
             assert(m_pFile != nullptr);
 
             size_t bytesRead = 0;
-            if (!drvfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead))
+            if (!drfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead))
             {
                 // Error reading.
                 bytesRead = 0;
@@ -420,16 +420,16 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            drvfs_uint64 readPointer = drvfs_tell(m_pFile);
+            uint64_t readPointer = drfs_tell(m_pFile);
 
             size_t bytesRead = 0;
-            if (!drvfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead))
+            if (!drfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead))
             {
                 // Error reading.
                 return 0;
             }
                 
-            drvfs_seek(m_pFile, static_cast<drvfs_int64>(readPointer), drvfs_origin_start);
+            drfs_seek(m_pFile, static_cast<int64_t>(readPointer), drfs_origin_start);
             return bytesRead;
         }
 
@@ -438,7 +438,7 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            if (drvfs_seek(m_pFile, bytesToSkip, drvfs_origin_current)) {
+            if (drfs_seek(m_pFile, bytesToSkip, drfs_origin_current)) {
                 return bytesToSkip;
             }
 
@@ -450,14 +450,14 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            return static_cast<size_t>(drvfs_tell(m_pFile));
+            return static_cast<size_t>(drfs_tell(m_pFile));
         }
 
 
     private:
 
         /// The virtual file system file object to read from.
-        drvfs_file* m_pFile;
+        drfs_file* m_pFile;
 
 
     private:    // No copying.

@@ -22,7 +22,7 @@ namespace GT
           compilationScript(nullptr),
           isScriptFile(false)
     {
-        char* fileContent = drvfs_open_and_read_text_file(g_Context->GetVFS(), absolutePath, nullptr);
+        char* fileContent = drfs_open_and_read_text_file(g_Context->GetVFS(), absolutePath, nullptr);
         if (fileContent != nullptr)
         {
             auto &gui    = this->GetGUI();
@@ -110,7 +110,7 @@ namespace GT
             }
 
             
-            drvfs_free(fileContent);
+            drfs_free(fileContent);
         }
     }
 
@@ -175,11 +175,11 @@ namespace GT
         auto text = this->textArea->GetText();
         if (text != nullptr)
         {
-            wasSaved = drvfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), text);
+            wasSaved = drfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), text);
         }
         else
         {
-            wasSaved = drvfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), "");
+            wasSaved = drfs_open_and_write_text_file(g_Context->GetVFS(), this->GetAbsolutePath(), "");
         }
 
         if (wasSaved)

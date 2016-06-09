@@ -28,8 +28,8 @@
 #include <GTGE/Core/Vector.hpp>
 #include <GTGE/Core/Timing.hpp>
 #include <GTGE/Core/FontServer.hpp>
-#include <dr_libs/dr_util.h>
-#include <dr_libs/dr_vfs.h>
+#include <dr_libs/dr.h>
+#include <dr_libs/dr_fs.h>
 
 #ifdef _WIN32
 #undef GetCommandLine
@@ -86,7 +86,7 @@ namespace GT
         // File System Management
 
         /// Retrieves a pointer to the virtual file system object.
-        drvfs_context* GetVFS() { return m_pVFS; }
+        drfs_context* GetVFS() { return m_pVFS; }
 
         /// Retrieves the executable's absolute file path.
         const char* GetExecutableAbsolutePath() const;
@@ -130,10 +130,10 @@ namespace GT
         // Audio
 
         /// Retrieves a pointer to the dr_audio context.
-        draudio_context* GetAudioContext();
+        dra_context* GetAudioContext();
 
         /// Retrieves a pointer to the audio playback device.
-        draudio_device* GetAudioPlaybackDevice();
+        dra_device* GetAudioPlaybackDevice();
 
         /// Retrieves a reference to the global sound world.
         ///
@@ -562,24 +562,24 @@ namespace GT
         dr_cmdline m_cmdline;
 
         /// The absolute path of the executable.
-        char m_executableAbsolutePath[DRVFS_MAX_PATH];
+        char m_executableAbsolutePath[DRFS_MAX_PATH];
 
         /// The absolute path of the directory of the application's executable.
-        char m_executableDirectoryAbsolutePath[DRVFS_MAX_PATH];
+        char m_executableDirectoryAbsolutePath[DRFS_MAX_PATH];
 
 
         /// A pointer to the object representing the virtual file system. This is where base directories are added.
-        drvfs_context* m_pVFS;
+        drfs_context* m_pVFS;
 
         /// The log file.
-        drvfs_file* m_pLogFile;
+        drfs_file* m_pLogFile;
 
 
         /// A pointer to the dr_audio context for audio playback.
-        draudio_context* m_pAudioContext;
+        dra_context* m_pAudioContext;
 
         /// A pointer to the device for audio playback.
-        draudio_device* m_pAudioPlaybackDevice;
+        dra_device* m_pAudioPlaybackDevice;
 
         /// The global sound world.
         GT::SoundWorld m_soundWorld;
@@ -731,12 +731,6 @@ namespace GT
         /// The key combination for toggling the editor.
         KeyCombination editorToggleKeyCombination;
 
-
-
-#ifdef GT_BUILD_EDITOR
-        /// The editor.
-        Editor2* m_pEditor;
-#endif
 
 
     private:    // No copying.

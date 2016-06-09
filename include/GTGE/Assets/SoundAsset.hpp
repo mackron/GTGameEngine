@@ -17,6 +17,13 @@ namespace GT
         Vorbis,     // Lossy compressed
     };
 
+    struct VoiceDesc
+    {
+        dra_format format;
+        unsigned int channels;
+        unsigned int sampleRate;
+    };
+
 
     /// Base class for sound assets.
     class SoundAsset : public Asset
@@ -45,7 +52,7 @@ namespace GT
         ///     directly to dr_audio.
         ///     @par
         ///     Currently, the pInitialData member should point to the first byte of the entire file.
-        virtual draudio_buffer_desc GetDataInfo() const = 0;
+        virtual VoiceDesc GetDataInfo() const = 0;
     };
 }
 

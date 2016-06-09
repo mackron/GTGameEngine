@@ -317,19 +317,17 @@ namespace GT
 
     bool Scene::LoadFromFile(const char* relativeFilePath)
     {
-        drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), relativeFilePath, DRVFS_READ, 0);
-        if (pFile != nullptr)
-        {
-            bool result = false;
-
-            FileDeserializer deserializer(pFile);
-            result = this->Deserialize(deserializer);
-
-            drvfs_close(pFile);
-            return result;
+        drfs_file* pFile;
+        if (drfs_open(g_Context->GetVFS(), relativeFilePath, DRFS_READ, &pFile) != drfs_success) {
+            return false;
         }
 
-        return false;
+
+        FileDeserializer deserializer(pFile);
+        bool result = this->Deserialize(deserializer);
+
+        drfs_close(pFile);
+        return result;
     }
 
 

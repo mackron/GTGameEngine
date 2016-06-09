@@ -2135,12 +2135,12 @@ namespace GT
                 String query(directoryName);
                 query.Append(".*");
 
-                drvfs_iterator iFile;
-                if (drvfs_begin(g_Context->GetVFS(), directoryName, &iFile))
+                drfs_iterator iFile;
+                if (drfs_begin(g_Context->GetVFS(), directoryName, &iFile))
                 {
                     do
                     {
-                        if ((iFile.info.attributes & DRVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                        if ((iFile.info.attributes & DRFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                         {
                             directories.Add(drpath_file_name(iFile.info.absolutePath), true);
                         }
@@ -2148,7 +2148,7 @@ namespace GT
                         {
                             files.Add(drpath_file_name(iFile.info.absolutePath), true);
                         }
-                    } while (drvfs_next(g_Context->GetVFS(), &iFile));
+                    } while (drfs_next(g_Context->GetVFS(), &iFile));
                 }
 
 
@@ -2179,7 +2179,7 @@ namespace GT
             auto path = script.ToString(1);
             auto base = script.ToString(2);
                 
-            char relativePath[DRVFS_MAX_PATH];
+            char relativePath[DRFS_MAX_PATH];
             drpath_to_relative(path, base, relativePath, sizeof(relativePath));
                 
             script.Push(relativePath);
@@ -2316,14 +2316,14 @@ namespace GT
         {
             int __GetFileInfo(Script &script)
             {
-                drvfs_file_info info;
-                if (drvfs_get_file_info(g_Context->GetVFS(), script.ToString(1), &info))
+                drfs_file_info info;
+                if (drfs_get_file_info(g_Context->GetVFS(), script.ToString(1), &info))
                 {
                     script.Push(script.ToString(1));
                     script.Push(info.absolutePath);
                     script.Push(static_cast<int>(info.sizeInBytes));            // <-- Erroneous! sizeInBytes is 64-bit, but we're casting down to 32-bit!
                     script.Push(static_cast<int>(info.lastModifiedTime));       // <-- Erroneous! lastModifiedTime is 64-bit, but we're casting down to 32-bit!
-                    script.Push((info.attributes & DRVFS_FILE_ATTRIBUTE_DIRECTORY) != 0);
+                    script.Push((info.attributes & DRFS_FILE_ATTRIBUTE_DIRECTORY) != 0);
 
                     return 5;
                 }
@@ -2335,7 +2335,7 @@ namespace GT
 
             int GetParentDirectoryPath(Script &script)
             {
-                char baseDir[DRVFS_MAX_PATH];
+                char baseDir[DRFS_MAX_PATH];
                 drpath_copy_base_path(script.ToString(1), baseDir, sizeof(baseDir));
 
                 script.Push(baseDir);
@@ -2356,7 +2356,7 @@ namespace GT
 
             int RemoveExtension(Script &script)
             {
-                char path[DRVFS_MAX_PATH];
+                char path[DRFS_MAX_PATH];
                 drpath_copy_and_remove_extension(path, sizeof(path), script.ToString(1));
 
                 return 1;
@@ -2364,20 +2364,20 @@ namespace GT
 
             int FileExists(Script &script)
             {
-                script.Push(drvfs_exists(g_Context->GetVFS(), script.ToString(1)));
+                script.Push(drfs_exists(g_Context->GetVFS(), script.ToString(1)));
                 return 1;
             }
 
             int CreateDirectory(Script &script)
             {
-                drvfs_create_directory_recursive(g_Context->GetVFS(), script.ToString(1));
+                drfs_create_directory_recursive(g_Context->GetVFS(), script.ToString(1));
                 return 0;
             }
 
             int DeleteDirectory(Script &script)
             {
-                if (drvfs_is_existing_directory(g_Context->GetVFS(), script.ToString(1))) {
-                    drvfs_delete_file(g_Context->GetVFS(), script.ToString(1));
+                if (drfs_is_existing_directory(g_Context->GetVFS(), script.ToString(1))) {
+                    drfs_delete_file(g_Context->GetVFS(), script.ToString(1));
                 }
 
                 return 0;
@@ -2385,10 +2385,9 @@ namespace GT
 
             int CreateEmptyFile(Script &script)
             {
-                drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), script.ToString(1), DRVFS_WRITE | DRVFS_CREATE_DIRS, 0);
-                if (pFile != nullptr)
-                {
-                    drvfs_close(pFile);
+                drfs_file* pFile;
+                if (drfs_open(g_Context->GetVFS(), script.ToString(1), DRFS_WRITE | DRFS_CREATE_DIRS, &pFile) == drfs_success) {
+                    drfs_close(pFile);
                 }
 
                 return 0;
@@ -2396,20 +2395,20 @@ namespace GT
 
             int DeleteFile(Script &script)
             {
-                drvfs_delete_file(g_Context->GetVFS(), script.ToString(1));
+                drfs_delete_file(g_Context->GetVFS(), script.ToString(1));
                 return 0;
             }
 
             int IsDirectory(Script &script)
             {
-                script.Push(drvfs_is_existing_directory(g_Context->GetVFS(), script.ToString(1)));
+                script.Push(drfs_is_existing_directory(g_Context->GetVFS(), script.ToString(1)));
                 return 1;
             }
 
             int FindAbsolutePath(Script &script)
             {
-                char absolutePath[DRVFS_MAX_PATH];
-                if (drvfs_find_absolute_path(g_Context->GetVFS(), script.ToString(1), absolutePath, sizeof(absolutePath))) {
+                char absolutePath[DRFS_MAX_PATH];
+                if (drfs_find_absolute_path(g_Context->GetVFS(), script.ToString(1), absolutePath, sizeof(absolutePath))) {
                     script.Push(absolutePath);
                 } else {
                     script.PushNil();
@@ -2537,26 +2536,25 @@ namespace GT
         {
             int CreateFromFile(Script &script)
             {
-                drvfs_file* pFile = drvfs_open(g_Context->GetVFS(), script.ToString(1), DRVFS_READ, 0);
-                if (pFile != nullptr)
-                {
-                    auto deserializer = new FileDeserializer(pFile);
-
-                    script.Push(deserializer);
-                    script.Push(reinterpret_cast<void*>(pFile));
-
-                    return 2;
+                drfs_file* pFile;
+                if (drfs_open(g_Context->GetVFS(), script.ToString(1), DRFS_READ, &pFile) != drfs_success) {
+                    return 0;
                 }
 
-                return 0;
+                auto deserializer = new FileDeserializer(pFile);
+
+                script.Push(deserializer);
+                script.Push(reinterpret_cast<void*>(pFile));
+
+                return 2;
             }
 
             int DeleteFromFile(Script &script)
             {
                 auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
-                auto file         = reinterpret_cast<drvfs_file*>(script.ToPointer(2));
+                auto file         = reinterpret_cast<drfs_file*>(script.ToPointer(2));
 
-                drvfs_close(file);
+                drfs_close(file);
                 delete deserializer;
 
                 return 0;

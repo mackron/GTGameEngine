@@ -19,10 +19,10 @@ namespace GT
     }
 
 
-    bool MaterialAsset_MTL::Load(const char* absolutePath, drvfs_context* pVFS)
+    bool MaterialAsset_MTL::Load(const char* absolutePath, drfs_context* pVFS)
     {
         size_t fileSize;
-        char* pFileData = drvfs_open_and_read_text_file(pVFS, absolutePath, &fileSize);
+        char* pFileData = drfs_open_and_read_text_file(pVFS, absolutePath, &fileSize);
         if (pFileData != NULL && fileSize > 6)
         {
             bool result = true;
@@ -43,7 +43,7 @@ namespace GT
             }
 
 
-            drvfs_free(pFileData);
+            drfs_free(pFileData);
             return result;
         }
         else

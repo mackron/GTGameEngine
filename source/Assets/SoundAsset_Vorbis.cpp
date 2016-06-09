@@ -14,24 +14,22 @@ namespace GT
 
     SoundAsset_Vorbis::~SoundAsset_Vorbis()
     {
-        drvfs_free(m_dataInfo.pData);
+        drfs_free(m_pData);
     }
 
 
-    bool SoundAsset_Vorbis::Load(const char* absolutePath, drvfs_context* pVFS)
+    bool SoundAsset_Vorbis::Load(const char* absolutePath, drfs_context* pVFS)
     {
         // For now we are just going to load a streamer and retrieve the information about the buffer. Later on we'll clean this up and do it properly.
-        m_dataInfo.pData = drvfs_open_and_read_binary_file(pVFS, absolutePath, &m_dataInfo.sizeInBytes);
-        if (m_dataInfo.pData != nullptr)
+        m_pData = drfs_open_and_read_binary_file(pVFS, absolutePath, &m_dataSize);
+        if (m_pData != nullptr)
         {
-            GT::SoundStreamer_Vorbis streamer(m_dataInfo.pData, m_dataInfo.sizeInBytes);
+            GT::SoundStreamer_Vorbis streamer(m_pData, m_dataSize);
             if (streamer.Initialize())
             {
-                m_dataInfo.flags         = 0;
-                m_dataInfo.format        = streamer.GetFormat();
-                m_dataInfo.channels      = streamer.GetNumChannels();
-                m_dataInfo.sampleRate    = streamer.GetSampleRate();
-                m_dataInfo.bitsPerSample = streamer.GetBitsPerSample();
+                m_dataInfo.format     = streamer.GetFormat();
+                m_dataInfo.channels   = streamer.GetNumChannels();
+                m_dataInfo.sampleRate = streamer.GetSampleRate();
 
                 return true;
             }
@@ -46,7 +44,7 @@ namespace GT
         return CompressedAudioFormat::Vorbis;
     }
 
-    draudio_buffer_desc SoundAsset_Vorbis::GetDataInfo() const
+    VoiceDesc SoundAsset_Vorbis::GetDataInfo() const
     {
         return m_dataInfo;
     }

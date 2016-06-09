@@ -1,14 +1,14 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGE/Assets/Asset.hpp>
-#include <dr_libs/dr_util.h>
+#include <dr_libs/dr.h>
 
 namespace GT
 {
     Asset::Asset(const char* absolutePathOrIdentifier, AssetType type)
         : m_absolutePathOrIdentifier(), m_type(type), m_metadata()
     {
-        strcpy_s(m_absolutePathOrIdentifier, DRVFS_MAX_PATH, absolutePathOrIdentifier);
+        strcpy_s(m_absolutePathOrIdentifier, DRFS_MAX_PATH, absolutePathOrIdentifier);
     }
 
     Asset::~Asset()
@@ -43,15 +43,15 @@ namespace GT
         return this->GetMetadataChunkData(name, unused);
     }
 
-    bool Asset::LoadMetadata(const char* absolutePath, drvfs_context* pVFS)
+    bool Asset::LoadMetadata(const char* absolutePath, drfs_context* pVFS)
     {
-        drvfs_file* pMetadataFile = drvfs_open(pVFS, absolutePath, DRVFS_READ, 0);
-        if (pMetadataFile != nullptr)
+        drfs_file* pMetadataFile;
+        if (drfs_open(pVFS, absolutePath, DRFS_READ, &pMetadataFile) == drfs_success)
         {
             FileDeserializer deserializer(pMetadataFile);
             m_metadata.Deserialize(deserializer);
 
-            drvfs_close(pMetadataFile);
+            drfs_close(pMetadataFile);
             return true;
         }
         else

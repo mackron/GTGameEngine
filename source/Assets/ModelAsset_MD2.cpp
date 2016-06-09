@@ -3,7 +3,7 @@
 #include "ModelAsset_MD2.hpp"
 
 #if defined(GT_BUILD_MD2)
-#include <dr_libs/dr_util.h>
+#include <dr_libs/dr.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -267,10 +267,10 @@ namespace GT
     }
 
 
-    bool ModelAsset_MD2::Load(const char* absolutePath, drvfs_context* pVFS)
+    bool ModelAsset_MD2::Load(const char* absolutePath, drfs_context* pVFS)
     {
         size_t fileSize;
-        uint8_t* pFileData = reinterpret_cast<uint8_t*>(drvfs_open_and_read_binary_file(pVFS, absolutePath, &fileSize));
+        uint8_t* pFileData = reinterpret_cast<uint8_t*>(drfs_open_and_read_binary_file(pVFS, absolutePath, &fileSize));
         if (pFileData != nullptr)
         {
             bool result = true;
@@ -389,7 +389,7 @@ namespace GT
             }
                 
 
-            drvfs_free(pFileData);
+            drfs_free(pFileData);
             return result;
         }
         else

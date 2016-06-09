@@ -189,11 +189,11 @@ namespace GT
 
     bool GUIStyleServer::LoadFromFile(const char* filePath)
     {
-        char* pFileData = drvfs_open_and_read_text_file(GT::g_Context->GetVFS(), filePath, nullptr);
+        char* pFileData = drfs_open_and_read_text_file(GT::g_Context->GetVFS(), filePath, nullptr);
         if (pFileData != nullptr)
         {
-            char absolutePath[DRVFS_MAX_PATH];
-            if (!drvfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
+            char absolutePath[DRFS_MAX_PATH];
+            if (!drfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
             {
                 // Failed to retrieve the absolute path. Just use the original path.
                 strcpy_s(absolutePath, sizeof(absolutePath), filePath);
@@ -202,13 +202,13 @@ namespace GT
             // We want to unload the file before re-loading it.
             this->UnloadFile(absolutePath);
 
-            char absolutePathBase[DRVFS_MAX_PATH];
+            char absolutePathBase[DRFS_MAX_PATH];
             drpath_copy_base_path(absolutePath, absolutePathBase, sizeof(absolutePathBase));
 
             bool successful = this->Load(pFileData, absolutePathBase, absolutePath);
             
 
-            drvfs_free(pFileData);
+            drfs_free(pFileData);
             return successful;
         }
         else
@@ -224,10 +224,10 @@ namespace GT
     void GUIStyleServer::UnloadFile(const char* filePath)
     {
         // The file path needs to be absolute.
-        char absolutePath[DRVFS_MAX_PATH];
+        char absolutePath[DRFS_MAX_PATH];
         if (!drpath_is_absolute(filePath))
         {
-            if (!drvfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath))) {
+            if (!drfs_find_absolute_path(GT::g_Context->GetVFS(), filePath, absolutePath, sizeof(absolutePath))) {
                 strcpy_s(absolutePath, sizeof(absolutePath), filePath);
             }
         }

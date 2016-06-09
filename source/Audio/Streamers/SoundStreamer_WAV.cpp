@@ -102,13 +102,13 @@ namespace GT
         return m_sampleRate;
     }
 
-    draudio_format SoundStreamer_WAV::GetFormat() const
+    dra_format SoundStreamer_WAV::GetFormat() const
     {
         if (m_formatCode == WAVE_FORMAT_IEEE_FLOAT) {
-            return draudio_format_float;
+            return dra_format_f32;
         }
 
-        return draudio_format_pcm;
+        return dra_format_s32;
     }
 
 

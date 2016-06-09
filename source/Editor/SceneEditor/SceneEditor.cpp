@@ -79,8 +79,8 @@ namespace GT
         auto &script = this->GetScript();
 
         // We need to load the scene.
-        drvfs_file* file = drvfs_open(g_Context->GetVFS(), absolutePath, DRVFS_READ, 0);
-        if (file != nullptr)
+        drfs_file* file;
+        if (drfs_open(g_Context->GetVFS(), absolutePath, DRFS_READ, &file) == drfs_success)
         {
             // We need to now create the GUI elements for this particular file. We start with the main element.
             this->GUI.Main = gui.CreateElement("<div parentid='Editor_SubEditorContainer' styleclass='scene-editor-main' />");
@@ -173,7 +173,7 @@ namespace GT
 
 
             // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
-            if (drvfs_size(file) > 0)
+            if (drfs_size(file) > 0)
             {
                 FileDeserializer deserializer(file);
                 this->DeserializeScene(deserializer);
@@ -190,7 +190,7 @@ namespace GT
 
 
             // The scene will be done loading by this pointer, so we can close the file.
-            drvfs_close(file);
+            drfs_close(file);
         }
     }
 
@@ -2500,8 +2500,8 @@ namespace GT
 
     bool SceneEditor::Save()
     {
-        drvfs_file* file = drvfs_open(g_Context->GetVFS(), this->GetAbsolutePath(), DRVFS_WRITE, 0);
-        if (file != nullptr)
+        drfs_file* file;
+        if (drfs_open(g_Context->GetVFS(), this->GetAbsolutePath(), DRFS_WRITE, &file) == drfs_success)
         {
             // If the physics simulation is running or the game is playing, it needs to be stopped first.
             if (this->IsPlaying() || this->IsPaused())
@@ -2517,7 +2517,7 @@ namespace GT
             FileSerializer serializer(file);
             this->SerializeScene(serializer);
 
-            drvfs_close(file);
+            drfs_close(file);
 
             this->UnmarkAsModified();
 
@@ -2785,7 +2785,7 @@ namespace GT
                         auto model = modelComponent->GetModel();
                         if (model != nullptr)
                         {
-                            char absolutePathWithoutExt[DRVFS_MAX_PATH];
+                            char absolutePathWithoutExt[DRFS_MAX_PATH];
                             drpath_copy_and_remove_extension(absolutePathWithoutExt, sizeof(absolutePathWithoutExt), absolutePath);
 
                             if (model->GetDefinition().absolutePath == absolutePath || model->GetDefinition().absolutePath == absolutePathWithoutExt)
@@ -2823,9 +2823,9 @@ namespace GT
             // we will find the most likely base path and use that to derive a relative path. This is not a robust way of doing this and
             // will be updated when the asset management system is updated.
             const char* mostLikelyBasePath = nullptr;
-            for (unsigned int iBasePath = 0; iBasePath < drvfs_get_base_directory_count(g_Context->GetVFS()); ++iBasePath)
+            for (unsigned int iBasePath = 0; iBasePath < drfs_get_base_directory_count(g_Context->GetVFS()); ++iBasePath)
             {
-                const char* basePath = drvfs_get_base_directory_by_index(g_Context->GetVFS(), iBasePath);
+                const char* basePath = drfs_get_base_directory_by_index(g_Context->GetVFS(), iBasePath);
                 if (drpath_is_descendant(absolutePath, basePath))
                 {
                     mostLikelyBasePath = basePath;
@@ -2835,7 +2835,7 @@ namespace GT
 
             if (mostLikelyBasePath != nullptr)
             {
-                char relativePath[DRVFS_MAX_PATH];
+                char relativePath[DRFS_MAX_PATH];
                 if (drpath_to_relative(absolutePath, mostLikelyBasePath, relativePath, sizeof(relativePath)))
                 {
                     if (GT::IsSupportedPrefabExtension(absolutePath))
@@ -3604,8 +3604,8 @@ namespace GT
 
     void SceneEditor::UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath)
     {
-        char scriptAbsolutePath[DRVFS_MAX_PATH];
-        if (!drvfs_find_absolute_path(g_Context->GetVFS(), scriptRelativePath, scriptAbsolutePath, sizeof(scriptAbsolutePath))) {
+        char scriptAbsolutePath[DRFS_MAX_PATH];
+        if (!drfs_find_absolute_path(g_Context->GetVFS(), scriptRelativePath, scriptAbsolutePath, sizeof(scriptAbsolutePath))) {
             return;
         }
 
