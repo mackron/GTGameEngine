@@ -52,6 +52,7 @@
 #define GT_ENABLE_MD2       1       ///< Enable MD2 models.
 #define GT_ENABLE_OGEX      1       ///< Enable OpenGEX models.
 #define GT_ENABLE_WAV       1       ///< Enable WAV sounds.
+#define GT_ENABLE_FLAC      1       ///< Enable FLAC sounds.
 #define GT_ENABLE_VORBIS    1       ///< Enable Ogg Vorbis sounds.
 
 
@@ -115,6 +116,9 @@
 #if defined(GT_ENABLE_WAV) && GT_ENABLE_WAV == 1
 #define GT_BUILD_WAV
 #endif
+#if defined(GT_ENABLE_FLAC) && GT_ENABLE_FLAC == 1
+#define GT_BUILD_FLAC
+#endif
 #if defined(GT_ENABLE_VORBIS) && GT_ENABLE_VORBIS == 1
 #define GT_BUILD_VORBIS
 #endif
@@ -128,6 +132,7 @@
     defined(GT_BUILD_MD2)  || \
     defined(GT_BUILD_OGEX) || \
     defined(GT_BUILD_WAV)  || \
+    defined(GT_BUILD_FLAC) || \
     defined(GT_BUILD_VORBIS)
 #define GT_BUILD_DEFAULT_ASSETS
 #endif

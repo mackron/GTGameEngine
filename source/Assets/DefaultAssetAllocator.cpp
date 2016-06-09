@@ -20,13 +20,7 @@
 #include "ModelAsset_OBJ.hpp"
 #endif
 
-#if defined(GT_BUILD_WAV)
-#include "SoundAsset_WAV.hpp"
-#endif
-
-#if defined(GT_BUILD_VORBIS)
-#include "SoundAsset_Vorbis.hpp"
-#endif
+#include <GTGE/Assets/SoundAsset.hpp>
 
 namespace GT
 {
@@ -71,6 +65,10 @@ namespace GT
                 if (Strings::Equal<false>(ext, "wav"))
                 {
                     return AssetType_Sound_WAV;
+                }
+                if (Strings::Equal<false>(ext, "flac"))
+                {
+                    return AssetType_Sound_Flac;
                 }
                 if (Strings::Equal<false>(ext, "ogg"))
                 {
@@ -146,6 +144,9 @@ namespace GT
 #if defined(GT_BUILD_WAV)
         case AssetType_Sound_WAV:
 #endif
+#if defined(GT_BUILD_FLAC)
+        case AssetType_Sound_Flac:
+#endif
 #if defined(GT_BUILD_VORBIS)
         case AssetType_Sound_Vorbis:
 #endif
@@ -205,14 +206,14 @@ namespace GT
 #if defined(GT_BUILD_WAV)
         if (type == AssetType_Sound_WAV)
         {
-            return new SoundAsset_WAV(absolutePathOrIdentifier, type);
+            return new SoundAsset(absolutePathOrIdentifier, type);
         }
 #endif
 
 #if defined(GT_BUILD_VORBIS)
         if (type == AssetType_Sound_Vorbis)
         {
-            return new SoundAsset_Vorbis(absolutePathOrIdentifier, type);
+            return new SoundAsset(absolutePathOrIdentifier, type);
         }
 #endif
 

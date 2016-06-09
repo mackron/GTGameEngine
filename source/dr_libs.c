@@ -13,11 +13,15 @@
 #define DR_PATH_IMPLEMENTATION
 #include <dr_libs/dr_path.h>
 
+#if defined(GT_BUILD_FLAC)
 #define DR_FLAC_IMPLEMENTATION
 #include <dr_libs/dr_flac.h>
+#endif
 
+#if defined(GT_BUILD_WAV)
 #define DR_WAV_IMPLEMENTATION
 #include <dr_libs/dr_wav.h>
+#endif
 
 #if defined(GT_BUILD_VORBIS)
 #define STB_VORBIS_HEADER_ONLY

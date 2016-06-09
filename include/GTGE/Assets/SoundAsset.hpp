@@ -8,20 +8,14 @@
 
 namespace GT
 {
-    /// The different audio data formats.
-    enum class CompressedAudioFormat
-    {
-        Unknown,
-        WAV,        // Uncompressed
-        FLAC,       // Losslessly compressed
-        Vorbis,     // Lossy compressed
-    };
-
     struct VoiceDesc
     {
         dra_format format;
         unsigned int channels;
         unsigned int sampleRate;
+
+        void* pData;
+        size_t dataSize;
     };
 
 
@@ -40,9 +34,8 @@ namespace GT
         /// @copydoc Asset::GetClass()
         AssetClass GetClass() const;
 
-
-        /// Retrieves the format of the audio data.
-        virtual CompressedAudioFormat GetCompressedDataFormat() const = 0;
+        /// @copydoc Asset::Load()
+        bool Load(const char* absolutePath, drfs_context* pVFS);
 
         /// Retrieves information about the audio data of the sound.
         ///
@@ -52,7 +45,13 @@ namespace GT
         ///     directly to dr_audio.
         ///     @par
         ///     Currently, the pInitialData member should point to the first byte of the entire file.
-        virtual VoiceDesc GetDataInfo() const = 0;
+        VoiceDesc GetDataInfo() const;
+
+
+
+    private:
+
+        VoiceDesc m_dataInfo;
     };
 }
 

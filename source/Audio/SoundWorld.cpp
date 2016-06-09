@@ -1,11 +1,9 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTGE/Audio/SoundWorld.hpp>
+#include <GTGE/Audio/SoundStreamer.hpp>
 #include <GTGE/Assets/SoundAsset.hpp>
 #include <GTGE/Context.hpp>
-
-#include "../Audio/Streamers/SoundStreamer_WAV.hpp"
-#include "../Audio/Streamers/SoundStreamer_Vorbis.hpp"
 
 namespace GT
 {
@@ -36,7 +34,7 @@ namespace GT
         delete pSoundData;
     }
 
-    static bool EA_OnSoundRead(dra_sound* pSound, uint64_t samplesToRead, void* pSamplesOut)
+    static uint64_t EA_OnSoundRead(dra_sound* pSound, uint64_t samplesToRead, void* pSamplesOut)
     {
         EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(pSound->pUserData);
         assert(pSoundData != NULL);
@@ -45,7 +43,7 @@ namespace GT
             return pSoundData->pStreamer->Read(samplesToRead, pSamplesOut);
         }
 
-        return false;
+        return 0;
     }
 
     static bool EA_OnSoundSeek(dra_sound* pSound, uint64_t sample)

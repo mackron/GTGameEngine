@@ -15,10 +15,10 @@ namespace GT
     public:
 
         /// Constructor.
-        SoundStreamer();
+        SoundStreamer(const void* fileData, size_t fileDataSizeInBytes);
 
         /// Destructor.
-        virtual ~SoundStreamer();
+        ~SoundStreamer();
 
 
     // Virtual methods.
@@ -30,33 +30,33 @@ namespace GT
         ///
         /// @remarks
         ///     This is where the validity of the file data should be initially checked.
-        virtual bool Initialize() = 0;
+        bool Initialize();
 
 
         /// Reads the next data chunk.
-        virtual bool Read(uint64_t samplestoRead, void* pSamplesOut) = 0;
+        uint64_t Read(uint64_t samplesToRead, void* pSamplesOut);
 
         /// Seeks the read positition of the streamer.
         ///
         /// @remarks
         ///     To seek to the start of the sound, call this method with a value of 0.
-        virtual bool Seek(uint64_t sample) = 0;
+        bool Seek(uint64_t sample);
 
 
         /// Retrieves the format of the audio.
         ///
         /// @return The format of the audio.
-        virtual dra_format GetFormat() const = 0;
+        dra_format GetFormat() const;
 
         /// Retrieves the number of channels in the sound.
         ///
         /// @return The number of channels in the sound.
-        virtual unsigned int GetNumChannels() const = 0;
+        unsigned int GetNumChannels() const;
 
         /// Retrieves the sample rate. 22050, 44100, etc.
         ///
         /// @return The sample rate of the sound.
-        virtual unsigned int GetSampleRate() const = 0;
+        unsigned int GetSampleRate() const;
 
 
 
@@ -74,6 +74,19 @@ namespace GT
 
         /// Deletes a sound streamer that was created with CreateFromAsset().
         static void Delete(SoundStreamer* pStreamer);
+
+
+
+    private:
+
+        // A pointer to the raw file data.
+        const void* m_pData;
+
+        // The size of the data in bytes.
+        size_t m_dataSize;
+
+        // The internal dr_audio decoder.
+        dra_decoder m_decoder;
     };
 }
 

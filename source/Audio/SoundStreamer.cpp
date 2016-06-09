@@ -3,17 +3,50 @@
 #include <GTGE/Audio/SoundStreamer.hpp>
 #include <GTGE/Assets/SoundAsset.hpp>
 
-#include "Streamers/SoundStreamer_WAV.hpp"
-#include "Streamers/SoundStreamer_Vorbis.hpp"
-
 namespace GT
 {
-    SoundStreamer::SoundStreamer()
+    SoundStreamer::SoundStreamer(const void* pData, size_t dataSize)
+        : m_pData(pData), m_dataSize(dataSize)
     {
     }
 
     SoundStreamer::~SoundStreamer()
     {
+    }
+
+
+    bool SoundStreamer::Initialize()
+    {
+        if (!dra_decoder_open_memory(&m_decoder, m_pData, m_dataSize)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    uint64_t SoundStreamer::Read(uint64_t samplesToRead, void* pSamplesOut)
+    {
+        return dra_decoder_read_f32(&m_decoder, samplesToRead, (float*)pSamplesOut);
+    }
+
+    bool SoundStreamer::Seek(uint64_t sample)
+    {
+        return dra_decoder_seek_to_sample(&m_decoder, sample);
+    }
+
+    dra_format SoundStreamer::GetFormat() const
+    {
+        return dra_format_f32;
+    }
+
+    unsigned int SoundStreamer::GetNumChannels() const
+    {
+        return m_decoder.channels;
+    }
+
+    unsigned int SoundStreamer::GetSampleRate() const
+    {
+        return m_decoder.sampleRate;
     }
 
 
@@ -26,29 +59,15 @@ namespace GT
 
     SoundStreamer* SoundStreamer::CreateFromAsset(GT::Asset* pAsset)
     {
-        SoundStreamer* pStreamer = nullptr;
-
-        if (pAsset->GetClass() == GT::AssetClass_Sound)
-        {
-            GT::SoundAsset* pSoundAsset = reinterpret_cast<GT::SoundAsset*>(pAsset);
-            assert(pSoundAsset != nullptr);
-
-            dra_buffer_desc dataInfo = pSoundAsset->GetDataInfo();
-
-
-            // We need to create a streamer based on the compressed format of the audio data.
-            switch (pSoundAsset->GetCompressedDataFormat())
-            {
-            case GT::CompressedAudioFormat::WAV:    pStreamer = new SoundStreamer_WAV(dataInfo.pData, dataInfo.sizeInBytes);      break;
-            case GT::CompressedAudioFormat::Vorbis: pStreamer = new GT::SoundStreamer_Vorbis(dataInfo.pData, dataInfo.sizeInBytes); break;
-
-            case GT::CompressedAudioFormat::FLAC:
-            case GT::CompressedAudioFormat::Unknown:
-            default: break;
-            }
+        if (pAsset->GetClass() != GT::AssetClass_Sound) {
+            return NULL;
         }
 
-        return pStreamer;
+        GT::SoundAsset* pSoundAsset = reinterpret_cast<GT::SoundAsset*>(pAsset);
+        assert(pSoundAsset != nullptr);
+
+        VoiceDesc dataInfo = pSoundAsset->GetDataInfo();
+        return new SoundStreamer(dataInfo.pData, dataInfo.dataSize);
     }
 
     void SoundStreamer::Delete(SoundStreamer* pStreamer)
