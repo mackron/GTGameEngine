@@ -6,7 +6,6 @@
 #include <GTGE/PrefabLibrary.hpp>
 #include <GTGE/ScriptLibrary.hpp>
 #include <GTGE/Physics/CollisionShapeTypes.hpp>
-#include <dr_libs/dr_path.h>
 #include <GTGE/Core/System.hpp>
 
 // Temp until we get some more support in Script.

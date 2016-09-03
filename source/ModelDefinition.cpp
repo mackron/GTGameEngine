@@ -4,7 +4,6 @@
 #include <GTGE/MaterialLibrary.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <dr_libs/dr_path.h>
 
 namespace GT
 {

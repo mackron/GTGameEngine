@@ -2,7 +2,6 @@
 
 #include <GTGE/ParticleSystemDefinition.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <dr_libs/dr_path.h>
 
 namespace GT
 {

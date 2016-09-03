@@ -4,14 +4,13 @@
 #include <GTGE/MaterialLibrary.hpp>
 #include <GTGE/VertexArrayLibrary.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <dr_libs/dr_path.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 
-#include <assimp/Importer.hpp>
+#include "external/assimp/include/assimp/Importer.hpp"
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop

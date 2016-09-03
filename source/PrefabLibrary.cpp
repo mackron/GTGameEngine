@@ -3,7 +3,6 @@
 #include <GTGE/PrefabLibrary.hpp>
 #include <GTGE/GTEngine.hpp>
 #include <GTGE/Core/Dictionary.hpp>
-#include <dr_libs/dr_path.h>
 #include <utility>
 
 

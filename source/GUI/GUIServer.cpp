@@ -6,9 +6,8 @@
 #include <GTGE/Core/Strings/Create.hpp>
 #include <GTGE/Core/Strings/Equal.hpp>
 #include <GTGE/Core/ToString.hpp>
-#include <cassert>
 #include <GTGE/GTEngine.hpp>
-#include <dr_libs/dr_path.h>
+#include <cassert>
 
 // GUIServer
 namespace GT

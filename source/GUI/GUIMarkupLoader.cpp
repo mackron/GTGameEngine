@@ -3,7 +3,6 @@
 #include <GTGE/GUI/GUIMarkupLoader.hpp>
 #include <GTGE/GUI/GUIServer.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <dr_libs/dr_path.h>
 
 namespace GT
 {

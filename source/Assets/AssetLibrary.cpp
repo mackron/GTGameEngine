@@ -3,7 +3,6 @@
 #include <GTGE/Assets/AssetLibrary.hpp>
 #include <GTGE/Assets/Asset.hpp>
 #include <GTGE/Assets/AssetAllocator.hpp>
-#include <dr_libs/dr_path.h>
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
 #include "DefaultAssetAllocator.hpp"

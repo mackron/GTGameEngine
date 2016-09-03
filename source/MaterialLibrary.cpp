@@ -5,7 +5,6 @@
 #include <GTGE/Core/Dictionary.hpp>
 #include <GTGE/Core/List.hpp>
 #include <GTGE/Core/Vector.hpp>
-#include <dr_libs/dr_path.h>
 #include <utility>
 
 namespace GT

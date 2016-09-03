@@ -7,7 +7,6 @@
 #include <GTGE/ScriptLibrary.hpp>
 #include <GTGE/GUI/GUIServer.hpp>
 #include <GTGE/Core/Keyboard.hpp>
-#include <dr_libs/dr_path.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

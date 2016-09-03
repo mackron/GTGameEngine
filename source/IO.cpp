@@ -4,7 +4,6 @@
 #include <GTGE/ModelLibrary.hpp>
 #include <GTGE/Core/ImageLoader.hpp>
 #include <GTGE/Core/Strings/Find.hpp>
-#include <dr_libs/dr_path.h>
 
 namespace GT
 {

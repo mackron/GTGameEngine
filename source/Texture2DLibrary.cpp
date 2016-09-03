@@ -3,7 +3,6 @@
 #include <GTGE/Texture2DLibrary.hpp>
 #include <GTGE/Rendering/Renderer.hpp>
 #include <GTGE/Context.hpp>
-#include <dr_libs/dr_path.h>
 
 namespace GT
 {

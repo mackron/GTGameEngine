@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGE/Config.hpp>
-#include <dr_libs/dr_path.h>
 #include <dr_libs/dr.h>
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)

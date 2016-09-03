@@ -7,9 +7,8 @@
 #include <GTGE/Assets/MaterialAsset.hpp>
 #include <GTGE/Assets/ModelAsset.hpp>
 #include <GTGE/MeshBuilder.hpp>
-#include <dr_libs/dr_path.h>
 #include <dr_libs/dr_fs.h>
-#include <dr_libs/dr_mtl.h>
+#include <dr_libs/old/dr_mtl.h>
 
 namespace GT
 {

@@ -3,7 +3,6 @@
 #include <GTGE/Editor/SubEditor.hpp>
 #include <GTGE/Editor.hpp>
 #include <GTGE/Context.hpp>
-#include <dr_libs/dr_path.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

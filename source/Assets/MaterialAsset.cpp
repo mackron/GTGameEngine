@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGE/Assets/MaterialAsset.hpp>
-#include <dr_libs/dr_mtl.h>
+#include <dr_libs/old/dr_mtl.h>
 #include <dr_libs/dr.h>
 
 namespace GT

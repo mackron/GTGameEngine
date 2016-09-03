@@ -7,7 +7,6 @@
 #include <GTGE/Context.hpp>
 #include <GTGE/Core/Parse.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
-#include <dr_libs/dr_path.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

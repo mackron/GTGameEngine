@@ -11,7 +11,6 @@
 #include <GTGE/Core/Serializer.hpp>
 #include <GTGE/Core/Deserializer.hpp>
 #include <GTGE/Core/String.hpp>
-#include <dr_libs/dr_path.h>
 
 #undef min
 #undef max

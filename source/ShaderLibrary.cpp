@@ -6,7 +6,6 @@
 #include <GTGE/Core/Dictionary.hpp>
 #include <GTGE/Core/Vector.hpp>
 #include <GTGE/Core/String.hpp>
-#include <dr_libs/dr_path.h>
 
 using namespace rapidxml;
 

@@ -8,7 +8,7 @@
 #include "../Math.hpp"
 #include "../AlignedType.hpp"
 #include "../Core/Colour.hpp"
-#include <dr_libs/dr_gui.h>
+#include <dr_libs/old/dr_gui.h>
 
 #if defined(_WIN32)
 #include <GTGE/Core/windows.hpp>

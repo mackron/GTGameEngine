@@ -3,7 +3,7 @@
 #include <GTGE/SceneNode.hpp>
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/transform.hpp>
+#include "glm/glm/gtx/transform.hpp"
 
 namespace GT
 {

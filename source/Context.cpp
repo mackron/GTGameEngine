@@ -10,7 +10,6 @@
 #include <GTGE/Core/String.hpp>
 #include <GTGE/Core/Keyboard.hpp>
 #include <GTGE/Core/WindowManagement.hpp>
-#include <dr_libs/dr_path.h>
 #include <dr_libs/dr_fs.h>
 
 namespace GT

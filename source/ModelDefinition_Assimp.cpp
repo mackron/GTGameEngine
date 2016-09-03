@@ -12,9 +12,9 @@
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "external/assimp/include/assimp/Importer.hpp"
+#include "external/assimp/include/assimp/scene.h"
+#include "external/assimp/include/assimp/postprocess.h"
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop

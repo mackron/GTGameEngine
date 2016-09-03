@@ -3,7 +3,7 @@
 #include "MaterialAsset_MTL.hpp"
 
 #if defined(GT_BUILD_MTL)
-#include <dr_libs/dr_mtl.h>
+#include <dr_libs/old/dr_mtl.h>
 
 namespace GT
 {

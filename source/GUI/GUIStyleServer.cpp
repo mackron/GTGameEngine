@@ -6,7 +6,6 @@
 #include <GTGE/Core/String.hpp>
 #include <GTGE/Core/stdlib.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <dr_libs/dr_path.h>
 
 // Delete the headers below later on.
 #include <iostream>

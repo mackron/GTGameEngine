@@ -3,7 +3,6 @@
 #include <GTGE/GTEngine.hpp>
 #include <GTGE/ScriptLibrary.hpp>
 #include <GTGE/Scripting.hpp>
-#include <dr_libs/dr_path.h>
 
 namespace GT
 {

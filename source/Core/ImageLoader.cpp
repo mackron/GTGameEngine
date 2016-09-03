@@ -4,7 +4,6 @@
 #include <GTGE/Core/Strings/Equal.hpp>
 #include <GTGE/Core/Strings/Create.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <dr_libs/dr_path.h>
 
 // TODO: Delete this once DDS is implemented.
 #define GTLIB_NO_DDS

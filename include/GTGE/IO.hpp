@@ -5,6 +5,7 @@
 
 #include <GTGE/Assets/AssetTypes.hpp>
 #include <GTGE/Core/String.hpp>
+#include <dr_libs/dr.h>
 
 namespace GT
 {

@@ -4,7 +4,7 @@
 #include <GTGE/Scene.hpp>
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/epsilon.hpp>
+#include "../include/glm/glm/gtc/epsilon.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
