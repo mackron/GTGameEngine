@@ -45,7 +45,7 @@
 #include "Math/Plane.hpp"
 #include "AABB.hpp"
 
-#include "../source/external/bullet3/src/LinearMath/btMatrix3x3.h"     // <-- Will include btVector3 and btQuaternion.
+#include "LinearMath/btMatrix3x3.h"     // <-- Will include btVector3 and btQuaternion.
 
 namespace GT
 {

@@ -17,9 +17,6 @@
 #define DR_FSW_IMPLEMENTATION
 #include <dr_libs/dr_fsw.h>
 
-#define DR_PATH_IMPLEMENTATION
-#include <dr_libs/dr_path.h>
-
 #if defined(GT_BUILD_FLAC)
 #define DR_FLAC_IMPLEMENTATION
 #include <dr_libs/dr_flac.h>
@@ -41,10 +38,10 @@
 #include <dr_libs/dr_audio.h>
 
 #define DR_GUI_IMPLEMENTATION
-#include <dr_libs/dr_gui.h>
+#include <dr_libs/old/dr_gui.h>
 
 #define DR_2D_IMPLEMENTATION
-#include <dr_libs/dr_2d.h>
+#include <dr_libs/old/dr_2d.h>
 
 #define DR_MTL_IMPLEMENTATION
-#include <dr_libs/dr_mtl.h>
+#include <dr_libs/old/dr_mtl.h>

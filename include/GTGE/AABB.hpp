@@ -13,7 +13,7 @@
     #endif
 #endif
 
-#include "../source/external/bullet3/src/BulletCollision/Gimpact/btBoxCollision.h"
+#include "BulletCollision/Gimpact/btBoxCollision.h"
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop

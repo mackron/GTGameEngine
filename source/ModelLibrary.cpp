@@ -10,7 +10,7 @@
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 
-#include "external/assimp/include/assimp/Importer.hpp"
+#include "assimp/Importer.hpp"
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
