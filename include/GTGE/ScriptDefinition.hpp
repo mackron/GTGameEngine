@@ -3,10 +3,6 @@
 #ifndef GT_ScriptDefinition
 #define GT_ScriptDefinition
 
-#include "ScriptVariable.hpp"
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/Vector.hpp>
-
 namespace GT
 {
     /// Class containing information about a script asset file.

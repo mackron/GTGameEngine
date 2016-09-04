@@ -3,9 +3,6 @@
 #ifndef GT_Message
 #define GT_Message
 
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/Vector.hpp>
-
 namespace GT
 {
     /// Enumerator representing the different message types.

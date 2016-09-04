@@ -3,9 +3,6 @@
 #ifndef GT_ScriptVariable
 #define GT_ScriptVariable
 
-#include "ScriptVariableTypes.hpp"
-#include <GTGE/Core/String.hpp>
-
 namespace GT
 {
     /// Class representing a public variable in a scene node script.

@@ -3,9 +3,6 @@
 #ifndef GT_DefaultGUIImageManager
 #define GT_DefaultGUIImageManager
 
-#include <GTGE/GUI/GUIImageManager.hpp>
-#include "Rendering/Texture2D.hpp"
-
 namespace GT
 {
     class DefaultGUIImageManager : public GUIImageManager

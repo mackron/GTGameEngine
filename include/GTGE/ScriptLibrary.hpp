@@ -3,10 +3,6 @@
 #ifndef GT_ScriptLibrary
 #define GT_ScriptLibrary
 
-#include "ScriptDefinition.hpp"
-#include <GTGE/Script.hpp>
-#include <GTGE/Core/Dictionary.hpp>
-
 namespace GT
 {
     class Context;

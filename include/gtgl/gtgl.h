@@ -505,7 +505,7 @@ extern "C"
     /**
     *   \brief  Destroys a window created with gtglCreateWindow().
     */
-    GTGLwindow gtglDeleteWindow(GTGLwindow window);
+    void gtglDeleteWindow(GTGLwindow window);
 
     /**
     *   \brief  Shows a window.

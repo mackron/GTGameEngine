@@ -3,8 +3,6 @@
 #ifndef GT_MessageHandler
 #define GT_MessageHandler
 
-#include "Message.hpp"
-
 namespace GT
 {
     /// Base class used for intercepting and handling messages that are dispatched via the MessageDispatcher.

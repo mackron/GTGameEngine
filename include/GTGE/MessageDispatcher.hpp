@@ -3,9 +3,6 @@
 #ifndef GT_MessageDispatcher
 #define GT_MessageDispatcher
 
-#include "MessageHandler.hpp"
-#include <GTGE/Core/Vector.hpp>
-
 #undef PostMessage
 
 namespace GT

@@ -3,15 +3,10 @@
 #ifndef GT_Context
 #define GT_Context
 
-#include "MessageDispatcher.hpp"
-#include "Audio/SoundWorld.hpp"
-#include "Assets/AssetLibrary.hpp"
-#include "ScriptLibrary.hpp"
 #include "ParticleSystemLibrary.hpp"
 #include "PrefabLibrary.hpp"
 #include "ModelLibrary.hpp"
 #include "MaterialLibrary.hpp"
-#include "Texture2DLibrary.hpp"
 #include "VertexArrayLibrary.hpp"
 #include "ShaderLibrary.hpp"
 #include "GameEventQueue.hpp"
@@ -21,15 +16,7 @@
 #include "Editor.hpp"
 #include "GUIEventHandler.hpp"
 #include "Profiler.hpp"
-#include "DefaultGUIImageManager.hpp"
-#include "Rendering/DefaultGUIRenderer.hpp"
 #include "GameStateManager.hpp"
-#include <GTGE/GUI/GUIServer.hpp>
-#include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/Timing.hpp>
-#include <GTGE/Core/FontServer.hpp>
-#include <dr_libs/dr.h>
-#include <dr_libs/dr_fs.h>
 
 #ifdef _WIN32
 #undef GetCommandLine
@@ -39,8 +26,6 @@ namespace GT
 {
     static const size_t MouseBufferSize   = 2;
     static const float  MouseSmoothFactor = 0.5f;
-
-    class Editor2;
 
     /// Class representing the engine context.
     class Context
