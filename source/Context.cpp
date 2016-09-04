@@ -69,7 +69,11 @@ namespace GT
 
         if (strcmp(key, "BaseDirectory") == 0)
         {
-            pData->pContext->AddBaseDirectoryRelativeToExe(value);
+            // Remove the double quotes.
+            char valueWithoutQuotes[4096];
+            dr_next_token(value, valueWithoutQuotes, sizeof(valueWithoutQuotes));
+
+            pData->pContext->AddBaseDirectoryRelativeToExe(valueWithoutQuotes);
             return;
         }
     }
