@@ -16,7 +16,6 @@
 /* We'll need windows.h here for various Windows functions. Remember, gtgl_wgl.h does not include windows.h; only windef.h. */
 #include <windows.h>
 
-static size_t         GTGL_WindowCount = 0;
 static const wchar_t *GTGL_WindowClass = L"GTGLWindow";
 LRESULT               GTGL_WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) { return DefWindowProcW(hWnd, msg, wParam, lParam); }
 
@@ -116,48 +115,11 @@ void GTGLcontext_dtor(GTGLcontext self)
 
 void GTGLcontext_CreateDummyHWND(GTGLcontext self)
 {
-#if 0
-    /* If the window count is zero we need to register the window class. */
-    if (GTGL_WindowCount == 0)
-    {
-        WNDCLASSEXW wc;
-        memset(&wc, 0, sizeof(wc));
-        wc.cbSize        = sizeof(wc);
-        wc.cbWndExtra    = sizeof(void *);
-        wc.lpfnWndProc   = (WNDPROC)GTGL_WindowProc;
-        wc.lpszClassName = GTGL_WindowClass;
-        wc.style         = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-
-        RegisterClassExW(&wc);
-    }
-
-    ++GTGL_WindowCount;
-        
-    /* We can create the window when we have a class. */
-    self->DummyHWND = CreateWindowExW(0, GTGL_WindowClass, L"GTGL Dummy Window", 
-                                      WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_OVERLAPPEDWINDOW,
-                                      0, 0, 0, 0, NULL, NULL, GetModuleHandle(NULL), NULL);
-#endif
-
     self->DummyHWND = CreateWindowExW(0, L"STATIC", L"", 0, 0, 0, 0, 0, NULL, NULL, GetModuleHandle(NULL), NULL);
 }
 
 void GTGLcontext_DeleteDummyHWND(GTGLcontext self)
 {
-#if 0
-    if (GTGL_WindowCount > 0)
-    {
-        --GTGL_WindowCount;
-        DestroyWindow(self->DummyHWND);
-            
-        if (GTGL_WindowCount == 0)
-        {
-            /* If we don't have any more windows we will unregister the class. */
-            UnregisterClassW(GTGL_WindowClass, GetModuleHandle(NULL));
-        }
-    }
-#endif
-
     DestroyWindow(self->DummyHWND);
 }
 

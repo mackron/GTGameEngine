@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static PFNGLGETSTRINGPROC __local_glGetString = NULL;
+static PFNGLGETSTRINGPROC __local_glGetString_ = NULL;
 
 int gtglInitGLAPI(GLboolean debugMode)
 {
@@ -47,13 +47,13 @@ int gtglIsVersionSupported(unsigned int major, unsigned int minor)
 
 void gtglGetOpenGLVersion(unsigned int *major, unsigned int *minor)
 {
-    if (__local_glGetString == NULL)
+    if (__local_glGetString_ == NULL)
     {
-        __local_glGetString = (PFNGLGETSTRINGPROC)gtglGetProcAddress("glGetString");
+        __local_glGetString_ = (PFNGLGETSTRINGPROC)gtglGetProcAddress("glGetString");
     }
 
     {
-        const char * majorStart = (const char *)__local_glGetString(GL_VERSION);
+        const char * majorStart = (const char *)__local_glGetString_(GL_VERSION);
               char * minorStart;
 
         *major = strtoul(majorStart, &minorStart, 0);

@@ -67,6 +67,7 @@
 #undef max
 #undef MIN
 #undef MAX
+#undef next
 
 #if defined(_MSC_VER) || defined(__clang__)
 #pragma comment(lib, "msimg32.lib")
@@ -312,6 +313,10 @@
 #include "../include/GTGE/Component.hpp"
 #include "../include/GTGE/ConvexHullBuildSettings.hpp"
 #include "../include/GTGE/ConvexHull.hpp"
+#include "../include/GTGE/Message.hpp"
+#include "../include/GTGE/MessageHandler.hpp"
+#include "../include/GTGE/MessageDispatcher.hpp"
+#include "../include/GTGE/DefaultGUIImageManager.hpp"
 
 #include "../include/GTGE/Animation/AnimationKeyFrame.hpp"
 #include "../include/GTGE/Animation/AnimationKey.hpp"
@@ -334,7 +339,13 @@
 #include "../include/GTGE/Audio/SoundStreamer.hpp"
 #include "../include/GTGE/Audio/SoundWorld.hpp"
 
+#include "../include/GTGE/ScriptVariableTypes.hpp"
+#include "../include/GTGE/ScriptVariable.hpp"
+#include "../include/GTGE/ScriptDefinition.hpp"
+#include "../include/GTGE/ScriptLibrary.hpp"
+#include "../include/GTGE/Context.hpp"
 #include "../include/GTGE/GTEngine.hpp"
+
 
 #endif
 
@@ -360,6 +371,52 @@
     #pragma warning(disable:4459)   // Hides global declaration (thanks Lua!)
     #pragma warning(disable:4822)   // local class member function does not have a body
 #endif
+
+// HACD
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4456)   // declaration of '...' hides previous local declaration
+#endif
+#include "HACD/hacdHACD.cpp"
+#include "HACD/hacdGraph.cpp"
+#include "HACD/hacdICHull.cpp"
+#include "HACD/hacdManifoldMesh.cpp"
+#include "HACD/hacdMeshDecimator.cpp"
+#include "HACD/hacdMicroAllocator.cpp"
+#include "HACD/hacdRaycastMesh.cpp"
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
+
+// GTGL
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4457)
+#endif
+#include "gtgl/gtgl.c"
+#include "gtgl/gtgl_context.c"
+#include "gtgl/gtgl_contextmanager.c"
+#include "gtgl/gtgl_errors.c"
+#include "gtgl/gtgl_extensions.c"
+#include "gtgl/gtgl_gl.c"
+#include "gtgl/gtgl_glx.c"
+#include "gtgl/gtgl_utils.c"
+#include "gtgl/gtgl_wgl.c"
+#include "gtgl/gtgl_window.c"
+#include "gtgl/gtgl_windowmanager.c"
+#include "gtgl/debugging/gtgl_debugging_common.c"
+#include "gtgl/emulators/gtgl_emulation_common.c"
+#include "gtgl/emulators/gtgl_arb_debug_output.c"
+#include "gtgl/win32/gtgl_context_win32.c"
+#include "gtgl/win32/gtgl_window_win32.c"
+#include "gtgl/win32/gtgl_windowmanager_win32.c"
+#include "gtgl/x11/gtgl_context_x11.c"
+#include "gtgl/x11/gtgl_window_x11.c"
+#include "gtgl/x11/gtgl_windowmanager_x11.c"
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
+
 
 // Lua
 #ifndef GTGE_NO_DEFAULT_LUA
@@ -447,6 +504,8 @@
 #if defined(_MSC_VER)
     #pragma warning(pop)
 #endif
+
+
 
 
 
@@ -713,7 +772,6 @@
 #include "ShadowVolume.cpp"
 #include "Texture2DLibrary.cpp"
 #include "VertexArrayLibrary.cpp"
-
 
 #include "Editor/ImageEditor/ImageEditor.cpp"
 #include "Editor/MaterialEditor/MaterialEditor.cpp"
