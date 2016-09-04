@@ -179,7 +179,6 @@
     #pragma warning(disable:4127)   // conditional expression is constant
 #endif
 
-
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_NO_STDIO
 #define STBI_NO_BMP
@@ -199,22 +198,22 @@
 #if !defined(GT_BUILD_PSD)
 #define STBI_NO_PSD
 #endif
-#include <GTGE/external/stb_image.h>
+#include "../include/GTGE/external/stb_image.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <GTGE/external/stb_image_write.h>
+#include "../include/GTGE/external/stb_image_write.h"
 
 #define STB_DXT_IMPLEMENTATION
-#include <GTGE/external/stb_dxt.h>
+#include "../include/GTGE/external/stb_dxt.h"
 
 #define STB_TRUETYPE_IMPLEMENTATION
-#include <GTGE/external/stb_truetype.h>
+#include "../include/GTGE/external/stb_truetype.h"
 
 #if defined(GT_BUILD_VORBIS)
 #define STB_VORBIS_NO_STDIO
 #define STB_VORBIS_NO_PUSHDATA_API
 #define STB_VORBIS_HEADER_ONLY
-#include <GTGE/external/stb_vorbis.c>
+#include "../include/GTGE/external/stb_vorbis.c"
 #endif
 
 #if defined(_MSC_VER)
@@ -238,8 +237,8 @@
 #endif
 
 #include <dr_libs/dr_audio.h>
-#include <dr_libs/old/dr_gui.h>
-#include <dr_libs/old/dr_2d.h>
+//#include <dr_libs/old/dr_gui.h>
+//#include <dr_libs/old/dr_2d.h>
 #include <dr_libs/old/dr_mtl.h>
 
 
@@ -555,11 +554,11 @@
 #define DR_AUDIO_IMPLEMENTATION
 #include <dr_libs/dr_audio.h>
 
-#define DR_GUI_IMPLEMENTATION
-#include <dr_libs/old/dr_gui.h>
+//#define DR_GUI_IMPLEMENTATION
+//#include <dr_libs/old/dr_gui.h>
 
-#define DR_2D_IMPLEMENTATION
-#include <dr_libs/old/dr_2d.h>
+//#define DR_2D_IMPLEMENTATION
+//#include <dr_libs/old/dr_2d.h>
 
 #define DR_MTL_IMPLEMENTATION
 #include <dr_libs/old/dr_mtl.h>
