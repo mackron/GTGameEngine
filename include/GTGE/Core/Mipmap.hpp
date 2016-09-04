@@ -3,8 +3,6 @@
 #ifndef GT_Mipmap
 #define GT_Mipmap
 
-#include "ImageFormats.hpp"
-
 namespace GT
 {
     class Mipmap

@@ -3,8 +3,6 @@
 #ifndef GT_GlyphMapLayout
 #define GT_GlyphMapLayout
 
-#include <GTGE/Core/Vector.hpp>
-
 namespace GT
 {
     /// Structure representing a row in the glyph map layout.

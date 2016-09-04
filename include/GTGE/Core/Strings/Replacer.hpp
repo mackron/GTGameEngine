@@ -3,12 +3,6 @@
 #ifndef GT_Strings_Replacer
 #define GT_Strings_Replacer
 
-#include "../BasicBuffer.hpp"
-#include "Size.hpp"
-#include "List.hpp"
-#include "Find.hpp"
-#include "Copy.hpp"
-
 namespace GT
 {
     namespace Strings

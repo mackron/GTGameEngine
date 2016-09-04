@@ -3,9 +3,6 @@
 #ifndef GT_System
 #define GT_System
 
-#include <cstddef>
-#include "Vector.hpp"
-
 namespace GT
 {
     namespace System

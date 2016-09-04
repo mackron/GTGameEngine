@@ -3,10 +3,7 @@
 #ifndef GT_Image
 #define GT_Image
 
-#include "ImageFormats.hpp"
-#include "Mipmap.hpp"
 #include "ImageLoader.hpp"
-#include <GTGE/Core/Vector.hpp>
 
 namespace GT
 {

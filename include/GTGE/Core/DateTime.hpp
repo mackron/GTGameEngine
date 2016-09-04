@@ -3,10 +3,6 @@
 #ifndef GT_DateTime
 #define GT_DateTime
 
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/Parse.hpp>
-#include <time.h>
-
 namespace GT
 {
     /**

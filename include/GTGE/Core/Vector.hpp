@@ -3,15 +3,6 @@
 #ifndef GT_Vector
 #define GT_Vector
 
-#include <GTGE/Core/Math.hpp>
-#include <GTGE/Core/stdlib.hpp>
-
-#include <cstddef>
-#include <cassert>
-#include <new>
-#include <functional>
-#include <algorithm>
-
 namespace GT
 {
     template <typename T>

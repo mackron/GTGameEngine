@@ -3,8 +3,6 @@
 #ifndef GT_WindowManagement
 #define GT_WindowManagement
 
-#include "WindowEventCallback.hpp"
-
 namespace GT
 {
     /// Processes the next message in the event queue.

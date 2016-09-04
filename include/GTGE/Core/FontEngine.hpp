@@ -3,13 +3,7 @@
 #ifndef GT_FontEngine
 #define GT_FontEngine
 
-#include "GlyphMapManager.hpp"
-#include "FontInfo.hpp"
-#include "FontMetrics.hpp"
-#include "GlyphMetrics.hpp"
 #include "KerningVector.hpp"
-#include <GTGE/Core/Rect.hpp>
-#include <functional>
 
 namespace GT
 {

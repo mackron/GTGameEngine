@@ -5,9 +5,6 @@
 #ifndef GT_Strings_UnicodeBase
 #define GT_Strings_UnicodeBase
 
-#include <cstddef>
-#include <cassert>
-
 namespace GT
 {
     namespace Strings

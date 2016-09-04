@@ -3,22 +3,10 @@
 #ifndef GT_Window
 #define GT_Window
 
-#include "Windowing/InternalWindowObjects.hpp"
-#include "Windowing/WindowEventHandler.hpp"
-#include "Cursors.hpp"
-#include "Vector.hpp"
-
-#if defined(_WIN32)
-#include "windows.hpp"
-#endif
-
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4482)   // nonstandard extension.
 #endif
-
-#include <cassert>
-
 
 namespace GT
 {

@@ -2,11 +2,6 @@
 
 #ifdef __linux__
 
-#include "X11.hpp"
-#include <X11/XKBlib.h>
-
-#include "../Keys.hpp"
-
 namespace GT
 {
     namespace X11

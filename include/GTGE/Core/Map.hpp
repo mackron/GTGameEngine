@@ -5,13 +5,6 @@
 #ifndef GT_Map
 #define GT_Map
 
-#include "stdlib.hpp"
-
-#include <cstdint>
-#include <cstddef>
-#include <cassert>
-#include <new>
-
 namespace GT
 {
     /// An item in a dictionary.

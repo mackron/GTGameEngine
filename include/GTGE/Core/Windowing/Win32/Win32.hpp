@@ -5,9 +5,6 @@
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
 
-#include "../../Cursors.hpp"
-#include "../../windows.hpp"
-
 namespace GT
 {
     namespace Win32

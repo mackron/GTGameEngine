@@ -3,9 +3,6 @@
 #ifndef GT_ToString
 #define GT_ToString
 
-#include <cstdint>
-#include "String.hpp"
-
 namespace GT
 {
     String ToString(int64_t value);

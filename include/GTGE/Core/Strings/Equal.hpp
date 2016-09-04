@@ -3,10 +3,6 @@
 #ifndef GT_Strings_Equal
 #define GT_Strings_Equal
 
-#include "NextChar.hpp"
-#include "Compare.hpp"
-#include <cctype>   // For toupper().
-
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4127)   // conditional expression is constant.
@@ -32,7 +28,7 @@ namespace GT
                     c1 = NextChar(str1, str1SizeInTs);
                     c2 = NextChar(str2, str2SizeInUs);
                     
-                    if (std::toupper((int)c1) != std::toupper((int)c2))
+                    if (toupper((int)c1) != toupper((int)c2))
                     {
                         return false;
                     }
@@ -119,5 +115,4 @@ namespace GT
 #if defined(_MSC_VER)
     #pragma warning(pop)
 #endif
-
 #endif

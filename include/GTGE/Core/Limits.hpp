@@ -3,8 +3,6 @@
 #ifndef GT_Limits
 #define GT_Limits
 
-#include <cstdint>
-
 namespace GT
 {
     template <typename T>

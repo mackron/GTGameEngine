@@ -3,9 +3,6 @@
 #ifndef GT_GlyphMapManager
 #define GT_GlyphMapManager
 
-#include <cstddef>
-#include <cstdint>
-
 namespace GT
 {
     typedef size_t GlyphMapHandle;

@@ -3,14 +3,6 @@
 #ifndef GT_String
 #define GT_String
 
-#include "Strings/Create.hpp"
-#include "Strings/Equal.hpp"
-#include "Strings/List.hpp"
-#include "Strings/Size.hpp"
-#include "Strings/Trim.hpp"
-#include <cassert>
-#include <locale>
-
 namespace GT
 {
     /// Class representing a basic UTF string.

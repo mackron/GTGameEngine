@@ -3,10 +3,6 @@
 #ifndef GT_LineIterator
 #define GT_LineIterator
 
-#include "Find.hpp"
-#include "Tokenizer.hpp"
-#include <cstring>
-
 namespace GT
 {
     namespace Strings

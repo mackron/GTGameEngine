@@ -3,9 +3,6 @@
 #ifndef GT_WindowEventHandler
 #define GT_WindowEventHandler
 
-#include "MouseButtons.hpp"
-#include "Keys.hpp"
-
 namespace GT
 {
     /**

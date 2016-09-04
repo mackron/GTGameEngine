@@ -3,9 +3,6 @@
 #ifndef GT_Keys
 #define GT_Keys
 
-#include <cstdint>
-#include <GTGE/Core/String.hpp>
-
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4482)   // nonstandard extension.

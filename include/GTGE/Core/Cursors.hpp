@@ -3,8 +3,6 @@
 #ifndef GT_Cursors
 #define GT_Cursors
 
-#include <GTGE/Core/Strings/Equal.hpp>
-
 namespace GT
 {
     enum Cursor

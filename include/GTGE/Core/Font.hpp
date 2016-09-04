@@ -3,15 +3,7 @@
 #ifndef GT_Font
 #define GT_Font
 
-#include "FontEngine.hpp"
-#include "FontInfo.hpp"
 #include "GlyphMapLayout.hpp"
-#include "GlyphMapManager.hpp"
-#include "GlyphMetrics.hpp"
-#include "KerningVector.hpp"
-#include <GTGE/Core/Rect.hpp>
-#include <GTGE/Core/Map.hpp>
-#include <cstdint>
 
 namespace GT
 {

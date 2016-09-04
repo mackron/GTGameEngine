@@ -3,11 +3,6 @@
 #ifndef GT_Strings_Tokenizer
 #define GT_Strings_Tokenizer
 
-#include "Find.hpp"
-#include "Size.hpp"
-#include "Equal.hpp"
-#include <cstring>
-
 namespace GT
 {
     namespace Strings

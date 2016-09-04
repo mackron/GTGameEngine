@@ -3,9 +3,6 @@
 #ifndef GT_Strings_Iterator
 #define GT_Strings_Iterator
 
-#include "NextChar.hpp"
-#include <cstdint>
-
 namespace GT
 {
     namespace Strings

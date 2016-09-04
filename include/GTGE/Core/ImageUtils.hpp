@@ -3,8 +3,6 @@
 #ifndef GT_ImageUtils
 #define GT_ImageUtils
 
-#include "ImageFormats.hpp"
-
 namespace GT
 {
     namespace ImageUtils

@@ -3,8 +3,6 @@
 #ifndef GT_Colour
 #define GT_Colour
 
-#include <cstddef>
-
 namespace GT
 {
     class ColorF

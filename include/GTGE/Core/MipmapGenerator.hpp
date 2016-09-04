@@ -3,9 +3,6 @@
 #ifndef GT_MipmapGenerator
 #define GT_MipmapGenerator
 
-#include "Mipmap.hpp"
-#include "ImageUtils.hpp"
-
 namespace GT
 {
     /// Static class for generating mipmaps.

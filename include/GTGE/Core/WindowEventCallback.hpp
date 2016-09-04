@@ -3,8 +3,6 @@
 #ifndef GT_WindowEventCallback
 #define GT_WindowEventCallback
 
-#include "WindowEvent.hpp"
-
 namespace GT
 {
     /// Callback passed to NextWindowEvent().

@@ -3,12 +3,6 @@
 #ifndef GT_FontServer
 #define GT_FontServer
 
-#include "FontEngine.hpp"
-#include "FontEventHandler.hpp"
-#include "GlyphMapManager.hpp"
-#include "Font.hpp"
-#include <GTGE/Core/List.hpp>
-
 #undef DeleteFont
 namespace GT
 {

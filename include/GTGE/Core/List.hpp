@@ -3,8 +3,6 @@
 #ifndef GT_List
 #define GT_List
 
-#include <cstddef>
-
 namespace GT
 {
     /**

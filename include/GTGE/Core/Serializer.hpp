@@ -3,12 +3,6 @@
 #ifndef GT_Serializer
 #define GT_Serializer
 
-#include <cstdlib>
-#include <cstring>      // For memcpy()
-#include "Math.hpp"     // For Max().
-#include "String.hpp"   // For String specialization.
-#include <dr_libs/dr_fs.h>
-
 namespace GT
 {
     /// Class for doing basic serialization.

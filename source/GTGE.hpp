@@ -20,24 +20,69 @@
 
 // Standard headers.
 #include <stdlib.h>
-#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <ctype.h>
+#include <math.h>
+#include <time.h>
+#include <stdio.h>
+#include <locale>
+#include <new>
+#include <functional>
+#include <algorithm>
+
+#if defined(_MSC_VER)
+#include <direct.h>
+#endif
 
 // Platform headers.
 #ifdef _WIN32
+#if !defined(WINVER)
+#define WINVER 0x0501
+#elif WINVER < 0x0501
+#undef  WINVER
+#define WINVER 0x0501
+#endif
+
 #include <windows.h>
+#include <windowsx.h>
+#undef CreateWindow
+#undef DeleteFile
+#undef CopyFile
+#undef SetCurrentDirectory
+#undef GetCurrentDirectory
+#undef CreateDirectory
+#undef CreateFont
+#undef DeleteFont
+#undef LoadImage
+#undef GetClassName
+#undef GetCommandLine
+#undef PostMessage
+#undef min
+#undef max
+#undef MIN
+#undef MAX
 
 #if defined(_MSC_VER) || defined(__clang__)
 #pragma comment(lib, "msimg32.lib")
 #endif
-#endif
+#endif  // __WIN32
 #ifdef __linux__
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xatom.h>
+#include <X11/keysym.h>
+#include <X11/cursorfont.h>
+#include <X11/Xcursor/Xcursor.h>
+#include <X11/XKBlib.h>
 #include "../include/GTGE/Core/Profiling/valgrind/callgrind.h"
 #include "../include/GTGE/Core/Profiling/valgrind/helgrind.h"
 #include "../include/GTGE/Core/Profiling/valgrind/memcheck.h"
 #include "../include/GTGE/Core/Profiling/valgrind/valgrind.h"
-#endif
+#endif  // __linux__
 
 
 // GLM
@@ -70,27 +115,131 @@
 #endif
 
 
-// GTGE Headers.
-#include "../include/GTGE/Core/Strings/Compare.hpp"
-#include "../include/GTGE/Core/Strings/Copy.hpp"
-#include "../include/GTGE/Core/Strings/Create.hpp"
-#include "../include/GTGE/Core/Strings/Equal.hpp"
-#include "../include/GTGE/Core/Strings/Find.hpp"
-#include "../include/GTGE/Core/Strings/Iterator.hpp"
-#include "../include/GTGE/Core/Strings/LineIterator.hpp"
-#include "../include/GTGE/Core/Strings/List.hpp"
-#include "../include/GTGE/Core/Strings/NextChar.hpp"
-#include "../include/GTGE/Core/Strings/Replacer.hpp"
-#include "../include/GTGE/Core/Strings/Size.hpp"
-#include "../include/GTGE/Core/Strings/Tokenizer.hpp"
-#include "../include/GTGE/Core/Strings/Trim.hpp"
-#include "../include/GTGE/Core/Strings/UnicodeBase.hpp"
-#include "../include/GTGE/Core/String.hpp"
+// rapidxml
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+    #pragma GCC diagnostic ignored "-Wswitch-default"
+    #pragma GCC diagnostic ignored "-Winline"
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+#include "../include/GTGE/external/rapidxml.hpp"
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
+
+// STB Libraries
+#if defined(GT_BUILD_VORBIS)
+#define STB_VORBIS_NO_STDIO
+#define STB_VORBIS_NO_PUSHDATA_API
+#define STB_VORBIS_HEADER_ONLY
+#include "../include/GTGE/external/stb_vorbis.c"
+#endif
+
+
+// dr_libs
+//
+// These should be placed after stb_vorbis so that dr_audio can detect it.
+#include <dr_libs/dr.h>
+#include <dr_libs/dr_fs.h>
+#include <dr_libs/dr_fsw.h>
+
+#if defined(GT_BUILD_FLAC)
+#include <dr_libs/dr_flac.h>
+#endif
+
+#if defined(GT_BUILD_WAV)
+#include <dr_libs/dr_wav.h>
+#endif
+
+#include <dr_libs/dr_audio.h>
+#include <dr_libs/old/dr_mtl.h>
+
+
+// GTGE Headers.
+#include "../include/GTGE/Core/stdlib.hpp"
+#include "../include/GTGE/Core/stdio.hpp"
+#include "../include/GTGE/Core/BasicBuffer.hpp"
+#include "../include/GTGE/Core/BinarySearchTree.hpp"
+#include "../include/GTGE/Core/BufferReader.hpp"
+#include "../include/GTGE/Core/Colour.hpp"
+#include "../include/GTGE/Core/Limits.hpp"
+#include "../include/GTGE/Core/ReferenceCountedObject.hpp"
+#include "../include/GTGE/Core/ResultCodes.hpp"
+#include "../include/GTGE/Core/Strings/UnicodeBase.hpp"
+#include "../include/GTGE/Core/Strings/NextChar.hpp"
+#include "../include/GTGE/Core/Strings/Compare.hpp"
+#include "../include/GTGE/Core/Strings/Iterator.hpp"
+#include "../include/GTGE/Core/Strings/Size.hpp"
+#include "../include/GTGE/Core/Strings/Copy.hpp"
+#include "../include/GTGE/Core/Strings/Equal.hpp"
+#include "../include/GTGE/Core/Strings/List.hpp"
+#include "../include/GTGE/Core/Strings/Create.hpp"
+#include "../include/GTGE/Core/Strings/Find.hpp"
+#include "../include/GTGE/Core/Strings/Tokenizer.hpp"
+#include "../include/GTGE/Core/Strings/LineIterator.hpp"
+#include "../include/GTGE/Core/Strings/Replacer.hpp"
+#include "../include/GTGE/Core/Strings/Trim.hpp"
+#include "../include/GTGE/Core/String.hpp"
+#include "../include/GTGE/Core/Parse.hpp"
+#include "../include/GTGE/Core/ToString.hpp"
+#include "../include/GTGE/Core/DateTime.hpp"
+#include "../include/GTGE/Core/Cursors.hpp"
+#include "../include/GTGE/Core/Math.hpp"
+#include "../include/GTGE/Core/Rect.hpp"
+#include "../include/GTGE/Core/Point.hpp"
+#include "../include/GTGE/Core/Vector.hpp"
+#include "../include/GTGE/Core/List.hpp"
+#include "../include/GTGE/Core/Map.hpp"
+#include "../include/GTGE/Core/Dictionary.hpp"
+#include "../include/GTGE/Core/SortedVector.hpp"
+#include "../include/GTGE/Core/Deserializer.hpp"
+#include "../include/GTGE/Core/Serializer.hpp"
+#include "../include/GTGE/Core/System.hpp"
+#include "../include/GTGE/Core/Timing/TimingCommon.hpp"
 #include "../include/GTGE/Core/Timing/Benchmarker.hpp"
 #include "../include/GTGE/Core/Timing/Stopwatch.hpp"
 #include "../include/GTGE/Core/Timing/Timer.hpp"
-#include "../include/GTGE/Core/Timing/TimingCommon.hpp"
+#include "../include/GTGE/Core/Windowing/Clipboard.hpp"
+#include "../include/GTGE/Core/Windowing/InternalWindowObjects.hpp"
+#include "../include/GTGE/Core/Windowing/Keys.hpp"
+#include "../include/GTGE/Core/Windowing/MouseButtons.hpp"
+#include "../include/GTGE/Core/Windowing/WindowEventHandler.hpp"
+#include "../include/GTGE/Core/Windowing/X11/X11.hpp"
+#include "../include/GTGE/Core/Windowing/X11/X11Keys.hpp"
+#include "../include/GTGE/Core/Windowing/Win32/Win32.hpp"
+#include "../include/GTGE/Core/Keyboard.hpp"
+#include "../include/GTGE/Core/Mouse.hpp"
+#include "../include/GTGE/Core/GlyphMapManager.hpp"
+#include "../include/GTGE/Core/GlyphRenderingModes.hpp"
+#include "../include/GTGE/Core/GlyphMetrics.hpp"
+#include "../include/GTGE/Core/FontStyles.hpp"
+#include "../include/GTGE/Core/FontInfo.hpp"
+#include "../include/GTGE/Core/FontMetrics.hpp"
+#include "../include/GTGE/Core/KerningVector.hpp"
+#include "../include/GTGE/Core/FontEngine.hpp"
+#include "../include/GTGE/Core/GlyphMapLayout.hpp"
+#include "../include/GTGE/Core/Font.hpp"
+#include "../include/GTGE/Core/FontEventHandler.hpp"
+#include "../include/GTGE/Core/FontServer.hpp"
+#include "../include/GTGE/Core/GlyphCache.hpp"
+#include "../include/GTGE/Core/HandleManager.hpp"
+#include "../include/GTGE/Core/ImageFormats.hpp"
+#include "../include/GTGE/Core/Mipmap.hpp"
+#include "../include/GTGE/Core/ImageFileInfo.hpp"
+#include "../include/GTGE/Core/ImageLoader.hpp"
+#include "../include/GTGE/Core/Image.hpp"
+#include "../include/GTGE/Core/ImageDataConverter.hpp"
+#include "../include/GTGE/Core/ImageUtils.hpp"
+#include "../include/GTGE/Core/MipmapGenerator.hpp"
+#include "../include/GTGE/Core/Random.hpp"
+#include "../include/GTGE/Core/TextMesh.hpp"
+#include "../include/GTGE/Core/TextManager.hpp"
+#include "../include/GTGE/Core/Window.hpp"
+#include "../include/GTGE/Core/WindowEvent.hpp"
+#include "../include/GTGE/Core/WindowEventCallback.hpp"
+#include "../include/GTGE/Core/WindowManagement.hpp"
 
 #include "../include/GTGE/Math.hpp"
 #include "../include/GTGE/Math/Plane.hpp"
@@ -215,35 +364,10 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "../include/GTGE/external/stb_truetype.h"
 
-#if defined(GT_BUILD_VORBIS)
-#define STB_VORBIS_NO_STDIO
-#define STB_VORBIS_NO_PUSHDATA_API
-#define STB_VORBIS_HEADER_ONLY
-#include "../include/GTGE/external/stb_vorbis.c"
-#endif
-
 #if defined(_MSC_VER)
     #pragma warning(pop)
 #endif
 
-
-// dr_libs
-//
-// These should be placed after stb_vorbis so that dr_audio can detect it.
-#include <dr_libs/dr.h>
-#include <dr_libs/dr_fs.h>
-#include <dr_libs/dr_fsw.h>
-
-#if defined(GT_BUILD_FLAC)
-#include <dr_libs/dr_flac.h>
-#endif
-
-#if defined(GT_BUILD_WAV)
-#include <dr_libs/dr_wav.h>
-#endif
-
-#include <dr_libs/dr_audio.h>
-#include <dr_libs/old/dr_mtl.h>
 
 
 // GTGE Source Files

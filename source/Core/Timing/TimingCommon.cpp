@@ -3,8 +3,6 @@
 #include <GTGE/Core/Timing/TimingCommon.hpp>
 
 #if defined(_WIN32)
-#include <GTGE/Core/windows.hpp>
-#include <cstdint>
 
 namespace GT
 {

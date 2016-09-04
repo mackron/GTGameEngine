@@ -3,8 +3,6 @@
 #ifndef GT_Clipboard
 #define GT_Clipboard
 
-#include <GTGE/Core/String.hpp>
-
 namespace GT
 {
     /// Static class representing the clipboard for doing copy-and-paste.

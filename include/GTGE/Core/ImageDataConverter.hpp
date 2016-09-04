@@ -3,8 +3,6 @@
 #ifndef GT_ImageDataConverter
 #define GT_ImageDataConverter
 
-#include "ImageFormats.hpp"
-
 namespace GT
 {
     /**

@@ -3,15 +3,6 @@
 #ifndef GT_InternalWindowObjects
 #define GT_InternalWindowObjects
 
-#include <cstddef>
-
-#if defined(_WIN32)
-#include "Win32/windows_types.h"
-#else
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#endif
-
 namespace GT
 {
     /**

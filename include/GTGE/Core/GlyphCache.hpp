@@ -3,10 +3,6 @@
 #ifndef GT_GlyphCache
 #define GT_GlyphCache
 
-#include "FontEngine.hpp"
-#include "GlyphMapLayout.hpp"
-#include <GTGE/Core/Map.hpp>
-
 namespace GT
 {
     /// Platform independant class for caching glyphs.

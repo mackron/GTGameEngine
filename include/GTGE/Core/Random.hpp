@@ -3,11 +3,6 @@
 #ifndef GT_Random
 #define GT_Random
 
-#include "Math.hpp"
-#include "Limits.hpp"
-#include "Timing.hpp"
-#include <ctime>
-
 #define GT_LCG_M    4294967296
 #define GT_LCG_A    1103515245
 #define GT_LCG_C    12345

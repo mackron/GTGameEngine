@@ -3,9 +3,6 @@
 #ifndef GT_Parse
 #define GT_Parse
 
-#include <cassert>
-#include <cstdint>
-
 namespace GT
 {
     template <typename T>

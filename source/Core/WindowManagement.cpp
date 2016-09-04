@@ -854,11 +854,6 @@ namespace GT
     }
 }
 #else
-#include <GTGE/Core/Windowing/Win32/Win32.hpp>
-#include <GTGE/Core/windows.hpp>
-#include <windowsx.h>
-#include <cstdio>
-
 namespace GT
 {
     const char* WindowClassName = "GT_DefaultWindow";

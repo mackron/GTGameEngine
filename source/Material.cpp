@@ -8,18 +8,6 @@
 #include <GTGE/Core/Parse.hpp>
 #include <GTGE/Core/Strings/Tokenizer.hpp>
 
-#if defined(__GNUC__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Weffc++"
-    #pragma GCC diagnostic ignored "-Wswitch-default"
-    #pragma GCC diagnostic ignored "-Winline"
-    #pragma GCC diagnostic ignored "-Wsign-conversion"
-#endif
-#include <GTGE/Core/rapidxml.hpp>
-#if defined(__GNUC__)
-    #pragma GCC diagnostic pop
-#endif
-
 using namespace rapidxml;
 
 namespace GT

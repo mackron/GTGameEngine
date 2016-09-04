@@ -3,12 +3,6 @@
 #ifndef GT_Math_Core
 #define GT_Math_Core
 
-#include <cmath>
-#include <cstdint>
-#include <cstdlib>
-#include <cstddef>
-#include <cassert>
-
 #define GT_EPSILON_F          0.00001f
 #define GT_EPSILON_D          0.00000000001
 

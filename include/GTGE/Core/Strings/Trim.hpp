@@ -3,9 +3,6 @@
 #ifndef GT_Strings_Trim
 #define GT_Strings_Trim
 
-#include "NextChar.hpp"
-#include "Copy.hpp"
-
 namespace GT
 {
     namespace Strings

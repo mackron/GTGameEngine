@@ -3,11 +3,6 @@
 #ifndef GT_Deserializer
 #define GT_Deserializer
 
-#include <cstring>      // For memcpy()
-#include "String.hpp"
-#include "Math.hpp"     // For Min().
-#include "Vector.hpp"
-
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4482)   // 'this' used in initialise list.

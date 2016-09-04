@@ -22,7 +22,6 @@ with malloc(). It will be free with free().
     #pragma GCC diagnostic ignored "-Wunknown-pragmas"
     #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #endif
-#include <GTGE/Core/windows.hpp>
 #include <shlobj.h>
 #include <shellapi.h>
 #if defined(__clang__)

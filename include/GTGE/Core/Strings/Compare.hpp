@@ -3,9 +3,6 @@
 #ifndef GT_Strings_Compare
 #define GT_Strings_Compare
 
-#include "NextChar.hpp"
-#include <cstring>
-
 namespace GT
 {
     namespace Strings

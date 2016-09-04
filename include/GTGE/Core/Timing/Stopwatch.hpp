@@ -3,8 +3,6 @@
 #ifndef GT_Timing_Stopwatch
 #define GT_Timing_Stopwatch
 
-#include "TimingCommon.hpp"
-
 namespace GT
 {
     /**

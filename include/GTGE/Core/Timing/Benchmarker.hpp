@@ -3,8 +3,6 @@
 #ifndef GT_Benchmarker
 #define GT_Benchmarker
 
-#include "TimingCommon.hpp"
-
 namespace GT
 {
     /// Class for performing simple benchmarking.

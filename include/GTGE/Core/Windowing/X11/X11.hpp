@@ -34,16 +34,6 @@
 
 #ifdef __linux__
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
-#include <X11/keysym.h>
-#include <X11/cursorfont.h>
-#include <X11/Xcursor/Xcursor.h>
-#include "../WindowEventHandler.hpp"
-#include "../../Cursors.hpp"
-#include "../../Vector.hpp"
-
 namespace GT
 {
     namespace X11

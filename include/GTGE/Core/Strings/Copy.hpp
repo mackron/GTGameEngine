@@ -3,9 +3,6 @@
 #ifndef GT_Strings_Copy
 #define GT_Strings_Copy
 
-#include "Iterator.hpp"
-#include "Size.hpp"
-
 namespace GT
 {
     namespace Strings

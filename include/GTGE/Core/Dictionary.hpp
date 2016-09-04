@@ -3,13 +3,6 @@
 #ifndef GT_Dictionary
 #define GT_Dictionary
 
-#include "Strings/Compare.hpp"
-#include "Strings/Create.hpp"
-#include "stdlib.hpp"
-#include <cstring>
-#include <cstdint>
-#include <new>
-
 namespace GT
 {
     /// An item in a dictionary.

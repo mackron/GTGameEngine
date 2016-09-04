@@ -3,9 +3,6 @@
 #ifndef GT_HandleManager
 #define GT_HandleManager
 
-#include "Vector.hpp"
-#include <functional>
-
 namespace GT
 {
     /// Class for managing 32-bit handles.

@@ -3,11 +3,6 @@
 #ifndef GT_FontInfo
 #define GT_FontInfo
 
-#include "FontStyles.hpp"
-#include "GlyphRenderingModes.hpp"
-#include <GTGE/Core/String.hpp>
-#include <cstddef>
-
 namespace GT
 {
     /**

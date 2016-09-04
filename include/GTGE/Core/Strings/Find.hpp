@@ -3,11 +3,6 @@
 #ifndef GT_Strings_Find
 #define GT_Strings_Find
 
-#include "NextChar.hpp"
-#include "Equal.hpp"
-#include "Size.hpp"
-#include "Iterator.hpp"
-
 namespace GT
 {
     namespace Strings

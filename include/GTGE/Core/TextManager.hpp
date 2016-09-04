@@ -3,14 +3,6 @@
 #ifndef __GTType_TextManager
 #define __GTType_TextManager
 
-#include <GTGE/Core/Font.hpp>
-#include <GTGE/Core/TextMesh.hpp>
-#include <GTGE/Core/Rect.hpp>
-#include <GTGE/Core/Colour.hpp>
-#include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/List.hpp>
-
 namespace GT
 {
     enum Alignment

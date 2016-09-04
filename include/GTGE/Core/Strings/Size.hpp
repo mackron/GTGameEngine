@@ -3,10 +3,6 @@
 #ifndef GT_Strings_Size
 #define GT_Strings_Size
 
-#include "NextChar.hpp"
-#include <cstddef>
-#include <cstring>
-
 namespace GT
 {
     namespace Strings

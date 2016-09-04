@@ -7,20 +7,6 @@
 
 // A hate the using command, but it's such a pain doing Strings all the time...
 using namespace GT;
-
-
-#if defined(__GNUC__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Weffc++"
-    #pragma GCC diagnostic ignored "-Wswitch-default"
-    #pragma GCC diagnostic ignored "-Winline"
-    #pragma GCC diagnostic ignored "-Wsign-conversion"
-#endif
-#include <GTGE/Core/rapidxml.hpp>
-#if defined(__GNUC__)
-    #pragma GCC diagnostic pop
-#endif
-
 using namespace rapidxml;
 
 namespace GT

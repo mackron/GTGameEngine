@@ -3,13 +3,6 @@
 #ifndef GT_Strings_Create
 #define GT_Strings_Create
 
-#include "../BasicBuffer.hpp"
-#include "../stdio.hpp"
-#include "List.hpp"
-#include "Copy.hpp"
-
-#include <cstdarg>
-
 namespace GT
 {
     namespace Strings

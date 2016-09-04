@@ -3,8 +3,6 @@
 #ifndef GT_ImageFormats
 #define GT_ImageFormats
 
-#include <cstddef>
-
 #define GTIMAGE_GENIMAGEFORMATID(componentCount, componentSize, componentType) \
     (componentCount << 24) | (componentSize << 16) | (componentType << 8)
 

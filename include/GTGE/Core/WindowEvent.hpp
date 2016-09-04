@@ -3,10 +3,6 @@
 #ifndef GT_WindowEvent
 #define GT_WindowEvent
 
-#include "Windowing/Keys.hpp"
-#include "Windowing/MouseButtons.hpp"
-#include "Window.hpp"
-
 namespace GT
 {
 #if 0

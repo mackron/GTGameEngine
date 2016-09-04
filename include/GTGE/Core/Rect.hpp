@@ -3,9 +3,6 @@
 #ifndef GT_Rect
 #define GT_Rect
 
-#include <cstdio>
-#include <GTGE/Core/Math.hpp>
-
 namespace GT
 {
     /// A generic rectangle structure.

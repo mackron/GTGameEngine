@@ -3,9 +3,6 @@
 #ifndef GT_ImageInfo
 #define GT_ImageInfo
 
-#include "ImageFormats.hpp"
-#include <dr_libs/dr_fs.h>
-
 namespace GT
 {
     struct ImageFileInfo : public drfs_file_info

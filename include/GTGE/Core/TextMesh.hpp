@@ -3,9 +3,6 @@
 #ifndef __GTType_TextMesh
 #define __GTType_TextMesh
 
-#include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/GlyphMapManager.hpp>       // <-- For GlyphMapHandle.
-
 namespace GT
 {
     /// Structure representing a vertex in a mesh.

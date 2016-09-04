@@ -3,8 +3,6 @@
 #ifndef GT_FontStyles
 #define GT_FontStyles
 
-#include <cstdint>
-
 namespace GT
 {
     static const uint32_t FontStyle_Thin       = (1 << 0);

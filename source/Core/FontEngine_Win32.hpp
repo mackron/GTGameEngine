@@ -8,8 +8,6 @@
 #if defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
 #include <GTGE/Core/FontEngine.hpp>
 
-#include <GTGE/Core/windows.hpp>
-
 namespace GT
 {
 	class FontEngine_Win32 : public FontEngine

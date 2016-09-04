@@ -3,10 +3,6 @@
 #ifndef GT_ImageLoader
 #define GT_ImageLoader
 
-#include "ImageFileInfo.hpp"
-#include "Mipmap.hpp"
-#include <GTGE/Core/String.hpp>
-
 namespace GT
 {
     /**

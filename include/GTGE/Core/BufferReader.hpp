@@ -3,10 +3,6 @@
 #ifndef GT_BufferReader
 #define GT_BufferReader
 
-#include <cstdint>
-#include <cstring>
-#include <cassert>
-
 namespace GT
 {
     /// A helper class for safely reading a data buffer and ensuring it doesn't try reading past the buffer allocation.

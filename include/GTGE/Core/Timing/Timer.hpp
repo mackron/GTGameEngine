@@ -3,8 +3,6 @@
 #ifndef GT_Timing_Timer
 #define GT_Timing_Timer
 
-#include "TimingCommon.hpp"
-
 namespace GT
 {
     /**
