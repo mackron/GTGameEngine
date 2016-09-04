@@ -126,6 +126,12 @@
 #undef GetFirstChild
 #undef GetClassName
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4459)   // Hides global declaration (thanks Lua!)
+    #pragma warning(disable:4822)   // local class member function does not have a body
+#endif
+
 // Lua
 #ifndef GTGE_NO_DEFAULT_LUA
 #define LUA_CORE
@@ -237,8 +243,6 @@
 #endif
 
 #include <dr_libs/dr_audio.h>
-//#include <dr_libs/old/dr_gui.h>
-//#include <dr_libs/old/dr_2d.h>
 #include <dr_libs/old/dr_mtl.h>
 
 
@@ -554,12 +558,6 @@
 #define DR_AUDIO_IMPLEMENTATION
 #include <dr_libs/dr_audio.h>
 
-//#define DR_GUI_IMPLEMENTATION
-//#include <dr_libs/old/dr_gui.h>
-
-//#define DR_2D_IMPLEMENTATION
-//#include <dr_libs/old/dr_2d.h>
-
 #define DR_MTL_IMPLEMENTATION
 #include <dr_libs/old/dr_mtl.h>
 
@@ -577,6 +575,11 @@
 #if defined(_MSC_VER)
     #pragma warning(pop)
 #endif
+#endif
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
 #endif
 
 #endif
