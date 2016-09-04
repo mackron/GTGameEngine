@@ -377,13 +377,13 @@
     #pragma warning(push)
     #pragma warning(disable:4456)   // declaration of '...' hides previous local declaration
 #endif
-#include "HACD/hacdHACD.cpp"
-#include "HACD/hacdGraph.cpp"
-#include "HACD/hacdICHull.cpp"
-#include "HACD/hacdManifoldMesh.cpp"
-#include "HACD/hacdMeshDecimator.cpp"
-#include "HACD/hacdMicroAllocator.cpp"
-#include "HACD/hacdRaycastMesh.cpp"
+#include "external/HACD/hacdHACD.cpp"
+#include "external/HACD/hacdGraph.cpp"
+#include "external/HACD/hacdICHull.cpp"
+#include "external/HACD/hacdManifoldMesh.cpp"
+#include "external/HACD/hacdMeshDecimator.cpp"
+#include "external/HACD/hacdMicroAllocator.cpp"
+#include "external/HACD/hacdRaycastMesh.cpp"
 #if defined(_MSC_VER)
     #pragma warning(pop)
 #endif
@@ -393,26 +393,26 @@
     #pragma warning(push)
     #pragma warning(disable:4457)
 #endif
-#include "gtgl/gtgl.c"
-#include "gtgl/gtgl_context.c"
-#include "gtgl/gtgl_contextmanager.c"
-#include "gtgl/gtgl_errors.c"
-#include "gtgl/gtgl_extensions.c"
-#include "gtgl/gtgl_gl.c"
-#include "gtgl/gtgl_glx.c"
-#include "gtgl/gtgl_utils.c"
-#include "gtgl/gtgl_wgl.c"
-#include "gtgl/gtgl_window.c"
-#include "gtgl/gtgl_windowmanager.c"
-#include "gtgl/debugging/gtgl_debugging_common.c"
-#include "gtgl/emulators/gtgl_emulation_common.c"
-#include "gtgl/emulators/gtgl_arb_debug_output.c"
-#include "gtgl/win32/gtgl_context_win32.c"
-#include "gtgl/win32/gtgl_window_win32.c"
-#include "gtgl/win32/gtgl_windowmanager_win32.c"
-#include "gtgl/x11/gtgl_context_x11.c"
-#include "gtgl/x11/gtgl_window_x11.c"
-#include "gtgl/x11/gtgl_windowmanager_x11.c"
+#include "external/gtgl/gtgl.c"
+#include "external/gtgl/gtgl_context.c"
+#include "external/gtgl/gtgl_contextmanager.c"
+#include "external/gtgl/gtgl_errors.c"
+#include "external/gtgl/gtgl_extensions.c"
+#include "external/gtgl/gtgl_gl.c"
+#include "external/gtgl/gtgl_glx.c"
+#include "external/gtgl/gtgl_utils.c"
+#include "external/gtgl/gtgl_wgl.c"
+#include "external/gtgl/gtgl_window.c"
+#include "external/gtgl/gtgl_windowmanager.c"
+#include "external/gtgl/debugging/gtgl_debugging_common.c"
+#include "external/gtgl/emulators/gtgl_emulation_common.c"
+#include "external/gtgl/emulators/gtgl_arb_debug_output.c"
+#include "external/gtgl/win32/gtgl_context_win32.c"
+#include "external/gtgl/win32/gtgl_window_win32.c"
+#include "external/gtgl/win32/gtgl_windowmanager_win32.c"
+#include "external/gtgl/x11/gtgl_context_x11.c"
+#include "external/gtgl/x11/gtgl_window_x11.c"
+#include "external/gtgl/x11/gtgl_windowmanager_x11.c"
 #if defined(_MSC_VER)
     #pragma warning(pop)
 #endif
