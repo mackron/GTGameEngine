@@ -38,7 +38,7 @@ namespace GT
             assert(callbackData->pFile != nullptr);
 
             unsigned int bytesRead;
-            if (!drfs_read(callbackData->pFile, data, (unsigned int)size, &bytesRead)) {
+            if (drfs_read(callbackData->pFile, data, (unsigned int)size, &bytesRead) != drfs_success) {
                 return 0;
             }
 
