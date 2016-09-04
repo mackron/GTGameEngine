@@ -3,8 +3,6 @@
 #ifndef GT_GUIElementEventHandler
 #define GT_GUIElementEventHandler
 
-#include <GTGE/Core/Windowing/Keys.hpp>
-
 namespace GT
 {
     class GUIElement;

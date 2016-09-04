@@ -3,8 +3,6 @@
 #ifndef GT_GUIRenderer
 #define GT_GUIRenderer
 
-#include "../GUIImageManager.hpp"
-
 namespace GT
 {
     class GUIServer;

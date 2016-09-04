@@ -3,11 +3,6 @@
 #ifndef GT_GUIEvent
 #define GT_GUIEvent
 
-#include "GUIElement.hpp"
-#include "GUIEventCodes.hpp"
-#include <GTGE/Core/Window.hpp>
-#include <cstdint>
-
 namespace GT
 {
     struct GUIEvent

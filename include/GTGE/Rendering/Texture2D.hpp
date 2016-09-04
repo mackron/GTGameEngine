@@ -3,12 +3,6 @@
 #ifndef GT_Texture2D
 #define GT_Texture2D
 
-#include "TextureFilters.hpp"
-#include "TextureWrapModes.hpp"
-#include <GTGE/Core/Image.hpp>
-#include <GTGE/Core/Map.hpp>
-#include <GTGE/Core/List.hpp>
-
 namespace GT
 {
     class Framebuffer;

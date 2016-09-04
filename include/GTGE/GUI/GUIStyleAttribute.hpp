@@ -3,17 +3,6 @@
 #ifndef GT_GUIStyleAttribute
 #define GT_GUIStyleAttribute
 
-#include "GUIStyleNumber.hpp"
-#include "GUIPositioning.hpp"
-#include "GUIPlanes.hpp"
-#include "GUIAlign.hpp"
-#include "GUIFontStyles.hpp"
-#include <GTGE/Core/Colour.hpp>
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/Parse.hpp>
-#include <GTGE/Core/stdio.hpp>
-#include <GTGE/Core/stdlib.hpp>
-
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4351)   // new behaviour

@@ -3,28 +3,6 @@
 #ifndef GT_GUIServer
 #define GT_GUIServer
 
-#include "GUIScriptServer.hpp"
-#include "GUIStyleServer.hpp"
-#include "GUIServerEventHandler.hpp"
-#include "GUIMarkupLoader.hpp"
-#include "GUIElement.hpp"
-#include "GUICaret.hpp"
-#include "GUIEventQueue.hpp"
-#include "GUIGarbageCollector.hpp"
-#include "GUILayoutManager.hpp"
-#include "GUIImageManager.hpp"
-#include "GUIFontGlyphMapManager.hpp"
-#include "GUIFontCache.hpp"
-#include "GUIElementTree.hpp"
-#include "Rendering/GUIRenderer.hpp"
-#include <GTGE/Core/Point.hpp>
-#include <GTGE/Core/Rect.hpp>
-#include <GTGE/Core/Dictionary.hpp>
-#include <GTGE/Core/SortedVector.hpp>
-#include <GTGE/Core/Timing.hpp>
-#include <GTGE/Core/FontServer.hpp>
-#include <dr_libs/dr.h>
-
 /*
 --- Implementation Details ---
 

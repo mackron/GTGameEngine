@@ -3,8 +3,6 @@
 #ifndef GT_Rendering_BlendEquations
 #define GT_Rendering_BlendEquations
 
-#include <GTGE/Core/Strings/Equal.hpp>
-
 namespace GT
 {
     enum BlendEquation

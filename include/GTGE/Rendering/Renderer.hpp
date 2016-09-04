@@ -3,21 +3,6 @@
 #ifndef GT_Renderer
 #define GT_Renderer
 
-#include <GTGE/Core/Window.hpp>
-#include "Texture2D.hpp"
-#include "TextureCube.hpp"
-#include "Shader.hpp"
-#include "VertexArray.hpp"
-#include "Framebuffer.hpp"
-#include "DrawModes.hpp"
-#include "BufferTypes.hpp"
-#include "BlendFunctions.hpp"
-#include "BlendEquations.hpp"
-#include "RendererFunctions.hpp"
-#include "StencilOperations.hpp"
-#include "../Graphics/GraphicsTypes.hpp"
-#include "PolygonModes.hpp"
-
 #undef CreateWindow
 
 namespace GT

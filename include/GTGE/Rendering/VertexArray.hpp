@@ -3,10 +3,6 @@
 #ifndef GT_VertexArray
 #define GT_VertexArray
 
-#include "VertexFormat.hpp"
-#include "../Math.hpp"
-#include "../Serialization.hpp"
-
 namespace GT
 {
     enum VertexArrayUsage

@@ -3,9 +3,6 @@
 #ifndef GT_Texture2DLibrary
 #define GT_Texture2DLibrary
 
-#include "Graphics/GraphicsTypes.hpp"
-#include <GTGE/Core/Dictionary.hpp>
-
 namespace GT
 {
     class Texture2D;

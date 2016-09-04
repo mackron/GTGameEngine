@@ -3,11 +3,6 @@
 #ifndef GT_GUIServerXMLParser
 #define GT_GUIServerXMLParser
 
-#include "GUIServerEventHandler.hpp"
-#include <GTGE/Core/BasicBuffer.hpp>
-#include <GTGE/Core/Strings/Create.hpp>
-#include <GTGE/Core/Strings/List.hpp>
-
 namespace GT
 {
     /**

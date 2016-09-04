@@ -3,8 +3,6 @@
 #ifndef GT_GUIStyleClassTree
 #define GT_GUIStyleClassTree
 
-#include "GUIStyleClass.hpp"
-
 namespace GT
 {
     /// Class representing a tree data structure for storing style classes.

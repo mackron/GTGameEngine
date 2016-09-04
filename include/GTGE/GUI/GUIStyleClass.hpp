@@ -3,10 +3,6 @@
 #ifndef GT_GUIStyleClass
 #define GT_GUIStyleClass
 
-#include <GTGE/Script.hpp>
-#include <GTGE/Core/List.hpp>
-#include "GUIStyleAttribute.hpp"
-
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4480)   // nonstandard extension used: specifying underlying type for enum.

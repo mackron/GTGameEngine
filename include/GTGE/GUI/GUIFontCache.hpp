@@ -3,9 +3,6 @@
 #ifndef GT_GUIFontCache
 #define GT_GUIFontCache
 
-#include <GTGE/Core/FontServer.hpp>
-#include <GTGE/Core/Vector.hpp>
-
 namespace GT
 {
     /// Class used for caching fonts so same fonts are reused instead of re-loaded.

@@ -3,11 +3,6 @@
 #ifndef GT_ShaderParameterCache
 #define GT_ShaderParameterCache
 
-#include "ShaderParameter.hpp"
-#include "Math.hpp"
-#include "Serialization.hpp"
-#include <GTGE/Core/Dictionary.hpp>
-
 namespace GT
 {
     class Texture2D;

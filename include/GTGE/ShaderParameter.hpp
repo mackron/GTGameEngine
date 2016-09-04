@@ -3,10 +3,6 @@
 #ifndef GT_ShaderParameter
 #define GT_ShaderParameter
 
-#include "Texture2DLibrary.hpp"
-#include "Math.hpp"
-#include "Rendering/TextureCube.hpp"
-
 namespace GT
 {
     class Texture2D;

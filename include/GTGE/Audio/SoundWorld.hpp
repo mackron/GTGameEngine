@@ -3,10 +3,6 @@
 #ifndef GT_SoundWorld
 #define GT_SoundWorld
 
-#include <GTGE/Core/Vector.hpp>
-#include "../Math.hpp"
-#include <dr_libs/dr_audio.h>
-
 #undef PlaySound
 
 namespace GT

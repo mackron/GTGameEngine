@@ -3,10 +3,6 @@
 #ifndef GT_GUIGUIElementRenderingData
 #define GT_GUIGUIElementRenderingData
 
-#include "GUIMesh.hpp"
-#include "../GUIGarbageCollector.hpp"
-#include <GTGE/Core/Vector.hpp>
-
 namespace GT
 {
     class GUIElement;

@@ -3,12 +3,6 @@
 #ifndef GT_AlignedType
 #define GT_AlignedType
 
-#include <stdlib.h>
-#include <new>
-
-#include <dr_libs/dr.h>
-
-
 /// Base class for correctly aligning new operations.
 template <int Alignment>
 class AlignedType

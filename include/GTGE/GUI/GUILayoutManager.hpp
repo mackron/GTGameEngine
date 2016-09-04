@@ -3,10 +3,6 @@
 #ifndef GT_GUILayoutManager
 #define GT_GUILayoutManager
 
-#include "GUIElement.hpp"
-#include <GTGE/Core/BinarySearchTree.hpp>
-#include <GTGE/Core/List.hpp>
-
 namespace GT
 {
     class GUILayoutManager

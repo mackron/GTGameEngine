@@ -3,12 +3,6 @@
 #ifndef GT_GUIMarkupLoader
 #define GT_GUIMarkupLoader
 
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/Dictionary.hpp>
-#include <GTGE/Core/Vector.hpp>
-
-#include <GTGE/GUI/GUIServerXMLParser.hpp>
-
 namespace GT
 {
     class GUIServer;

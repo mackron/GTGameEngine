@@ -3,10 +3,6 @@
 #ifndef GT_GUIStyleStack
 #define GT_GUIStyleStack
 
-#include "GUIStyleClass.hpp"
-#include "GUIStyleAttribute.hpp"
-#include <GTGE/Core/List.hpp>
-
 namespace GT
 {
     // GUIElement.hpp includes this file.

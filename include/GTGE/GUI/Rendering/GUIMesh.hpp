@@ -3,10 +3,6 @@
 #ifndef GT_GUIMesh
 #define GT_GUIMesh
 
-#include "../GUIImageManager.hpp"
-#include <GTGE/Core/Colour.hpp>
-#include <GTGE/Core/Vector.hpp>
-
 namespace GT
 {
     /// Structure representing a vertex in a mesh.

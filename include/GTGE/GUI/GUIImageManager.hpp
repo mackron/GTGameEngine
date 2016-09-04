@@ -3,8 +3,6 @@
 #ifndef GT_GUIImageManager
 #define GT_GUIImageManager
 
-#include <cstddef>
-
 namespace GT
 {
     typedef size_t GUIImageHandle;

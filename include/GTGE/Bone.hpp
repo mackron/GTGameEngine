@@ -3,12 +3,6 @@
 #ifndef GT_Bone
 #define GT_Bone
 
-#include "Math.hpp"
-#include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/Serializer.hpp>
-#include <GTGE/Core/Deserializer.hpp>
-
 namespace GT
 {
     /// Structure reprsenting a vertex weight.

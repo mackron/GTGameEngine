@@ -3,10 +3,7 @@
 #ifndef GT_Shader
 #define GT_Shader
 
-#include "ShaderStages.hpp"
-#include "../Math.hpp"
 #include "../ShaderParameterCache.hpp"
-#include <GTGE/Core/String.hpp>
 
 namespace GT
 {

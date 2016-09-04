@@ -3,8 +3,6 @@
 #ifndef GT_GUIElementTree
 #define GT_GUIElementTree
 
-#include "GUIElement.hpp"
-
 namespace GT
 {
     /// Class representing a tree data structure for storing elements.

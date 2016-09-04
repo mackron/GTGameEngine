@@ -3,11 +3,6 @@
 #ifndef GT_GUIStyleScriptCompiler
 #define GT_GUIStyleScriptCompiler
 
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/Dictionary.hpp>
-#include "GUIStyleScriptError.hpp"
-
 namespace GT
 {
     /// Class representing an attribute inside a style class. This is just a simple key/value string pair.

@@ -3,9 +3,6 @@
 #ifndef GT_GUIServerEventHandler
 #define GT_GUIServerEventHandler
 
-#include <GTGE/Core/Cursors.hpp>
-#include <GTGE/Core/Font.hpp>
-
 namespace GT
 {
     /**

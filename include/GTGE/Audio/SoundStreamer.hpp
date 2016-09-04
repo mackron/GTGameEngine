@@ -3,8 +3,6 @@
 #ifndef GT_Audio_SoundStreamer
 #define GT_Audio_SoundStreamer
 
-#include <dr_libs/dr_audio.h>
-
 namespace GT
 {
     class Asset;

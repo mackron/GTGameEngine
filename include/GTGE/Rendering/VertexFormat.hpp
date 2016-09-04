@@ -3,11 +3,6 @@
 #ifndef GT_VertexFormat
 #define GT_VertexFormat
 
-#include "VertexAttributes.hpp"
-#include <GTGE/Core/Serializer.hpp>
-#include <GTGE/Core/Deserializer.hpp>
-#include <cstddef>
-
 #define GTENGINE_MAX_VERTEX_ATTRIBS       16
 #define GTENGINE_VERTEX_FORMAT_SIZE       (GTENGINE_MAX_VERTEX_ATTRIBS * 2 + 1)
 

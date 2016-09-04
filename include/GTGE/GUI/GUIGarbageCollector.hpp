@@ -3,8 +3,6 @@
 #ifndef GT_GUIGarbageCollector
 #define GT_GUIGarbageCollector
 
-#include <GTGE/Core/List.hpp>
-
 namespace GT
 {
     class GUIElement;

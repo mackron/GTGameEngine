@@ -3,8 +3,6 @@
 #ifndef GT_GUIEventQueue
 #define GT_GUIEventQueue
 
-#include "GUIEvent.hpp"
-
 namespace GT
 {
     /// Class representing a queue of events.

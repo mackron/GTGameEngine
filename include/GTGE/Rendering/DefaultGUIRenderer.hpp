@@ -3,7 +3,6 @@
 #ifndef GT_Renderer_DefaultGUIRenderer
 #define GT_Renderer_DefaultGUIRenderer
 
-#include "Renderer.hpp"
 #include <GTGE/GUI/Rendering/GUIRenderer.hpp>
 
 namespace GT

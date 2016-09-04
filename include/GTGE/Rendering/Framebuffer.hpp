@@ -3,9 +3,6 @@
 #ifndef GT_Framebuffer
 #define GT_Framebuffer
 
-#include <GTGE/Core/Map.hpp>
-#include <cstddef>
-
 namespace GT
 {
     class Texture2D;

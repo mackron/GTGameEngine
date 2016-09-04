@@ -3,16 +3,6 @@
 #ifndef GT_GUIElement
 #define GT_GUIElement
 
-#include "GUIStyleStack.hpp"
-#include "GUIElementEventHandler.hpp"
-#include "Rendering/GUIElementRenderingData.hpp"
-
-#include <GTGE/Core/Rect.hpp>
-#include <GTGE/Core/List.hpp>
-#include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/TextManager.hpp>
-#include <bitset>
-
 namespace GT
 {
     class GUIServer;

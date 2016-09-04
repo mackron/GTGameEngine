@@ -3,10 +3,6 @@
 #ifndef GT_GUIStyleScriptError
 #define GT_GUIStyleScriptError
 
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/Strings/Tokenizer.hpp>
-#include <GTGE/Core/Strings/LineIterator.hpp>
-
 namespace GT
 {
     struct GUIStyleScriptError

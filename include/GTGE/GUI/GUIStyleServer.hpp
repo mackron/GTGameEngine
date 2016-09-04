@@ -3,15 +3,6 @@
 #ifndef GT_GUIStyleServer
 #define GT_GUIStyleServer
 
-#include "GUIStyleClass.hpp"
-#include "GUIStyleClassTree.hpp"
-#include "GUIStyleScriptError.hpp"
-#include "GUIStyleScriptCompiler.hpp"
-
-#include <GTGE/Core/Dictionary.hpp>
-#include <GTGE/Core/BinarySearchTree.hpp>
-#include <GTGE/Core/Vector.hpp>
-
 namespace GT
 {
     class GUIServer;

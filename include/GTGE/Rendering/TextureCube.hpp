@@ -3,9 +3,6 @@
 #ifndef GT_TextureCube
 #define GT_TextureCube
 
-#include "Texture2D.hpp"
-#include "../Graphics/GraphicsTypes.hpp"
-
 namespace GT
 {
     /// Class representing a cube map.

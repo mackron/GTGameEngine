@@ -3,11 +3,6 @@
 #ifndef GT_GUICaret
 #define GT_GUICaret
 
-#include <GTGE/Core/Colour.hpp>
-#include "GUIElement.hpp"
-#include "Rendering/GUIMesh.hpp"
-
-
 namespace GT
 {
     /**

@@ -3,8 +3,6 @@
 #ifndef GT_GUIScriptServer
 #define GT_GUIScriptServer
 
-#include <GTGE/Script.hpp>
-
 namespace GT
 {
     class GUIServer;

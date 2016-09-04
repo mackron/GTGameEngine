@@ -3,10 +3,7 @@
 #ifndef GT_ConvexHull
 #define GT_ConvexHull
 
-#include "Math.hpp"
-#include "ConvexHullBuildSettings.hpp"
 #include "Rendering/VertexArray.hpp"
-#include <GTGE/Core/Vector.hpp>
 
 namespace GT
 {

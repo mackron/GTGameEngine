@@ -34,6 +34,7 @@
 #include <new>
 #include <functional>
 #include <algorithm>
+#include <bitset>
 
 #if defined(_MSC_VER)
 #include <direct.h>
@@ -244,8 +245,73 @@
 
 #include "../include/GTGE/Math.hpp"
 #include "../include/GTGE/Math/Plane.hpp"
+#include "../include/GTGE/Script.hpp"
+
+#include "../include/GTGE/GUI/GUIAlign.hpp"
+#include "../include/GTGE/GUI/GUIGarbageCollector.hpp"
+#include "../include/GTGE/GUI/GUIImageManager.hpp"
+#include "../include/GTGE/GUI/Rendering/GUIMesh.hpp"
+#include "../include/GTGE/GUI/Rendering/GUIElementRenderingData.hpp"
+#include "../include/GTGE/GUI/Rendering/GUIRenderer.hpp"
+#include "../include/GTGE/GUI/GUIElementEventHandler.hpp"
+#include "../include/GTGE/GUI/GUIStyleNumber.hpp"
+#include "../include/GTGE/GUI/GUIPositioning.hpp"
+#include "../include/GTGE/GUI/GUIPlanes.hpp"
+#include "../include/GTGE/GUI/GUIFontStyles.hpp"
+#include "../include/GTGE/GUI/GUIStyleAttribute.hpp"
+#include "../include/GTGE/GUI/GUIStyleClass.hpp"
+#include "../include/GTGE/GUI/GUIStyleClassTree.hpp"
+#include "../include/GTGE/GUI/GUIStyleStack.hpp"
+#include "../include/GTGE/GUI/GUIElement.hpp"
+#include "../include/GTGE/GUI/GUICaret.hpp"
+#include "../include/GTGE/GUI/GUIElementTree.hpp"
+#include "../include/GTGE/GUI/GUIEventCodes.hpp"
+#include "../include/GTGE/GUI/GUIEvent.hpp"
+#include "../include/GTGE/GUI/GUIEventQueue.hpp"
+#include "../include/GTGE/GUI/GUIFontCache.hpp"
+#include "../include/GTGE/GUI/GUIFontGlyphMapManager.hpp"
+#include "../include/GTGE/GUI/GUILayoutManager.hpp"
+#include "../include/GTGE/GUI/GUIServerEventHandler.hpp"
+#include "../include/GTGE/GUI/GUIServerXMLParser.hpp"
+#include "../include/GTGE/GUI/GUIMarkupLoader.hpp"
+#include "../include/GTGE/GUI/GUIScriptServer.hpp"
+#include "../include/GTGE/GUI/GUIStyleScriptError.hpp"
+#include "../include/GTGE/GUI/GUIStyleScriptCompiler.hpp"
+#include "../include/GTGE/GUI/GUIStyleServer.hpp"
+#include "../include/GTGE/GUI/GUIServer.hpp"
+
+#include "../include/GTGE/Graphics/GraphicsTypes.hpp"
+
+#include "../include/GTGE/Rendering/TextureFilters.hpp"
+#include "../include/GTGE/Rendering/TextureWrapModes.hpp"
+#include "../include/GTGE/Rendering/Texture2D.hpp"
+#include "../include/GTGE/Rendering/TextureCube.hpp"
+#include "../include/GTGE/Texture2DLibrary.hpp"
+#include "../include/GTGE/ShaderParameter.hpp"
+#include "../include/GTGE/ShaderParameterCache.hpp"
+#include "../include/GTGE/Rendering/BlendEquations.hpp"
+#include "../include/GTGE/Rendering/BlendFunctions.hpp"
+#include "../include/GTGE/Rendering/BufferTypes.hpp"
+#include "../include/GTGE/Rendering/DrawModes.hpp"
+#include "../include/GTGE/Rendering/PolygonModes.hpp"
+#include "../include/GTGE/Rendering/RendererFunctions.hpp"
+#include "../include/GTGE/Rendering/ShaderStages.hpp"
+#include "../include/GTGE/Rendering/StencilOperations.hpp"
+#include "../include/GTGE/Rendering/Framebuffer.hpp"
+#include "../include/GTGE/Rendering/VertexFormat.hpp"
+#include "../include/GTGE/Rendering/VertexAttributes.hpp"
+#include "../include/GTGE/Rendering/VertexArray.hpp"
+#include "../include/GTGE/Rendering/Shader.hpp"
+#include "../include/GTGE/Rendering/Renderer.hpp"
+#include "../include/GTGE/Rendering/DefaultGUIRenderer.hpp"
 
 #include "../include/GTGE/AABB.hpp"
+#include "../include/GTGE/AlignedType.hpp"
+#include "../include/GTGE/Bone.hpp"
+#include "../include/GTGE/CollisionGroups.hpp"
+#include "../include/GTGE/Component.hpp"
+#include "../include/GTGE/ConvexHullBuildSettings.hpp"
+#include "../include/GTGE/ConvexHull.hpp"
 
 #include "../include/GTGE/Animation/AnimationKeyFrame.hpp"
 #include "../include/GTGE/Animation/AnimationKey.hpp"
@@ -254,8 +320,6 @@
 #include "../include/GTGE/Animation/AnimationSequence.hpp"
 #include "../include/GTGE/Animation/AnimationTrack.hpp"
 #include "../include/GTGE/Animation/Animation.hpp"
-
-#include "../include/GTGE/Graphics/GraphicsTypes.hpp"
 
 #include "../include/GTGE/Assets/AssetTypes.hpp"
 #include "../include/GTGE/Assets/AssetMetadata.hpp"
@@ -266,6 +330,9 @@
 #include "../include/GTGE/Assets/MaterialAsset.hpp"
 #include "../include/GTGE/Assets/ModelAsset.hpp"
 #include "../include/GTGE/Assets/SoundAsset.hpp"
+
+#include "../include/GTGE/Audio/SoundStreamer.hpp"
+#include "../include/GTGE/Audio/SoundWorld.hpp"
 
 #include "../include/GTGE/GTEngine.hpp"
 

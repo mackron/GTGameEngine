@@ -4,8 +4,6 @@
 #define GT_GUIFontGlyphMapManager
 
 #include "GUIImageManager.hpp"             // For GUIImageHandle.
-#include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/GlyphMapManager.hpp>
 
 namespace GT
 {
