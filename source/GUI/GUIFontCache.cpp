@@ -2,6 +2,8 @@
 
 #include <GTGE/GUI/GUIFontCache.hpp>
 
+#undef DeleteFont
+
 namespace GT
 {
     GUIFontCache::GUIFontCache(GT::FontServer &fontServer)

@@ -3,6 +3,11 @@
 #ifndef GT_Scripting_SceneNode
 #define GT_Scripting_SceneNode
 
+#undef GetNextSibling
+#undef GetPrevSibling
+#undef GetFirstChild
+#undef GetClassName
+
 namespace GT
 {
     class Script;

@@ -11,6 +11,7 @@
 
 namespace GT
 {
+#if 0
     struct WriteOCL
     {
         SIMD_FORCE_INLINE static bool Process(btScalar &q, btScalar v)
@@ -31,6 +32,7 @@ namespace GT
             return q <= v;
         }
     };
+#endif
 }
 
 

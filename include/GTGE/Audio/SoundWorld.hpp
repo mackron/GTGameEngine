@@ -7,6 +7,8 @@
 #include "../Math.hpp"
 #include <dr_libs/dr_audio.h>
 
+#undef PlaySound
+
 namespace GT
 {
     class Context;

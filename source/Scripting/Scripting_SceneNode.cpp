@@ -5,6 +5,11 @@
 #include <GTGE/Scripting.hpp>
 #include <GTGE/SceneNode.hpp>
 
+#undef GetNextSibling
+#undef GetPrevSibling
+#undef GetFirstChild
+#undef GetClassName
+
 namespace GT
 {
     bool LoadSceneNodeLibrary(GT::Script &script)

@@ -2,7 +2,6 @@
 
 #include "ImageAsset_STB.hpp"
 #include <GTGE/Config.hpp>
-#include <GTGE/external/stb_image.h>
 
 namespace GT
 {

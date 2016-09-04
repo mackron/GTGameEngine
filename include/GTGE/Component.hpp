@@ -3,6 +3,8 @@
 #ifndef GT_Component
 #define GT_Component
 
+#undef GetClassName
+
 #define GTENGINE_IMPL_COMPONENT_ATTRIBS(className, name) \
     const char* const className::Name      = name; \
     const char* const className::ClassName = #className; \

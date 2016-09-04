@@ -5,6 +5,8 @@
 #include <GTGE/Assets/SoundAsset.hpp>
 #include <GTGE/Context.hpp>
 
+#undef PlaySound
+
 namespace GT
 {
     struct EA_SoundData

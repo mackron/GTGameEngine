@@ -1,5 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
+#ifndef GT_Editor_PivotPoint
+#define GT_Editor_PivotPoint
+
 #include "../Math.hpp"
 
 namespace GT
@@ -204,3 +207,5 @@ namespace GT
         bool m_snapToGrid;
     };
 }
+
+#endif

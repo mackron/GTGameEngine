@@ -2,8 +2,6 @@
 
 #include <GTGE/GUI/GUIStyleScriptCompiler.hpp>
 #include "GUIStyleTokenizer.hpp"
-#include <dr_libs/dr_fs.h>
-#include <dr_libs/dr.h>
 
 namespace GT
 {

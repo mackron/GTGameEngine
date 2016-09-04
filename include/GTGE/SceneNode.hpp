@@ -26,6 +26,11 @@
 #include <GTGE/Core/Map.hpp>
 #include <GTGE/Core/String.hpp>
 
+#undef GetNextSibling
+#undef GetPrevSibling
+#undef GetFirstChild
+#undef GetClassName
+
 namespace GT
 {
     class Scene;            // <-- Needed by SceneNode.

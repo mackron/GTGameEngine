@@ -4,6 +4,11 @@
 #include <GTGE/Scene.hpp>
 #include <GTGE/GTEngine.hpp>
 
+#undef GetNextSibling
+#undef GetPrevSibling
+#undef GetFirstChild
+#undef GetClassName
+
 namespace GT
 {
     SceneNode::SceneNode()

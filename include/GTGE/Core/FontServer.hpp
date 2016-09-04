@@ -9,6 +9,7 @@
 #include "Font.hpp"
 #include <GTGE/Core/List.hpp>
 
+#undef DeleteFont
 namespace GT
 {
     /// The main interface to GTType. An application must create a font server to use GTType.

@@ -1,5 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
+#ifndef GT_SceneDeserializeCallback
+#define GT_SceneDeserializeCallback
+
 #include <GTGE/Serialization.hpp>
 
 namespace GT
@@ -43,3 +46,5 @@ namespace GT
         virtual bool HandleChunk(const Serialization::ChunkHeader &header, Deserializer &deserializer);
     };
 }
+
+#endif

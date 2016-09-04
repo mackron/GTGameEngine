@@ -16,6 +16,8 @@
 #endif
 #endif
 
+#include "../include/GTGE/Config.hpp"
+
 // Standard headers.
 #include <stdlib.h>
 #include <stdio.h>
@@ -113,6 +115,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 #ifdef GTGE_IMPLEMENTATION
 #undef LoadString
+#undef PlaySound
+#undef DeleteFont
+#undef GetNextSibling
+#undef GetPrevSibling
+#undef GetFirstChild
+#undef GetClassName
 
 // Lua
 #ifndef GTGE_NO_DEFAULT_LUA
@@ -153,6 +161,85 @@
 #include "external/lua-5.1.5/src/lauxlib.h"
 
 
+// STB
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4996)   // This function or variable may be unsafe.
+    #pragma warning(disable:4189)   // local variable is initialized but not referenced
+    #pragma warning(disable:4244)   // conversion from '...' to '...', possible loss of data
+    #pragma warning(disable:4100)   // unreferenced formal parameter
+    #pragma warning(disable:4456)   // declaration of '...' hides previous local declaration
+    #pragma warning(disable:4457)   // declaration of '...' hides function parameter
+    #pragma warning(disable:4245)   // conversion from '...' to '...', signed/unsigned mismatch
+    #pragma warning(disable:4701)   // potentially uninitialized local variable '...' used
+    #pragma warning(disable:4127)   // conditional expression is constant
+#endif
+
+
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_NO_STDIO
+#define STBI_NO_BMP
+#define STBI_NO_GIF
+#define STBI_NO_HDR
+#define STBI_NO_PIC
+#define STBI_NO_PNM
+#if !defined(GT_BUILD_PNG)
+#define STBI_NO_PNG
+#endif
+#if !defined(GT_BUILD_TGA)
+#define STBI_NO_TGA
+#endif
+#if !defined(GT_BUILD_JPG)
+#define STBI_NO_JPEG
+#endif
+#if !defined(GT_BUILD_PSD)
+#define STBI_NO_PSD
+#endif
+#include <GTGE/external/stb_image.h>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <GTGE/external/stb_image_write.h>
+
+#define STB_DXT_IMPLEMENTATION
+#include <GTGE/external/stb_dxt.h>
+
+#define STB_TRUETYPE_IMPLEMENTATION
+#include <GTGE/external/stb_truetype.h>
+
+#if defined(GT_BUILD_VORBIS)
+#define STB_VORBIS_NO_STDIO
+#define STB_VORBIS_NO_PUSHDATA_API
+#define STB_VORBIS_HEADER_ONLY
+#include <GTGE/external/stb_vorbis.c>
+#endif
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
+
+
+// dr_libs
+//
+// These should be placed after stb_vorbis so that dr_audio can detect it.
+#include <dr_libs/dr.h>
+#include <dr_libs/dr_fs.h>
+#include <dr_libs/dr_fsw.h>
+
+#if defined(GT_BUILD_FLAC)
+#include <dr_libs/dr_flac.h>
+#endif
+
+#if defined(GT_BUILD_WAV)
+#include <dr_libs/dr_wav.h>
+#endif
+
+#include <dr_libs/dr_audio.h>
+#include <dr_libs/old/dr_gui.h>
+#include <dr_libs/old/dr_2d.h>
+#include <dr_libs/old/dr_mtl.h>
+
+
+// GTGE Source Files
 #include "Core/Strings/NextChar.cpp"
 #include "Core/Timing/Stopwatch.cpp"
 #include "Core/Timing/Timer.cpp"
@@ -217,6 +304,262 @@
 #include "Assets/ModelAsset_OBJ.cpp"
 #include "Assets/SoundAsset.cpp"
 
+#include "Audio/SoundStreamer.cpp"
+#include "Audio/SoundWorld.cpp"
 
+#include "Components/CameraComponent.cpp"
+#include "Components/CollisionShapeComponent.cpp"
+#include "Components/ConeTwistConstraintComponent.cpp"
+#include "Components/DynamicsComponent.cpp"
+#include "Components/EditorMetadataComponent.cpp"
+#include "Components/GenericConstraintComponent.cpp"
+#include "Components/LightComponent.cpp"
+#include "Components/ModelComponent.cpp"
+#include "Components/OccluderComponent.cpp"
+#include "Components/ParticleSystemComponent.cpp"
+#include "Components/PointToPointConstraintComponent.cpp"
+#include "Components/PrefabComponent.cpp"
+#include "Components/ProximityComponent.cpp"
+#include "Components/ScriptComponent.cpp"
+
+#include "DefaultSceneRenderer/DefaultSceneRenderer.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_DirectionalLight.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_Framebuffers.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_LightGroup.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_LightManager.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_LuminanceChain.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_MaterialShaderID.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_MaterialShaders.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_MaterialUniformNameCache.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_Mesh.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_MultiPassPipeline.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_PointLight.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_ShaderBuilder.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_ShadowVisibilityProcessor.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_SinglePassPipeline.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_SpotLight.cpp"
+#include "DefaultSceneRenderer/DefaultSceneRenderer_VisibilityProcessor.cpp"
+
+#include "Graphics/DefaultGraphicsWorld_Null.cpp"
+#include "Graphics/DefaultGraphicsWorld_OpenGL.cpp"
+#include "Graphics/GraphicsAPI.cpp"
+#include "Graphics/GraphicsAPI_Null.cpp"
+#include "Graphics/GraphicsAPI_OpenGL.cpp"
+#include "Graphics/GraphicsAssetResourceManager.cpp"
+#include "Graphics/GraphicsAssetResources.cpp"
+#include "Graphics/GraphicsModelObject.cpp"
+#include "Graphics/GraphicsWorld.cpp"
+#include "Graphics/GraphicsWorldObject.cpp"
+
+#include "GUI/Rendering/GUIElementRenderingData.cpp"
+#include "GUI/Rendering/GUIMesh.cpp"
+#include "GUI/Rendering/GUIRenderer.cpp"
+#include "GUI/GUICaret.cpp"
+#include "GUI/GUIElement.cpp"
+#include "GUI/GUIElementEventHandler.cpp"
+#include "GUI/GUIElementTree.cpp"
+#include "GUI/GUIEventQueue.cpp"
+#include "GUI/GUIFontCache.cpp"
+#include "GUI/GUIFontGlyphMapManager.cpp"
+#include "GUI/GUIGarbageCollector.cpp"
+#include "GUI/GUIImageManager.cpp"
+#include "GUI/GUILayoutManager.cpp"
+#include "GUI/GUIMarkupLoader.cpp"
+#include "GUI/GUIScriptServer.cpp"
+#include "GUI/GUIServer.cpp"
+#include "GUI/GUIServerEventHandler.cpp"
+#include "GUI/GUIServerXMLParser.cpp"
+#include "GUI/GUIStandardLibrary.cpp"
+#include "GUI/GUIStandardLibrary_Images.cpp"
+#include "GUI/GUIStyleAttributeHandler.cpp"
+#include "GUI/GUIStyleClass.cpp"
+#include "GUI/GUIStyleClassTree.cpp"
+#include "GUI/GUIStyleScriptCompiler.cpp"
+#include "GUI/GUIStyleServer.cpp"
+#include "GUI/GUIStyleStack.cpp"
+#include "GUI/GUIStyleTokenizer.cpp"
+
+#include "Physics/BaseCollisionWorld.cpp"
+#include "Physics/btEllipsoidShape.cpp"
+#include "Physics/CollisionObject.cpp"
+#include "Physics/CollisionWorld.cpp"
+#include "Physics/ConeTwistConstraint.cpp"
+#include "Physics/DynamicsWorld.cpp"
+#include "Physics/GenericConstraint.cpp"
+#include "Physics/GhostObject.cpp"
+#include "Physics/MeshCollisionShape.cpp"
+#include "Physics/PointToPointConstraint.cpp"
+#include "Physics/RigidBody.cpp"
+#include "Physics/SceneNodeMotionState.cpp"
+#include "Physics/StaticMeshCollisionShape.cpp"
+
+#include "Rendering/OpenGL/OpenGL21/Framebuffer_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/FramebufferState_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/Renderer_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/ServerState_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/Shader_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/ShaderState_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/State_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/Texture2D_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/TextureCube_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/TextureState_OpenGL21.cpp"
+#include "Rendering/OpenGL/OpenGL21/VertexArray_OpenGL21.cpp"
+#include "Rendering/OpenGL/Debugging_OpenGL.cpp"
+#include "Rendering/DefaultGUIRenderer.cpp"
+#include "Rendering/Framebuffer.cpp"
+#include "Rendering/Renderer.cpp"
+#include "Rendering/Shader.cpp"
+#include "Rendering/Texture2D.cpp"
+#include "Rendering/TextureCube.cpp"
+#include "Rendering/VertexArray.cpp"
+#include "Rendering/VertexFormat.cpp"
+
+#include "Scripting/Scripting_Animation.cpp"
+#include "Scripting/Scripting_Audio.cpp"
+#include "Scripting/Scripting_Components.cpp"
+#include "Scripting/Scripting_Editor.cpp"
+#include "Scripting/Scripting_Game.cpp"
+#include "Scripting/Scripting_Math.cpp"
+#include "Scripting/Scripting_Particles.cpp"
+#include "Scripting/Scripting_Rendering.cpp"
+#include "Scripting/Scripting_Scene.cpp"
+#include "Scripting/Scripting_SceneNode.cpp"
+
+#include "Utilities/DynamicCharacterController.cpp"
+
+#include "Bone.cpp"
+#include "Component.cpp"
+#include "Context.cpp"
+#include "ConvexHull.cpp"
+#include "CPUVertexShader.cpp"
+#include "CPUVertexShader_SimpleTransform.cpp"
+#include "CPUVertexShader_Skinning.cpp"
+#include "DefaultGUIImageManager.cpp"
+#include "DefaultPrefabLinker.cpp"
+#include "DefaultSceneCullingManager.cpp"
+#include "DefaultScenePhysicsManager.cpp"
+#include "DefaultSceneUpdateManager.cpp"
+#include "Editor.cpp"
+#include "GameEventFilter.cpp"
+#include "GameEventQueue.cpp"
+#include "GamePackager.cpp"
+#include "GameScript.cpp"
+#include "GameStateManager.cpp"
+#include "GameWindowEventHandler.cpp"
+#include "GTEngine.cpp"
+#include "GUIEventHandler.cpp"
+#include "IO.cpp"
+#include "Material.cpp"
+#include "MaterialLibrary.cpp"
+#include "MaterialShaderCache.cpp"
+#include "Math.cpp"
+#include "Mesh.cpp"
+#include "MeshBuilder.cpp"
+#include "Message.cpp"
+#include "MessageDispatcher.cpp"
+#include "MessageHandler.cpp"
+#include "Model.cpp"
+#include "ModelDefinition.cpp"
+#include "ModelDefinition_Assimp.cpp"
+#include "ModelLibrary.cpp"
+#include "NavigationMesh.cpp"
+#include "Particle.cpp"
+#include "ParticleEmitter.cpp"
+#include "ParticleFunction.cpp"
+#include "ParticleList.cpp"
+#include "ParticleSystem.cpp"
+#include "ParticleSystemDefinition.cpp"
+#include "ParticleSystemLibrary.cpp"
+#include "Prefab.cpp"
+#include "PrefabLibrary.cpp"
+#include "PrefabLinker.cpp"
+#include "Profiler.cpp"
+#include "Projectile.cpp"
+#include "Scene.cpp"
+#include "SceneCullingDbvtPolicy.cpp"
+#include "SceneDeserializeCallback.cpp"
+#include "SceneEventHandler.cpp"
+#include "SceneNode.cpp"
+#include "SceneNodeEventHandler.cpp"
+#include "SceneNodeMap.cpp"
+#include "SceneRenderer.cpp"
+#include "SceneStateStack.cpp"
+#include "SceneStateStackBranch.cpp"
+#include "SceneStateStackFrame.cpp"
+#include "SceneStateStackRestoreCommands.cpp"
+#include "SceneStateStackStagingArea.cpp"
+#include "SceneViewport.cpp"
+#include "Script.cpp"
+#include "ScriptDefinition.cpp"
+#include "Scripting.cpp"
+#include "ScriptLibrary.cpp"
+#include "ScriptVariable.cpp"
+#include "ShaderLibrary.cpp"
+#include "ShaderParameter.cpp"
+#include "ShaderParameterCache.cpp"
+#include "ShadowVolume.cpp"
+#include "Texture2DLibrary.cpp"
+#include "VertexArrayLibrary.cpp"
+
+
+#include "Editor/ImageEditor/ImageEditor.cpp"
+#include "Editor/MaterialEditor/MaterialEditor.cpp"
+#include "Editor/ModelEditor/ModelEditor.cpp"
+#include "Editor/PackagingToolEditor/PackagingToolEditor.cpp"
+#include "Editor/ParticleEditor/ParticleEditor.cpp"
+#include "Editor/SceneEditor/SceneEditor.cpp"
+#include "Editor/SceneEditor/SceneEditorCommand.cpp"
+#include "Editor/SceneEditor/SceneEditorGameEventFilter.cpp"
+#include "Editor/SceneEditor/SceneEditorPhysicsManager.cpp"
+#include "Editor/SceneEditor/SceneEditorPrefabLinker.cpp"
+#include "Editor/SceneEditor/SceneEditorSceneEventHandler.cpp"
+#include "Editor/SceneEditor/SceneEditorSceneUpdateManager.cpp"
+#include "Editor/TextEditor/TextEditor.cpp"
+#include "Editor/Editor3DViewportEventHandler.cpp"
+#include "Editor/EditorAxisArrows.cpp"
+#include "Editor/EditorGrid.cpp"
+#include "Editor/PivotPoint.cpp"
+#include "Editor/SubEditor.cpp"
+#include "Editor/SubEditorTabEventHandler.cpp"
+#include "Editor/TransformGizmo.cpp"
+
+
+// dr_libs
+//
+// These should be placed after stb_vorbis so that dr_audio can detect it.
+#define DR_IMPLEMENTATION
+#include <dr_libs/dr.h>
+
+#define DR_FS_IMPLEMENTATION
+#include <dr_libs/dr_fs.h>
+
+#define DR_FSW_IMPLEMENTATION
+#include <dr_libs/dr_fsw.h>
+
+#if defined(GT_BUILD_FLAC)
+#define DR_FLAC_IMPLEMENTATION
+#include <dr_libs/dr_flac.h>
+#endif
+
+#if defined(GT_BUILD_WAV)
+#define DR_WAV_IMPLEMENTATION
+#include <dr_libs/dr_wav.h>
+#endif
+
+#define DR_AUDIO_IMPLEMENTATION
+#include <dr_libs/dr_audio.h>
+
+#define DR_GUI_IMPLEMENTATION
+#include <dr_libs/old/dr_gui.h>
+
+#define DR_2D_IMPLEMENTATION
+#include <dr_libs/old/dr_2d.h>
+
+#define DR_MTL_IMPLEMENTATION
+#include <dr_libs/old/dr_mtl.h>
+
+#if defined(GT_BUILD_VORBIS)
+#include <GTGE/external/stb_vorbis.c>
+#endif
 
 #endif

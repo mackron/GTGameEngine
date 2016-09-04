@@ -5,9 +5,7 @@
 
 #include <GTGE/Core/stdlib.hpp>
 #include "ImageLoader_PNG.hpp"
-
 #include <GTGE/GTEngine.hpp>
-#include <dr_libs/dr_fs.h>
 
 namespace GT
 {

@@ -3,7 +3,6 @@
 #include <GTGE/GamePackager.hpp>
 #include <GTGE/IO.hpp>
 #include <GTGE/GTEngine.hpp>
-#include <dr_libs/dr_fs.h>
 
 namespace GT
 {
