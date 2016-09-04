@@ -384,6 +384,8 @@ namespace GT
 
     void Context::Shutdown()
     {
+        editor.CloseAllOpenFiles();
+
         // We first let the game know that we are shutting down. It's important that we do this before killing anything.
         m_gameStateManager.OnShutdown(*this);
         this->script.Execute("Game.OnShutdown();");     // <-- TODO: Don't use this inline style calling. Instead, properly call it through the C++ API.
@@ -1008,7 +1010,7 @@ namespace GT
         // We will start by creating the output directory.
         if (!drfs_is_existing_directory(this->GetVFS(), absoluteOutputDirectory))
         {
-            if (!drfs_create_directory(this->GetVFS(), absoluteOutputDirectory))
+            if (drfs_create_directory(this->GetVFS(), absoluteOutputDirectory) != drfs_success)
             {
                 // Failed to create the output directory.
                 return false;

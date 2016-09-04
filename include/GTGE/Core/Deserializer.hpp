@@ -406,7 +406,7 @@ namespace GT
             assert(m_pFile != nullptr);
 
             size_t bytesRead = 0;
-            if (!drfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead))
+            if (drfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead) != drfs_success)
             {
                 // Error reading.
                 bytesRead = 0;
@@ -423,7 +423,7 @@ namespace GT
             uint64_t readPointer = drfs_tell(m_pFile);
 
             size_t bytesRead = 0;
-            if (!drfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead))
+            if (drfs_read(m_pFile, outputBuffer, bytesToRead, &bytesRead) != drfs_success)
             {
                 // Error reading.
                 return 0;
@@ -438,7 +438,7 @@ namespace GT
         {
             assert(m_pFile != nullptr);
 
-            if (drfs_seek(m_pFile, bytesToSkip, drfs_origin_current)) {
+            if (drfs_seek(m_pFile, bytesToSkip, drfs_origin_current) == drfs_success) {
                 return bytesToSkip;
             }
 
