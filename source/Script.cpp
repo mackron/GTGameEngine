@@ -6,12 +6,9 @@
 #include <GTGE/Core/ToString.hpp>
 #include <GTGE/Core/Parse.hpp>
 
-extern "C"
-{
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
+#include "external/lua-5.1.5/src/lua.h"
+#include "external/lua-5.1.5/src/lualib.h"
+#include "external/lua-5.1.5/src/lauxlib.h"
 
 #define LUA_STATE ((lua_State*)this->state)
 

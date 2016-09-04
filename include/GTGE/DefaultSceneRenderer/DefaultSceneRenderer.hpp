@@ -7,6 +7,7 @@
 #include "../Scene.hpp"
 #include "../MaterialLibrary.hpp"
 #include "../Rendering/Renderer.hpp"
+#include "../Graphics/GraphicsTypes.hpp"
 
 #include "DefaultSceneRenderer_VisibilityProcessor.hpp"
 #include "DefaultSceneRenderer_MaterialShaders.hpp"
@@ -103,13 +104,13 @@ namespace GT
 
 
             // Filters.
-            Renderer::SetTexture2DFilter(*this->colourBuffer0,     TextureFilter_Nearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->colourBuffer1,     TextureFilter_Nearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->lightingBuffer0,   TextureFilter_Nearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->lightingBuffer1,   TextureFilter_Nearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->finalColourBuffer, TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->colourBuffer0,     TextureFilter_Point, TextureFilter_Point);
+            Renderer::SetTexture2DFilter(*this->colourBuffer1,     TextureFilter_Point, TextureFilter_Point);
+            Renderer::SetTexture2DFilter(*this->lightingBuffer0,   TextureFilter_Point, TextureFilter_Point);
+            Renderer::SetTexture2DFilter(*this->lightingBuffer1,   TextureFilter_Point, TextureFilter_Point);
+            Renderer::SetTexture2DFilter(*this->finalColourBuffer, TextureFilter_Point, TextureFilter_Point);
             Renderer::SetTexture2DFilter(*this->bloomBuffer,       TextureFilter_Linear,  TextureFilter_Linear);
-            Renderer::SetTexture2DFilter(*this->bloomBlurBuffer,   TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->bloomBlurBuffer,   TextureFilter_Point, TextureFilter_Point);
 
             // Wrap Modes.
             Renderer::SetTexture2DWrapMode(*this->colourBuffer0,   TextureWrapMode_ClampToEdge);
@@ -229,8 +230,8 @@ namespace GT
             this->Resize(widthIn, heightIn);
 
             // Now we can setup the filtering and attach the textures to the framebuffer itself.
-            Renderer::SetTexture2DFilter(  *this->colourBuffer, TextureFilter_Linear,  TextureFilter_Linear);
-            Renderer::SetTexture2DFilter(  *this->blurBuffer,   TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(  *this->colourBuffer, TextureFilter_Linear, TextureFilter_Linear);
+            Renderer::SetTexture2DFilter(  *this->blurBuffer,   TextureFilter_Point, TextureFilter_Point);
             Renderer::SetTexture2DWrapMode(*this->colourBuffer, TextureWrapMode_ClampToEdge);
             Renderer::SetTexture2DWrapMode(*this->blurBuffer,   TextureWrapMode_ClampToEdge);
 
@@ -319,9 +320,9 @@ namespace GT
 
 
             // Filters.
-            Renderer::SetTextureCubeFilter(*this->colourBuffer, TextureFilter_Linear,  TextureFilter_Linear);
-            Renderer::SetTexture2DFilter(  *this->blurBuffer0,  TextureFilter_Nearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(  *this->blurBuffer1,  TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTextureCubeFilter(*this->colourBuffer, TextureFilter_Linear, TextureFilter_Linear);
+            Renderer::SetTexture2DFilter(  *this->blurBuffer0,  TextureFilter_Point, TextureFilter_Point);
+            Renderer::SetTexture2DFilter(  *this->blurBuffer1,  TextureFilter_Point, TextureFilter_Point);
 
             // Wrapping modes.
             Renderer::SetTextureCubeWrapMode(*this->colourBuffer, TextureWrapMode_ClampToEdge);

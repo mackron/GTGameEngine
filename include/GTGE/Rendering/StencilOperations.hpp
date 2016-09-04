@@ -5,6 +5,7 @@
 
 namespace GT
 {
+#if 0
     enum StencilOp
     {
         StencilOp_Keep,
@@ -16,6 +17,7 @@ namespace GT
         StencilOp_DecrementWrap,
         StencilOp_Invert
     };
+#endif
 }
 
 #endif

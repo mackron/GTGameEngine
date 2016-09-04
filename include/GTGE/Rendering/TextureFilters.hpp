@@ -5,6 +5,7 @@
 
 namespace GT
 {
+#if 0
     enum TextureFilter
     {
         TextureFilter_Nearest = 1,
@@ -17,6 +18,7 @@ namespace GT
 
         TextureFilter_Point = TextureFilter_Nearest
     };
+#endif
 }
 
 #endif

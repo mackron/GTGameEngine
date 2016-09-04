@@ -212,7 +212,16 @@ namespace GT
         TextureFilter_Linear_Point_Linear,
         TextureFilter_Linear_Linear_Point,
         TextureFilter_Linear_Linear_Linear,
-        TextureFilter_Anisotropic
+        TextureFilter_Anisotropic,
+
+        // Enums below are for backwards compatibility with the old renderer.
+        TextureFilter_Nearest,
+        TextureFilter_Linear,
+        TextureFilter_NearestNearest,
+        TextureFilter_NearestLinear,
+        TextureFilter_LinearNearest,
+        TextureFilter_LinearLinear,
+        TextureFilter_Point = TextureFilter_Nearest,
     };
 
     enum VertexAttribSemantic

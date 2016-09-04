@@ -1,5 +1,6 @@
 
-#include <GTGE/GTEngine.hpp>
+//#include <GTGE/GTEngine.hpp>
+#include "../source/GTGE.hpp"
 
 #if defined(_WIN32)
 #include <windows.h>

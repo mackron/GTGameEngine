@@ -10,8 +10,8 @@ namespace GT
         : m_context(context),
           m_loadedTextures(),
           m_defaultAnisotropy(1),
-          m_defaultMinFilter(TextureFilter_LinearLinear),
-          m_defaultMagFilter(TextureFilter_Linear),
+          m_defaultMinFilter(TextureFilter_Linear_Linear_Linear),
+          m_defaultMagFilter(TextureFilter_Linear_Linear_Linear),
           Black1x1Texture(nullptr)
     {
     }

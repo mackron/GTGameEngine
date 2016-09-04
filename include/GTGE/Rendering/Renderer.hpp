@@ -15,6 +15,7 @@
 #include "BlendEquations.hpp"
 #include "RendererFunctions.hpp"
 #include "StencilOperations.hpp"
+#include "../Graphics/GraphicsTypes.hpp"
 #include "PolygonModes.hpp"
 
 #undef CreateWindow

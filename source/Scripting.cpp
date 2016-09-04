@@ -9,13 +9,9 @@
 #include <GTGE/Core/System.hpp>
 
 // Temp until we get some more support in Script.
-extern "C"
-{
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
-
+#include "external/lua-5.1.5/src/lua.h"
+#include "external/lua-5.1.5/src/lualib.h"
+#include "external/lua-5.1.5/src/lauxlib.h"
 
 namespace GT
 {

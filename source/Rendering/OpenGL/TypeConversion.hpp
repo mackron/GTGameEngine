@@ -336,14 +336,14 @@ namespace GT
     {
         switch (op)
         {
-        case StencilOp_Keep:          return GL_KEEP;
-        case StencilOp_Zero:          return GL_ZERO;
-        case StencilOp_Replace:       return GL_REPLACE;
-        case StencilOp_Increment:     return GL_INCR;
-        case StencilOp_IncrementWrap: return GL_INCR_WRAP;
-        case StencilOp_Decrement:     return GL_DECR;
-        case StencilOp_DecrementWrap: return GL_DECR_WRAP;
-        case StencilOp_Invert:        return GL_INVERT;
+        case StencilOp_Keep:            return GL_KEEP;
+        case StencilOp_Zero:            return GL_ZERO;
+        case StencilOp_Replace:         return GL_REPLACE;
+        case StencilOp_Increment_Clamp: return GL_INCR;
+        case StencilOp_Increment:       return GL_INCR_WRAP;
+        case StencilOp_Decrement_Clamp: return GL_DECR;
+        case StencilOp_Decrement:       return GL_DECR_WRAP;
+        case StencilOp_Invert:          return GL_INVERT;
         default: break;
         }
 

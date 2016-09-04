@@ -25,14 +25,14 @@ namespace GT
     }
 
 
-    struct STBICallbackData
+    struct STBICallbackData_PNG
     {
         drfs_file* pFile;
     };
 
-    static int STBI_Read(void* user, char *data, int size)
+    static int STBI_Read_PNG(void* user, char *data, int size)
     {
-        auto callbackData = reinterpret_cast<STBICallbackData*>(user);
+        auto callbackData = reinterpret_cast<STBICallbackData_PNG*>(user);
         assert(callbackData != nullptr);
         {
             assert(callbackData->pFile != nullptr);
@@ -46,9 +46,9 @@ namespace GT
         }
     }
 
-    static void STBI_Skip(void* user, int n)
+    static void STBI_Skip_PNG(void* user, int n)
     {
-        auto callbackData = reinterpret_cast<STBICallbackData*>(user);
+        auto callbackData = reinterpret_cast<STBICallbackData_PNG*>(user);
         assert(callbackData != nullptr);
         {
             assert(callbackData->pFile != nullptr);
@@ -56,9 +56,9 @@ namespace GT
         }
     }
 
-    static int STBI_EOF(void* user)
+    static int STBI_EOF_PNG(void* user)
     {
-        auto callbackData = reinterpret_cast<STBICallbackData*>(user);
+        auto callbackData = reinterpret_cast<STBICallbackData_PNG*>(user);
         assert(callbackData != nullptr);
         {
             assert(callbackData->pFile != nullptr);
@@ -83,13 +83,13 @@ namespace GT
         drfs_file* pFile;
         if (drfs_open(g_Context->GetVFS(), this->absolutePath.c_str(), DRFS_READ, &pFile) == drfs_success)
         {
-            STBICallbackData callbackData;
+            STBICallbackData_PNG callbackData;
             callbackData.pFile = pFile;
 
             stbi_io_callbacks stbiCallbacks;
-            stbiCallbacks.read = STBI_Read;
-            stbiCallbacks.skip = STBI_Skip;
-            stbiCallbacks.eof  = STBI_EOF;
+            stbiCallbacks.read = STBI_Read_PNG;
+            stbiCallbacks.skip = STBI_Skip_PNG;
+            stbiCallbacks.eof  = STBI_EOF_PNG;
 
             int imageWidth;
             int imageHeight;
