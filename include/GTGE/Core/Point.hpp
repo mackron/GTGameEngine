@@ -6,16 +6,16 @@
 namespace GT
 {
     template <typename T>
-    class Point
+    class gtPoint
     {
     public:
         
-        Point()
+        gtPoint()
             : x(0), y(0)
         {
         }
         
-        Point(T _x, T _y)
+        gtPoint(T _x, T _y)
             : x(_x), y(_y)
         {
         }

@@ -27,6 +27,10 @@
 // Platform headers.
 #ifdef _WIN32
 #include <windows.h>
+
+#if defined(_MSC_VER) || defined(__clang__)
+#pragma comment(lib, "msimg32.lib")
+#endif
 #endif
 #ifdef __linux__
 #include "../include/GTGE/Core/Profiling/valgrind/callgrind.h"
@@ -340,6 +344,7 @@
 #include "DefaultSceneRenderer/DefaultSceneRenderer_SpotLight.cpp"
 #include "DefaultSceneRenderer/DefaultSceneRenderer_VisibilityProcessor.cpp"
 
+#if 0
 #include "Graphics/DefaultGraphicsWorld_Null.cpp"
 #include "Graphics/DefaultGraphicsWorld_OpenGL.cpp"
 #include "Graphics/GraphicsAPI.cpp"
@@ -350,6 +355,7 @@
 #include "Graphics/GraphicsModelObject.cpp"
 #include "Graphics/GraphicsWorld.cpp"
 #include "Graphics/GraphicsWorldObject.cpp"
+#endif
 
 #include "GUI/Rendering/GUIElementRenderingData.cpp"
 #include "GUI/Rendering/GUIMesh.cpp"
@@ -559,7 +565,19 @@
 #include <dr_libs/old/dr_mtl.h>
 
 #if defined(GT_BUILD_VORBIS)
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4244)   // conversion from '...' to '...', possible loss of data
+    #pragma warning(disable:4100)   // unreferenced formal parameter
+    #pragma warning(disable:4456)   // declaration of '...' hides previous local declaration
+    #pragma warning(disable:4457)   // declaration of '...' hides function parameter
+    #pragma warning(disable:4701)   // potentially uninitialized local variable '...' used
+#endif
+#undef STB_VORBIS_HEADER_ONLY
 #include <GTGE/external/stb_vorbis.c>
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 #endif
 
 #endif

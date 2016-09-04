@@ -10,11 +10,11 @@
 namespace GT
 {
     // Some math stuff, mainly for rounded corners.
-    static const float pi = 3.14159265f;
+    static const float gtPI = 3.14159265f;
 
     float radians(float degrees)
     {
-        return degrees * (pi / 180.0f);
+        return degrees * (gtPI / 180.0f);
     }
 
 
@@ -153,7 +153,7 @@ namespace GT
             // We only need to do this if we actually have a radius > 0.0.
             if (radius > 0.0f)
             {
-                int   segmentsPerCorner   = (static_cast<int>(2.0f * pi * radius) / 4) + 1;
+                int   segmentsPerCorner   = (static_cast<int>(2.0f * gtPI * radius) / 4) + 1;
                 float segmentAngleRadians = radians(90.0f / static_cast<float>(segmentsPerCorner));
 
                 const unsigned int firstOuterIndex = 4;

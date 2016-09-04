@@ -2519,13 +2519,13 @@ namespace GT
             }
 
             this->dragAndDropProxyElement       = nullptr;
-            this->dragAndDropProxyElementOffset = GT::Point<int>(0, 0);
+            this->dragAndDropProxyElementOffset = GT::gtPoint<int>(0, 0);
         }
     }
 
     void GUIServer::SetDragAndDropProxyElementOffset(int offsetX, int offsetY)
     {
-        this->dragAndDropProxyElementOffset = GT::Point<int>(offsetX, offsetY);
+        this->dragAndDropProxyElementOffset = GT::gtPoint<int>(offsetX, offsetY);
     }
 
 

@@ -1088,7 +1088,7 @@ namespace GT
         GUIElement* dragAndDropProxyElement;
 
         /// The offset to apply to the drag-and-drop proxy element when positioning it against the mouse.
-        GT::Point<int> dragAndDropProxyElementOffset;
+        GT::gtPoint<int> dragAndDropProxyElementOffset;
 
 
         /// The list of elements that need to have OnShow events posted.
