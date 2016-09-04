@@ -3,12 +3,6 @@
 #ifndef GT_Asset
 #define GT_Asset
 
-#include <GTGE/Core/String.hpp>
-#include <GTGE/Core/ReferenceCountedObject.hpp>
-#include "AssetTypes.hpp"
-#include "AssetMetadata.hpp"
-#include <dr_libs/dr_fs.h>
-
 namespace GT
 {
     /// Class representing an asset (texture, model, sound, etc.)

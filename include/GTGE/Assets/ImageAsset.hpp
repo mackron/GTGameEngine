@@ -3,9 +3,6 @@
 #ifndef GT_ImageAsset
 #define GT_ImageAsset
 
-#include "Asset.hpp"
-#include "../Graphics/GraphicsTypes.hpp"
-
 namespace GT
 {
     // Base class for image assets.

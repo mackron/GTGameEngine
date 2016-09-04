@@ -3,9 +3,6 @@
 #ifndef GT_GraphicsTypes
 #define GT_GraphicsTypes
 
-#include <cstdint>
-#include <cfloat>
-
 #define GT_MAX_VERTEX_BUFFER_SLOTS          32
 #define GT_MAX_CONSTANT_BUFFER_SLOTS        14
 #define GT_MAX_FRAMEBUFFER_RENDER_TARGETS   8

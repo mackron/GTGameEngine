@@ -3,13 +3,6 @@
 #ifndef GT_AssetLibrary
 #define GT_AssetLibrary
 
-#include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/Dictionary.hpp>
-#include "../Config.hpp"
-#include "AssetTypes.hpp"
-#include <dr_libs/dr_fs.h>
-#include <dr_libs/dr.h>
-
 namespace GT
 {
     class Asset;

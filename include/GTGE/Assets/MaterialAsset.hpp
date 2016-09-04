@@ -3,9 +3,6 @@
 #ifndef GT_MaterialAsset
 #define GT_MaterialAsset
 
-#include "Asset.hpp"
-#include "../Graphics/GraphicsTypes.hpp"    // For material variable types.
-
 namespace GT
 {
     struct MaterialVariable

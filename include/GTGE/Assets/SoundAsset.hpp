@@ -3,9 +3,6 @@
 #ifndef GT_SoundAsset
 #define GT_SoundAsset
 
-#include "Asset.hpp"
-#include <dr_libs/dr_audio.h>
-
 namespace GT
 {
     struct VoiceDesc

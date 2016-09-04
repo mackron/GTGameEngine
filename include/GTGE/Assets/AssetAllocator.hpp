@@ -3,8 +3,6 @@
 #ifndef GT_AssetAllocator
 #define GT_AssetAllocator
 
-#include "AssetTypes.hpp"
-
 namespace GT
 {
     class Asset;

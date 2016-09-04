@@ -3,10 +3,6 @@
 #ifndef GT_AseetMetadata
 #define GT_AseetMetadata
 
-#include <GTGE/Core/Vector.hpp>
-#include <GTGE/Core/Serializer.hpp>
-#include <GTGE/Core/Deserializer.hpp>
-
 namespace GT
 {
     /// Class representing a metadata chunk.

@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <float.h>
 #include <stdarg.h>
 #include <assert.h>
 #include <ctype.h>
@@ -253,6 +254,18 @@
 #include "../include/GTGE/Animation/AnimationSequence.hpp"
 #include "../include/GTGE/Animation/AnimationTrack.hpp"
 #include "../include/GTGE/Animation/Animation.hpp"
+
+#include "../include/GTGE/Graphics/GraphicsTypes.hpp"
+
+#include "../include/GTGE/Assets/AssetTypes.hpp"
+#include "../include/GTGE/Assets/AssetMetadata.hpp"
+#include "../include/GTGE/Assets/Asset.hpp"
+#include "../include/GTGE/Assets/AssetAllocator.hpp"
+#include "../include/GTGE/Assets/AssetLibrary.hpp"
+#include "../include/GTGE/Assets/ImageAsset.hpp"
+#include "../include/GTGE/Assets/MaterialAsset.hpp"
+#include "../include/GTGE/Assets/ModelAsset.hpp"
+#include "../include/GTGE/Assets/SoundAsset.hpp"
 
 #include "../include/GTGE/GTEngine.hpp"
 

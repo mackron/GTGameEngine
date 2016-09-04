@@ -3,9 +3,6 @@
 #ifndef GT_ModelAsset
 #define GT_ModelAsset
 
-#include "Asset.hpp"
-#include "../Graphics/GraphicsTypes.hpp"
-
 namespace GT
 {
     /// The different supported animation types for meshes.

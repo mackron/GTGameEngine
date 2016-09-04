@@ -3,8 +3,6 @@
 #ifndef GT_AssetTypes
 #define GT_AssetTypes
 
-#include <cstdint>
-
 namespace GT
 {
     typedef uint32_t AssetClass;
