@@ -17,7 +17,8 @@ namespace GT
 
     bool SoundStreamer::Initialize()
     {
-        if (!dra_decoder_open_memory(&m_decoder, m_pData, m_dataSize)) {
+        dra_result result = dra_decoder_open_memory(&m_decoder, m_pData, m_dataSize);
+        if (result != DRA_RESULT_SUCCESS) {
             return false;
         }
 
